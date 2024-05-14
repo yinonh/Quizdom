@@ -7,7 +7,7 @@ part 'trivia_response.g.dart';
 class TriviaResponse with _$TriviaResponse {
   const factory TriviaResponse({
     @JsonKey(name: "response_code") int? responseCode,
-    @JsonKey(name: "results") List<Result>? results,
+    @JsonKey(name: "results") List<Question>? results,
   }) = _TriviaResponse;
 
   factory TriviaResponse.fromJson(Map<String, dynamic> json) =>
@@ -15,8 +15,8 @@ class TriviaResponse with _$TriviaResponse {
 }
 
 @freezed
-class Result with _$Result {
-  const factory Result({
+class Question with _$Question {
+  const factory Question({
     @JsonKey(name: "type") Type? type,
     @JsonKey(name: "difficulty") Difficulty? difficulty,
     @JsonKey(name: "category") String? category,
@@ -25,7 +25,8 @@ class Result with _$Result {
     @JsonKey(name: "incorrect_answers") List<String>? incorrectAnswers,
   }) = _Result;
 
-  factory Result.fromJson(Map<String, dynamic> json) => _$ResultFromJson(json);
+  factory Question.fromJson(Map<String, dynamic> json) =>
+      _$QuestionFromJson(json);
 }
 
 enum Difficulty {

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/trivia_api_provider.dart';
+import 'package:trivia/data/trivia_provider.dart';
 
 import 'package:trivia/models/trivia_categories.dart';
 
@@ -18,7 +18,12 @@ class CategoriesState with _$CategoriesState {
 class CategoriesScreenManager extends _$CategoriesScreenManager {
   @override
   Future<CategoriesState> build() async {
-    final api = ref.read(triviaApiProvider.notifier);
-    return CategoriesState(categories: await api.getCategories());
+    final trivia = ref.read(triviaProvider.notifier);
+    return CategoriesState(categories: await trivia.getCategories());
+  }
+
+  void setCategory(int categoryId) {
+    final trivia = ref.read(triviaProvider.notifier);
+    trivia.setCategory(categoryId);
   }
 }

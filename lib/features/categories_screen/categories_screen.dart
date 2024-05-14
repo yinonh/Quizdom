@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/commom_widgets/app_bar.dart';
 
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
+import 'package:trivia/features/question_screen/question_screen.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routName = "/categories_screen";
@@ -10,15 +12,11 @@ class CategoriesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoriesState = ref.watch(categoriesScreenManagerProvider);
+    final categoriesNotifier =
+        ref.read(categoriesScreenManagerProvider.notifier);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Center(
-          child: Text(
-            "Categories",
-            textAlign: TextAlign.center,
-          ),
-        ),
+      appBar: const CustomAppBar(
+        title: 'Categories',
       ),
       body: Center(
         child: categoriesState.when(data: (data) {
@@ -29,7 +27,9 @@ class CategoriesScreen extends ConsumerWidget {
                   title: Text(data.categories.triviaCategories![index].name!),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded),
                   onTap: () {
-                    print(data.categories.triviaCategories![index].name);
+                    categoriesNotifier.setCategory(
+                        data.categories.triviaCategories![index].id!);
+                    Navigator.pushNamed(context, QuestionScreen.routName);
                   },
                 );
               });

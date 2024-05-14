@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
+import 'package:trivia/features/question_screen/question_screen.dart';
 
+import 'custom_route_observer.dart';
 import 'features/categories_screen/categories_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -26,6 +28,9 @@ class MyApp extends StatelessWidget {
           case CategoriesScreen.routName:
             page = const CategoriesScreen();
             break;
+          case QuestionScreen.routName:
+            page = const QuestionScreen();
+            break;
           default:
             page = const SizedBox();
         }
@@ -37,6 +42,7 @@ class MyApp extends StatelessWidget {
           settings: settings,
         );
       },
+      navigatorObservers: [CustomRouteObserver(ref: ref)],
     );
   }
 }
