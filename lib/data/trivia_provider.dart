@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,6 +53,19 @@ class Trivia extends _$Trivia {
     state = state.copyWith(categoryId: categoryId);
   }
 
+  Map<String, dynamic> decodeFields(Map<String, dynamic> result) {
+    return {
+      'type': utf8.decode(base64.decode(result['type'])),
+      'difficulty': utf8.decode(base64.decode(result['difficulty'])),
+      'category': utf8.decode(base64.decode(result['category'])),
+      'question': utf8.decode(base64.decode(result['question'])),
+      'correct_answer': utf8.decode(base64.decode(result['correct_answer'])),
+      'incorrect_answers': (result['incorrect_answers'] as List).map((answer) {
+        return utf8.decode(base64.decode(answer));
+      }).toList(),
+    };
+  }
+
   Future<TriviaResponse> getTriviaQuestions() async {
     final response = await state.client.get(
       "https://opentdb.com/api.php",
@@ -59,11 +73,19 @@ class Trivia extends _$Trivia {
         "amount": 10,
         "category": state.categoryId,
         "type": "multiple",
+        "encode": "base64",
         "token": state.token,
       },
     );
     if (response.statusCode == 200) {
-      return TriviaResponse.fromJson(response.data);
+      List decodedResults = (response.data['results'] as List).map((result) {
+        return decodeFields(result);
+      }).toList();
+
+      return TriviaResponse.fromJson({
+        'response_code': response.data['response_code'],
+        'results': decodedResults
+      });
     } else {
       throw Exception('Failed to load trivia questions');
     }
