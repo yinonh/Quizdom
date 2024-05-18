@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/commom_widgets/app_bar.dart';
+import 'package:trivia/common_widgets/app_bar.dart';
 
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/features/question_screen/question_screen.dart';
+import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routName = "/categories_screen";
@@ -29,7 +29,7 @@ class CategoriesScreen extends ConsumerWidget {
                   onTap: () {
                     categoriesNotifier.setCategory(
                         data.categories.triviaCategories![index].id!);
-                    Navigator.pushNamed(context, QuestionScreen.routName);
+                    Navigator.pushNamed(context, QuizScreen.routName);
                   },
                 );
               });

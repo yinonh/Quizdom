@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/features/question_screen/question_screen.dart';
+import 'package:trivia/features/quiz_screen/quiz_screen.dart';
+import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
 
 import 'custom_route_observer.dart';
 import 'features/categories_screen/categories_screen.dart';
@@ -28,8 +28,8 @@ class MyApp extends ConsumerWidget {
           case CategoriesScreen.routName:
             page = const CategoriesScreen();
             break;
-          case QuestionScreen.routName:
-            page = const QuestionScreen();
+          case QuizScreen.routName:
+            page = const QuizScreen();
             break;
           default:
             page = const SizedBox();
