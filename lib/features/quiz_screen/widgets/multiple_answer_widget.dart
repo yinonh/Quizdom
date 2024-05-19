@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 
-class MultipleAnswerWidget extends StatelessWidget {
+class MultipleAnswerWidget extends ConsumerWidget {
   final String question;
   final List<String> options;
   final Function(int) onAnswerSelected;
@@ -15,7 +17,8 @@ class MultipleAnswerWidget extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final questionsState = ref.watch(quizScreenManagerProvider).asData!.value;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -33,18 +36,8 @@ class MultipleAnswerWidget extends StatelessWidget {
           shrinkWrap: true,
           itemCount: options.length,
           itemBuilder: (BuildContext context, int index) {
-            // Apply fade animation
-            return FadeTransition(
-              opacity: Tween<double>(
-                begin: 0,
-                end: 1,
-              ).animate(
-                CurvedAnimation(
-                  parent: ModalRoute.of(context)!.animation!,
-                  curve: const Interval(0.5, 1.0, curve: Curves.easeInOut),
-                ),
-              ),
-              child: GestureDetector(
+            if (questionsState.selectedAnswerIndex == null) {
+              return GestureDetector(
                 onTap: () => onAnswerSelected(index),
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 8.0),
@@ -58,8 +51,47 @@ class MultipleAnswerWidget extends StatelessWidget {
                     style: const TextStyle(fontSize: 16.0),
                   ),
                 ),
-              ),
-            );
+              );
+            } else if (questionsState.selectedAnswerIndex ==
+                questionsState.correctAnswerIndex) {
+              return GestureDetector(
+                onTap: () => onAnswerSelected(index),
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: questionsState.correctAnswerIndex == index
+                        ? Colors.green.withOpacity(0.2)
+                        : Colors.blue.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Text(
+                    options[index],
+                    style: const TextStyle(fontSize: 16.0),
+                  ),
+                ),
+              );
+            } else {
+              return GestureDetector(
+                onTap: () => onAnswerSelected(index),
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: questionsState.selectedAnswerIndex == index
+                        ? Colors.red.withOpacity(0.2)
+                        : questionsState.correctAnswerIndex == index
+                            ? Colors.green.withOpacity(0.2)
+                            : Colors.blue.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Text(
+                    options[index],
+                    style: const TextStyle(fontSize: 16.0),
+                  ),
+                ),
+              );
+            }
           },
         ),
       ],

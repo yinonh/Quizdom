@@ -17,7 +17,19 @@ class QuizState with _$QuizState {
     required int timeLeft,
     required int questionIndex,
     required List<String> shuffledOptions,
+    required int correctAnswerIndex,
+    int? selectedAnswerIndex,
   }) = _QuizState;
+}
+
+class ShuffledData {
+  final List<String> options;
+  final int correctIndex;
+
+  ShuffledData({
+    required this.options,
+    required this.correctIndex,
+  });
 }
 
 @riverpod
@@ -28,13 +40,15 @@ class QuizScreenManager extends _$QuizScreenManager {
   Future<QuizState> build() async {
     final trivia = ref.read(triviaProvider.notifier);
     final response = await trivia.getTriviaQuestions();
-    final initialOptions = _getShuffledOptions(response.results![0]);
+    final initialShuffledData = _getShuffledOptions(response.results![0]);
 
     return QuizState(
       triviaResponse: response,
       timeLeft: 10,
       questionIndex: 0,
-      shuffledOptions: initialOptions,
+      shuffledOptions: initialShuffledData.options,
+      correctAnswerIndex: initialShuffledData.correctIndex,
+      selectedAnswerIndex: null,
     );
   }
 
@@ -58,13 +72,15 @@ class QuizScreenManager extends _$QuizScreenManager {
       if (quizState.questionIndex <
           quizState.triviaResponse.results!.length - 1) {
         final nextIndex = quizState.questionIndex + 1;
-        final nextOptions =
+        final nextShuffledData =
             _getShuffledOptions(quizState.triviaResponse.results![nextIndex]);
 
         state = AsyncValue.data(quizState.copyWith(
           questionIndex: nextIndex,
           timeLeft: 10, // Reset time for the next question
-          shuffledOptions: nextOptions,
+          shuffledOptions: nextShuffledData.options,
+          correctAnswerIndex: nextShuffledData.correctIndex,
+          selectedAnswerIndex: null, // Reset the selected answer index
         ));
       } else {
         _timer?.cancel();
@@ -72,9 +88,16 @@ class QuizScreenManager extends _$QuizScreenManager {
     });
   }
 
-  List<String> _getShuffledOptions(Question question) {
+  ShuffledData _getShuffledOptions(Question question) {
     final options = [...question.incorrectAnswers!, question.correctAnswer!];
     options.shuffle();
-    return options;
+    final shuffledCorrectIndex = options.indexOf(question.correctAnswer!);
+    return ShuffledData(options: options, correctIndex: shuffledCorrectIndex);
+  }
+
+  void selectAnswer(int index) {
+    state.whenData((quizState) {
+      state = AsyncValue.data(quizState.copyWith(selectedAnswerIndex: index));
+    });
   }
 }

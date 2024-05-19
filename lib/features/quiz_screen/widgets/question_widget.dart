@@ -23,9 +23,7 @@ class QuestionWidget extends ConsumerWidget {
             MultipleAnswerWidget(
               question: currentQuestion.question!,
               options: data.shuffledOptions,
-              onAnswerSelected: (int x) {
-                print(x);
-              },
+              onAnswerSelected: questionsStateNotifier.selectAnswer,
             ),
             const Spacer(),
             LinearProgressIndicator(
