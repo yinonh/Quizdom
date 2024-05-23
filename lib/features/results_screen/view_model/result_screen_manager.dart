@@ -1,0 +1,28 @@
+import 'dart:async';
+
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import 'package:trivia/models/user_achievements.dart';
+import 'package:trivia/service/trivia_provider.dart';
+
+part 'result_screen_manager.freezed.dart';
+
+part 'result_screen_manager.g.dart';
+
+@freezed
+class ResultState with _$ResultState {
+  const factory ResultState({
+    required UserAchievements userAchievements,
+  }) = _ResultState;
+}
+
+@riverpod
+class ResultScreenManager extends _$ResultScreenManager {
+  @override
+  Future<ResultState> build() async {
+    return ResultState(
+      userAchievements: ref.watch(triviaProvider).achievements,
+    );
+  }
+}

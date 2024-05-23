@@ -6,7 +6,7 @@ import 'package:trivia/features/categories_screen/view_model/categories_screen_m
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 
 class CategoriesScreen extends ConsumerWidget {
-  static const routName = "/categories_screen";
+  static const routeName = "/categories_screen";
   const CategoriesScreen({super.key});
 
   @override
@@ -29,7 +29,8 @@ class CategoriesScreen extends ConsumerWidget {
                   onTap: () {
                     categoriesNotifier.setCategory(
                         data.categories.triviaCategories![index].id!);
-                    Navigator.pushNamed(context, QuizScreen.routName);
+                    categoriesNotifier.resetAchievements();
+                    Navigator.pushNamed(context, QuizScreen.routeName);
                   },
                 );
               });

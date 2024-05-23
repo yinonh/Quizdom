@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/common_widgets/app_bar.dart';
-import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
+import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
 
-class QuizScreen extends ConsumerWidget {
-  static const routeName = "/quiz_screen";
-  const QuizScreen({super.key});
+class ResultsScreen extends ConsumerWidget {
+  static const routeName = "/results_screen";
+
+  const ResultsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questionsState = ref.watch(quizScreenManagerProvider);
+    final resultState = ref.watch(resultScreenManagerProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      appBar: CustomAppBar(
-        title: 'Question ${questionsState.asData?.value.questionIndex}',
+      appBar: const CustomAppBar(
+        title: 'Result',
       ),
       body: Container(
         height: double.infinity,
@@ -28,7 +27,18 @@ class QuizScreen extends ConsumerWidget {
             topRight: Radius.circular(35.0),
           ),
         ),
-        child: QuestionWidget(),
+        child: resultState.when(
+          data: (data) {
+            return Text(
+                "Correct Answer: ${data.userAchievements.correctAnswers}");
+          },
+          error: (_, __) {
+            return const SizedBox();
+          },
+          loading: () {
+            return const CircularProgressIndicator();
+          },
+        ),
       ),
     );
   }

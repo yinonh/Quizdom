@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/trivia_provider.dart';
+import 'package:trivia/service/trivia_provider.dart';
 
 import 'package:trivia/models/trivia_categories.dart';
 
@@ -20,6 +20,10 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   Future<CategoriesState> build() async {
     final trivia = ref.read(triviaProvider.notifier);
     return CategoriesState(categories: await trivia.getCategories());
+  }
+
+  void resetAchievements() {
+    ref.read(triviaProvider.notifier).resetAchievements();
   }
 
   void setCategory(int categoryId) {

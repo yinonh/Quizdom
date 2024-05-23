@@ -1,18 +1,19 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'server.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 Dio dio(DioRef ref) {
-  final dio = Dio(BaseOptions(
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      responseType: ResponseType.json,
-      baseUrl: 'https://opentdb.com/'));
+  final dio = Dio(
+    BaseOptions(
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        responseType: ResponseType.json,
+        baseUrl: 'https://opentdb.com/'),
+  );
   dio.interceptors.add(DioInterceptor());
   return dio;
 }

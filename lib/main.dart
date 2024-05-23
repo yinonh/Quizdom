@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
+import 'package:trivia/features/results_screen/results_screen.dart';
 
 import 'custom_route_observer.dart';
 import 'features/categories_screen/categories_screen.dart';
@@ -25,11 +26,14 @@ class MyApp extends ConsumerWidget {
       onGenerateRoute: (settings) {
         Widget page;
         switch (settings.name) {
-          case CategoriesScreen.routName:
+          case CategoriesScreen.routeName:
             page = const CategoriesScreen();
             break;
-          case QuizScreen.routName:
+          case QuizScreen.routeName:
             page = const QuizScreen();
+            break;
+          case ResultsScreen.routeName:
+            page = const ResultsScreen();
             break;
           default:
             page = const SizedBox();

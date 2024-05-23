@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 
 class MultipleAnswerWidget extends ConsumerWidget {
@@ -15,6 +14,24 @@ class MultipleAnswerWidget extends ConsumerWidget {
     required this.options,
     required this.onAnswerSelected,
   }) : super(key: key);
+
+  Widget optionWidget(int index, Color color) {
+    return GestureDetector(
+      onTap: () => onAnswerSelected(index),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8.0),
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Text(
+          options[index],
+          style: const TextStyle(fontSize: 16.0),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,59 +54,23 @@ class MultipleAnswerWidget extends ConsumerWidget {
           itemCount: options.length,
           itemBuilder: (BuildContext context, int index) {
             if (questionsState.selectedAnswerIndex == null) {
-              return GestureDetector(
-                onTap: () => onAnswerSelected(index),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Text(
-                    options[index],
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
-              );
+              return optionWidget(index, Colors.blue.withOpacity(0.2));
             } else if (questionsState.selectedAnswerIndex ==
                 questionsState.correctAnswerIndex) {
-              return GestureDetector(
-                onTap: () => onAnswerSelected(index),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: questionsState.correctAnswerIndex == index
-                        ? Colors.green.withOpacity(0.2)
-                        : Colors.blue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Text(
-                    options[index],
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
+              return optionWidget(
+                index,
+                questionsState.correctAnswerIndex == index
+                    ? Colors.green.withOpacity(0.2)
+                    : Colors.blue.withOpacity(0.2),
               );
             } else {
-              return GestureDetector(
-                onTap: () => onAnswerSelected(index),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: questionsState.selectedAnswerIndex == index
-                        ? Colors.red.withOpacity(0.2)
-                        : questionsState.correctAnswerIndex == index
-                            ? Colors.green.withOpacity(0.2)
-                            : Colors.blue.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Text(
-                    options[index],
-                    style: const TextStyle(fontSize: 16.0),
-                  ),
-                ),
+              return optionWidget(
+                index,
+                questionsState.selectedAnswerIndex == index
+                    ? Colors.red.withOpacity(0.2)
+                    : questionsState.correctAnswerIndex == index
+                        ? Colors.green.withOpacity(0.2)
+                        : Colors.blue.withOpacity(0.2),
               );
             }
           },

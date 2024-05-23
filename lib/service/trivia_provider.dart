@@ -1,13 +1,15 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/server.dart';
-
 import 'package:trivia/models/trivia_categories.dart';
 import 'package:trivia/models/trivia_response.dart';
+import 'package:trivia/models/user_achievements.dart';
+import 'package:trivia/service/server.dart';
 
 part 'trivia_provider.freezed.dart';
+
 part 'trivia_provider.g.dart';
 
 @freezed
@@ -16,16 +18,25 @@ class TriviaState with _$TriviaState {
     required Dio client,
     required String? token,
     required int? categoryId,
+    required UserAchievements achievements,
   }) = _TriviaState;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Trivia extends _$Trivia {
   @override
   TriviaState build() {
-    final client = ref.watch(dioProvider);
     return TriviaState(
-        client: ref.watch(dioProvider), categoryId: null, token: null);
+      client: ref.watch(dioProvider),
+      categoryId: null,
+      token: null,
+      achievements: const UserAchievements(
+        correctAnswers: 0,
+        wrongAnswers: 0,
+        unanswered: 0,
+        sumResponseTime: 0.0,
+      ),
+    );
   }
 
   Future<void> setToken() async {
@@ -89,5 +100,46 @@ class Trivia extends _$Trivia {
     } else {
       throw Exception('Failed to load trivia questions');
     }
+  }
+
+  void resetAchievements() {
+    state = state.copyWith(
+      achievements: const UserAchievements(
+          correctAnswers: 0,
+          wrongAnswers: 0,
+          unanswered: 0,
+          sumResponseTime: 0),
+    );
+  }
+
+  void updateAchievements(
+      {required AchievementField field, double? sumResponseTime}) {
+    UserAchievements updatedAchievements;
+
+    switch (field) {
+      case AchievementField.correctAnswers:
+        updatedAchievements = state.achievements.copyWith(
+          correctAnswers: state.achievements.correctAnswers + 1,
+        );
+        break;
+      case AchievementField.wrongAnswers:
+        updatedAchievements = state.achievements.copyWith(
+          wrongAnswers: state.achievements.wrongAnswers + 1,
+        );
+        break;
+      case AchievementField.unanswered:
+        updatedAchievements = state.achievements.copyWith(
+          unanswered: state.achievements.unanswered + 1,
+        );
+        break;
+      case AchievementField.sumResponseTime:
+        updatedAchievements = state.achievements.copyWith(
+          sumResponseTime:
+              sumResponseTime ?? state.achievements.sumResponseTime + 10,
+        );
+        break;
+    }
+
+    state = state.copyWith(achievements: updatedAchievements);
   }
 }
