@@ -64,9 +64,6 @@ class QuizScreenManager extends _$QuizScreenManager {
                   quizState.copyWith(timeLeft: quizState.timeLeft - 0.01));
             } else {
               if (quizState.selectedAnswerIndex == null) {
-                ref
-                    .read(triviaProvider.notifier)
-                    .updateAchievements(field: AchievementField.unanswered);
                 selectAnswer(-1);
               } else {
                 _moveToNextQuestion();
@@ -121,6 +118,10 @@ class QuizScreenManager extends _$QuizScreenManager {
             ref.read(triviaProvider.notifier).updateAchievements(
                 field: AchievementField.correctAnswers,
                 sumResponseTime: quizState.timeLeft);
+          } else if (index == -1) {
+            ref
+                .read(triviaProvider.notifier)
+                .updateAchievements(field: AchievementField.unanswered);
           } else {
             ref.read(triviaProvider.notifier).updateAchievements(
                 field: AchievementField.wrongAnswers,

@@ -132,13 +132,13 @@ class Trivia extends _$Trivia {
           unanswered: state.achievements.unanswered + 1,
         );
         break;
-      case AchievementField.sumResponseTime:
-        updatedAchievements = state.achievements.copyWith(
-          sumResponseTime:
-              sumResponseTime ?? state.achievements.sumResponseTime + 10,
-        );
-        break;
     }
+    state = state.copyWith(achievements: updatedAchievements);
+
+    updatedAchievements = state.achievements.copyWith(
+      sumResponseTime:
+          sumResponseTime ?? state.achievements.sumResponseTime + 10,
+    );
 
     state = state.copyWith(achievements: updatedAchievements);
   }

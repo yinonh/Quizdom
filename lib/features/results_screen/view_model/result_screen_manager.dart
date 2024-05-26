@@ -25,4 +25,15 @@ class ResultScreenManager extends _$ResultScreenManager {
       userAchievements: ref.watch(triviaProvider).achievements,
     );
   }
+
+  double getTimeAvg() {
+    final achievements = ref.read(triviaProvider).achievements;
+    final totalAnswered = achievements.correctAnswers +
+        achievements.wrongAnswers +
+        achievements.unanswered;
+
+    if (totalAnswered == 0) return 0.0;
+
+    return achievements.sumResponseTime / totalAnswered;
+  }
 }

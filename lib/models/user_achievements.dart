@@ -20,5 +20,4 @@ enum AchievementField {
   correctAnswers,
   wrongAnswers,
   unanswered,
-  sumResponseTime,
 }

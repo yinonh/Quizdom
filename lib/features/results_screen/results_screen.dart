@@ -11,6 +11,7 @@ class ResultsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resultState = ref.watch(resultScreenManagerProvider);
+    final resultNotifier = ref.read(resultScreenManagerProvider.notifier);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       appBar: const CustomAppBar(
@@ -29,8 +30,14 @@ class ResultsScreen extends ConsumerWidget {
         ),
         child: resultState.when(
           data: (data) {
-            return Text(
-                "Correct Answer: ${data.userAchievements.correctAnswers}");
+            return Column(
+              children: [
+                Text("Correct Answer: ${data.userAchievements.correctAnswers}"),
+                Text("Wrong Answer: ${data.userAchievements.wrongAnswers}"),
+                Text("Didn't Answer: ${data.userAchievements.unanswered}"),
+                Text("TimeAvg: ${resultNotifier.getTimeAvg()}"),
+              ],
+            );
           },
           error: (_, __) {
             return const SizedBox();
