@@ -9,11 +9,11 @@ class MultipleAnswerWidget extends ConsumerWidget {
   final Function(int) onAnswerSelected;
 
   const MultipleAnswerWidget({
-    Key? key,
+    super.key,
     required this.question,
     required this.options,
     required this.onAnswerSelected,
-  }) : super(key: key);
+  });
 
   Widget optionWidget(int index, Color color) {
     return GestureDetector(

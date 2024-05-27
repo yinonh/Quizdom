@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:fluttermoji/fluttermojiFunctions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
 
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
@@ -15,8 +18,30 @@ class CategoriesScreen extends ConsumerWidget {
     final categoriesNotifier =
         ref.read(categoriesScreenManagerProvider.notifier);
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Categories',
+      // appBar: const CustomAppBar(
+      //   title: 'Categories',
+      // ),
+      appBar: AppBar(
+        title: const Text("hello"),
+        leading: FutureBuilder<String?>(
+          future: categoriesNotifier.fetchAvatar(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return const Center(child: Text('Error fetching avatar'));
+            } else if (!snapshot.hasData || snapshot.data == null) {
+              return Center(child: Text('No avatar found'));
+            } else {
+              final avatarSvg = snapshot.data!;
+              return Center(
+                child: SvgPicture.string(
+                  FluttermojiFunctions().decodeFluttermojifromString(avatarSvg),
+                ),
+              );
+            }
+          },
+        ),
       ),
       body: Center(
         child: categoriesState.when(data: (data) {

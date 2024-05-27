@@ -54,6 +54,10 @@ class Trivia extends _$Trivia {
         .get("api_category.php", queryParameters: {"token": state.token});
     if (response.statusCode == 200) {
       TriviaCategories categories = TriviaCategories.fromJson(response.data);
+      categories = categories.copyWith(triviaCategories: [
+        const TriviaCategory(name: "All", id: -1),
+        ...?categories.triviaCategories
+      ]);
       return categories;
     } else {
       throw Exception('Failed to load trivia data');
@@ -61,12 +65,13 @@ class Trivia extends _$Trivia {
   }
 
   void setCategory(int categoryId) {
-    state = state.copyWith(categoryId: categoryId);
+    if (categoryId != -1) {
+      state = state.copyWith(categoryId: categoryId);
+    }
   }
 
   Map<String, dynamic> decodeFields(Map<String, dynamic> result) {
     return {
-      'type': utf8.decode(base64.decode(result['type'])),
       'difficulty': utf8.decode(base64.decode(result['difficulty'])),
       'category': utf8.decode(base64.decode(result['category'])),
       'question': utf8.decode(base64.decode(result['question'])),
@@ -83,7 +88,6 @@ class Trivia extends _$Trivia {
       queryParameters: {
         "amount": 10,
         "category": state.categoryId,
-        "type": "multiple",
         "encode": "base64",
         "token": state.token,
       },

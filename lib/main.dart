@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
-import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
 
 import 'custom_route_observer.dart';
@@ -22,10 +22,13 @@ class MyApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: const CategoriesScreen(),
+      home: const AvatarScreen(),
       onGenerateRoute: (settings) {
         Widget page;
         switch (settings.name) {
+          case AvatarScreen.routeName:
+            page = const AvatarScreen();
+            break;
           case CategoriesScreen.routeName:
             page = const CategoriesScreen();
             break;
