@@ -1,7 +1,7 @@
-import 'package:fluttermoji/fluttermojiFunctions.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trivia/fluttermoji/fluttermojiFunctions.dart';
 
 part 'avatar_screen_manager.freezed.dart';
 part 'avatar_screen_manager.g.dart';

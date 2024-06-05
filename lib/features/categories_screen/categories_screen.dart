@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:fluttermoji/fluttermojiFunctions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trivia/common_widgets/app_bar.dart';
 
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
+import 'package:trivia/fluttermoji/fluttermojiFunctions.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routeName = "/categories_screen";
@@ -31,7 +29,7 @@ class CategoriesScreen extends ConsumerWidget {
             } else if (snapshot.hasError) {
               return const Center(child: Text('Error fetching avatar'));
             } else if (!snapshot.hasData || snapshot.data == null) {
-              return Center(child: Text('No avatar found'));
+              return const Center(child: Text('No avatar found'));
             } else {
               final avatarSvg = snapshot.data!;
               return Center(

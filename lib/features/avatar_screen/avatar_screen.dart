@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
-import 'package:fluttermoji/fluttermojiCustomizer.dart';
-import 'package:fluttermoji/fluttermojiFunctions.dart';
-import 'package:fluttermoji/fluttermojiThemeData.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
+import 'package:trivia/fluttermoji/fluttermojiCircleAvatar.dart';
+import 'package:trivia/fluttermoji/fluttermojiCustomizer.dart';
+import 'package:trivia/fluttermoji/fluttermojiThemeData.dart';
 
 class AvatarScreen extends ConsumerWidget {
   static const routeName = "/avatar";
