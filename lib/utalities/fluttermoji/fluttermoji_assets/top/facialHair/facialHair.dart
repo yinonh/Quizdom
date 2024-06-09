@@ -7,15 +7,16 @@ class FacialHair {
     'BlondeGolden': "#D6B370",
     'Brown': "#724133",
     'BrownDark': "#4A312C",
-    'Platinum': "#ECDCBF",
+    'PastelPink': '#F59797',
     'Red': "#C93305",
+    'SilverGray': '#808080',
   };
   static String? generateFacialHair(
       {String facialHairType = "Nothing", String fhColor = "Black"}) {
     String? colorHex = facialHairColor[fhColor];
 
     Map<String, dynamic> facialHair = {
-      "Nothing": '''        
+      "Nothing": '''
         ''',
       "Full Beard": '''
         <g id="Facial-Hair/Beard-Medium" transform="translate(-28.000000, -8.000000)">

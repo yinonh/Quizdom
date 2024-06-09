@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/models/trivia_response.dart';
 import 'package:trivia/models/user_achievements.dart';
 import 'package:trivia/service/trivia_provider.dart';
+import 'package:trivia/service/user_provider.dart';
 
 part 'quiz_screen_manager.freezed.dart';
 
@@ -111,19 +112,18 @@ class QuizScreenManager extends _$QuizScreenManager {
   }
 
   void selectAnswer(int index) {
+    final userNotifier = ref.read(userProvider.notifier);
     state.whenData(
       (quizState) {
         if (quizState.selectedAnswerIndex == null) {
           if (quizState.correctAnswerIndex == index) {
-            ref.read(triviaProvider.notifier).updateAchievements(
+            userNotifier.updateAchievements(
                 field: AchievementField.correctAnswers,
                 sumResponseTime: quizState.timeLeft);
           } else if (index == -1) {
-            ref
-                .read(triviaProvider.notifier)
-                .updateAchievements(field: AchievementField.unanswered);
+            userNotifier.updateAchievements(field: AchievementField.unanswered);
           } else {
-            ref.read(triviaProvider.notifier).updateAchievements(
+            userNotifier.updateAchievements(
                 field: AchievementField.wrongAnswers,
                 sumResponseTime: quizState.timeLeft);
           }

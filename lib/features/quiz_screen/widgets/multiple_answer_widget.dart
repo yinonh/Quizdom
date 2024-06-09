@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 
+enum OptionState { correct, wrong, unchosen }
+
 class MultipleAnswerWidget extends ConsumerWidget {
   final String question;
   final List<String> options;
@@ -15,19 +17,53 @@ class MultipleAnswerWidget extends ConsumerWidget {
     required this.onAnswerSelected,
   });
 
-  Widget optionWidget(int index, Color color) {
+  Color getColorForState(OptionState state) {
+    switch (state) {
+      case OptionState.unchosen:
+        return Colors.blue.withOpacity(0.2);
+      case OptionState.correct:
+        return Colors.green.withOpacity(0.2);
+      case OptionState.wrong:
+        return Colors.red.withOpacity(0.2);
+    }
+  }
+
+  Widget optionWidget(int index, OptionState optionState) {
     return GestureDetector(
       onTap: () => onAnswerSelected(index),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: color,
+          color: getColorForState(optionState),
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: Text(
-          options[index],
-          style: const TextStyle(fontSize: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              "${index + 1}.  ",
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            Text(
+              options[index],
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            Spacer(),
+            optionState == OptionState.wrong
+                ? const Icon(
+                    Icons.close_rounded,
+                    color: Colors.red,
+                  )
+                : optionState == OptionState.correct
+                    ? const Icon(
+                        Icons.check_rounded,
+                        color: Colors.green,
+                      )
+                    : const SizedBox(
+                        height: 0,
+                      )
+          ],
         ),
       ),
     );
@@ -54,24 +90,22 @@ class MultipleAnswerWidget extends ConsumerWidget {
           itemCount: options.length,
           itemBuilder: (BuildContext context, int index) {
             if (questionsState.selectedAnswerIndex == null) {
-              return optionWidget(index, Colors.blue.withOpacity(0.2));
+              return optionWidget(index, OptionState.unchosen);
             } else if (questionsState.selectedAnswerIndex ==
                 questionsState.correctAnswerIndex) {
               return optionWidget(
-                index,
-                questionsState.correctAnswerIndex == index
-                    ? Colors.green.withOpacity(0.2)
-                    : Colors.blue.withOpacity(0.2),
-              );
+                  index,
+                  questionsState.correctAnswerIndex == index
+                      ? OptionState.correct
+                      : OptionState.unchosen);
             } else {
               return optionWidget(
-                index,
-                questionsState.selectedAnswerIndex == index
-                    ? Colors.red.withOpacity(0.2)
-                    : questionsState.correctAnswerIndex == index
-                        ? Colors.green.withOpacity(0.2)
-                        : Colors.blue.withOpacity(0.2),
-              );
+                  index,
+                  questionsState.selectedAnswerIndex == index
+                      ? OptionState.wrong
+                      : questionsState.correctAnswerIndex == index
+                          ? OptionState.correct
+                          : OptionState.unchosen);
             }
           },
         ),

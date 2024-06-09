@@ -7,25 +7,7 @@ import 'fluttermoji_assets/fluttermojimodel.dart';
 import 'package:get/get.dart';
 import 'fluttermojiController.dart';
 
-/// This widget provides the user with a UI for customizing their Fluttermoji
-///
-///*****
-///Note: \
-/// It is advised that a [FluttermojiCircleAvatar] also be present in the same page.
-/// to show the user a preview of the changes being made.
 class FluttermojiCustomizer extends StatefulWidget {
-  /// Creates a widget UI to customize the Fluttermoji
-  ///
-  /// You may provide a [FluttermojiThemeData] instance to adjust the appearance of this
-  /// widget to your app's theme.
-  ///
-  /// Accepts optional [scaffoldHeight] and [scaffoldWidth] attributes
-  /// to override the default layout.
-  ///
-  ///*****
-  ///Note: \
-  /// It is advised that a [FluttermojiCircleAvatar] also be present in the same page.
-  /// to show the user a preview of the changes being made.
   FluttermojiCustomizer({
     Key? key,
     this.scaffoldHeight,
@@ -51,37 +33,9 @@ class FluttermojiCustomizer extends StatefulWidget {
 
   final double? scaffoldHeight;
   final double? scaffoldWidth;
-
-  /// Configuration for the overall visual theme for this widget
-  /// and the components within it.
   final FluttermojiThemeData theme;
-
-  /// List of titles that are rendered at the top of the widget, indicating
-  /// which attribute the user is customizing.
-  ///
-  /// Overrides the default titles specified in [defaultAttributeTitles]
-  ///
-  /// Length of [attributeTitles] must be **11**
   final List<String> attributeTitles;
-
-  /// List of icons that are rendered in the bottom row, indicating
-  /// the attributes available to modify.
-  ///
-  /// Overrides the default icons specified in [defaultAttributeIcons]
-  ///
-  /// Length of [attributeIcons] must be **11**
-  ///
-  /// Ensure that the path to the icons is valid and that the resources
-  /// are included  as an asset in *pubspec.yaml*.
-  ///
-  /// **Only SVG files are supported as of now.**
   final List<String> attributeIcons;
-
-  /// Will save the selection automatically everytime the user selects
-  /// something when set to `true` .
-  ///
-  /// If set to `false` you may want to implement a [FluttermojiSaveWidget]
-  /// in your app to let users save their selection manually.
   final bool autosave;
 
   static const int attributesCount = 11;
@@ -100,16 +54,9 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
   @override
   void initState() {
     super.initState();
-
-    var _fluttermojiController;
     Get.put(FluttermojiController());
-    _fluttermojiController = Get.find<FluttermojiController>();
-
-    setState(() {
-      tabController = TabController(length: attributesCount, vsync: this);
-      fluttermojiController = _fluttermojiController;
-    });
-
+    fluttermojiController = Get.find<FluttermojiController>();
+    tabController = TabController(length: attributesCount, vsync: this);
     tabController.addListener(() {
       setState(() {});
     });
@@ -117,7 +64,6 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
 
   @override
   void dispose() {
-    // This ensures that unsaved edits are reverted
     fluttermojiController.restoreState();
     super.dispose();
   }
@@ -134,13 +80,14 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
 
   void onArrowTap(bool isLeft) {
     int _currentIndex = tabController.index;
-    if (isLeft)
+    if (isLeft) {
       tabController
           .animateTo(_currentIndex > 0 ? _currentIndex - 1 : _currentIndex);
-    else
+    } else {
       tabController.animateTo(_currentIndex < attributesCount - 1
           ? _currentIndex + 1
           : _currentIndex);
+    }
 
     setState(() {});
   }
@@ -165,13 +112,22 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
 
   Container bottomNavBar(List<Widget> navbarWidgets) {
     return Container(
-      color: widget.theme.primaryBgColor,
+      decoration: BoxDecoration(
+        color: widget.theme.primaryBgColor,
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, -1),
+            blurRadius: 4.0,
+          ),
+        ],
+      ),
       child: TabBar(
         controller: tabController,
         isScrollable: true,
-        labelPadding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+        labelPadding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
         indicatorColor: widget.theme.selectedIconColor,
-        indicatorPadding: EdgeInsets.all(2),
+        indicatorPadding: const EdgeInsets.all(2),
         tabs: navbarWidgets,
       ),
     );
@@ -180,12 +136,14 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
   AppBar appbar(List<AttributeItem> attributes) {
     return AppBar(
       centerTitle: true,
-      elevation: 0,
+      elevation: 2,
       backgroundColor: widget.theme.primaryBgColor,
       automaticallyImplyLeading: false,
       title: Text(
         attributes[tabController.index].title,
-        style: widget.theme.labelTextStyle,
+        style: widget.theme.labelTextStyle.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
         textAlign: TextAlign.center,
       ),
       leading: arrowButton(true),
@@ -201,7 +159,6 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
           ? tabController.index > 0
           : tabController.index < attributesCount - 1,
       child: IconButton(
-        // splashRadius: 20,
         icon: Icon(
           isLeft
               ? Icons.arrow_back_ios_new_rounded
@@ -213,10 +170,6 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
     );
   }
 
-  /// Widget that renders an expanded layout for customization
-  /// Accepts a [cardTitle] and a [attributes].
-  ///
-  /// [attribute] is an object with the fields attributeName and attributeKey
   Widget body({required List<AttributeItem> attributes}) {
     var size = MediaQuery.of(context).size;
 
@@ -231,16 +184,11 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
         fluttermojiController.selectedOptions[attribute.key] = 0;
       }
 
-      /// Number of options available for said [attribute]
-      /// Eg: "Hairstyle" attribue has 38 options
       var attributeListLength =
           fluttermojiProperties[attribute.key!]!.property!.length;
 
-      /// Number of tiles per horizontal row,
       int gridCrossAxisCount;
 
-      /// Set the number of tiles per horizontal row,
-      /// depending on the [attributeListLength]
       if (attributeListLength < 12)
         gridCrossAxisCount = 3;
       else if (attributeListLength < 9)
@@ -250,28 +198,38 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
 
       int? i = fluttermojiController.selectedOptions[attribute.key];
 
-      /// Build the main Tile Grid with all the options from the attribute
       var _tileGrid = GridView.builder(
         physics: widget.theme.scrollPhysics,
         itemCount: attributeListLength,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: gridCrossAxisCount,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
+          crossAxisSpacing: 8.0,
+          mainAxisSpacing: 8.0,
         ),
         itemBuilder: (BuildContext context, int index) => InkWell(
           onTap: () => onTapOption(index, i, attribute),
-          child: Container(
-            decoration: index == i
-                ? widget.theme.selectedTileDecoration
-                : widget.theme.unselectedTileDecoration,
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            decoration: BoxDecoration(
+              color: index == i ? Colors.white : Colors.transparent,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: index == i
+                  ? [
+                      const BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(0, 2),
+                        blurRadius: 2.0,
+                      ),
+                    ]
+                  : [],
+            ),
             margin: widget.theme.tileMargin,
             padding: widget.theme.tilePadding,
             child: SvgPicture.string(
               fluttermojiController.getComponentSVG(attribute.key, index),
               height: 20,
               semanticsLabel: 'Your Fluttermoji',
-              placeholderBuilder: (context) => Center(
+              placeholderBuilder: (context) => const Center(
                 child: CupertinoActivityIndicator(),
               ),
             ),
@@ -279,12 +237,10 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
         ),
       );
 
-      /// Builds the icon for the attribute to be placed in the bottom row
       var bottomNavWidget = Padding(
           padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 12),
           child: SvgPicture.asset(
             attribute.iconAsset!,
-            package: 'fluttermoji',
             height: attribute.iconsize ??
                 (widget.scaffoldHeight != null
                     ? widget.scaffoldHeight! / heightFactor * 0.03
@@ -297,7 +253,6 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
             semanticsLabel: attribute.title,
           ));
 
-      /// Add all the initialized widgets to the state
       attributeGrids.add(_tileGrid);
       navbarWidgets.add(bottomNavWidget);
     }

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trivia/service/trivia_provider.dart';
 
 import 'package:trivia/models/trivia_categories.dart';
+import 'package:trivia/service/user_provider.dart';
 
 part 'categories_screen_manager.freezed.dart';
 part 'categories_screen_manager.g.dart';
@@ -24,7 +25,7 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   }
 
   void resetAchievements() {
-    ref.read(triviaProvider.notifier).resetAchievements();
+    ref.read(userProvider.notifier).resetAchievements();
   }
 
   void setCategory(int categoryId) {
@@ -34,6 +35,6 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
 
   Future<String?> fetchAvatar() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('avatarSvg');
+    return prefs.getString('fluttermoji');
   }
 }

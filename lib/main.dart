@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
+import 'package:trivia/utalities/size_config.dart';
 
 import 'custom_route_observer.dart';
 import 'features/categories_screen/categories_screen.dart';
@@ -16,6 +17,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    SizeConfig().init(context);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

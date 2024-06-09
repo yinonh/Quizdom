@@ -72,7 +72,6 @@ const List<String> FluttermojiStyle = [
 
 const List<String> TopType = [
   'Bald',
-  'Eyepatch',
   'Turban',
   'Hat',
   'I\'m not bald',
@@ -125,28 +124,8 @@ const List<String> HairColor = [
   'BlondeGolden',
   'BrownDark',
   'PastelPink',
-  'Platinum',
   'Red',
   'SilverGray',
-];
-
-//This is the property I skipped on purpose
-const List<String> HatColor = [
-  'Black',
-  'Blue01',
-  'Blue02',
-  'Blue03',
-  'Gray01',
-  'Gray02',
-  'Heather',
-  'PastelBlue',
-  'PastelGreen',
-  'PastelOrange',
-  'PastelRed',
-  'PastelYellow',
-  'Pink',
-  'Red',
-  'White',
 ];
 
 const List<String> FacialHairType = [
@@ -160,12 +139,13 @@ const List<String> FacialHairType = [
 const List<String> FacialHairColor = [
   'Auburn',
   'Black',
+  'Brown',
   'Blonde',
   'BlondeGolden',
-  'Brown',
   'BrownDark',
-  'Platinum',
+  'PastelPink',
   'Red',
+  'SilverGray',
 ];
 
 const List<String> ClotheType = [
@@ -183,8 +163,6 @@ const List<String> ClotheType = [
 const List<String> ClotheColor = [
   'Blue01',
   'Blue02',
-  'PastelYellow',
-  'PastelGreen',
   'Gray02',
   'Black',
   'Blue03',
@@ -192,7 +170,6 @@ const List<String> ClotheColor = [
   'Heather',
   'PastelBlue',
   'PastelOrange',
-  'PastelRed',
   'Pink',
   'Red',
   'White',
@@ -255,7 +232,6 @@ const List<String> MouthType = [
   'Smile',
   'Tongue',
   'Twinkle',
-  'Vomit',
 ];
 
 const List<String> SkinColor = [
@@ -264,5 +240,5 @@ const List<String> SkinColor = [
   'Black',
   'Brown',
   'DarkBrown',
-  'Yellow',
+  'Yellow'
 ];

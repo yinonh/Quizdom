@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:trivia/models/user_achievements.dart';
-import 'package:trivia/service/trivia_provider.dart';
+import 'package:trivia/service/user_provider.dart';
 
 part 'result_screen_manager.freezed.dart';
 
@@ -22,12 +22,12 @@ class ResultScreenManager extends _$ResultScreenManager {
   @override
   Future<ResultState> build() async {
     return ResultState(
-      userAchievements: ref.watch(triviaProvider).achievements,
+      userAchievements: ref.watch(userProvider).achievements,
     );
   }
 
   double getTimeAvg() {
-    final achievements = ref.read(triviaProvider).achievements;
+    final achievements = ref.read(userProvider).achievements;
     final totalAnswered = achievements.correctAnswers +
         achievements.wrongAnswers +
         achievements.unanswered;
