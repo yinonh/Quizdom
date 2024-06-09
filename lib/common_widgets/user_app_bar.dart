@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
+import 'package:trivia/service/user_provider.dart';
 
 class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const UserAppBar({Key? key})
-      : preferredSize = const Size.fromHeight(80.0),
-        super(key: key);
+  const UserAppBar({super.key}) : preferredSize = const Size.fromHeight(100.0);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesNotifier =
-        ref.read(categoriesScreenManagerProvider.notifier);
+    final userState = ref.watch(userProvider);
     return Stack(
       children: [
         AppBar(
@@ -39,25 +37,12 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: FutureBuilder<String?>(
-            future: categoriesNotifier.fetchAvatar(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircleAvatar(
-                  radius: 40,
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return const Center(child: Text('Error fetching avatar'));
-              } else if (!snapshot.hasData || snapshot.data == null) {
-                return const Center(child: Text('No avatar found'));
-              } else {
-                final avatarSvg = snapshot.data!;
-                return Center(
+        userState.avatar != null
+            ? Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Center(
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -87,7 +72,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                             radius: 35,
                             child: ClipOval(
                               child: SvgPicture.string(
-                                avatarSvg,
+                                userState.avatar!,
                                 fit: BoxFit.cover,
                                 height: 70,
                                 width: 70,
@@ -98,20 +83,11 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                );
-              }
-            },
-          ),
-        ),
-        // const Positioned(
-        //   top: 0.5,
-        //   left: 0,
-        //   right: 0,
-        //   child: Text(
-        //     "Yinon Hadad",
-        //     style: TextStyle(color: Colors.white, fontSize: 15),
-        //   ),
-        // )
+                ),
+              )
+            : const SizedBox(
+                height: 0,
+              ),
       ],
     );
   }

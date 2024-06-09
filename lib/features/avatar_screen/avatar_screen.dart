@@ -46,13 +46,17 @@ class AvatarScreen extends ConsumerWidget {
               child: GestureDetector(
                 onTap: () async {
                   await avatarNotifier.saveAvatar();
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(milliseconds: 700),
-                      pageBuilder: (_, __, ___) => const CategoriesScreen(),
-                    ),
-                  );
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 700),
+                        pageBuilder: (_, __, ___) => const CategoriesScreen(),
+                      ),
+                    );
+                  }
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 8.0),

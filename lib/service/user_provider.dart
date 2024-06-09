@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trivia/models/user_achievements.dart';
 
@@ -71,5 +72,10 @@ class User extends _$User {
     );
 
     state = state.copyWith(achievements: updatedAchievements);
+  }
+
+  Future<String?> setAvatar() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = state.copyWith(avatar: prefs.getString('fluttermoji'));
   }
 }
