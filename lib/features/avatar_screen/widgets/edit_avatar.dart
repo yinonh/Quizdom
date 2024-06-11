@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
-import 'package:trivia/utalities/fluttermoji/fluttermojiCircleAvatar.dart';
-import 'package:trivia/utalities/size_config.dart';
+import 'package:trivia/utility/fluttermoji/fluttermojiCircleAvatar.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class EditAvatar extends ConsumerWidget {
   const EditAvatar({Key? key}) : super(key: key);

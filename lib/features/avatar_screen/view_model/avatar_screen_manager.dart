@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utalities/fluttermoji/fluttermojiController.dart';
+import 'package:trivia/utility/fluttermoji/fluttermojiController.dart';
 
 part 'avatar_screen_manager.freezed.dart';
 part 'avatar_screen_manager.g.dart';

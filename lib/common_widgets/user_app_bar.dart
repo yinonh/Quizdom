@@ -1,36 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/service/user_provider.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  const UserAppBar({super.key}) : preferredSize = const Size.fromHeight(100.0);
+  UserAppBar({super.key}) : preferredSize = Size.fromHeight(calcHeight(120));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userProvider);
     return Stack(
       children: [
-        AppBar(
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
         Positioned(
-          bottom: 0,
+          top: 0,
           left: 0,
           right: 0,
           child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            height: calcHeight(95),
+            width: double.infinity,
+            color: AppConstant.primaryColor.toColor(),
+          ),
+        ),
+        Positioned(
+          bottom: 1,
+          left: 0,
+          right: 0,
+          child: Container(
+            color: Colors.transparent,
             child: Center(
               child: SvgPicture.asset(
                 'assets/drop.svg',
-                height: 40,
+                height: calcHeight(55),
                 colorFilter: ColorFilter.mode(
-                  Theme.of(context).primaryColor,
+                  AppConstant.primaryColor.toColor(),
                   BlendMode.srcIn,
                 ),
               ),
@@ -39,7 +48,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
         userState.avatar != null
             ? Positioned(
-                bottom: 0,
+                bottom: 6.0,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -59,23 +68,24 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          const SizedBox(
-                            width: 80,
-                            height: 80,
+                          SizedBox(
+                            width: calcWidth(90),
+                            height: calcWidth(90),
                             child: CircularProgressIndicator(
                               strokeWidth: 5.0,
                               value: 0.8,
-                              color: Colors.blue,
+                              color: AppConstant.onPrimary.toColor(),
                             ),
                           ),
                           CircleAvatar(
-                            radius: 35,
+                            backgroundColor: Colors.white,
+                            radius: calcWidth(42),
                             child: ClipOval(
                               child: SvgPicture.string(
                                 userState.avatar!,
                                 fit: BoxFit.cover,
-                                height: 70,
-                                width: 70,
+                                height: calcWidth(80),
+                                width: calcWidth(80),
                               ),
                             ),
                           ),

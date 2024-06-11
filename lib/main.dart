@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
-import 'package:trivia/utalities/size_config.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/size_config.dart';
 
 import 'custom_route_observer.dart';
 import 'features/categories_screen/categories_screen.dart';
@@ -21,7 +23,8 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: AppConstant.primaryColor.toColor()),
         useMaterial3: true,
       ),
       home: const AvatarScreen(),

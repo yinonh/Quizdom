@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:trivia/common_widgets/user_app_bar.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/features/categories_screen/widgets/horizontal_list.dart';
+import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
-import 'package:trivia/features/categories_screen/widgets/section_header.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
 
 class CategoriesScreen extends ConsumerWidget {
@@ -18,12 +17,16 @@ class CategoriesScreen extends ConsumerWidget {
     final categoriesState = ref.watch(categoriesScreenManagerProvider);
 
     return Scaffold(
-      appBar: const UserAppBar(),
+      appBar: UserAppBar(),
+      extendBodyBehindAppBar: true,
       body: categoriesState.when(
         data: (data) => SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(
+                height: 130,
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -40,7 +43,7 @@ class CategoriesScreen extends ConsumerWidget {
                     TopButton(
                       icon: Icons.person_2,
                       label: "Solo Mode",
-                      color: Colors.greenAccent,
+                      color: Colors.greenAccent.shade400,
                       onTap: () {
                         // Handle solo mode tap
                       },
@@ -56,34 +59,13 @@ class CategoriesScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-
-              // Featured Categories
-              SectionHeader(
+              ExpandableHorizontalList(
+                categories: data.categories.triviaCategories,
                 title: "Featured Categories",
-                onTap: () {
-                  // Navigate to full categories list screen
-                },
-              ),
-              HorizontalList(
-                categories: data.categories.triviaCategories?.take(4).toList(),
-              ),
-
-              // Recent Quiz
-              SectionHeader(
-                title: "Recent Quiz",
-                onTap: () {
-                  // Navigate to full recent quiz list screen
-                },
               ),
               InfoContainer(text: "Recent Quiz Information"),
-
-              // Personal Rooms
-              SectionHeader(
-                title: "Personal Rooms",
-                onTap: () {
-                  // Navigate to full personal rooms list screen
-                },
-              ),
+              InfoContainer(text: "Personal Rooms Information"),
+              InfoContainer(text: "Personal Rooms Information"),
               InfoContainer(text: "Personal Rooms Information"),
             ],
           ),

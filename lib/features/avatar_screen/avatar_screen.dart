@@ -4,8 +4,10 @@ import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
-import 'package:trivia/utalities/fluttermoji/fluttermojiCustomizer.dart';
-import 'package:trivia/utalities/fluttermoji/fluttermojiThemeData.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/fluttermoji/fluttermojiCustomizer.dart';
+import 'package:trivia/utility/fluttermoji/fluttermojiThemeData.dart';
 
 class AvatarScreen extends ConsumerWidget {
   static const routeName = "/avatar";
@@ -60,9 +62,11 @@ class AvatarScreen extends ConsumerWidget {
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 8.0),
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 18.0),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.2),
+                    color:
+                        AppConstant.highlightColor.toColor().withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: const Text(

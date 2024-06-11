@@ -76,7 +76,7 @@ class Trivia extends _$Trivia {
 
   Future<TriviaResponse> getTriviaQuestions() async {
     final response = await state.client.get(
-      "https://opentdb.com/api.php",
+      "api.php",
       queryParameters: {
         "amount": 10,
         "category": state.categoryId,
