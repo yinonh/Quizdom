@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:trivia/models/user_achievements.dart';
 import 'package:trivia/service/user_provider.dart';
+import 'package:trivia/utility/app_constant.dart';
 
 part 'result_screen_manager.freezed.dart';
-
 part 'result_screen_manager.g.dart';
 
 @freezed
@@ -34,6 +33,7 @@ class ResultScreenManager extends _$ResultScreenManager {
 
     if (totalAnswered == 0) return 0.0;
 
-    return achievements.sumResponseTime / totalAnswered;
+    return AppConstant.questionTime -
+        (achievements.sumResponseTime / totalAnswered);
   }
 }

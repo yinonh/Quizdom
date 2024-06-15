@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
@@ -15,7 +14,8 @@ class QuizScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       appBar: CustomAppBar(
-        title: 'Question ${questionsState.asData?.value.questionIndex}',
+        title:
+            'Question ${(questionsState.asData?.value.questionIndex ?? 0) + 1}',
       ),
       body: Container(
         height: double.infinity,

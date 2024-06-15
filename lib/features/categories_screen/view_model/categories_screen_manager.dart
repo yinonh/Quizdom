@@ -1,8 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/service/trivia_provider.dart';
-
 import 'package:trivia/models/trivia_categories.dart';
+import 'package:trivia/service/trivia_provider.dart';
 import 'package:trivia/service/user_provider.dart';
 
 part 'categories_screen_manager.freezed.dart';

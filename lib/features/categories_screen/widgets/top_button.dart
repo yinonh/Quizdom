@@ -25,10 +25,10 @@ class TopButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withOpacity(0.1),
               spreadRadius: 1,
-              blurRadius: 2,
-              offset: Offset(0, 2), // changes position of shadow
+              blurRadius: 1,
+              offset: const Offset(0, 2),
             ),
           ],
         ),

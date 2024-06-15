@@ -45,7 +45,7 @@ class FluttermojiFunctions {
     SharedPreferences pref = await SharedPreferences.getInstance();
     return Future.wait([
       pref.remove('fluttermojiSelectedOptions'),
-      pref.remove('fluttermoji'),
+      pref.remove('user_avatar'),
     ]);
   }
 

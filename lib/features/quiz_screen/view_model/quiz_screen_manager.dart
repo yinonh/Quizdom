@@ -6,9 +6,9 @@ import 'package:trivia/models/trivia_response.dart';
 import 'package:trivia/models/user_achievements.dart';
 import 'package:trivia/service/trivia_provider.dart';
 import 'package:trivia/service/user_provider.dart';
+import 'package:trivia/utility/app_constant.dart';
 
 part 'quiz_screen_manager.freezed.dart';
-
 part 'quiz_screen_manager.g.dart';
 
 @freezed
@@ -45,7 +45,7 @@ class QuizScreenManager extends _$QuizScreenManager {
 
     return QuizState(
       questions: response.results!,
-      timeLeft: response.results!.length.toDouble(),
+      timeLeft: AppConstant.questionTime.toDouble(),
       questionIndex: 0,
       shuffledOptions: initialShuffledData.options,
       correctAnswerIndex: initialShuffledData.correctIndex,
@@ -54,15 +54,15 @@ class QuizScreenManager extends _$QuizScreenManager {
   }
 
   void startTimer() {
-    _timer?.cancel(); // Cancel any existing timer
+    _timer?.cancel();
     _timer = Timer.periodic(
-      const Duration(milliseconds: 10),
+      const Duration(milliseconds: 40),
       (timer) {
         state.whenData(
           (quizState) {
             if (quizState.timeLeft > 0) {
               state = AsyncValue.data(
-                  quizState.copyWith(timeLeft: quizState.timeLeft - 0.01));
+                  quizState.copyWith(timeLeft: quizState.timeLeft - 0.04));
             } else {
               if (quizState.selectedAnswerIndex == null) {
                 selectAnswer(-1);
@@ -86,7 +86,7 @@ class QuizScreenManager extends _$QuizScreenManager {
         state = AsyncValue.data(
           quizState.copyWith(
             questionIndex: nextIndex,
-            timeLeft: quizState.questions.length.toDouble(),
+            timeLeft: AppConstant.questionTime.toDouble(),
             // Reset time for the next question
             shuffledOptions: nextShuffledData.options,
             correctAnswerIndex: nextShuffledData.correctIndex,

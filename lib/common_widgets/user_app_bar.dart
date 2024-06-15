@@ -77,18 +77,24 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                               color: AppConstant.onPrimary.toColor(),
                             ),
                           ),
-                          CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: calcWidth(42),
-                            child: ClipOval(
-                              child: SvgPicture.string(
-                                userState.avatar!,
-                                fit: BoxFit.cover,
-                                height: calcWidth(80),
-                                width: calcWidth(80),
-                              ),
-                            ),
-                          ),
+                          userState.userImage != null
+                              ? CircleAvatar(
+                                  backgroundImage:
+                                      FileImage(userState.userImage!),
+                                  radius: calcWidth(42),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  radius: calcWidth(42),
+                                  child: ClipOval(
+                                    child: SvgPicture.string(
+                                      userState.avatar!,
+                                      fit: BoxFit.cover,
+                                      height: calcWidth(80),
+                                      width: calcWidth(80),
+                                    ),
+                                  ),
+                                ),
                         ],
                       ),
                     ),

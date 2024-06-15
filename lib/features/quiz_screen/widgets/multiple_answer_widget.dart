@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 
 enum OptionState { correct, wrong, unchosen }
@@ -39,17 +38,19 @@ class MultipleAnswerWidget extends ConsumerWidget {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               "${index + 1}.  ",
               style: const TextStyle(fontSize: 16.0),
             ),
-            Text(
-              options[index],
-              style: const TextStyle(fontSize: 16.0),
+            Expanded(
+              child: Text(
+                options[index],
+                style: const TextStyle(fontSize: 16.0),
+                maxLines: 2,
+              ),
             ),
-            Spacer(),
             optionState == OptionState.wrong
                 ? const Icon(
                     Icons.close_rounded,
@@ -61,8 +62,9 @@ class MultipleAnswerWidget extends ConsumerWidget {
                         color: Colors.green,
                       )
                     : const SizedBox(
+                        width: 0,
                         height: 0,
-                      )
+                      ),
           ],
         ),
       ),

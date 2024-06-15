@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/common_widgets/user_app_bar.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routeName = "/categories_screen";
@@ -24,8 +24,8 @@ class CategoriesScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 130,
+              SizedBox(
+                height: calcHeight(160),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),

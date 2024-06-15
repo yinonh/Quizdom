@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
 
 const double minFontSize = 14.0;
 
 class SizeConfig {
-  static late MediaQueryData _mediaQueryData;
   static late double screenWidth;
   static late double screenHeight;
   static late Orientation orientation;

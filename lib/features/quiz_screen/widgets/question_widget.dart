@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
+
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/multiple_answer_widget.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
@@ -8,6 +11,13 @@ class QuestionWidget extends ConsumerWidget {
   bool _hasNavigatedToResults = false;
 
   QuestionWidget({super.key});
+
+  Future<LottieComposition?> customDecoder(List<int> bytes) {
+    return LottieComposition.decodeZip(bytes, filePicker: (files) {
+      return files.firstWhereOrNull(
+          (f) => f.name.startsWith('animations/') && f.name.endsWith('.json'));
+    });
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,7 +75,16 @@ class QuestionWidget extends ConsumerWidget {
         return Text(error.toString());
       },
       loading: () {
-        return const CircularProgressIndicator();
+        return Center(
+          child: SizedBox(
+            height: 300,
+            width: 200,
+            child: Lottie.asset(
+              'assets/loading_animation.lottie',
+              decoder: customDecoder,
+            ),
+          ),
+        );
       },
     );
   }

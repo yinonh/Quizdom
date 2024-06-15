@@ -1,15 +1,17 @@
 import 'dart:convert';
-import 'fluttermoji_assets/style.dart';
+
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'fluttermojiFunctions.dart';
-import 'fluttermoji_assets/fluttermojimodel.dart';
 import 'fluttermoji_assets/clothes/clothes.dart';
 import 'fluttermoji_assets/face/eyebrow/eyebrow.dart';
 import 'fluttermoji_assets/face/eyes/eyes.dart';
 import 'fluttermoji_assets/face/mouth/mouth.dart';
 import 'fluttermoji_assets/face/nose/nose.dart';
+import 'fluttermoji_assets/fluttermojimodel.dart';
 import 'fluttermoji_assets/skin.dart';
+import 'fluttermoji_assets/style.dart';
 import 'fluttermoji_assets/top/accessories/accessories.dart';
 import 'fluttermoji_assets/top/facialHair/facialHair.dart';
 import 'fluttermoji_assets/top/hairStyles/hairStyle.dart';
@@ -62,7 +64,7 @@ class FluttermojiController extends GetxController {
     SharedPreferences pref = await SharedPreferences.getInstance();
 
     // Replace observable [fluttermoji] with latest saved version or use default attributes if null
-    fluttermoji.value = pref.getString('fluttermoji') ??
+    fluttermoji.value = pref.getString('user_avatar') ??
         FluttermojiFunctions().decodeFluttermojifromString(
           jsonEncode(defaultFluttermojiOptions),
         );
@@ -88,7 +90,7 @@ class FluttermojiController extends GetxController {
       fluttermojiNew = getFluttermojiFromOptions();
     }
     SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.setString('fluttermoji', fluttermojiNew);
+    await pref.setString('user_avatar', fluttermojiNew);
     fluttermoji.value = fluttermojiNew;
     await pref.setString(
         'fluttermojiSelectedOptions', jsonEncode(selectedOptions));

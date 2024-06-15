@@ -6,6 +6,8 @@ class AppConstant {
   static const String onPrimary = "#FFC700";
   static const String highlightColor = "#FFF455";
 
+  static const int questionTime = 10;
+
   static const Map<int, IconData> categoryIcons = {
     9: Icons.public, // General Knowledge
     10: Icons.book, // Entertainment: Books

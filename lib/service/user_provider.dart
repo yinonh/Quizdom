@@ -1,12 +1,11 @@
 import 'dart:io';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:trivia/models/user_achievements.dart';
 
 part 'user_provider.freezed.dart';
-
 part 'user_provider.g.dart';
 
 @freezed
@@ -68,14 +67,50 @@ class User extends _$User {
 
     updatedAchievements = state.achievements.copyWith(
       sumResponseTime:
-          sumResponseTime ?? state.achievements.sumResponseTime + 10,
+          state.achievements.sumResponseTime + (sumResponseTime ?? 10),
     );
 
     state = state.copyWith(achievements: updatedAchievements);
   }
 
+  Future<void> setImage(File? image) async {
+    if (image != null) {
+      // Get the application's document directory
+      final directory = await getApplicationDocumentsDirectory();
+      final imagePath = '${directory.path}/user_image.png';
+
+      // Save the image to the directory
+      final savedImage = await image.copy(imagePath);
+
+      // Save the image path to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_image_path', savedImage.path);
+
+      state = state.copyWith(userImage: savedImage);
+    } else {
+      // Remove image path from SharedPreferences if image is null
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('user_image_path');
+
+      state = state.copyWith(userImage: null);
+    }
+  }
+
+  Future<void> loadImageAndAvatar() async {
+    // Load image path from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    String? imagePath = prefs.getString('user_image_path');
+    String? avatar = prefs.getString('user_avatar');
+    if (imagePath != null && await File(imagePath).exists()) {
+      state = state.copyWith(avatar: avatar, userImage: File(imagePath));
+    } else {
+      state = state.copyWith(avatar: avatar);
+    }
+  }
+
   Future<String?> setAvatar() async {
     final prefs = await SharedPreferences.getInstance();
-    state = state.copyWith(avatar: prefs.getString('fluttermoji'));
+    state = state.copyWith(avatar: prefs.getString('user_avatar'));
+    return null;
   }
 }

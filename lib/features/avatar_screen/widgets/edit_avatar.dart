@@ -6,7 +6,7 @@ import 'package:trivia/utility/fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class EditAvatar extends ConsumerWidget {
-  const EditAvatar({Key? key}) : super(key: key);
+  const EditAvatar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,9 +55,9 @@ class EditAvatar extends ConsumerWidget {
             Positioned(
               bottom: 35,
               child: IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
+                icon: Icon(Icons.delete, color: Colors.white.withOpacity(0.5)),
                 onPressed: () {
-                  avatarNotifier.setImage(null);
+                  avatarNotifier.switchImage(null);
                   avatarNotifier.toggleShowTrashIcon(false);
                 },
               ),
@@ -71,16 +71,16 @@ class EditAvatar extends ConsumerWidget {
                   onPressed: () async {
                     final image = await ImagePicker()
                         .pickImage(source: ImageSource.camera);
-                    avatarNotifier.setImage(image);
+                    avatarNotifier.switchImage(image);
                   },
-                  icon: Icon(Icons.camera),
+                  icon: const Icon(Icons.camera),
                 ),
                 SizedBox(width: calcWidth(70)),
                 IconButton(
                   onPressed: () async {
                     final image = await ImagePicker()
                         .pickImage(source: ImageSource.gallery);
-                    avatarNotifier.setImage(image);
+                    avatarNotifier.switchImage(image);
                   },
                   icon: Icon(Icons.image),
                 ),

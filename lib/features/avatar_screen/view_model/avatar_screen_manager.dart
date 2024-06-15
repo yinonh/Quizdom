@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/fluttermoji/fluttermojiController.dart';
 
@@ -23,15 +23,29 @@ class AvatarState with _$AvatarState {
 class AvatarScreenManager extends _$AvatarScreenManager {
   @override
   AvatarState build() {
-    return const AvatarState(userName: "Yinon", showTrashIcon: false);
+    File? userImage = ref.read(userProvider).userImage;
+    return AvatarState(
+      userName: "Yinon",
+      showTrashIcon: false,
+      selectedImage: userImage,
+    );
   }
 
-  void setImage(XFile? image) {
+  void switchImage(XFile? image) {
     if (image != null) {
-      state =
-          state.copyWith(selectedImage: File(image.path), showTrashIcon: false);
+      state = state.copyWith(selectedImage: File(image.path));
     } else {
-      state = state.copyWith(selectedImage: null, showTrashIcon: false);
+      state = state.copyWith(selectedImage: null);
+    }
+  }
+
+  Future<void> saveImage() async {
+    final image = state.selectedImage;
+    if (image != null) {
+      await ref.read(userProvider.notifier).setImage(image);
+    } else {
+      await ref.read(userProvider.notifier).setImage(null);
+      state = state.copyWith(showTrashIcon: false);
     }
   }
 

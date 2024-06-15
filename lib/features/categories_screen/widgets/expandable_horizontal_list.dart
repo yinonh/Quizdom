@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/models/trivia_categories.dart';
@@ -65,11 +66,11 @@ class _ExpandableHorizontalListState
           ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            height: isExpanded ? 250.0 : 130.0,
+            height: isExpanded ? 250.0 : 160.0,
             child: SingleChildScrollView(
               physics: isExpanded
-                  ? AlwaysScrollableScrollPhysics()
-                  : NeverScrollableScrollPhysics(),
+                  ? const AlwaysScrollableScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Wrap(
@@ -86,8 +87,7 @@ class _ExpandableHorizontalListState
                       },
                       child: Container(
                         width: (MediaQuery.of(context).size.width - 32) / 2 - 8,
-                        height: 50,
-                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                        height: 70,
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
                           color: backgroundColor,
@@ -101,49 +101,42 @@ class _ExpandableHorizontalListState
                             ),
                           ],
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey
-                                          .withOpacity(0.2), // shadow color
-                                      spreadRadius: 0.01, // spread radius
-                                      blurRadius: 5, // blur radius
-                                      offset: const Offset(
-                                          0, 1), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  AppConstant.categoryIcons[category.id] ??
-                                      Icons.category,
-                                  color:
-                                      AppConstant.categoryColors[category.id] ??
-                                          Colors.black,
-                                  size: 20.0,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 8.0,
-                              ),
-                              FittedBox(
-                                fit: BoxFit.fitWidth,
-                                child: Text(
-                                  cleanCategoryName(category.name!)
-                                      .toUpperCase(),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    spreadRadius: 0.01,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 1),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                              child: Icon(
+                                AppConstant.categoryIcons[category.id] ??
+                                    Icons.category,
+                                color:
+                                    AppConstant.categoryColors[category.id] ??
+                                        Colors.black,
+                                size: 20.0,
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            Expanded(
+                              child: Text(
+                                cleanCategoryName(category.name!).toUpperCase(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.start,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );

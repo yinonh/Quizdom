@@ -8,7 +8,6 @@ import 'package:trivia/models/trivia_response.dart';
 import 'package:trivia/service/server.dart';
 
 part 'trivia_provider.freezed.dart';
-
 part 'trivia_provider.g.dart';
 
 @freezed

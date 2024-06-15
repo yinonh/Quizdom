@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
@@ -40,7 +41,8 @@ class AvatarScreen extends ConsumerWidget {
               child: FluttermojiCustomizer(
                 autosave: false,
                 theme: FluttermojiThemeData(
-                    boxDecoration: BoxDecoration(boxShadow: [BoxShadow()])),
+                    boxDecoration:
+                        const BoxDecoration(boxShadow: [BoxShadow()])),
               ),
             ),
             Padding(
@@ -48,16 +50,19 @@ class AvatarScreen extends ConsumerWidget {
               child: GestureDetector(
                 onTap: () async {
                   await avatarNotifier.saveAvatar();
-                  if (Navigator.canPop(context)) {
+                  await avatarNotifier.saveImage();
+                  if (context.mounted && Navigator.canPop(context)) {
                     Navigator.pop(context);
                   } else {
-                    Navigator.pushReplacement(
-                      context,
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 700),
-                        pageBuilder: (_, __, ___) => const CategoriesScreen(),
-                      ),
-                    );
+                    if (context.mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 700),
+                          pageBuilder: (_, __, ___) => const CategoriesScreen(),
+                        ),
+                      );
+                    }
                   }
                 },
                 child: Container(
@@ -70,7 +75,7 @@ class AvatarScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: const Text(
-                    'Save Avatar',
+                    'Save',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16.0),
                   ),
