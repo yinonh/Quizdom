@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'custom_route_observer.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
@@ -11,10 +14,11 @@ import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
 import 'package:trivia/utility/size_config.dart';
 
-import 'custom_route_observer.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

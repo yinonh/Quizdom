@@ -42,5 +42,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Firebase configuration
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Generated Dart code
 *.freezed.dart
 *.g.dart
