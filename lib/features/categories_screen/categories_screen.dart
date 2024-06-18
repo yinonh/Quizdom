@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/common_widgets/background.dart';
+
 import 'package:trivia/common_widgets/user_app_bar.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
@@ -19,59 +21,61 @@ class CategoriesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: UserAppBar(),
       extendBodyBehindAppBar: true,
-      body: categoriesState.when(
-        data: (data) => SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: calcHeight(160),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TopButton(
-                      icon: Icons.add_rounded,
-                      label: "Create Quiz",
-                      color: Colors.blueAccent,
-                      onTap: () {
-                        // Handle create quiz tap
-                      },
-                    ),
-                    TopButton(
-                      icon: Icons.person_2,
-                      label: "Solo Mode",
-                      color: Colors.greenAccent.shade400,
-                      onTap: () {
-                        // Handle solo mode tap
-                      },
-                    ),
-                    TopButton(
-                      icon: Icons.groups_2,
-                      label: "Multiplayer",
-                      color: Colors.orangeAccent,
-                      onTap: () {
-                        // Handle multiplayer tap
-                      },
-                    ),
-                  ],
+      body: CustomBackground(
+        child: categoriesState.when(
+          data: (data) => SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: calcHeight(160),
                 ),
-              ),
-              ExpandableHorizontalList(
-                categories: data.categories.triviaCategories,
-                title: "Featured Categories",
-              ),
-              InfoContainer(text: "Recent Quiz Information"),
-              InfoContainer(text: "Personal Rooms Information"),
-              InfoContainer(text: "Personal Rooms Information"),
-              InfoContainer(text: "Personal Rooms Information"),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TopButton(
+                        icon: Icons.add_rounded,
+                        label: "Create Quiz",
+                        color: Colors.orangeAccent.shade400,
+                        onTap: () {
+                          // Handle create quiz tap
+                        },
+                      ),
+                      TopButton(
+                        icon: Icons.person_2,
+                        label: "Solo Mode",
+                        color: Colors.lightBlueAccent.shade400,
+                        onTap: () {
+                          // Handle solo mode tap
+                        },
+                      ),
+                      TopButton(
+                        icon: Icons.groups_2,
+                        label: "Multiplayer",
+                        color: Colors.purple.shade400,
+                        onTap: () {
+                          // Handle multiplayer tap
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                ExpandableHorizontalList(
+                  categories: data.categories.triviaCategories,
+                  title: "Featured Categories",
+                ),
+                InfoContainer(text: "Recent Quiz Information"),
+                InfoContainer(text: "Personal Rooms Information"),
+                InfoContainer(text: "Personal Rooms Information"),
+                InfoContainer(text: "Personal Rooms Information"),
+              ],
+            ),
           ),
+          error: (error, _) => Center(child: Text(error.toString())),
+          loading: () => Center(child: CircularProgressIndicator()),
         ),
-        error: (error, _) => Center(child: Text(error.toString())),
-        loading: () => Center(child: CircularProgressIndicator()),
       ),
     );
   }

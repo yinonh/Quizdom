@@ -72,7 +72,7 @@ class _ExpandableHorizontalListState
                   ? const AlwaysScrollableScrollPhysics()
                   : const NeverScrollableScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: Wrap(
                   spacing: 8.0,
                   runSpacing: 8.0,
@@ -86,7 +86,7 @@ class _ExpandableHorizontalListState
                         Navigator.pushNamed(context, QuizScreen.routeName);
                       },
                       child: Container(
-                        width: (MediaQuery.of(context).size.width - 32) / 2 - 8,
+                        width: 150,
                         height: 70,
                         padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(

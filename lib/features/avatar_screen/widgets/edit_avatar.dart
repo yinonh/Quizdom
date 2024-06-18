@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 import 'package:trivia/utility/fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:trivia/utility/size_config.dart';
 
@@ -35,7 +37,9 @@ class EditAvatar extends ConsumerWidget {
                           radius: calcWidth(70),
                         )
                       : FluttermojiCircleAvatar(
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: AppConstant.secondaryColor
+                              .toColor()
+                              .withOpacity(0.3),
                           radius: calcWidth(70),
                         ),
                   if (avatarState.showTrashIcon)
@@ -73,7 +77,18 @@ class EditAvatar extends ConsumerWidget {
                         .pickImage(source: ImageSource.camera);
                     avatarNotifier.switchImage(image);
                   },
-                  icon: const Icon(Icons.camera),
+                  icon: Container(
+                    width: 30.0,
+                    height: 30.0,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: Icon(
+                      Icons.camera,
+                      color: AppConstant.highlightColor.toColor(),
+                    ),
+                  ),
                 ),
                 SizedBox(width: calcWidth(70)),
                 IconButton(
@@ -82,7 +97,18 @@ class EditAvatar extends ConsumerWidget {
                         .pickImage(source: ImageSource.gallery);
                     avatarNotifier.switchImage(image);
                   },
-                  icon: Icon(Icons.image),
+                  icon: Container(
+                    width: 30.0,
+                    height: 30.0,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: Icon(
+                      Icons.image,
+                      color: AppConstant.highlightColor.toColor(),
+                    ),
+                  ),
                 ),
               ],
             ),

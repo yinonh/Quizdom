@@ -74,7 +74,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 5.0,
                               value: 0.8,
-                              color: AppConstant.onPrimary.toColor(),
+                              color: Colors.lightBlueAccent.shade700,
                             ),
                           ),
                           userState.userImage != null

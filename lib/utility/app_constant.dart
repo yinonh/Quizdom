@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppConstant {
-  static const String primaryColor = "#007F73";
-  static const String secondaryColor = "#4CCD99";
-  static const String onPrimary = "#FFC700";
-  static const String highlightColor = "#FFF455";
+  static const String primaryColor = "#82d3c8";
+  static const String secondaryColor = "#00afff";
+  static const String onPrimary = "#ff9000";
+  static const String highlightColor = "#c357cb";
 
   static const int questionTime = 10;
 
@@ -50,7 +50,7 @@ class AppConstant {
     20: Colors.deepPurpleAccent,
     21: Colors.lightGreen,
     22: Colors.grey,
-    23: Colors.yellow,
+    23: Colors.red,
     24: Colors.deepOrangeAccent,
     25: Colors.indigo,
     26: Colors.lightBlueAccent,
