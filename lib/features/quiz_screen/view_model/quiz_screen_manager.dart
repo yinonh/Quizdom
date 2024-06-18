@@ -42,6 +42,9 @@ class QuizScreenManager extends _$QuizScreenManager {
     final triviaNotifier = ref.read(triviaProvider.notifier);
     final response = await triviaNotifier.getTriviaQuestions();
     final initialShuffledData = _getShuffledOptions(response.results![0]);
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
 
     return QuizState(
       questions: response.results!,
