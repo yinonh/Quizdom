@@ -45,6 +45,8 @@ dependencies:
   lottie: ^3.1.2
   path_provider: ^2.1.3
   firebase_core: ^3.1.0
+  flutter_native_splash: ^2.4.0
+  firebase_auth: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -67,4 +69,11 @@ flutter:
     - assets/
     - assets/attributeicons/
 
-
+flutter_native_splash:
+  background_image: "assets/splash_icon.png"
+  android_12:
+    color: "#82d3c8"
+    image: assets/splash_icon.png
+    image_dark: assets/splash_icon.png
+    ios: false
+    web: false
