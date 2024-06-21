@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 
 enum OptionState { correct, wrong, unchosen }
 
@@ -19,11 +21,11 @@ class MultipleAnswerWidget extends ConsumerWidget {
   Color getColorForState(OptionState state) {
     switch (state) {
       case OptionState.unchosen:
-        return Colors.blue.withOpacity(0.2);
+        return AppConstant.highlightColor.toColor().withOpacity(0.2);
       case OptionState.correct:
-        return Colors.green.withOpacity(0.2);
+        return AppConstant.secondaryColor.toColor().withOpacity(0.3);
       case OptionState.wrong:
-        return Colors.red.withOpacity(0.2);
+        return AppConstant.onPrimary.toColor().withOpacity(0.2);
     }
   }
 

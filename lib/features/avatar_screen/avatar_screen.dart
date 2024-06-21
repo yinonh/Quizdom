@@ -22,7 +22,7 @@ class AvatarScreen extends ConsumerWidget {
     final avatarState = ref.watch(avatarScreenManagerProvider);
     final avatarNotifier = ref.read(avatarScreenManagerProvider.notifier);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: AppConstant.primaryColor.toColor(),
       appBar: const CustomAppBar(
         title: "Sing in",
       ),
@@ -55,7 +55,8 @@ class AvatarScreen extends ConsumerWidget {
                     child: FluttermojiCustomizer(
                       autosave: false,
                       theme: FluttermojiThemeData(
-                          selectedIconColor: AppConstant.onPrimary.toColor(),
+                          selectedIconColor:
+                              AppConstant.secondaryColor.toColor(),
                           boxDecoration:
                               const BoxDecoration(boxShadow: [BoxShadow()])),
                     ),
@@ -86,17 +87,18 @@ class AvatarScreen extends ConsumerWidget {
                         width: double.infinity,
                         margin: const EdgeInsets.only(bottom: 8.0),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 18.0),
+                            horizontal: 12.0, vertical: 15.0),
                         decoration: BoxDecoration(
-                          color: AppConstant.primaryColor
-                              .toColor()
-                              .withOpacity(0.6),
+                          color: AppConstant.onPrimary.toColor(),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: const Text(
                           'Save',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16.0),
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ),
@@ -113,7 +115,7 @@ class AvatarScreen extends ConsumerWidget {
             left: 0,
             right: 0,
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 25.0),
+              padding: const EdgeInsets.symmetric(vertical: 25.0),
               child: Container(
                   width: calcWidth(155),
                   height: calcWidth(155),

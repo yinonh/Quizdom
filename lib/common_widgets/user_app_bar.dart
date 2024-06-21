@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,6 +17,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userProvider);
+
     return Stack(
       children: [
         Positioned(
@@ -42,6 +44,30 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   AppConstant.primaryColor.toColor(),
                   BlendMode.srcIn,
                 ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40.0,
+          right: 20.0,
+          child: IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+          ),
+        ),
+        Positioned(
+          top: 50.0,
+          left: 5.0,
+          child: Row(
+            children: List.generate(
+              3,
+              (index) => const Icon(
+                Icons.star,
+                color: Colors.white,
               ),
             ),
           ),
@@ -74,7 +100,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 5.0,
                               value: 0.8,
-                              color: Colors.lightBlueAccent.shade700,
+                              color: AppConstant.secondaryColor.toColor(),
                             ),
                           ),
                           userState.userImage != null

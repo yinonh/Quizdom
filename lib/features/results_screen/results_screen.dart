@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/stat_card.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 
 class ResultsScreen extends ConsumerWidget {
   static const routeName = "/results_screen";
@@ -15,7 +17,7 @@ class ResultsScreen extends ConsumerWidget {
     final resultNotifier = ref.read(resultScreenManagerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: AppConstant.primaryColor.toColor(),
       appBar: const CustomAppBar(
         title: 'Result',
       ),
