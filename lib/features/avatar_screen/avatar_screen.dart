@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/common_widgets/app_bar.dart';
-import 'package:trivia/common_widgets/background.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
@@ -55,58 +53,65 @@ class AvatarScreen extends ConsumerWidget {
                     child: FluttermojiCustomizer(
                       autosave: false,
                       theme: FluttermojiThemeData(
-                          selectedIconColor:
-                              AppConstant.secondaryColor.toColor(),
+                          selectedIconColor: AppConstant.onPrimary.toColor(),
                           boxDecoration:
                               const BoxDecoration(boxShadow: [BoxShadow()])),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () async {
-                        await avatarNotifier.saveAvatar();
-                        await avatarNotifier.saveImage();
-                        if (context.mounted && Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        } else {
-                          if (context.mounted) {
-                            Navigator.pushReplacement(
-                              context,
-                              PageRouteBuilder(
-                                transitionDuration:
-                                    const Duration(milliseconds: 700),
-                                pageBuilder: (_, __, ___) =>
-                                    const CategoriesScreen(),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 8.0),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 15.0),
-                        decoration: BoxDecoration(
-                          color: AppConstant.onPrimary.toColor(),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Text(
-                          'Save',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 50,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13.0),
+              child: GestureDetector(
+                onTap: () async {
+                  await avatarNotifier.saveAvatar();
+                  await avatarNotifier.saveImage();
+                  if (context.mounted && Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    if (context.mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 700),
+                          pageBuilder: (_, __, ___) => const CategoriesScreen(),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: AppConstant.secondaryColor.toColor(),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppConstant.secondaryColor
+                            .toColor()
+                            .withOpacity(0.5),
+                        spreadRadius: 4,
+                        blurRadius: 5,
+                        offset: const Offset(1, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Text(
+                    'Save',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
               ),
             ),
           ),

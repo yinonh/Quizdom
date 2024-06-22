@@ -48,6 +48,7 @@ dependencies:
   flutter_native_splash: ^2.4.0
   firebase_auth: ^5.1.0
   email_validator: ^2.1.17
+  top_snackbar_flutter: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +74,7 @@ flutter:
 flutter_native_splash:
   background_image: "assets/splash_icon.png"
   android_12:
-    color: "#82d3c8"
+    color: "#122124"
     image: assets/splash_icon.png
     image_dark: assets/splash_icon.png
     ios: false

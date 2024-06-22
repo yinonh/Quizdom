@@ -7,6 +7,8 @@ import 'package:trivia/features/categories_screen/view_model/categories_screen_m
 import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class CategoriesScreen extends ConsumerWidget {
@@ -38,7 +40,7 @@ class CategoriesScreen extends ConsumerWidget {
                       TopButton(
                         icon: Icons.add_rounded,
                         label: "Create Quiz",
-                        color: Colors.orangeAccent.shade400,
+                        color: AppConstant.highlightColor.toColor(),
                         onTap: () {
                           // Handle create quiz tap
                         },
@@ -46,7 +48,7 @@ class CategoriesScreen extends ConsumerWidget {
                       TopButton(
                         icon: Icons.person_2,
                         label: "Solo Mode",
-                        color: Colors.lightBlueAccent.shade400,
+                        color: AppConstant.secondaryColor.toColor(),
                         onTap: () {
                           // Handle solo mode tap
                         },
@@ -54,7 +56,7 @@ class CategoriesScreen extends ConsumerWidget {
                       TopButton(
                         icon: Icons.groups_2,
                         label: "Multiplayer",
-                        color: Colors.purple.shade400,
+                        color: AppConstant.onPrimary.toColor(),
                         onTap: () {
                           // Handle multiplayer tap
                         },

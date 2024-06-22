@@ -55,7 +55,9 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              Navigator.of(context).pushReplacementNamed('/login');
+              if (context.mounted) {
+                Navigator.of(context).pushReplacementNamed('/login');
+              }
             },
           ),
         ),
@@ -100,7 +102,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 5.0,
                               value: 0.8,
-                              color: AppConstant.secondaryColor.toColor(),
+                              color: AppConstant.onPrimary.toColor(),
                             ),
                           ),
                           userState.userImage != null

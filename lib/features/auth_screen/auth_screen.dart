@@ -1,82 +1,62 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
+
+import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
+import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
 
-class AuthScreen extends StatefulWidget {
+class AuthScreen extends ConsumerWidget {
   static const String routeName = "/login";
 
+  const AuthScreen({super.key});
+
   @override
-  _AuthScreenState createState() => _AuthScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authScreenManagerProvider);
+    final authNotifier = ref.read(authScreenManagerProvider.notifier);
 
-class _AuthScreenState extends State<AuthScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool _isLogin = true;
-  bool _showPassword = false;
-  bool _showConfirmPassword = false;
-  String _email = '';
-  String _password = '';
-  final _formKey = GlobalKey<FormState>();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
-  void _submit() async {
-    final isValid = _formKey.currentState!.validate();
-    FocusScope.of(context).unfocus(); // Close keyboard
-
-    if (isValid) {
-      _formKey.currentState!.save();
-
-      try {
-        if (_isLogin) {
-          await _auth.signInWithEmailAndPassword(
-            email: _email,
-            password: _password,
-          );
-          Navigator.pushReplacementNamed(context, AvatarScreen.routeName);
-          print("Successful login");
-        } else {
-          await _auth.createUserWithEmailAndPassword(
-            email: _email,
-            password: _password,
-          );
-          print("Successful registration");
-        }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString(),
-              textAlign: TextAlign.center,
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-        print("Error: ${e.toString()}");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authState.navigate) {
+        Navigator.pushReplacementNamed(context, AvatarScreen.routeName);
+        authNotifier.resetNavigate();
       }
-    }
-  }
+      if (authState.firebaseErrorMessage != null) {
+        final message = authState.firebaseErrorMessage!;
+        authNotifier.deleteFirebaseMessage();
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.info(
+            message: message,
+            backgroundColor: AppConstant.onPrimary.toColor(),
+            icon: Icon(
+              Icons.warning_rounded,
+              color: Colors.black.withOpacity(0.2),
+              size: 120,
+            ),
+          ),
+          snackBarPosition: SnackBarPosition.bottom,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 80,
+          ),
+          displayDuration: const Duration(seconds: 1, milliseconds: 500),
+        );
+      }
+    });
 
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Prevents overflow when keyboard opens
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           SvgPicture.asset(
             "assets/blob-scene-haikei.svg",
-            fit: BoxFit.cover, // Ensure the SVG covers the entire screen
+            fit: BoxFit.cover,
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
           ),
@@ -84,11 +64,11 @@ class _AuthScreenState extends State<AuthScreen> {
             left: 30,
             top: 100,
             child: Text(
-              !_isLogin ? 'Create Account' : 'Welcome Back',
+              !authState.isLogin ? 'Create Account' : 'Welcome Back',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: AppConstant.secondaryColor.toColor(),
+                color: AppConstant.onPrimary.toColor(),
                 shadows: [
                   BoxShadow(
                     color: Colors.white.withOpacity(0.3),
@@ -106,131 +86,64 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 children: [
                   Form(
-                    key: _formKey,
+                    key: authState.formKey,
                     child: Column(
                       children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon:
-                                const Icon(Icons.email, color: Colors.white),
-                            suffixIcon: _email.isNotEmpty &&
-                                    EmailValidator.validate(_email)
-                                ? const Icon(Icons.check_circle,
-                                    color: Colors.white)
-                                : null,
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
+                        CustomTextField(
+                          label: 'Email',
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                !EmailValidator.validate(value)) {
-                              return 'Invalid email';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              _email = value;
-                            });
-                          },
-                          onSaved: (value) {
-                            _email = value!;
-                          },
+                          prefixIcon: Icons.email,
+                          onChanged: authNotifier.setEmail,
+                          suffixIcon: authState.email.isNotEmpty &&
+                                  EmailValidator.validate(authState.email)
+                              ? const Icon(Icons.check_circle,
+                                  color: Colors.white)
+                              : const SizedBox.shrink(),
+                          errorText: authState.emailErrorMessage.isNotEmpty
+                              ? authState.emailErrorMessage
+                              : null,
                         ),
                         const SizedBox(height: 20),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon:
-                                const Icon(Icons.lock, color: Colors.white),
+                        CustomTextField(
+                          label: 'Password',
+                          prefixIcon: Icons.lock,
+                          onChanged: authNotifier.setPassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              authState.showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: authNotifier.toggleShowPassword,
+                          ),
+                          errorText: authState.passwordErrorMessage.isNotEmpty
+                              ? authState.passwordErrorMessage
+                              : null,
+                          obscureText: !authState.showPassword,
+                        ),
+                        if (!authState.isLogin) ...[
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            label: 'Confirm Password',
+                            prefixIcon: Icons.lock,
+                            onChanged: authNotifier.setConfirmPassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _showPassword
+                                authState.showConfirmPassword
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 color: Colors.white,
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _showPassword = !_showPassword;
-                                });
-                              },
+                              onPressed: authNotifier.toggleShowConfirmPassword,
                             ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          obscureText: !_showPassword,
-                          controller: _passwordController,
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.length < 6) {
-                              return 'Password must be at least 6 characters long';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            _password = value!;
-                          },
-                        ),
-                        if (!_isLogin) ...[
-                          const SizedBox(height: 20),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Confirm Password',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              prefixIcon:
-                                  const Icon(Icons.lock, color: Colors.white),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _showConfirmPassword
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _showConfirmPassword =
-                                        !_showConfirmPassword;
-                                  });
-                                },
-                              ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            obscureText: !_showConfirmPassword,
-                            controller: _confirmPasswordController,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.isEmpty ||
-                                  value != _passwordController.text) {
-                                return 'Passwords do not match';
-                              }
-                              return null;
-                            },
+                            errorText:
+                                authState.confirmPasswordErrorMessage.isNotEmpty
+                                    ? authState.confirmPasswordErrorMessage
+                                    : null,
+                            obscureText: !authState.showConfirmPassword,
                           ),
                         ],
-                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -244,46 +157,54 @@ class _AuthScreenState extends State<AuthScreen> {
             bottom: 10,
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: _submit,
-                  child: Padding(
-                    padding: const EdgeInsets.all(13.0),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: AppConstant.onPrimary.toColor()),
-                      child: Text(
-                        _isLogin ? 'Log In' : 'Sign Up',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
+                if (authState.isLoading)
+                  const CircularProgressIndicator()
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                    child: GestureDetector(
+                      onTap: authNotifier.submit,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: AppConstant.secondaryColor.toColor(),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppConstant.secondaryColor
+                                  .toColor()
+                                  .withOpacity(0.5),
+                              spreadRadius: 4,
+                              blurRadius: 5,
+                              offset: const Offset(1, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          authState.isLogin ? 'Login' : 'Sign Up',
+                          style: const TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
                 const SizedBox(height: 10),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isLogin = !_isLogin;
-                    });
-                  },
+                  onPressed: authNotifier.toggleFormMode,
                   child: Text(
-                    _isLogin
-                        ? 'Create new account'
-                        : 'Already have an account? Log In',
+                    authState.isLogin
+                        ? "Don't have an account? Sign Up"
+                        : "Already have an account? Login",
                     style:
                         TextStyle(color: AppConstant.highlightColor.toColor()),
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
