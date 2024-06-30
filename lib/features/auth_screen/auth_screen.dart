@@ -12,7 +12,7 @@ import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
 
 class AuthScreen extends ConsumerWidget {
-  static const String routeName = "/login";
+  static const String routeName = "/auth";
 
   const AuthScreen({super.key});
 

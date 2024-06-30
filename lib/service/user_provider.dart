@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -6,12 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trivia/models/user_achievements.dart';
 
 part 'user_provider.freezed.dart';
+
 part 'user_provider.g.dart';
 
 @freezed
 class UserState with _$UserState {
   const factory UserState({
-    String? userName,
+    String? uid,
+    String? name,
+    String? email,
     File? userImage,
     String? avatar,
     required UserAchievements achievements,
@@ -20,6 +25,8 @@ class UserState with _$UserState {
 
 @Riverpod(keepAlive: true)
 class User extends _$User {
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   UserState build() {
     return const UserState(
@@ -96,15 +103,66 @@ class User extends _$User {
     }
   }
 
-  Future<void> loadImageAndAvatar() async {
-    // Load image path from SharedPreferences
+  Future<void> initializeUser() async {
     final prefs = await SharedPreferences.getInstance();
-    String? imagePath = prefs.getString('user_image_path');
-    String? avatar = prefs.getString('user_avatar');
-    if (imagePath != null && await File(imagePath).exists()) {
-      state = state.copyWith(avatar: avatar, userImage: File(imagePath));
+    final uid = prefs.getString('uid');
+
+    if (uid != null) {
+      final userDoc = await _firestore.collection('users').doc(uid).get();
+
+      if (userDoc.exists) {
+        final userData = userDoc.data()!;
+        final name = userData['name'];
+        final email = userData['email'];
+        String? imagePath = prefs.getString('user_image_path');
+        String? avatar = prefs.getString('user_avatar');
+        if (imagePath != null && await File(imagePath).exists()) {
+          state = state.copyWith(
+            avatar: avatar,
+            userImage: File(imagePath),
+            uid: uid,
+            name: name,
+            email: email,
+          );
+        } else {
+          state = state.copyWith(
+            avatar: avatar,
+            uid: uid,
+            name: name,
+            email: email,
+          );
+        }
+      } else {
+        // Handle case where user document doesn't exist in Firestore
+      }
     } else {
-      state = state.copyWith(avatar: avatar);
+      // Handle case where uid is null
+    }
+  }
+
+  Future<void> saveUser(String uid, String name, String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('uid', uid);
+
+    await _firestore.collection('users').doc(uid).set({
+      'name': name,
+      'email': email,
+    });
+
+    state = state.copyWith(uid: uid, name: name, email: email);
+  }
+
+  Future<void> clearUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final uid = state.uid;
+
+    if (uid != null) {
+      await _firestore.collection('users').doc(uid).delete();
+      await prefs.remove('uid');
+      await prefs.remove('name');
+      await prefs.remove('email');
+
+      state = state.copyWith(uid: null, name: null, email: null);
     }
   }
 

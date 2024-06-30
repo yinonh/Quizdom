@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
+import 'package:trivia/service/user_provider.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';
@@ -124,22 +125,69 @@ class AuthScreenManager extends _$AuthScreenManager {
     );
 
     try {
+      UserCredential userCredential;
       if (state.isLogin) {
-        await _auth.signInWithEmailAndPassword(
+        userCredential = await _auth.signInWithEmailAndPassword(
           email: state.email,
           password: state.password,
         );
       } else {
-        await _auth.createUserWithEmailAndPassword(
+        userCredential = await _auth.createUserWithEmailAndPassword(
           email: state.email,
           password: state.password,
         );
       }
+
+      final user = userCredential.user;
+      if (user != null) {
+        ref
+            .read(userProvider.notifier)
+            .saveUser(user.uid, user.displayName ?? '', user.email ?? '');
+      }
+
       state = state.copyWith(navigate: true);
-    } catch (e) {
-      state = state.copyWith(firebaseErrorMessage: e.toString());
+    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(
+          firebaseErrorMessage: _mapFirebaseErrorCodeToMessage(e));
     } finally {
       state = state.copyWith(isLoading: false);
+    }
+  }
+
+  String _mapFirebaseErrorCodeToMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'The email address is not valid.';
+      case 'user-disabled':
+        return 'The user corresponding to the given email has been disabled.';
+      case 'user-not-found':
+        return 'There is no user corresponding to the given email.';
+      case 'wrong-password':
+        return 'The password is invalid for the given email.';
+      case 'email-already-in-use':
+        return 'The email address is already in use by another account.';
+      case 'operation-not-allowed':
+        return 'Email/Password accounts are not enabled.';
+      case 'weak-password':
+        return 'The password is too weak.';
+      case 'invalid-credential':
+        return 'The credential is not valid.';
+      case 'account-exists-with-different-credential':
+        return 'Account exists with different credentials.';
+      case 'invalid-verification-code':
+        return 'Invalid verification code.';
+      case 'invalid-verification-id':
+        return 'Invalid verification ID.';
+      case 'session-cookie-expired':
+        return 'The session cookie has expired.';
+      case 'session-cookie-revoked':
+        return 'The session cookie has been revoked.';
+      case 'too-many-requests':
+        return 'Too many requests. Please try again later.';
+      case 'missing-email':
+        return 'An email address must be provided.';
+      default:
+        return 'An undefined error occurred.';
     }
   }
 

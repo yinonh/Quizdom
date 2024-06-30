@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/app_constant.dart';
@@ -49,14 +50,15 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
         ),
         Positioned(
-          top: 40.0,
-          right: 20.0,
+          top: 35.0,
+          right: 10.0,
           child: IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.menu_rounded, color: Colors.white),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               if (context.mounted) {
-                Navigator.of(context).pushReplacementNamed('/login');
+                Navigator.of(context)
+                    .pushReplacementNamed(AuthScreen.routeName);
               }
             },
           ),

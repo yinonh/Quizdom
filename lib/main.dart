@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'custom_route_observer.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'custom_route_observer.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'firebase_options.dart';
 
@@ -45,7 +45,7 @@ class MyApp extends ConsumerWidget {
     SizeConfig().init(context);
 
     return FutureBuilder(
-      future: ref.read(userProvider.notifier).loadImageAndAvatar(),
+      future: ref.read(userProvider.notifier).initializeUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
@@ -56,12 +56,12 @@ class MyApp extends ConsumerWidget {
         }
 
         // Check the user state
-        final userState = ref.read(userProvider);
+        final userState = ref.watch(userProvider);
 
         // Determine the home screen
         Widget home;
-        if (userState.userImage == null && userState.avatar == null) {
-          home = AuthScreen();
+        if (userState.uid == null) {
+          home = const AuthScreen();
         } else {
           home = const CategoriesScreen();
         }
@@ -90,7 +90,7 @@ class MyApp extends ConsumerWidget {
                 page = const ResultsScreen();
                 break;
               case AuthScreen.routeName:
-                page = AuthScreen();
+                page = const AuthScreen();
                 break;
               default:
                 page = const SizedBox();
