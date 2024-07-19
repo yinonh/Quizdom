@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:trivia/models/user_achievements.dart';
 
 part 'user_provider.freezed.dart';
@@ -80,20 +81,15 @@ class User extends _$User {
     state = state.copyWith(achievements: updatedAchievements);
   }
 
-  Future<void> setImage(File? image) async {
-    if (image != null) {
-      // Get the application's document directory
-      final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/user_image.png';
-
-      // Save the image to the directory
-      final savedImage = await image.copy(imagePath);
+  Future<void> setImage(String? imagePath) async {
+    if (imagePath != null) {
+      final file = File(imagePath);
 
       // Save the image path to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_image_path', savedImage.path);
+      await prefs.setString('user_image_path', file.path);
 
-      state = state.copyWith(userImage: savedImage);
+      state = state.copyWith(userImage: file);
     } else {
       // Remove image path from SharedPreferences if image is null
       final prefs = await SharedPreferences.getInstance();

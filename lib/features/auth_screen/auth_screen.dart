@@ -57,8 +57,8 @@ class AuthScreen extends ConsumerWidget {
           SvgPicture.asset(
             "assets/blob-scene-haikei.svg",
             fit: BoxFit.cover,
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+            height: double.infinity, //MediaQuery.of(context).size.height,
+            width: double.infinity, //MediaQuery.of(context).size.width,
           ),
           Positioned(
             left: 30,

@@ -78,8 +78,8 @@ class EditAvatar extends ConsumerWidget {
                     avatarNotifier.switchImage(image);
                   },
                   icon: Container(
-                    width: 30.0,
-                    height: 30.0,
+                    width: calcWidth(30.0),
+                    height: calcHeight(30.0),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
@@ -98,8 +98,8 @@ class EditAvatar extends ConsumerWidget {
                     avatarNotifier.switchImage(image);
                   },
                   icon: Container(
-                    width: 30.0,
-                    height: 30.0,
+                    width: calcWidth(30.0),
+                    height: calcHeight(30.0),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,

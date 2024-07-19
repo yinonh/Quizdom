@@ -1,3 +1,4 @@
+import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
@@ -48,15 +49,38 @@ class AvatarScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(
-                        left: 20.0, right: 20.0, bottom: 30, top: 100),
-                    child: FluttermojiCustomizer(
-                      autosave: false,
-                      theme: FluttermojiThemeData(
-                          selectedIconColor: AppConstant.onPrimary.toColor(),
-                          boxDecoration:
-                              const BoxDecoration(boxShadow: [BoxShadow()])),
+                    padding: EdgeInsets.only(
+                      left: calcWidth(20),
+                      right: calcWidth(20),
+                      bottom: calcHeight(30),
+                      top: calcHeight(100),
                     ),
+                    child: avatarState.selectedImage != null
+                        ? Container(
+                            width: 500,
+                            height: 300,
+                            child: CustomImageCrop(
+                              cropController: avatarState.cropController,
+                              image: FileImage(avatarState.selectedImage!)
+                                  as ImageProvider<Object>,
+                              shape: CustomCropShape.Circle,
+                              canRotate: true,
+                              canMove: true,
+                              canScale: true,
+                              imageFit: CustomImageFit.fillCropSpace,
+                              pathPaint: Paint()
+                                ..strokeWidth = 2.0
+                                ..strokeJoin = StrokeJoin.round,
+                            ),
+                          )
+                        : FluttermojiCustomizer(
+                            autosave: false,
+                            theme: FluttermojiThemeData(
+                                selectedIconColor:
+                                    AppConstant.onPrimary.toColor(),
+                                boxDecoration: const BoxDecoration(
+                                    boxShadow: [BoxShadow()])),
+                          ),
                   ),
                 ],
               ),
@@ -65,13 +89,16 @@ class AvatarScreen extends ConsumerWidget {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 50,
+            bottom: calcHeight(50),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 13.0),
+              padding: EdgeInsets.symmetric(horizontal: calcWidth(13)),
               child: GestureDetector(
                 onTap: () async {
-                  await avatarNotifier.saveAvatar();
-                  await avatarNotifier.saveImage();
+                  if (avatarState.selectedImage == null) {
+                    await avatarNotifier.saveAvatar();
+                  } else {
+                    await avatarNotifier.saveImage();
+                  }
                   if (context.mounted && Navigator.canPop(context)) {
                     Navigator.pop(context);
                   } else {
@@ -87,7 +114,7 @@ class AvatarScreen extends ConsumerWidget {
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: calcHeight(15)),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
@@ -116,7 +143,7 @@ class AvatarScreen extends ConsumerWidget {
             ),
           ),
           Positioned(
-            top: -10,
+            top: calcHeight(-10),
             left: 0,
             right: 0,
             child: Padding(
