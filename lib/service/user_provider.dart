@@ -2,14 +2,11 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:trivia/models/user_achievements.dart';
 
 part 'user_provider.freezed.dart';
-
 part 'user_provider.g.dart';
 
 @freezed
@@ -26,7 +23,7 @@ class UserState with _$UserState {
 
 @Riverpod(keepAlive: true)
 class User extends _$User {
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   UserState build() {
@@ -43,10 +40,11 @@ class User extends _$User {
   void resetAchievements() {
     state = state.copyWith(
       achievements: const UserAchievements(
-          correctAnswers: 0,
-          wrongAnswers: 0,
-          unanswered: 0,
-          sumResponseTime: 0),
+        correctAnswers: 0,
+        wrongAnswers: 0,
+        unanswered: 0,
+        sumResponseTime: 0,
+      ),
     );
   }
 
@@ -81,19 +79,18 @@ class User extends _$User {
     state = state.copyWith(achievements: updatedAchievements);
   }
 
-  Future<void> setImage(String? imagePath) async {
+  Future<void> setImage(File? image) async {
+    final imagePath = image?.path;
     if (imagePath != null) {
-      final file = File(imagePath);
+      state = state.copyWith(userImage: image);
 
       // Save the image path to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_image_path', file.path);
-
-      state = state.copyWith(userImage: file);
+      await prefs.setString('cropped_user_image_path', imagePath);
     } else {
       // Remove image path from SharedPreferences if image is null
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('user_image_path');
+      await prefs.remove('cropped_user_image_path');
 
       state = state.copyWith(userImage: null);
     }
@@ -110,7 +107,7 @@ class User extends _$User {
         final userData = userDoc.data()!;
         final name = userData['name'];
         final email = userData['email'];
-        String? imagePath = prefs.getString('user_image_path');
+        String? imagePath = prefs.getString('cropped_user_image_path');
         String? avatar = prefs.getString('user_avatar');
         if (imagePath != null && await File(imagePath).exists()) {
           state = state.copyWith(
@@ -164,7 +161,9 @@ class User extends _$User {
 
   Future<String?> setAvatar() async {
     final prefs = await SharedPreferences.getInstance();
-    state = state.copyWith(avatar: prefs.getString('user_avatar'));
+    await prefs.remove('cropped_user_image_path');
+    state =
+        state.copyWith(avatar: prefs.getString('user_avatar'), userImage: null);
     return null;
   }
 }

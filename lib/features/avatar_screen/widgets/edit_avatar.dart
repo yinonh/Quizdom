@@ -16,104 +16,108 @@ class EditAvatar extends ConsumerWidget {
     final avatarNotifier = ref.read(avatarScreenManagerProvider.notifier);
 
     return Center(
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.bottomCenter,
-        children: [
-          Hero(
-            tag: "userAvatar",
-            child: GestureDetector(
-              onTap: () {
-                if (avatarState.selectedImage != null) {
-                  avatarNotifier.toggleShowTrashIcon();
-                }
-              },
-              child: Stack(
-                children: [
-                  avatarState.selectedImage != null
-                      ? CircleAvatar(
-                          backgroundImage:
-                              FileImage(avatarState.selectedImage!),
-                          radius: calcWidth(70),
-                        )
-                      : FluttermojiCircleAvatar(
-                          backgroundColor: AppConstant.secondaryColor
-                              .toColor()
-                              .withOpacity(0.3),
-                          radius: calcWidth(70),
+      child: avatarState.when(
+        data: (state) => Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.bottomCenter,
+          children: [
+            Hero(
+              tag: "userAvatar",
+              child: GestureDetector(
+                onTap: () {
+                  if (state.selectedImage != null) {
+                    avatarNotifier.toggleShowTrashIcon();
+                  }
+                },
+                child: Stack(
+                  children: [
+                    state.selectedImage != null
+                        ? CircleAvatar(
+                            backgroundImage: FileImage(state.selectedImage!),
+                            radius: calcWidth(70),
+                          )
+                        : FluttermojiCircleAvatar(
+                            backgroundColor: AppConstant.secondaryColor
+                                .toColor()
+                                .withOpacity(0.3),
+                            radius: calcWidth(70),
+                          ),
+                    if (state.showTrashIcon)
+                      Container(
+                        width: calcWidth(140),
+                        height: calcWidth(140),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          shape: BoxShape.circle,
                         ),
-                  if (avatarState.showTrashIcon)
-                    Container(
-                      width: calcWidth(140),
-                      height: calcWidth(140),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            if (state.showTrashIcon)
+              Positioned(
+                bottom: 35,
+                child: IconButton(
+                  icon:
+                      Icon(Icons.delete, color: Colors.white.withOpacity(0.5)),
+                  onPressed: () {
+                    avatarNotifier.switchImage(null);
+                    avatarNotifier.toggleShowTrashIcon(false);
+                  },
+                ),
+              ),
+            Positioned(
+              bottom: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      final image = await ImagePicker()
+                          .pickImage(source: ImageSource.camera);
+                      avatarNotifier.switchImage(image);
+                    },
+                    icon: Container(
+                      width: calcWidth(30.0),
+                      height: calcHeight(30.0),
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: Icon(
+                        Icons.camera,
+                        color: AppConstant.highlightColor.toColor(),
                       ),
                     ),
+                  ),
+                  SizedBox(width: calcWidth(70)),
+                  IconButton(
+                    onPressed: () async {
+                      final image = await ImagePicker()
+                          .pickImage(source: ImageSource.gallery);
+                      avatarNotifier.switchImage(image);
+                    },
+                    icon: Container(
+                      width: calcWidth(30.0),
+                      height: calcHeight(30.0),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: Icon(
+                        Icons.image,
+                        color: AppConstant.highlightColor.toColor(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          if (avatarState.showTrashIcon)
-            Positioned(
-              bottom: 35,
-              child: IconButton(
-                icon: Icon(Icons.delete, color: Colors.white.withOpacity(0.5)),
-                onPressed: () {
-                  avatarNotifier.switchImage(null);
-                  avatarNotifier.toggleShowTrashIcon(false);
-                },
-              ),
-            ),
-          Positioned(
-            bottom: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    final image = await ImagePicker()
-                        .pickImage(source: ImageSource.camera);
-                    avatarNotifier.switchImage(image);
-                  },
-                  icon: Container(
-                    width: calcWidth(30.0),
-                    height: calcHeight(30.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: Icon(
-                      Icons.camera,
-                      color: AppConstant.highlightColor.toColor(),
-                    ),
-                  ),
-                ),
-                SizedBox(width: calcWidth(70)),
-                IconButton(
-                  onPressed: () async {
-                    final image = await ImagePicker()
-                        .pickImage(source: ImageSource.gallery);
-                    avatarNotifier.switchImage(image);
-                  },
-                  icon: Container(
-                    width: calcWidth(30.0),
-                    height: calcHeight(30.0),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: Icon(
-                      Icons.image,
-                      color: AppConstant.highlightColor.toColor(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
+        loading: () => const CircularProgressIndicator(),
+        error: (error, stack) => Text('Error: $error'),
       ),
     );
   }

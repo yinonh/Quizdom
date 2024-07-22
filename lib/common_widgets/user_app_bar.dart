@@ -50,8 +50,21 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
         ),
         Positioned(
+          top: 50.0,
+          right: 1.0,
+          child: Row(
+            children: List.generate(
+              3,
+              (index) => const Icon(
+                Icons.star,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
           top: 35.0,
-          right: 10.0,
+          left: 10.0,
           child: IconButton(
             icon: const Icon(Icons.menu_rounded, color: Colors.white),
             onPressed: () async {
@@ -61,19 +74,6 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     .pushReplacementNamed(AuthScreen.routeName);
               }
             },
-          ),
-        ),
-        Positioned(
-          top: 50.0,
-          left: 5.0,
-          child: Row(
-            children: List.generate(
-              3,
-              (index) => const Icon(
-                Icons.star,
-                color: Colors.white,
-              ),
-            ),
           ),
         ),
         userState.avatar != null
