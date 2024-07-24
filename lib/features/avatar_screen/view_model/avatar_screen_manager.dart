@@ -57,7 +57,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
       MemoryImage memoryImage, String fileName) async {
     final Uint8List byteData = memoryImage.bytes;
 
-    final Directory tempDir = await getTemporaryDirectory();
+    final Directory tempDir = await getApplicationDocumentsDirectory();
     final String tempPath = tempDir.path;
 
     final File file = File('$tempPath/$fileName');
@@ -73,18 +73,24 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
       if (croppedImage != null) {
         String currentTime = DateTime.now().toString();
-        File croppedImageFile =
-            await convertMemoryImageToFile(croppedImage, currentTime);
+        final byteData = await croppedImage.bytes;
+        final buffer = byteData.buffer;
+
+        final appDir = await getApplicationDocumentsDirectory();
+        final imagePath = '${appDir.path}/cropped_image $currentTime.png';
+        final file = File(imagePath);
+        await file.writeAsBytes(
+            buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
         // Now copy the file to the Application Documents Directory
-        final appDir = await getApplicationDocumentsDirectory();
-        final originalImagePath = '${appDir.path}/original_image.png';
+        final originalImagePath =
+            '${appDir.path}/original_image  $currentTime.png';
         await data.originalImage!.copy(originalImagePath);
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('original_user_image_path', originalImagePath);
 
-        await ref.read(userProvider.notifier).setImage(croppedImageFile);
+        await ref.read(userProvider.notifier).setImage(file);
       } else {
         await ref.read(userProvider.notifier).setImage(null);
         state = AsyncValue.data(data.copyWith(showTrashIcon: false));

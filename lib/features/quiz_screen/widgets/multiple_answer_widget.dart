@@ -63,10 +63,7 @@ class MultipleAnswerWidget extends ConsumerWidget {
                         Icons.check_rounded,
                         color: Colors.green,
                       )
-                    : const SizedBox(
-                        width: 0,
-                        height: 0,
-                      ),
+                    : const SizedBox.shrink(),
           ],
         ),
       ),

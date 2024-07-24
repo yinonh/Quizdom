@@ -81,7 +81,7 @@ class User extends _$User {
 
   Future<void> setImage(File? image) async {
     final imagePath = image?.path;
-    if (imagePath != null) {
+    if (image != null && imagePath != null) {
       state = state.copyWith(userImage: image);
 
       // Save the image path to SharedPreferences
@@ -107,7 +107,11 @@ class User extends _$User {
         final userData = userDoc.data()!;
         final name = userData['name'];
         final email = userData['email'];
-        String? imagePath = prefs.getString('cropped_user_image_path');
+        String? imagePath;
+        if (prefs.containsKey('cropped_user_image_path')) {
+          print("here");
+          imagePath = prefs.getString('cropped_user_image_path');
+        }
         String? avatar = prefs.getString('user_avatar');
         if (imagePath != null && await File(imagePath).exists()) {
           state = state.copyWith(
@@ -119,6 +123,7 @@ class User extends _$User {
           );
         } else {
           state = state.copyWith(
+            userImage: null,
             avatar: avatar,
             uid: uid,
             name: name,

@@ -76,64 +76,59 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             },
           ),
         ),
-        userState.avatar != null
-            ? Positioned(
-                bottom: 6.0,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          transitionDuration: const Duration(milliseconds: 700),
-                          pageBuilder: (_, __, ___) => const AvatarScreen(),
-                        ),
-                      );
-                    },
-                    child: Hero(
-                      transitionOnUserGestures: true,
-                      tag: "userAvatar",
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            width: calcWidth(90),
-                            height: calcWidth(90),
-                            child: CircularProgressIndicator(
-                              strokeWidth: 5.0,
-                              value: 0.8,
-                              color: AppConstant.onPrimary.toColor(),
-                            ),
-                          ),
-                          userState.userImage != null
-                              ? CircleAvatar(
-                                  backgroundImage:
-                                      FileImage(userState.userImage!),
-                                  radius: calcWidth(42),
-                                )
-                              : CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: calcWidth(42),
-                                  child: ClipOval(
-                                    child: SvgPicture.string(
-                                      userState.avatar!,
-                                      fit: BoxFit.cover,
-                                      height: calcWidth(80),
-                                      width: calcWidth(80),
-                                    ),
-                                  ),
-                                ),
-                        ],
+        Positioned(
+          bottom: 6.0,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 700),
+                    pageBuilder: (_, __, ___) => const AvatarScreen(),
+                  ),
+                );
+              },
+              child: Hero(
+                transitionOnUserGestures: true,
+                tag: "userAvatar",
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: calcWidth(90),
+                      height: calcWidth(90),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 5.0,
+                        value: 0.8,
+                        color: AppConstant.onPrimary.toColor(),
                       ),
                     ),
-                  ),
+                    userState.userImage != null
+                        ? CircleAvatar(
+                            backgroundImage: FileImage(userState.userImage!),
+                            radius: calcWidth(42),
+                          )
+                        : CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: calcWidth(42),
+                            child: ClipOval(
+                              child: SvgPicture.string(
+                                userState.avatar!,
+                                fit: BoxFit.cover,
+                                height: calcWidth(80),
+                                width: calcWidth(80),
+                              ),
+                            ),
+                          ),
+                  ],
                 ),
-              )
-            : const SizedBox(
-                height: 0,
               ),
+            ),
+          ),
+        ),
       ],
     );
   }
