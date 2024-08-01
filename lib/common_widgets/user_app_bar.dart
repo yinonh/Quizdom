@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trivia/common_widgets/user_avater.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/service/user_provider.dart';
@@ -68,11 +69,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           child: IconButton(
             icon: const Icon(Icons.menu_rounded, color: Colors.white),
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              if (context.mounted) {
-                Navigator.of(context)
-                    .pushReplacementNamed(AuthScreen.routeName);
-              }
+              Scaffold.of(context).openDrawer();
             },
           ),
         ),
@@ -106,23 +103,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                         color: AppConstant.onPrimary.toColor(),
                       ),
                     ),
-                    userState.userImage != null
-                        ? CircleAvatar(
-                            backgroundImage: FileImage(userState.userImage!),
-                            radius: calcWidth(42),
-                          )
-                        : CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: calcWidth(42),
-                            child: ClipOval(
-                              child: SvgPicture.string(
-                                userState.avatar!,
-                                fit: BoxFit.cover,
-                                height: calcWidth(80),
-                                width: calcWidth(80),
-                              ),
-                            ),
-                          ),
+                    const UserAvatar(),
                   ],
                 ),
               ),

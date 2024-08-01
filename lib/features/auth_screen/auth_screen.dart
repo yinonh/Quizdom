@@ -92,11 +92,11 @@ class AuthScreen extends ConsumerWidget {
                         CustomTextField(
                           label: 'Email',
                           keyboardType: TextInputType.emailAddress,
-                          prefixIcon: Icons.email,
+                          prefixIcon: Icons.email_rounded,
                           onChanged: authNotifier.setEmail,
                           suffixIcon: authState.email.isNotEmpty &&
                                   EmailValidator.validate(authState.email)
-                              ? const Icon(Icons.check_circle,
+                              ? const Icon(Icons.check_circle_rounded,
                                   color: Colors.white)
                               : const SizedBox.shrink(),
                           errorText: authState.emailErrorMessage.isNotEmpty
@@ -106,13 +106,13 @@ class AuthScreen extends ConsumerWidget {
                         const SizedBox(height: 20),
                         CustomTextField(
                           label: 'Password',
-                          prefixIcon: Icons.lock,
+                          prefixIcon: Icons.lock_rounded,
                           onChanged: authNotifier.setPassword,
                           suffixIcon: IconButton(
                             icon: Icon(
                               authState.showPassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                                  ? Icons.visibility_rounded
+                                  : Icons.visibility_off_rounded,
                               color: Colors.white,
                             ),
                             onPressed: authNotifier.toggleShowPassword,
@@ -126,13 +126,13 @@ class AuthScreen extends ConsumerWidget {
                           const SizedBox(height: 20),
                           CustomTextField(
                             label: 'Confirm Password',
-                            prefixIcon: Icons.lock,
+                            prefixIcon: Icons.lock_rounded,
                             onChanged: authNotifier.setConfirmPassword,
                             suffixIcon: IconButton(
                               icon: Icon(
                                 authState.showConfirmPassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                                    ? Icons.visibility_rounded
+                                    : Icons.visibility_off_rounded,
                                 color: Colors.white,
                               ),
                               onPressed: authNotifier.toggleShowConfirmPassword,

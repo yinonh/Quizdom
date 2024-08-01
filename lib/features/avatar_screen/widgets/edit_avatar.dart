@@ -79,19 +79,20 @@ class EditAvatar extends ConsumerWidget {
                       avatarNotifier.switchImage(image);
                     },
                     icon: Container(
-                      width: calcWidth(30.0),
-                      height: calcHeight(30.0),
+                      width: calcWidth(45.0),
+                      height: calcHeight(45.0),
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: Icon(
                         Icons.camera,
+                        size: 30,
                         color: AppConstant.highlightColor.toColor(),
                       ),
                     ),
                   ),
-                  SizedBox(width: calcWidth(70)),
+                  SizedBox(width: calcWidth(55)),
                   IconButton(
                     onPressed: () async {
                       final image = await ImagePicker()
@@ -99,14 +100,15 @@ class EditAvatar extends ConsumerWidget {
                       avatarNotifier.switchImage(image);
                     },
                     icon: Container(
-                      width: calcWidth(30.0),
-                      height: calcHeight(30.0),
+                      width: calcWidth(45.0),
+                      height: calcHeight(45.0),
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
                       child: Icon(
                         Icons.image,
+                        size: 30,
                         color: AppConstant.highlightColor.toColor(),
                       ),
                     ),

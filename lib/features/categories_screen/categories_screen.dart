@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/background.dart';
+import 'package:trivia/common_widgets/custom_drawer.dart';
 
 import 'package:trivia/common_widgets/user_app_bar.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
@@ -22,6 +23,7 @@ class CategoriesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: UserAppBar(),
+      drawer: const CustomDrawer(),
       extendBodyBehindAppBar: true,
       body: CustomBackground(
         child: categoriesState.when(
@@ -68,10 +70,10 @@ class CategoriesScreen extends ConsumerWidget {
                   categories: data.categories.triviaCategories,
                   title: "Featured Categories",
                 ),
-                InfoContainer(text: "Recent Quiz Information"),
-                InfoContainer(text: "Personal Rooms Information"),
-                InfoContainer(text: "Personal Rooms Information"),
-                InfoContainer(text: "Personal Rooms Information"),
+                const InfoContainer(text: "Recent Quiz Information"),
+                const InfoContainer(text: "Personal Rooms Information"),
+                const InfoContainer(text: "Personal Rooms Information"),
+                const InfoContainer(text: "Personal Rooms Information"),
               ],
             ),
           ),
@@ -82,34 +84,3 @@ class CategoriesScreen extends ConsumerWidget {
     );
   }
 }
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final categoriesState = ref.watch(categoriesScreenManagerProvider);
-//     final categoriesNotifier =
-//         ref.read(categoriesScreenManagerProvider.notifier);
-//     return Scaffold(
-//       appBar: const UserAppBar(),
-//       body: categoriesState.when(data: (data) {
-//         return ListView.builder(
-//             itemCount: data.categories.triviaCategories?.length,
-//             itemBuilder: (context, index) {
-//               return ListTile(
-//                 title: Text(data.categories.triviaCategories![index].name!),
-//                 trailing: const Icon(Icons.arrow_forward_ios_rounded),
-//                 onTap: () {
-//                   categoriesNotifier.setCategory(
-//                       data.categories.triviaCategories![index].id!);
-//                   categoriesNotifier.resetAchievements();
-//                   Navigator.pushNamed(context, QuizScreen.routeName);
-//                 },
-//               );
-//             });
-//       }, error: (error, _) {
-//         return Text(error.toString());
-//       }, loading: () {
-//         return const CircularProgressIndicator();
-//       }),
-//     );
-//   }
-// }
