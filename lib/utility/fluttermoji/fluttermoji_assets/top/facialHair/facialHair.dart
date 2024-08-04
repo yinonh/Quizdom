@@ -7,7 +7,7 @@ class FacialHair {
     'BlondeGolden': "#D6B370",
     'Brown': "#724133",
     'BrownDark': "#4A312C",
-    'PastelPink': '#F59797',
+    'Green': '#009b4d',
     'Red': "#C93305",
     'SilverGray': '#808080',
   };

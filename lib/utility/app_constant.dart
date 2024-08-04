@@ -5,6 +5,7 @@ class AppConstant {
   static const String secondaryColor = "#82d3c8";
   static const String onPrimary = "#ff9000";
   static const String highlightColor = "#c357cb";
+  static const String userAvatarBackground = "#edcaeb";
 
   static const int questionTime = 10;
 

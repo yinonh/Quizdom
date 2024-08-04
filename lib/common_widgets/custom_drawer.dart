@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
+import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
@@ -19,7 +20,8 @@ class CustomDrawer extends ConsumerWidget {
   }) {
     return ListTile(
       leading: icon,
-      title: Text(title, style: TextStyle(color: textColor)),
+      title: Text(title,
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
       tileColor: tileColor,
       onTap: onTap,
     );
@@ -35,14 +37,14 @@ class CustomDrawer extends ConsumerWidget {
           UserAccountsDrawerHeader(
             accountName: Text(
               userState.name ?? "First Name",
-              style: TextStyle(
-                color: AppConstant.highlightColor.toColor(),
+              style: const TextStyle(
+                color: Colors.white,
               ),
             ),
             accountEmail: Text(
               userState.email ?? "",
-              style: TextStyle(
-                color: AppConstant.highlightColor.toColor(),
+              style: const TextStyle(
+                color: Colors.white,
               ),
             ),
             otherAccountsPicturesSize: const Size.square(75),
@@ -57,9 +59,15 @@ class CustomDrawer extends ConsumerWidget {
                 ),
               ),
             ],
-            currentAccountPicture: const UserAvatar(),
+            currentAccountPicture: GestureDetector(
+              child: const UserAvatar(),
+              onTap: () {
+                Scaffold.of(context).closeDrawer();
+                Navigator.pushNamed(context, AvatarScreen.routeName);
+              },
+            ),
             decoration: BoxDecoration(
-              color: AppConstant.secondaryColor.toColor(),
+              color: AppConstant.primaryColor.toColor(),
             ),
           ),
           drawerOption(
@@ -70,10 +78,11 @@ class CustomDrawer extends ConsumerWidget {
             },
           ),
           drawerOption(
-            icon: Icon(Icons.settings, color: AppConstant.onPrimary.toColor()),
-            title: 'Settings',
+            icon: Icon(Icons.account_circle_rounded,
+                color: AppConstant.onPrimary.toColor()),
+            title: 'Profile',
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/profile');
             },
           ),
           drawerOption(

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:trivia/profile_screen.dart';
 import 'custom_route_observer.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'firebase_options.dart';
@@ -91,6 +92,9 @@ class MyApp extends ConsumerWidget {
                 break;
               case AuthScreen.routeName:
                 page = const AuthScreen();
+                break;
+              case '/profile':
+                page = ProfileScreen();
                 break;
               default:
                 page = const SizedBox();

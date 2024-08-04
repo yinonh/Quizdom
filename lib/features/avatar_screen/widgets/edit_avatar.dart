@@ -37,9 +37,8 @@ class EditAvatar extends ConsumerWidget {
                             radius: calcWidth(70),
                           )
                         : FluttermojiCircleAvatar(
-                            backgroundColor: AppConstant.secondaryColor
-                                .toColor()
-                                .withOpacity(0.3),
+                            backgroundColor:
+                                AppConstant.userAvatarBackground.toColor(),
                             radius: calcWidth(70),
                           ),
                     if (state.showTrashIcon)
@@ -88,7 +87,7 @@ class EditAvatar extends ConsumerWidget {
                       child: Icon(
                         Icons.camera,
                         size: 30,
-                        color: AppConstant.highlightColor.toColor(),
+                        color: AppConstant.onPrimary.toColor(),
                       ),
                     ),
                   ),
@@ -109,7 +108,7 @@ class EditAvatar extends ConsumerWidget {
                       child: Icon(
                         Icons.image,
                         size: 30,
-                        color: AppConstant.highlightColor.toColor(),
+                        color: AppConstant.onPrimary.toColor(),
                       ),
                     ),
                   ),

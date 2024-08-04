@@ -140,9 +140,8 @@ class AuthScreenManager extends _$AuthScreenManager {
 
       final user = userCredential.user;
       if (user != null) {
-        ref
-            .read(userProvider.notifier)
-            .saveUser(user.uid, user.displayName ?? '', user.email ?? '');
+        ref.read(userProvider.notifier).saveUser(
+            user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
       }
 
       state = state.copyWith(navigate: true);

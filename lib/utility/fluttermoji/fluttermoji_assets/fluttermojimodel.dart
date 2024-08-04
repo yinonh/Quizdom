@@ -123,7 +123,7 @@ const List<String> HairColor = [
   'Blonde',
   'BlondeGolden',
   'BrownDark',
-  'PastelPink',
+  'Green',
   'Red',
   'SilverGray',
 ];
@@ -143,7 +143,7 @@ const List<String> FacialHairColor = [
   'Blonde',
   'BlondeGolden',
   'BrownDark',
-  'PastelPink',
+  'Green',
   'Red',
   'SilverGray',
 ];

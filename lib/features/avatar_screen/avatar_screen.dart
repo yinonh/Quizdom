@@ -25,7 +25,7 @@ class AvatarScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppConstant.primaryColor.toColor(),
       appBar: const CustomAppBar(
-        title: "Sign in",
+        title: "Set Image",
       ),
       body: avatarState.when(
         data: (state) => Stack(
