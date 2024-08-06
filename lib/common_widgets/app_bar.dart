@@ -26,6 +26,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
         AppBar(
+          scrolledUnderElevation: 0,
           actions: actions ?? [],
           leading: leading ??
               (Navigator.canPop(context)

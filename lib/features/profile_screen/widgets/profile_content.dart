@@ -13,7 +13,7 @@ class ProfileContent extends StatelessWidget {
     const bool isEditing = true;
 
     return Container(
-      height: MediaQuery.of(context).size.height + 10,
+      height: MediaQuery.of(context).size.height,
       width: double.infinity,
       margin: const EdgeInsets.only(top: 60),
       padding: const EdgeInsets.all(16.0),

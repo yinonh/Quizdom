@@ -1,7 +1,6 @@
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
@@ -154,13 +153,14 @@ class AvatarScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 25.0),
                 child: Container(
-                    width: calcWidth(155),
-                    height: calcWidth(155),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: const EditAvatar()),
+                  width: calcWidth(155),
+                  height: calcWidth(155),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: const EditAvatar(),
+                ),
               ),
             ),
           ],

@@ -16,27 +16,30 @@ class EditableField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(
-          color: AppConstant.primaryColor.toColor(),
-        ),
-        border: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppConstant.highlightColor.toColor(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(
+            color: AppConstant.primaryColor.toColor(),
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppConstant.highlightColor.toColor(),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: AppConstant.highlightColor.toColor(),
+            ),
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppConstant.highlightColor.toColor(),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: AppConstant.highlightColor.toColor(),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: AppConstant.highlightColor.toColor(),
+            ),
           ),
         ),
       ),

@@ -7,21 +7,27 @@ import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
 
   Widget drawerOption({
-    required Icon icon,
+    required IconData icon,
     required String title,
     required VoidCallback onTap,
     Color textColor = Colors.white,
     Color tileColor = const Color(0xFF00AFFF),
   }) {
     return ListTile(
-      leading: icon,
-      title: Text(title,
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+      leading: Icon(icon, color: textColor),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       tileColor: tileColor,
       onTap: onTap,
     );
@@ -29,67 +35,36 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider).currentUser;
+    final userState = ref.watch(userProvider);
     return Drawer(
+      width: MediaQuery.of(context).size.width * 0.7,
       backgroundColor: AppConstant.primaryColor.toColor(),
       child: Column(
         children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              "Hello, ${userState.name ?? "First Name"}",
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            accountEmail: const SizedBox.shrink(),
-            otherAccountsPicturesSize: const Size.square(75),
-            otherAccountsPictures: [
-              Row(
-                children: List.generate(
-                  3,
-                  (index) => const Icon(
-                    Icons.star,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-            currentAccountPicture: GestureDetector(
-              child: const UserAvatar(),
-              onTap: () {
-                Scaffold.of(context).closeDrawer();
-                Navigator.pushNamed(context, AvatarScreen.routeName);
-              },
-            ),
-            decoration: BoxDecoration(
-              color: AppConstant.primaryColor.toColor(),
-            ),
-          ),
+          CustomDrawerHeader(userState: userState),
           drawerOption(
-            icon: Icon(Icons.home, color: AppConstant.onPrimary.toColor()),
+            icon: Icons.home,
             title: 'Home',
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           drawerOption(
-            icon: Icon(Icons.account_circle_rounded,
-                color: AppConstant.onPrimary.toColor()),
+            icon: Icons.account_circle_rounded,
             title: 'Profile',
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/profile');
             },
           ),
           drawerOption(
-            icon: Icon(Icons.info, color: AppConstant.onPrimary.toColor()),
+            icon: Icons.info,
             title: 'About',
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           drawerOption(
-            icon: Icon(Icons.logout_rounded,
-                color: AppConstant.onPrimary.toColor()),
+            icon: Icons.logout_rounded,
             title: 'Logout',
             onTap: () async {
               await FirebaseAuth.instance.signOut();
@@ -100,6 +75,67 @@ class CustomDrawer extends ConsumerWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CustomDrawerHeader extends StatelessWidget {
+  final UserState userState;
+
+  const CustomDrawerHeader({
+    Key? key,
+    required this.userState,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        color: AppConstant.primaryColor.toColor(),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  child: const UserAvatar(),
+                  onTap: () {
+                    Scaffold.of(context).closeDrawer();
+                    Navigator.pushNamed(context, AvatarScreen.routeName);
+                  },
+                ),
+                SizedBox(
+                  width: calcWidth(20),
+                ),
+                Row(
+                  children: List.generate(
+                    3,
+                    (index) => const Icon(
+                      Icons.star,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              "Hello, ${userState.currentUser.name ?? "First Name"}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: calcHeight(5)),
+              child: const Divider(height: 8.0),
+            ),
+          ],
+        ),
       ),
     );
   }
