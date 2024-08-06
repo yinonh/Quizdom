@@ -23,8 +23,8 @@ class EditableField extends StatelessWidget {
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
-            color: AppConstant.primaryColor.toColor(),
+          labelStyle: const TextStyle(
+            color: Colors.black,
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(

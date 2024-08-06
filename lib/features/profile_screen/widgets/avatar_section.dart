@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
-import 'package:trivia/features/avatar_screen/avatar_screen.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class AvatarSection extends StatelessWidget {
@@ -24,23 +25,19 @@ class AvatarSection extends StatelessWidget {
           ),
           child: Center(
             child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.bottomCenter,
+              alignment: Alignment.center,
               children: [
-                Hero(
-                  tag: "userAvatar",
-                  child: Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, AvatarScreen.routeName);
-                        },
-                        child: const UserAvatar(
-                          radius: 70,
-                        ),
-                      ),
-                    ],
+                SizedBox(
+                  width: calcWidth(145),
+                  height: calcWidth(145),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 8.0,
+                    value: 0.8,
+                    color: AppConstant.onPrimary.toColor(),
                   ),
+                ),
+                const UserAvatar(
+                  radius: 70,
                 ),
               ],
             ),

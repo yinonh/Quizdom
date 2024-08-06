@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
+import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 
-class ProfileAppbar extends StatelessWidget {
+class ProfileAppbar extends ConsumerWidget {
   const ProfileAppbar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileScreenManagerProvider);
+    final profileNotifier = ref.read(profileScreenManagerProvider.notifier);
     return CustomAppBar(
       title: 'Profile',
       leading: IconButton(
@@ -20,11 +24,11 @@ class ProfileAppbar extends StatelessWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(
-            Icons.save_rounded,
+          icon: Icon(
+            profileState.isEditing ? Icons.save : Icons.edit,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: profileNotifier.toggleIsEditing,
         ),
       ],
     );

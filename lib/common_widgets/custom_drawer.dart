@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/common_widgets/stars.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
@@ -110,15 +111,7 @@ class CustomDrawerHeader extends StatelessWidget {
                 SizedBox(
                   width: calcWidth(20),
                 ),
-                Row(
-                  children: List.generate(
-                    3,
-                    (index) => const Icon(
-                      Icons.star,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                const UserStars(),
               ],
             ),
             const SizedBox(height: 8.0),

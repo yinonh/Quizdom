@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:trivia/common_widgets/stars.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
@@ -50,18 +51,10 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        Positioned(
+        const Positioned(
           top: 50.0,
           right: 1.0,
-          child: Row(
-            children: List.generate(
-              3,
-              (index) => const Icon(
-                Icons.star,
-                color: Colors.white,
-              ),
-            ),
-          ),
+          child: UserStars(),
         ),
         Positioned(
           top: 35.0,
