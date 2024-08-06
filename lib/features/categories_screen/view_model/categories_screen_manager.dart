@@ -20,7 +20,7 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   @override
   Future<CategoriesState> build() async {
     final trivia = ref.read(triviaProvider.notifier);
-    final userState = ref.read(userProvider);
+    final userState = ref.read(userProvider).currentUser;
     return CategoriesState(
         categories: await trivia.getCategories(), userAvatar: userState.avatar);
   }

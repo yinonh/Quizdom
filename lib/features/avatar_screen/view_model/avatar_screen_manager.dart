@@ -30,7 +30,7 @@ class AvatarState with _$AvatarState {
 class AvatarScreenManager extends _$AvatarScreenManager {
   @override
   Future<AvatarState> build() async {
-    File? userImage = ref.read(userProvider).userImage;
+    File? userImage = ref.read(userProvider).currentUser.userImage;
     final prefs = await SharedPreferences.getInstance();
     final originalImagePath = prefs.getString('original_user_image_path');
     final originalImage =

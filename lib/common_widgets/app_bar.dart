@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Stack(
       children: [
         Container(
-          height: preferredSize.height + 100, // Add height to show the curve
+          height: preferredSize.height,
           decoration: BoxDecoration(
             color: AppConstant.primaryColor.toColor(),
             borderRadius: const BorderRadius.vertical(

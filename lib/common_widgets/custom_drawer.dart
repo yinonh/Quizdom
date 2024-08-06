@@ -29,24 +29,19 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider);
+    final userState = ref.watch(userProvider).currentUser;
     return Drawer(
       backgroundColor: AppConstant.primaryColor.toColor(),
       child: Column(
         children: <Widget>[
           UserAccountsDrawerHeader(
             accountName: Text(
-              userState.name ?? "First Name",
+              "Hello, ${userState.name ?? "First Name"}",
               style: const TextStyle(
                 color: Colors.white,
               ),
             ),
-            accountEmail: Text(
-              userState.email ?? "",
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            ),
+            accountEmail: const SizedBox.shrink(),
             otherAccountsPicturesSize: const Size.square(75),
             otherAccountsPictures: [
               Row(

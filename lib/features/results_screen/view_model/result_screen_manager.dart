@@ -21,12 +21,12 @@ class ResultScreenManager extends _$ResultScreenManager {
   @override
   Future<ResultState> build() async {
     return ResultState(
-      userAchievements: ref.watch(userProvider).achievements,
+      userAchievements: ref.watch(userProvider).currentUser.achievements,
     );
   }
 
   double getTimeAvg() {
-    final achievements = ref.read(userProvider).achievements;
+    final achievements = ref.read(userProvider).currentUser.achievements;
     final totalAnswered = achievements.correctAnswers +
         achievements.wrongAnswers +
         achievements.unanswered;

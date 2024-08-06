@@ -12,7 +12,7 @@ class UserAvatar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider);
+    final userState = ref.watch(userProvider).currentUser;
     return userState.userImage != null
         ? CircleAvatar(
             backgroundImage: FileImage(userState.userImage!),

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:trivia/profile_screen.dart';
+import 'package:trivia/features/profile_screen/profile_screen.dart';
 import 'custom_route_observer.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'firebase_options.dart';
@@ -57,7 +57,7 @@ class MyApp extends ConsumerWidget {
         }
 
         // Check the user state
-        final userState = ref.watch(userProvider);
+        final userState = ref.watch(userProvider).currentUser;
 
         // Determine the home screen
         Widget home;
