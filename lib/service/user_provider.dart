@@ -105,8 +105,10 @@ class User extends _$User {
     }
 
     updatedAchievements = updatedAchievements.copyWith(
-      sumResponseTime:
-          updatedAchievements.sumResponseTime + (sumResponseTime ?? 10.0),
+      sumResponseTime: updatedAchievements.sumResponseTime +
+          (field != AchievementField.unanswered
+              ? (sumResponseTime ?? 10.0)
+              : 10),
     );
 
     final updatedUser = updateCurrentUser(achievements: updatedAchievements);

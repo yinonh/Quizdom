@@ -10,30 +10,30 @@ class AppConstant {
   static const int questionTime = 10;
 
   static const Map<int, IconData> categoryIcons = {
-    9: Icons.public, // General Knowledge
-    10: Icons.book, // Entertainment: Books
-    11: Icons.movie, // Entertainment: Film
-    12: Icons.music_note, // Entertainment: Music
-    13: Icons.theater_comedy, // Entertainment: Musicals & Theatres
-    14: Icons.tv, // Entertainment: Television
-    15: Icons.videogame_asset, // Entertainment: Video Games
-    16: Icons.games, // Entertainment: Board Games
-    17: Icons.nature, // Science & Nature
-    18: Icons.computer, // Science: Computers
-    19: Icons.calculate, // Science: Mathematics
-    20: Icons.local_library, // Mythology
-    21: Icons.sports, // Sports
-    22: Icons.map, // Geography
-    23: Icons.history_edu, // History
-    24: Icons.gavel, // Politics
-    25: Icons.brush, // Art
-    26: Icons.star, // Celebrities
-    27: Icons.pets, // Animals
-    28: Icons.directions_car, // Vehicles
-    29: Icons.auto_stories, // Entertainment: Comics
-    30: Icons.devices, // Science: Gadgets
-    31: Icons.menu_book, // Entertainment: Japanese Anime & Manga
-    32: Icons.animation, // Entertainment: Cartoon & Animations
+    9: Icons.public_rounded, // General Knowledge
+    10: Icons.book_rounded, // Entertainment: Books
+    11: Icons.movie_rounded, // Entertainment: Film
+    12: Icons.music_note_rounded, // Entertainment: Music
+    13: Icons.theater_comedy_rounded, // Entertainment: Musicals & Theatres
+    14: Icons.tv_rounded, // Entertainment: Television
+    15: Icons.videogame_asset_rounded, // Entertainment: Video Games
+    16: Icons.games_rounded, // Entertainment: Board Games
+    17: Icons.nature_rounded, // Science & Nature
+    18: Icons.computer_rounded, // Science: Computers
+    19: Icons.calculate_rounded, // Science: Mathematics
+    20: Icons.local_library_rounded, // Mythology
+    21: Icons.sports_rounded, // Sports
+    22: Icons.map_rounded, // Geography
+    23: Icons.history_edu_rounded, // History
+    24: Icons.gavel_rounded, // Politics
+    25: Icons.brush_rounded, // Art
+    26: Icons.star_rounded, // Celebrities
+    27: Icons.pets_rounded, // Animals
+    28: Icons.directions_car_rounded, // Vehicles
+    29: Icons.auto_stories_rounded, // Entertainment: Comics
+    30: Icons.devices_rounded, // Science: Gadgets
+    31: Icons.menu_book_rounded, // Entertainment: Japanese Anime & Manga
+    32: Icons.animation_rounded, // Entertainment: Cartoon & Animations
   };
 
   static const Map<int, Color> categoryColors = {

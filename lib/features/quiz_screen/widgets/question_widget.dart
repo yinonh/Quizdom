@@ -6,6 +6,8 @@ import 'package:lottie/lottie.dart';
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/multiple_answer_widget.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 
 class QuestionWidget extends ConsumerWidget {
   bool _hasNavigatedToResults = false;
@@ -58,12 +60,13 @@ class QuestionWidget extends ConsumerWidget {
                     color: data.timeLeft / data.questions.length < 0.2
                         ? Colors.red
                         : data.timeLeft / data.questions.length < 0.5
-                            ? Colors.yellow
-                            : null,
+                            ? Colors.amber
+                            : AppConstant.onPrimary.toColor(),
                   )
-                : const LinearProgressIndicator(
+                : LinearProgressIndicator(
                     minHeight: 10,
                     borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: AppConstant.onPrimary.toColor(),
                   ),
             const SizedBox(
               height: 20,
