@@ -24,7 +24,7 @@ class TriviaUser with _$TriviaUser {
     String? avatar,
     required UserAchievements achievements,
     required DateTime lastLogin,
-    required List<int> recent5TriviaCategories,
+    required List<int> recentTriviaCategories,
     required bool autoLogin,
     required List<int> trophies,
     required double userXp,

@@ -31,8 +31,8 @@ class User extends _$User {
           sumResponseTime: 0.0,
         ),
         lastLogin: DateTime.now(),
-        recent5TriviaCategories: [],
-        autoLogin: false,
+        recentTriviaCategories: [],
+        autoLogin: true,
         trophies: [],
         userXp: 0.0,
       ),
@@ -47,7 +47,7 @@ class User extends _$User {
     String? avatar,
     UserAchievements? achievements,
     DateTime? lastLogin,
-    List<int>? recent5TriviaCategories,
+    List<int>? recentTriviaCategories,
     bool? autoLogin,
     List<int>? trophies,
     double? userXp,
@@ -60,8 +60,8 @@ class User extends _$User {
       avatar: avatar ?? state.currentUser.avatar,
       achievements: achievements ?? state.currentUser.achievements,
       lastLogin: lastLogin ?? state.currentUser.lastLogin,
-      recent5TriviaCategories:
-          recent5TriviaCategories ?? state.currentUser.recent5TriviaCategories,
+      recentTriviaCategories:
+          recentTriviaCategories ?? state.currentUser.recentTriviaCategories,
       autoLogin: autoLogin ?? state.currentUser.autoLogin,
       trophies: trophies ?? state.currentUser.trophies,
       userXp: userXp ?? state.currentUser.userXp,
@@ -146,8 +146,8 @@ class User extends _$User {
         final name = userData['name'];
         final email = userData['email'];
         final lastLogin = DateTime.parse(userData['lastLogin']);
-        final recent5TriviaCategories =
-            List<int>.from(userData['recent5TriviaCategories']);
+        final recentTriviaCategories =
+            List<int>.from(userData['recentTriviaCategories']);
         final autoLogin = userData['autoLogin'] as bool;
         final trophies = List<int>.from(userData['trophies']);
         final userXp = userData['userXp'] as double;
@@ -168,7 +168,7 @@ class User extends _$User {
           userImage: userImage,
           avatar: avatar,
           lastLogin: lastLogin,
-          recent5TriviaCategories: recent5TriviaCategories,
+          recentTriviaCategories: recentTriviaCategories,
           autoLogin: autoLogin,
           trophies: trophies,
           userXp: userXp,
@@ -176,6 +176,49 @@ class User extends _$User {
 
         state = state.copyWith(currentUser: updatedUser);
       }
+    }
+  }
+
+  Future<void> saveUser(String uid, String name, String email) async {
+    final now = DateTime.now();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('uid', uid);
+
+    await _firestore.collection('users').doc(uid).set({
+      'name': name,
+      'email': email,
+      'lastLogin': now.toIso8601String(),
+      'recentTriviaCategories': [],
+      'autoLogin': false,
+      'trophies': [],
+      'userXp': 0.0,
+    });
+
+    final updatedUser = updateCurrentUser(
+      uid: uid,
+      name: name,
+      email: email,
+      lastLogin: now,
+      recentTriviaCategories: [],
+      autoLogin: false,
+      trophies: [],
+      userXp: 0.0,
+    );
+    state = state.copyWith(currentUser: updatedUser);
+  }
+
+  Future<void> clearUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final uid = state.currentUser.uid;
+
+    if (uid != null) {
+      await _firestore.collection('users').doc(uid).delete();
+      await prefs.remove('uid');
+      await prefs.remove('name');
+      await prefs.remove('email');
+
+      final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
+      state = state.copyWith(currentUser: updatedUser);
     }
   }
 
@@ -198,47 +241,22 @@ class User extends _$User {
     });
   }
 
-  Future<void> saveUser(String uid, String name, String email) async {
-    final now = DateTime.now();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('uid', uid);
-
-    await _firestore.collection('users').doc(uid).set({
-      'name': name,
-      'email': email,
-      'lastLogin': now.toIso8601String(),
-      'recent5TriviaCategories': [],
-      'autoLogin': false,
-      'trophies': [],
-      'userXp': 0.0,
-    });
-
-    final updatedUser = updateCurrentUser(
-      uid: uid,
-      name: name,
-      email: email,
-      lastLogin: now,
-      recent5TriviaCategories: [],
-      autoLogin: false,
-      trophies: [],
-      userXp: 0.0,
-    );
-    state = state.copyWith(currentUser: updatedUser);
-  }
-
-  Future<void> clearUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final uid = state.currentUser.uid;
-
-    if (uid != null) {
-      await _firestore.collection('users').doc(uid).delete();
-      await prefs.remove('uid');
-      await prefs.remove('name');
-      await prefs.remove('email');
-
-      final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
-      state = state.copyWith(currentUser: updatedUser);
+  void addTriviaCategory(int categoryId) {
+    List<int> recentCategories =
+        List.from(state.currentUser.recentTriviaCategories);
+    recentCategories.remove(categoryId);
+    recentCategories.insert(0, categoryId);
+    if (recentCategories.length > 4) {
+      recentCategories.removeLast();
     }
+    final updatedUser =
+        state.currentUser.copyWith(recentTriviaCategories: recentCategories);
+    state = state.copyWith(currentUser: updatedUser);
+
+    // Optionally, update the database
+    _firestore.collection('users').doc(state.currentUser.uid).update({
+      'recentTriviaCategories': recentCategories,
+    });
   }
 
   Future<String?> setAvatar() async {

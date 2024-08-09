@@ -65,7 +65,7 @@ class QuestionWidget extends ConsumerWidget {
                   )
                 : LinearProgressIndicator(
                     minHeight: 10,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: AppConstant.onPrimary.toColor(),
                   ),
             const SizedBox(

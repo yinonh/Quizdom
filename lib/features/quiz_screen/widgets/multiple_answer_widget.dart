@@ -21,7 +21,7 @@ class MultipleAnswerWidget extends ConsumerWidget {
   Color getColorForState(OptionState state) {
     switch (state) {
       case OptionState.unchosen:
-        return AppConstant.highlightColor.toColor().withOpacity(0.2);
+        return AppConstant.secondaryColor.toColor().withOpacity(0.4);
       case OptionState.correct:
         return Colors.green.withOpacity(0.3);
       case OptionState.wrong:
