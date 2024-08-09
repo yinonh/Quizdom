@@ -61,7 +61,7 @@ class MyApp extends ConsumerWidget {
 
         // Determine the home screen
         Widget home;
-        if (userState.uid == null) {
+        if (userState.uid == null || userState.autoLogin == false) {
           home = const AuthScreen();
         } else {
           home = const CategoriesScreen();

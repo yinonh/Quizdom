@@ -23,6 +23,11 @@ class TriviaUser with _$TriviaUser {
     @JsonKey(fromJson: fileFromJson, toJson: fileToJson) File? userImage,
     String? avatar,
     required UserAchievements achievements,
+    required DateTime lastLogin,
+    required List<int> recent5TriviaCategories,
+    required bool autoLogin,
+    required List<int> trophies,
+    required double userXp,
   }) = _TriviaUser;
 
   factory TriviaUser.fromJson(Map<String, dynamic> json) =>

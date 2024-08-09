@@ -37,6 +37,7 @@ class CustomDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userProvider);
+    final userNotifier = ref.read(userProvider.notifier);
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.7,
       backgroundColor: AppConstant.primaryColor.toColor(),
@@ -70,6 +71,7 @@ class CustomDrawer extends ConsumerWidget {
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               if (context.mounted) {
+                userNotifier.updateAutoLogin(false);
                 Navigator.of(context)
                     .pushReplacementNamed(AuthScreen.routeName);
               }

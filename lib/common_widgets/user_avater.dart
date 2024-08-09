@@ -8,6 +8,7 @@ import 'package:trivia/utility/size_config.dart';
 
 class UserAvatar extends ConsumerWidget {
   final double radius;
+
   const UserAvatar({this.radius = 42, super.key});
 
   @override
@@ -18,17 +19,22 @@ class UserAvatar extends ConsumerWidget {
             backgroundImage: FileImage(userState.userImage!),
             radius: calcWidth(radius),
           )
-        : CircleAvatar(
-            backgroundColor: AppConstant.userAvatarBackground.toColor(),
-            radius: calcWidth(radius),
-            child: ClipOval(
-              child: SvgPicture.string(
-                userState.avatar!,
-                fit: BoxFit.cover,
-                height: calcWidth(radius * 2),
-                width: calcWidth(radius * 2),
-              ),
-            ),
-          );
+        : userState.avatar != null
+            ? CircleAvatar(
+                backgroundColor: AppConstant.userAvatarBackground.toColor(),
+                radius: calcWidth(radius),
+                child: ClipOval(
+                  child: SvgPicture.string(
+                    userState.avatar!,
+                    fit: BoxFit.cover,
+                    height: calcWidth(radius * 2),
+                    width: calcWidth(radius * 2),
+                  ),
+                ),
+              )
+            : CircleAvatar(
+                backgroundColor: AppConstant.userAvatarBackground.toColor(),
+                radius: calcWidth(radius),
+              );
   }
 }

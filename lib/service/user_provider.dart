@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,14 +22,19 @@ class User extends _$User {
 
   @override
   UserState build() {
-    return const UserState(
+    return UserState(
       currentUser: TriviaUser(
-        achievements: UserAchievements(
+        achievements: const UserAchievements(
           correctAnswers: 0,
           wrongAnswers: 0,
           unanswered: 0,
           sumResponseTime: 0.0,
         ),
+        lastLogin: DateTime.now(),
+        recent5TriviaCategories: [],
+        autoLogin: false,
+        trophies: [],
+        userXp: 0.0,
       ),
     );
   }
@@ -42,6 +46,11 @@ class User extends _$User {
     File? userImage,
     String? avatar,
     UserAchievements? achievements,
+    DateTime? lastLogin,
+    List<int>? recent5TriviaCategories,
+    bool? autoLogin,
+    List<int>? trophies,
+    double? userXp,
   }) {
     return state.currentUser.copyWith(
       uid: uid ?? state.currentUser.uid,
@@ -50,6 +59,12 @@ class User extends _$User {
       userImage: userImage ?? state.currentUser.userImage,
       avatar: avatar ?? state.currentUser.avatar,
       achievements: achievements ?? state.currentUser.achievements,
+      lastLogin: lastLogin ?? state.currentUser.lastLogin,
+      recent5TriviaCategories:
+          recent5TriviaCategories ?? state.currentUser.recent5TriviaCategories,
+      autoLogin: autoLogin ?? state.currentUser.autoLogin,
+      trophies: trophies ?? state.currentUser.trophies,
+      userXp: userXp ?? state.currentUser.userXp,
     );
   }
 
@@ -128,6 +143,13 @@ class User extends _$User {
         final userData = userDoc.data()!;
         final name = userData['name'];
         final email = userData['email'];
+        final lastLogin = DateTime.parse(userData['lastLogin']);
+        final recent5TriviaCategories =
+            List<int>.from(userData['recent5TriviaCategories']);
+        final autoLogin = userData['autoLogin'] as bool;
+        final trophies = List<int>.from(userData['trophies']);
+        final userXp = userData['userXp'] as double;
+
         String? imagePath;
         if (prefs.containsKey('cropped_user_image_path')) {
           imagePath = prefs.getString('cropped_user_image_path');
@@ -143,27 +165,62 @@ class User extends _$User {
           email: email,
           userImage: userImage,
           avatar: avatar,
+          lastLogin: lastLogin,
+          recent5TriviaCategories: recent5TriviaCategories,
+          autoLogin: autoLogin,
+          trophies: trophies,
+          userXp: userXp,
         );
 
         state = state.copyWith(currentUser: updatedUser);
-      } else {
-        // Handle case where user document doesn't exist in Firestore
       }
-    } else {
-      // Handle case where uid is null
     }
   }
 
+  Future<void> updateLastLogin() async {
+    final now = DateTime.now();
+    final updatedUser = updateCurrentUser(lastLogin: now);
+    state = state.copyWith(currentUser: updatedUser);
+
+    await _firestore.collection('users').doc(state.currentUser.uid).update({
+      'lastLogin': now.toIso8601String(),
+    });
+  }
+
+  void updateAutoLogin(bool autoLogin) {
+    final updatedUser = updateCurrentUser(autoLogin: autoLogin);
+    state = state.copyWith(currentUser: updatedUser);
+
+    _firestore.collection('users').doc(state.currentUser.uid).update({
+      'autoLogin': autoLogin,
+    });
+  }
+
   Future<void> saveUser(String uid, String name, String email) async {
+    final now = DateTime.now();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('uid', uid);
 
     await _firestore.collection('users').doc(uid).set({
       'name': name,
       'email': email,
+      'lastLogin': now.toIso8601String(),
+      'recent5TriviaCategories': [],
+      'autoLogin': false,
+      'trophies': [],
+      'userXp': 0.0,
     });
 
-    final updatedUser = updateCurrentUser(uid: uid, name: name, email: email);
+    final updatedUser = updateCurrentUser(
+      uid: uid,
+      name: name,
+      email: email,
+      lastLogin: now,
+      recent5TriviaCategories: [],
+      autoLogin: false,
+      trophies: [],
+      userXp: 0.0,
+    );
     state = state.copyWith(currentUser: updatedUser);
   }
 

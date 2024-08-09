@@ -131,18 +131,21 @@ class AuthScreenManager extends _$AuthScreenManager {
           email: state.email,
           password: state.password,
         );
+
+        ref.read(userProvider.notifier).updateLastLogin();
       } else {
         userCredential = await _auth.createUserWithEmailAndPassword(
           email: state.email,
           password: state.password,
         );
-      }
 
-      final user = userCredential.user;
-      if (user != null) {
-        ref.read(userProvider.notifier).saveUser(
-            user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
+        final user = userCredential.user;
+        if (user != null) {
+          ref.read(userProvider.notifier).saveUser(
+              user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
+        }
       }
+      ref.read(userProvider.notifier).updateAutoLogin(true);
 
       state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {

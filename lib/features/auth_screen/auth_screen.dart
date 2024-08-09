@@ -21,13 +21,13 @@ class AuthScreen extends ConsumerWidget {
     final authState = ref.watch(authScreenManagerProvider);
     final authNotifier = ref.read(authScreenManagerProvider.notifier);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authState.navigate) {
+    ref.listen<AuthState>(authScreenManagerProvider, (previous, next) {
+      if (next.navigate) {
         Navigator.pushReplacementNamed(context, AvatarScreen.routeName);
         authNotifier.resetNavigate();
       }
-      if (authState.firebaseErrorMessage != null) {
-        final message = authState.firebaseErrorMessage!;
+      if (next.firebaseErrorMessage != null) {
+        final message = next.firebaseErrorMessage!;
         authNotifier.deleteFirebaseMessage();
         showTopSnackBar(
           Overlay.of(context),
