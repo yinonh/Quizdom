@@ -6,6 +6,7 @@ import 'package:trivia/common_widgets/user_app_bar.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
+import 'package:trivia/features/categories_screen/widgets/recent_categories.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
@@ -67,45 +68,11 @@ class CategoriesScreen extends ConsumerWidget {
                   SizedBox(
                     height: calcHeight(30),
                   ),
-                  const Text(
-                    "Recent Played Categories",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: calcHeight(15),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(data.userRecentCategories.length,
-                        (index) {
-                      final categoryIndex = data.userRecentCategories[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 1,
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          AppConstant.categoryIcons[categoryIndex] ??
-                              Icons.category,
-                          color: AppConstant.categoryColors[categoryIndex] ??
-                              Colors.black,
-                          size: 24.0,
-                        ),
-                      );
-                    }),
-                  ),
-                  SizedBox(
-                    height: calcHeight(15),
-                  ),
+                  data.userRecentCategories.length >= 3
+                      ? RecentCategories(
+                          categoriesState: data,
+                        )
+                      : const SizedBox.shrink(),
                   ExpandableHorizontalList(
                     categories: data.categories.triviaCategories,
                     title: "Featured Categories",

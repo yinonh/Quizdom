@@ -189,7 +189,7 @@ class User extends _$User {
       'email': email,
       'lastLogin': now.toIso8601String(),
       'recentTriviaCategories': [],
-      'autoLogin': false,
+      'autoLogin': true,
       'trophies': [],
       'userXp': 0.0,
     });

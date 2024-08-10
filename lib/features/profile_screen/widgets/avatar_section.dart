@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
+import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
 import 'package:trivia/utility/size_config.dart';
@@ -36,8 +37,13 @@ class AvatarSection extends StatelessWidget {
                     color: AppConstant.onPrimary.toColor(),
                   ),
                 ),
-                const UserAvatar(
-                  radius: 70,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, AvatarScreen.routeName);
+                  },
+                  child: const UserAvatar(
+                    radius: 70,
+                  ),
                 ),
               ],
             ),

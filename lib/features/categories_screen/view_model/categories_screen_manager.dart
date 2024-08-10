@@ -18,32 +18,37 @@ class CategoriesState with _$CategoriesState {
 
 @riverpod
 class CategoriesScreenManager extends _$CategoriesScreenManager {
-  late final Trivia triviaProviderNotifier;
-  late final User userProviderNotifier;
+  Trivia? _triviaProviderNotifier;
+  User? _userProviderNotifier;
+
+  Trivia? get triviaProviderNotifier {
+    return _triviaProviderNotifier ??= ref.read(triviaProvider.notifier);
+  }
+
+  User? get userProviderNotifier {
+    return _userProviderNotifier ??= ref.read(userProvider.notifier);
+  }
 
   @override
   Future<CategoriesState> build() async {
-    // Initialize notifiers
-    triviaProviderNotifier = ref.read(triviaProvider.notifier);
-    userProviderNotifier = ref.read(userProvider.notifier);
-
     // Fetch necessary data
     final currentUser = ref.watch(userProvider).currentUser;
     return CategoriesState(
-      categories: await triviaProviderNotifier.getCategories(),
+      categories: await triviaProviderNotifier?.getCategories() ??
+          const TriviaCategories(),
       userRecentCategories: currentUser.recentTriviaCategories,
     );
   }
 
   // Reset achievements using the initialized notifier
   void resetAchievements() {
-    userProviderNotifier.resetAchievements();
+    userProviderNotifier?.resetAchievements();
   }
 
   // Set a category and update user's recent categories
   void setCategory(int categoryId) {
-    triviaProviderNotifier.setCategory(categoryId);
-    userProviderNotifier.addTriviaCategory(categoryId);
+    triviaProviderNotifier?.setCategory(categoryId);
+    userProviderNotifier?.addTriviaCategory(categoryId);
   }
 
   // Function to clean up category names
