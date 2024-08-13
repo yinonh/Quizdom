@@ -1,21 +1,22 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trivia/common_widgets/stars.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
-import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
+  final Widget? prefix;
 
-  UserAppBar({super.key}) : preferredSize = Size.fromHeight(calcHeight(120));
+  UserAppBar({this.prefix, super.key})
+      : preferredSize = Size.fromHeight(calcHeight(120));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +42,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             color: Colors.transparent,
             child: Center(
               child: SvgPicture.asset(
-                'assets/drop.svg',
+                Strings.appBarDrop,
                 height: calcHeight(55),
                 colorFilter: ColorFilter.mode(
                   AppConstant.primaryColor.toColor(),
@@ -59,12 +60,13 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
         Positioned(
           top: 35.0,
           left: 10.0,
-          child: IconButton(
-            icon: const Icon(Icons.menu_rounded, color: Colors.white),
-            onPressed: () async {
-              Scaffold.of(context).openDrawer();
-            },
-          ),
+          child: prefix ??
+              IconButton(
+                icon: const Icon(Icons.menu_rounded, color: Colors.white),
+                onPressed: () async {
+                  Scaffold.of(context).openDrawer();
+                },
+              ),
         ),
         Positioned(
           bottom: 6.0,
@@ -83,7 +85,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
               },
               child: Hero(
                 transitionOnUserGestures: true,
-                tag: "userAvatar",
+                tag: Strings.userAvatarTag,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -92,7 +94,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       height: calcWidth(90),
                       child: CircularProgressIndicator(
                         strokeWidth: 5.0,
-                        value: 0.8,
+                        value: userState.currentUser.userXp / 100,
                         color: AppConstant.onPrimary.toColor(),
                       ),
                     ),

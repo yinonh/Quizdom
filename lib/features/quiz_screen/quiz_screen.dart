@@ -5,9 +5,10 @@ import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart'
 import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
 
 class QuizScreen extends ConsumerWidget {
-  static const routeName = "/quiz_screen";
+  static const routeName = Strings.quizRouteName;
   const QuizScreen({super.key});
 
   @override
@@ -17,7 +18,7 @@ class QuizScreen extends ConsumerWidget {
       backgroundColor: AppConstant.primaryColor.toColor(),
       appBar: CustomAppBar(
         title:
-            'Question ${(questionsState.asData?.value.questionIndex ?? 0) + 1}',
+            '${Strings.question} ${(questionsState.asData?.value.questionIndex ?? 0) + 1}',
       ),
       body: Container(
         height: double.infinity,

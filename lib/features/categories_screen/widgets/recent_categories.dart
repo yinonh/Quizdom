@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class RecentCategories extends StatelessWidget {
@@ -14,7 +15,7 @@ class RecentCategories extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Recent Played Categories",
+          Strings.recentPlayedCategories,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         SizedBox(

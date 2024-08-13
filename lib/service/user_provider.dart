@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trivia/models/user.dart';
 import 'package:trivia/models/user_achievements.dart';
+import 'package:trivia/utility/constant_strings.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -115,6 +116,16 @@ class User extends _$User {
     state = state.copyWith(currentUser: updatedUser);
   }
 
+  void addXp(double xp) {
+    final updatedUser =
+        updateCurrentUser(userXp: state.currentUser.userXp + xp);
+    state = state.copyWith(currentUser: updatedUser);
+
+    _firestore.collection('users').doc(state.currentUser.uid).update({
+      'userXp': state.currentUser.userXp,
+    });
+  }
+
   Future<void> setImage(File? image) async {
     final imagePath = image?.path;
     final updatedUser = updateCurrentUser(userImage: image);
@@ -124,11 +135,11 @@ class User extends _$User {
 
       // Save the image path to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('cropped_user_image_path', imagePath);
+      await prefs.setString(Strings.croppedUserImagePathKey, imagePath);
     } else {
       // Remove image path from SharedPreferences if image is null
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('cropped_user_image_path');
+      await prefs.remove(Strings.croppedUserImagePathKey);
 
       state = state.copyWith(currentUser: updatedUser);
     }
@@ -136,10 +147,10 @@ class User extends _$User {
 
   Future<void> initializeUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final uid = prefs.getString('uid');
+    final userId = prefs.getString(Strings.uidKey);
 
-    if (uid != null) {
-      final userDoc = await _firestore.collection('users').doc(uid).get();
+    if (userId != null) {
+      final userDoc = await _firestore.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
         final userData = userDoc.data()!;
@@ -153,16 +164,16 @@ class User extends _$User {
         final userXp = userData['userXp'] as double;
 
         String? imagePath;
-        if (prefs.containsKey('cropped_user_image_path')) {
-          imagePath = prefs.getString('cropped_user_image_path');
+        if (prefs.containsKey(Strings.croppedUserImagePathKey)) {
+          imagePath = prefs.getString(Strings.croppedUserImagePathKey);
         }
-        String? avatar = prefs.getString('user_avatar');
+        String? avatar = prefs.getString(Strings.userAvatarKey);
         File? userImage = imagePath != null && await File(imagePath).exists()
             ? File(imagePath)
             : null;
 
         final updatedUser = updateCurrentUser(
-          uid: uid,
+          uid: userId,
           name: name,
           email: email,
           userImage: userImage,
@@ -179,10 +190,17 @@ class User extends _$User {
     }
   }
 
+  Future<void> saveUid(String? uid) async {
+    if (uid != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(Strings.uidKey, uid);
+    }
+  }
+
   Future<void> saveUser(String uid, String name, String email) async {
     final now = DateTime.now();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('uid', uid);
+    await prefs.setString(Strings.uidKey, uid);
 
     await _firestore.collection('users').doc(uid).set({
       'name': name,
@@ -213,9 +231,7 @@ class User extends _$User {
 
     if (uid != null) {
       await _firestore.collection('users').doc(uid).delete();
-      await prefs.remove('uid');
-      await prefs.remove('name');
-      await prefs.remove('email');
+      await prefs.remove(Strings.uidKey);
 
       final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
       state = state.copyWith(currentUser: updatedUser);
@@ -261,10 +277,10 @@ class User extends _$User {
 
   Future<String?> setAvatar() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('cropped_user_image_path');
+    await prefs.remove(Strings.croppedUserImagePathKey);
 
     final updatedUser = state.currentUser.copyWith(
-      avatar: prefs.getString('user_avatar'),
+      avatar: prefs.getString(Strings.userAvatarKey),
       userImage: null,
     );
 

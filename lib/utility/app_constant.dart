@@ -6,6 +6,15 @@ class AppConstant {
   static const String onPrimary = "#ff9000";
   static const String highlightColor = "#c357cb";
   static const String userAvatarBackground = "#edcaeb";
+  static const String goldStars = "#ffD700";
+
+  // Trophy Colors
+  static const Color goldColor = Color(0xFFFFD700);
+  static const Color silverColor = Color(0xFFC0C0C0);
+  static const Color bronzeColor = Color(0xFFCD7F32);
+  static const Color platinumColor = Color(0xFFE5E4E2);
+  static const Color diamondColor = Color(0xFFB9F2FF);
+  static const Color rubyColor = Color(0xFFE0115F);
 
   static const int questionTime = 10;
 

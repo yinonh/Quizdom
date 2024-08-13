@@ -21,6 +21,8 @@ class TriviaState with _$TriviaState {
 
 @Riverpod(keepAlive: true)
 class Trivia extends _$Trivia {
+  TriviaCategories? _cachedCategories;
+
   @override
   TriviaState build() {
     return TriviaState(
@@ -41,6 +43,10 @@ class Trivia extends _$Trivia {
   }
 
   Future<TriviaCategories> getCategories() async {
+    if (_cachedCategories != null) {
+      return _cachedCategories!;
+    }
+
     final response = await state.client
         .get("api_category.php", queryParameters: {"token": state.token});
     if (response.statusCode == 200) {
@@ -49,6 +55,9 @@ class Trivia extends _$Trivia {
         const TriviaCategory(name: "All", id: -1),
         ...?categories.triviaCategories
       ]);
+
+      _cachedCategories = categories;
+
       return categories;
     } else {
       throw Exception('Failed to load trivia data');

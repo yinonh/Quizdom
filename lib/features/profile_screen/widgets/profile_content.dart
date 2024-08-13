@@ -4,6 +4,7 @@ import 'package:trivia/common_widgets/stars.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/size_config.dart';
 
 import 'editable_field.dart';
@@ -48,29 +49,29 @@ class ProfileContent extends ConsumerWidget {
                 ),
                 child: const UserStars(),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: calcHeight(16)),
               profileState.isEditing
                   ? EditableField(
-                      label: 'Username',
+                      label: Strings.username,
                       controller: profileState.nameController,
                     )
                   : _buildDisplayText(
-                      'Username', profileState.nameController.text),
+                      Strings.username, profileState.nameController.text),
               const SizedBox(height: 8),
               profileState.isEditing
                   ? EditableField(
                       controller: profileState.emailController,
-                      label: 'Email',
+                      label: Strings.email,
                     )
                   : _buildDisplayText(
-                      'Email', profileState.emailController.text),
-              const SizedBox(height: 8),
+                      Strings.email, profileState.emailController.text),
+              SizedBox(height: calcHeight(8)),
               if (profileState.isEditing)
                 EditableField(
-                  label: 'Password',
+                  label: Strings.password,
                   controller: profileState.passwordController,
                 ),
-              const SizedBox(height: 5),
+              SizedBox(height: calcHeight(5)),
             ],
           ),
           Positioned(

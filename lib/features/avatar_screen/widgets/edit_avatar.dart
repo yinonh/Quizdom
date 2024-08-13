@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:trivia/common_widgets/customProgressIndicator.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:trivia/utility/size_config.dart';
 
@@ -22,7 +24,7 @@ class EditAvatar extends ConsumerWidget {
           alignment: Alignment.bottomCenter,
           children: [
             Hero(
-              tag: "userAvatar",
+              tag: Strings.userAvatarTag,
               child: GestureDetector(
                 onTap: () {
                   if (state.selectedImage != null) {
@@ -117,8 +119,8 @@ class EditAvatar extends ConsumerWidget {
             ),
           ],
         ),
-        loading: () => const CircularProgressIndicator(),
-        error: (error, stack) => Text('Error: $error'),
+        loading: () => const CustomProgressIndicator(),
+        error: (error, stack) => Text('${Strings.error} $error'),
       ),
     );
   }

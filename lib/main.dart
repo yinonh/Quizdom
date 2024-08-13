@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:trivia/common_widgets/customProgressIndicator.dart';
 import 'package:trivia/features/profile_screen/profile_screen.dart';
 import 'custom_route_observer.dart';
 import 'features/auth_screen/auth_screen.dart';
@@ -51,7 +52,7 @@ class MyApp extends ConsumerWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
             home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: CustomProgressIndicator()),
             ),
           );
         }

@@ -5,9 +5,12 @@ import 'package:trivia/common_widgets/stars.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
+import 'package:trivia/features/categories_screen/categories_screen.dart';
+import 'package:trivia/features/profile_screen/profile_screen.dart';
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class CustomDrawer extends ConsumerWidget {
@@ -46,28 +49,30 @@ class CustomDrawer extends ConsumerWidget {
           CustomDrawerHeader(userState: userState),
           drawerOption(
             icon: Icons.home,
-            title: 'Home',
+            title: Strings.home,
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.pushReplacementNamed(
+                  context, CategoriesScreen.routeName);
             },
           ),
           drawerOption(
             icon: Icons.account_circle_rounded,
-            title: 'Profile',
+            title: Strings.profile,
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('/profile');
+              Navigator.of(context)
+                  .pushReplacementNamed(ProfileScreen.routeName);
             },
           ),
           drawerOption(
             icon: Icons.info,
-            title: 'About',
+            title: Strings.about,
             onTap: () {
               Navigator.of(context).pop();
             },
           ),
           drawerOption(
             icon: Icons.logout_rounded,
-            title: 'Logout',
+            title: Strings.logout,
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               if (context.mounted) {
@@ -87,9 +92,9 @@ class CustomDrawerHeader extends StatelessWidget {
   final UserState userState;
 
   const CustomDrawerHeader({
-    Key? key,
+    super.key,
     required this.userState,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +123,7 @@ class CustomDrawerHeader extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              "Hello, ${userState.currentUser.name ?? "First Name"}",
+              "${Strings.hello} ${userState.currentUser.name ?? ""}",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,

@@ -16,7 +16,7 @@ class AvatarSection extends StatelessWidget {
       left: 0,
       right: 0,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 25.0),
+        padding: EdgeInsets.symmetric(vertical: calcHeight(25)),
         child: Container(
           width: calcWidth(155),
           height: calcWidth(155),

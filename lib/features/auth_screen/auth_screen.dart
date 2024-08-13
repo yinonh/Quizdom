@@ -4,15 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-
+import 'package:trivia/common_widgets/customProgressIndicator.dart';
 import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
 import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class AuthScreen extends ConsumerWidget {
-  static const String routeName = "/auth";
+  static const String routeName = Strings.authRouteName;
 
   const AuthScreen({super.key});
 
@@ -41,9 +43,9 @@ class AuthScreen extends ConsumerWidget {
             ),
           ),
           snackBarPosition: SnackBarPosition.bottom,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 80,
+          padding: EdgeInsets.symmetric(
+            horizontal: calcWidth(20),
+            vertical: calcHeight(80),
           ),
           displayDuration: const Duration(seconds: 1, milliseconds: 500),
         );
@@ -55,7 +57,7 @@ class AuthScreen extends ConsumerWidget {
       body: Stack(
         children: [
           SvgPicture.asset(
-            "assets/blob-scene-haikei.svg",
+            Strings.authBackground,
             fit: BoxFit.cover,
             height: double.infinity, //MediaQuery.of(context).size.height,
             width: double.infinity, //MediaQuery.of(context).size.width,
@@ -64,7 +66,7 @@ class AuthScreen extends ConsumerWidget {
             left: 30,
             top: 100,
             child: Text(
-              !authState.isLogin ? 'Create Account' : 'Welcome Back',
+              !authState.isLogin ? Strings.createAccount : Strings.welcomeBack,
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -90,7 +92,7 @@ class AuthScreen extends ConsumerWidget {
                     child: Column(
                       children: [
                         CustomTextField(
-                          label: 'Email',
+                          label: Strings.email,
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: Icons.email_rounded,
                           onChanged: authNotifier.setEmail,
@@ -103,9 +105,11 @@ class AuthScreen extends ConsumerWidget {
                               ? authState.emailErrorMessage
                               : null,
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: calcHeight(20),
+                        ),
                         CustomTextField(
-                          label: 'Password',
+                          label: Strings.password,
                           prefixIcon: Icons.lock_rounded,
                           onChanged: authNotifier.setPassword,
                           suffixIcon: IconButton(
@@ -123,9 +127,11 @@ class AuthScreen extends ConsumerWidget {
                           obscureText: !authState.showPassword,
                         ),
                         if (!authState.isLogin) ...[
-                          const SizedBox(height: 20),
+                          SizedBox(
+                            height: calcHeight(20),
+                          ),
                           CustomTextField(
-                            label: 'Confirm Password',
+                            label: Strings.confirmPassword,
                             prefixIcon: Icons.lock_rounded,
                             onChanged: authNotifier.setConfirmPassword,
                             suffixIcon: IconButton(
@@ -158,7 +164,7 @@ class AuthScreen extends ConsumerWidget {
             child: Column(
               children: [
                 if (authState.isLoading)
-                  const CircularProgressIndicator()
+                  const CustomProgressIndicator()
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13.0),
@@ -182,7 +188,7 @@ class AuthScreen extends ConsumerWidget {
                           ],
                         ),
                         child: Text(
-                          authState.isLogin ? 'Login' : 'Sign Up',
+                          authState.isLogin ? Strings.login : Strings.signUp,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -191,13 +197,13 @@ class AuthScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 10),
+                SizedBox(height: calcHeight(10)),
                 TextButton(
                   onPressed: authNotifier.toggleFormMode,
                   child: Text(
                     authState.isLogin
-                        ? "Don't have an account? Sign Up"
-                        : "Already have an account? Login",
+                        ? Strings.switchToSignUp
+                        : Strings.switchToLogin,
                     style:
                         TextStyle(color: AppConstant.highlightColor.toColor()),
                   ),

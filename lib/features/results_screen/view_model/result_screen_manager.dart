@@ -21,19 +21,23 @@ class ResultScreenManager extends _$ResultScreenManager {
   @override
   Future<ResultState> build() async {
     return ResultState(
-      userAchievements: ref.watch(userProvider).currentUser.achievements,
+      userAchievements: ref.read(userProvider).currentUser.achievements,
     );
   }
 
   double getTimeAvg() {
     final achievements = ref.read(userProvider).currentUser.achievements;
-    final totalAnswered = achievements.correctAnswers +
+    final totalQuestions = achievements.correctAnswers +
         achievements.wrongAnswers +
         achievements.unanswered;
 
-    if (totalAnswered == 0) return 0.0;
+    if (totalQuestions == 0) return 0.0;
 
     return AppConstant.questionTime -
-        (achievements.sumResponseTime / totalAnswered);
+        (achievements.sumResponseTime / totalQuestions);
+  }
+
+  void addXpToUser() {
+    ref.read(userProvider.notifier).addXp(5.0);
   }
 }

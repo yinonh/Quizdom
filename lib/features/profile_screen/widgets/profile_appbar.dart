@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
+import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class ProfileAppbar extends ConsumerWidget {
   const ProfileAppbar({super.key});
@@ -9,7 +11,7 @@ class ProfileAppbar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return CustomAppBar(
-      title: 'Profile',
+      title: Strings.profile,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back_ios_new_rounded,
@@ -19,9 +21,9 @@ class ProfileAppbar extends ConsumerWidget {
           Navigator.pushReplacementNamed(context, CategoriesScreen.routeName);
         },
       ),
-      actions: const [
+      actions: [
         SizedBox(
-          width: 45,
+          width: calcWidth(45),
         )
       ],
     );

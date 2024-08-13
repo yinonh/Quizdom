@@ -2,17 +2,19 @@ import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
+import 'package:trivia/common_widgets/customProgressIndicator.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/fluttermoji/fluttermojiCustomizer.dart';
 import 'package:trivia/utility/fluttermoji/fluttermojiThemeData.dart';
 import 'package:trivia/utility/size_config.dart';
 
 class AvatarScreen extends ConsumerWidget {
-  static const routeName = "/avatar";
+  static const routeName = Strings.avatarRouteName;
 
   const AvatarScreen({super.key});
 
@@ -24,7 +26,7 @@ class AvatarScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppConstant.primaryColor.toColor(),
       appBar: const CustomAppBar(
-        title: "Set Image",
+        title: Strings.setImage,
       ),
       body: avatarState.when(
         data: (state) => Stack(
@@ -59,8 +61,8 @@ class AvatarScreen extends ConsumerWidget {
                       ),
                       child: state.selectedImage != null
                           ? SizedBox(
-                              width: 500,
-                              height: 300,
+                              width: calcWidth(500),
+                              height: calcHeight(300),
                               child: CustomImageCrop(
                                 cropController: state.cropController,
                                 image: FileImage(state.originalImage!)
@@ -135,7 +137,7 @@ class AvatarScreen extends ConsumerWidget {
                       ],
                     ),
                     child: const Text(
-                      'Save',
+                      Strings.save,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 20.0,
@@ -165,8 +167,8 @@ class AvatarScreen extends ConsumerWidget {
             ),
           ],
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+        loading: () => const Center(child: CustomProgressIndicator()),
+        error: (error, stack) => Center(child: Text('${Strings.error} $error')),
       ),
     );
   }

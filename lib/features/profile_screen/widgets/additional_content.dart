@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/features/profile_screen/widgets/trophy_item.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/utility/size_config.dart';
 
 class AdditionalContent extends StatelessWidget {
   const AdditionalContent({super.key});
@@ -16,49 +20,66 @@ class AdditionalContent extends StatelessWidget {
           topRight: Radius.circular(35.0),
         ),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Trophies',
+            Strings.trophies,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00afff),
+              color: AppConstant.primaryColor.toColor(),
             ),
           ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              TrophyItem(trophyName: 'Gold', trophyColor: Color(0xFFFFD700)),
-              TrophyItem(trophyName: 'Silver', trophyColor: Color(0xFFC0C0C0)),
-              TrophyItem(trophyName: 'Bronze', trophyColor: Color(0xFFCD7F32)),
-            ],
-          ),
-          SizedBox(height: 16),
-          Row(
+          const SizedBox(height: 16),
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               TrophyItem(
-                  trophyName: 'Platinum', trophyColor: Color(0xFFE5E4E2)),
-              TrophyItem(trophyName: 'Diamond', trophyColor: Color(0xFFB9F2FF)),
-              TrophyItem(trophyName: 'Ruby', trophyColor: Color(0xFFE0115F)),
+                trophyName: Strings.goldTrophy,
+                trophyColor: AppConstant.goldColor,
+              ),
+              TrophyItem(
+                trophyName: Strings.silverTrophy,
+                trophyColor: AppConstant.silverColor,
+              ),
+              TrophyItem(
+                trophyName: Strings.bronzeTrophy,
+                trophyColor: AppConstant.bronzeColor,
+              ),
             ],
           ),
-          SizedBox(height: 16),
+          SizedBox(height: calcHeight(15)),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TrophyItem(
+                trophyName: Strings.platinumTrophy,
+                trophyColor: AppConstant.platinumColor,
+              ),
+              TrophyItem(
+                trophyName: Strings.diamondTrophy,
+                trophyColor: AppConstant.diamondColor,
+              ),
+              TrophyItem(
+                trophyName: Strings.rubyTrophy,
+                trophyColor: AppConstant.rubyColor,
+              ),
+            ],
+          ),
+          SizedBox(height: calcHeight(15)),
           Text(
-            'Statistics',
+            Strings.statisticsTitle,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF00afff),
+              color: AppConstant.primaryColor.toColor(),
             ),
           ),
-          SizedBox(height: 16),
-          Text("Correct answers in round: 10"),
-          Text("Best time: 10"),
-          Text("Best total score: 10"),
+          const SizedBox(height: 16),
+          const Text("${Strings.correctAnswersText}10"),
+          const Text("${Strings.bestTimeText}10"),
+          const Text("${Strings.bestTotalScoreText}10"),
         ],
       ),
     );

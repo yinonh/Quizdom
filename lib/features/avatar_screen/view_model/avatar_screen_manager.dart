@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trivia/service/user_provider.dart';
+import 'package:trivia/utility/constant_strings.dart';
 import 'package:trivia/utility/fluttermoji/fluttermojiController.dart';
 
 part 'avatar_screen_manager.freezed.dart';
@@ -30,13 +31,14 @@ class AvatarState with _$AvatarState {
 class AvatarScreenManager extends _$AvatarScreenManager {
   @override
   Future<AvatarState> build() async {
-    File? userImage = ref.read(userProvider).currentUser.userImage;
+    final currentUser = ref.read(userProvider).currentUser;
+    File? userImage = currentUser.userImage;
     final prefs = await SharedPreferences.getInstance();
-    final originalImagePath = prefs.getString('original_user_image_path');
+    final originalImagePath = prefs.getString(Strings.originalUserImagePathKey);
     final originalImage =
         originalImagePath != null ? File(originalImagePath) : userImage;
     return AvatarState(
-      userName: "Yinon",
+      userName: currentUser.name ?? "",
       showTrashIcon: false,
       selectedImage: userImage,
       originalImage: originalImage,
@@ -73,22 +75,23 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
       if (croppedImage != null) {
         String currentTime = DateTime.now().toString();
-        final byteData = await croppedImage.bytes;
+        final byteData = croppedImage.bytes;
         final buffer = byteData.buffer;
 
         final appDir = await getApplicationDocumentsDirectory();
-        final imagePath = '${appDir.path}/cropped_image $currentTime.png';
+        final imagePath = Strings.getCroppedImagePath(appDir.path, currentTime);
         final file = File(imagePath);
         await file.writeAsBytes(
             buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
         // Now copy the file to the Application Documents Directory
         final originalImagePath =
-            '${appDir.path}/original_image  $currentTime.png';
+            Strings.getOriginalImagePath(appDir.path, currentTime);
         await data.originalImage!.copy(originalImagePath);
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('original_user_image_path', originalImagePath);
+        await prefs.setString(
+            Strings.originalUserImagePathKey, originalImagePath);
 
         await ref.read(userProvider.notifier).setImage(file);
       } else {

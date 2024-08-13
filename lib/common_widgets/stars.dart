@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/utility/color_utility.dart';
 
 class UserStars extends StatelessWidget {
   const UserStars({super.key});
@@ -10,7 +12,7 @@ class UserStars extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(
         3,
-        (index) => const Icon(Icons.star, color: Color(0xFFFFD700)),
+        (index) => Icon(Icons.star, color: AppConstant.goldStars.toColor()),
       ),
     );
   }

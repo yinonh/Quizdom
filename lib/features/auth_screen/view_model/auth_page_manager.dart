@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:trivia/service/user_provider.dart';
+import 'package:trivia/utility/constant_strings.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';
@@ -97,13 +98,13 @@ class AuthScreenManager extends _$AuthScreenManager {
     String confirmPasswordError = '';
 
     if (!EmailValidator.validate(state.email)) {
-      emailError = 'Invalid email';
+      emailError = Strings.invalidEmail;
     }
     if (state.password.length < 6) {
-      passwordError = 'Password must be at least 6 characters long';
+      passwordError = Strings.passwordTooShort;
     }
     if (!state.isLogin && state.password != state.confirmPassword) {
-      confirmPasswordError = 'Passwords do not match';
+      confirmPasswordError = Strings.passwordsNotMatch;
     }
 
     if (emailError.isNotEmpty ||
@@ -131,7 +132,8 @@ class AuthScreenManager extends _$AuthScreenManager {
           email: state.email,
           password: state.password,
         );
-
+        await ref.read(userProvider.notifier).saveUid(userCredential.user?.uid);
+        await ref.read(userProvider.notifier).initializeUser();
         ref.read(userProvider.notifier).updateLastLogin();
       } else {
         userCredential = await _auth.createUserWithEmailAndPassword(
@@ -159,37 +161,37 @@ class AuthScreenManager extends _$AuthScreenManager {
   String _mapFirebaseErrorCodeToMessage(FirebaseAuthException e) {
     switch (e.code) {
       case 'invalid-email':
-        return 'The email address is not valid.';
+        return Strings.invalidEmail;
       case 'user-disabled':
-        return 'The user corresponding to the given email has been disabled.';
+        return Strings.userDisabled;
       case 'user-not-found':
-        return 'There is no user corresponding to the given email.';
+        return Strings.userNotFound;
       case 'wrong-password':
-        return 'The password is invalid for the given email.';
+        return Strings.wrongPassword;
       case 'email-already-in-use':
-        return 'The email address is already in use by another account.';
+        return Strings.emailAlreadyUse;
       case 'operation-not-allowed':
-        return 'Email/Password accounts are not enabled.';
+        return Strings.operationNotAllowed;
       case 'weak-password':
-        return 'The password is too weak.';
+        return Strings.passwordTooWeak;
       case 'invalid-credential':
-        return 'The credential is not valid.';
+        return Strings.invalidCredential;
       case 'account-exists-with-different-credential':
-        return 'Account exists with different credentials.';
+        return Strings.accountExistsWithDifferentCredential;
       case 'invalid-verification-code':
-        return 'Invalid verification code.';
+        return Strings.invalidVerificationCode;
       case 'invalid-verification-id':
-        return 'Invalid verification ID.';
+        return Strings.invalidVerificationID;
       case 'session-cookie-expired':
-        return 'The session cookie has expired.';
+        return Strings.sessionCookieExpired;
       case 'session-cookie-revoked':
-        return 'The session cookie has been revoked.';
+        return Strings.sessionCookieRevoked;
       case 'too-many-requests':
-        return 'Too many requests. Please try again later.';
+        return Strings.tooManyRequests;
       case 'missing-email':
-        return 'An email address must be provided.';
+        return Strings.missingEmail;
       default:
-        return 'An undefined error occurred.';
+        return Strings.undefinedError;
     }
   }
 
