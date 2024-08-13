@@ -7,7 +7,6 @@ class Strings {
   // Shared Preferences
   static const String originalUserImagePathKey = "original_user_image_path";
   static const String croppedUserImagePathKey = "cropped_user_image_path";
-  static const String uidKey = "uid";
   static const String userAvatarKey = "user_avatar";
 
   // Hero Tag

@@ -132,7 +132,6 @@ class AuthScreenManager extends _$AuthScreenManager {
           email: state.email,
           password: state.password,
         );
-        await ref.read(userProvider.notifier).saveUid(userCredential.user?.uid);
         await ref.read(userProvider.notifier).initializeUser();
         ref.read(userProvider.notifier).updateLastLogin();
       } else {

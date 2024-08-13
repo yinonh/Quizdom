@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -147,7 +148,7 @@ class User extends _$User {
 
   Future<void> initializeUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString(Strings.uidKey);
+    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId != null) {
       final userDoc = await _firestore.collection('users').doc(userId).get();
@@ -190,17 +191,8 @@ class User extends _$User {
     }
   }
 
-  Future<void> saveUid(String? uid) async {
-    if (uid != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(Strings.uidKey, uid);
-    }
-  }
-
   Future<void> saveUser(String uid, String name, String email) async {
     final now = DateTime.now();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(Strings.uidKey, uid);
 
     await _firestore.collection('users').doc(uid).set({
       'name': name,
@@ -226,12 +218,10 @@ class User extends _$User {
   }
 
   Future<void> clearUser() async {
-    final prefs = await SharedPreferences.getInstance();
     final uid = state.currentUser.uid;
 
     if (uid != null) {
       await _firestore.collection('users').doc(uid).delete();
-      await prefs.remove(Strings.uidKey);
 
       final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
       state = state.copyWith(currentUser: updatedUser);
