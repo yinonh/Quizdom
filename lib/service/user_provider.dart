@@ -34,7 +34,6 @@ class User extends _$User {
         ),
         lastLogin: DateTime.now(),
         recentTriviaCategories: [],
-        autoLogin: true,
         trophies: [],
         userXp: 0.0,
       ),
@@ -64,7 +63,6 @@ class User extends _$User {
       lastLogin: lastLogin ?? state.currentUser.lastLogin,
       recentTriviaCategories:
           recentTriviaCategories ?? state.currentUser.recentTriviaCategories,
-      autoLogin: autoLogin ?? state.currentUser.autoLogin,
       trophies: trophies ?? state.currentUser.trophies,
       userXp: userXp ?? state.currentUser.userXp,
     );

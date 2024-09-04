@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:trivia/utility/size_config.dart';
 
 import 'defaults.dart';
 import 'fluttermojiController.dart';
@@ -239,7 +240,8 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
       );
 
       var bottomNavWidget = Padding(
-          padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 12),
+          padding: EdgeInsets.symmetric(
+              vertical: calcHeight(5), horizontal: calcWidth(10)),
           child: SvgPicture.asset(
             attribute.iconAsset!,
             height: attribute.iconsize ??

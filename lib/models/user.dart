@@ -25,7 +25,6 @@ class TriviaUser with _$TriviaUser {
     required UserAchievements achievements,
     required DateTime lastLogin,
     required List<int> recentTriviaCategories,
-    required bool autoLogin,
     required List<int> trophies,
     required double userXp,
   }) = _TriviaUser;
