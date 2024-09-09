@@ -13,19 +13,24 @@ class UserAvatar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider).currentUser;
-    return userState.userImage != null
+    final userState = ref.watch(userProvider);
+    if (userState.imageLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return userState.currentUser.userImage != null
         ? CircleAvatar(
-            backgroundImage: FileImage(userState.userImage!),
+            backgroundImage: FileImage(userState.currentUser.userImage!),
             radius: calcWidth(radius),
           )
-        : userState.avatar != null
+        : userState.currentUser.avatar != null
             ? CircleAvatar(
                 backgroundColor: AppConstant.userAvatarBackground.toColor(),
                 radius: calcWidth(radius),
                 child: ClipOval(
                   child: SvgPicture.string(
-                    userState.avatar!,
+                    userState.currentUser.avatar!,
                     fit: BoxFit.cover,
                     height: calcWidth(radius * 2),
                     width: calcWidth(radius * 2),

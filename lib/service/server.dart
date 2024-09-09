@@ -28,21 +28,21 @@ class DioInterceptor implements Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    log('❌ Dio Error!: ${err.message}');
-    log('❌ Url: ${err.requestOptions.uri}');
-    log('❌ ${err.stackTrace}');
-    log('❌ Response Error: ${err.response?.data}');
+    // log('❌ Dio Error!: ${err.message}');
+    // log('❌ Url: ${err.requestOptions.uri}');
+    // log('❌ ${err.stackTrace}');
+    // log('❌ Response Error: ${err.response?.data}');
     return handler.next(err);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    log('⬅️ Received network response');
-    log('${response.statusCode != 200 ? '❌ ${response.statusCode} ❌' : '✅ 200 ✅'} ${response.requestOptions.baseUrl}${response.requestOptions.path}');
-    log('Query params: ${response.requestOptions.queryParameters}');
-    log('Full Response: ${response.toString()}');
-    log('Response Data: ${response.data}');
-    log('-------------------------');
+    // log('⬅️ Received network response');
+    // log('${response.statusCode != 200 ? '❌ ${response.statusCode} ❌' : '✅ 200 ✅'} ${response.requestOptions.baseUrl}${response.requestOptions.path}');
+    // log('Query params: ${response.requestOptions.queryParameters}');
+    // log('Full Response: ${response.toString()}');
+    // log('Response Data: ${response.data}');
+    // log('-------------------------');
     return handler.next(response);
   }
 }

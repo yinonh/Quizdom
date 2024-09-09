@@ -94,9 +94,6 @@ class AvatarScreenManager extends _$AvatarScreenManager {
             Strings.originalUserImagePathKey, originalImagePath);
 
         await ref.read(userProvider.notifier).setImage(file);
-      } else {
-        await ref.read(userProvider.notifier).setImage(null);
-        state = AsyncValue.data(data.copyWith(showTrashIcon: false));
       }
     });
   }

@@ -99,9 +99,9 @@ class AvatarScreen extends ConsumerWidget {
                 child: GestureDetector(
                   onTap: () async {
                     if (state.selectedImage == null) {
-                      await avatarNotifier.saveAvatar();
+                      avatarNotifier.saveAvatar();
                     } else {
-                      await avatarNotifier.saveImage();
+                      avatarNotifier.saveImage();
                     }
                     if (context.mounted && Navigator.canPop(context)) {
                       Navigator.pop(context);

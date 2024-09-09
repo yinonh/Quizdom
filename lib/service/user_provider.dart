@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,18 +11,21 @@ import 'package:trivia/models/user_achievements.dart';
 import 'package:trivia/utility/constant_strings.dart';
 
 part 'user_provider.freezed.dart';
+
 part 'user_provider.g.dart';
 
 @freezed
 class UserState with _$UserState {
   const factory UserState({
     required TriviaUser currentUser,
+    required bool imageLoading,
   }) = _UserState;
 }
 
 @Riverpod(keepAlive: true)
 class User extends _$User {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   @override
   UserState build() {
@@ -37,6 +42,7 @@ class User extends _$User {
         trophies: [],
         userXp: 0.0,
       ),
+      imageLoading: false,
     );
   }
 
@@ -126,21 +132,28 @@ class User extends _$User {
   }
 
   Future<void> setImage(File? image) async {
+    state = state.copyWith(imageLoading: true);
     final imagePath = image?.path;
     final updatedUser = updateCurrentUser(userImage: image);
 
     if (image != null && imagePath != null) {
-      state = state.copyWith(currentUser: updatedUser);
+      state = state.copyWith(currentUser: updatedUser, imageLoading: false);
 
       // Save the image path to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(Strings.croppedUserImagePathKey, imagePath);
-    } else {
-      // Remove image path from SharedPreferences if image is null
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(Strings.croppedUserImagePathKey);
 
-      state = state.copyWith(currentUser: updatedUser);
+      // Save the image in the firestore storage
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return;
+      final storageRef = _storage.ref().child('user_images/$userId');
+      final uploadTask = await storageRef.putFile(image);
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+      // Update Firestore with the image URL
+      await _firestore.collection('users').doc(userId).update({
+        'userImage': downloadUrl,
+      });
     }
   }
 
@@ -271,6 +284,17 @@ class User extends _$User {
       avatar: prefs.getString(Strings.userAvatarKey),
       userImage: null,
     );
+
+    // Remove image from Firebase Storage and local cache
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId != null) {
+      await _firestore.collection('users').doc(userId).update({
+        'userImage': FieldValue.delete(),
+      });
+
+      final storageRef = _storage.ref().child('user_images/$userId');
+      await storageRef.delete();
+    }
 
     state = state.copyWith(currentUser: updatedUser);
     return null;
