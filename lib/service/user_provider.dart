@@ -154,6 +154,16 @@ class User extends _$User {
       await _firestore.collection('users').doc(userId).update({
         'userImage': downloadUrl,
       });
+      // Check if the image exists in Firestore
+      final userDoc = await _firestore.collection('users').doc(userId).get();
+      final userAvatarExists = userDoc.data()?['userAvatar'] != null;
+
+      if (userAvatarExists) {
+        // Delete the image from Firestore
+        await _firestore.collection('users').doc(userId).update({
+          'userAvatar': FieldValue.delete(),
+        });
+      }
     }
   }
 
@@ -278,22 +288,36 @@ class User extends _$User {
 
   Future<String?> setAvatar() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(Strings.croppedUserImagePathKey);
 
     final updatedUser = state.currentUser.copyWith(
       avatar: prefs.getString(Strings.userAvatarKey),
       userImage: null,
     );
 
-    // Remove image from Firebase Storage and local cache
+    // Save the image in the firestore storage
     final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId != null) {
+    if (userId == null) return null;
+    final storageRef = _storage.ref().child('user_images/$userId');
+    final uploadTask =
+        await storageRef.putString(state.currentUser.avatar ?? "");
+    final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+    // Update Firestore with the image URL
+    await _firestore.collection('users').doc(userId).update({
+      'userAvatar': downloadUrl,
+    });
+
+    await prefs.remove(Strings.croppedUserImagePathKey);
+
+    // Check if the image exists in Firestore
+    final userDoc = await _firestore.collection('users').doc(userId).get();
+    final userImageExists = userDoc.data()?['userImage'] != null;
+
+    if (userImageExists) {
+      // Delete the image from Firestore
       await _firestore.collection('users').doc(userId).update({
         'userImage': FieldValue.delete(),
       });
-
-      final storageRef = _storage.ref().child('user_images/$userId');
-      await storageRef.delete();
     }
 
     state = state.copyWith(currentUser: updatedUser);
