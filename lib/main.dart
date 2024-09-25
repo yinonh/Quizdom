@@ -13,6 +13,7 @@ import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/profile_screen/profile_screen.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
+import 'package:trivia/service/connectivity_provider.dart';
 import 'package:trivia/service/user_provider.dart';
 import 'package:trivia/utility/app_constant.dart';
 import 'package:trivia/utility/color_utility.dart';
@@ -20,6 +21,7 @@ import 'package:trivia/utility/size_config.dart';
 
 import 'custom_route_observer.dart';
 import 'features/auth_screen/auth_screen.dart';
+import 'features/no_internet_screen/no_internet_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -67,6 +69,16 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     SizeConfig().init(context);
+
+    // Listen to connectivity state
+    final isConnected = ref.watch(connectivityProvider);
+
+    if (!isConnected) {
+      return const MaterialApp(
+        title: 'No Internet',
+        home: NoInternetScreen(),
+      );
+    }
 
     return FutureBuilder(
       future: ref.read(userProvider.notifier).initializeUser(),

@@ -1,6 +1,7 @@
 class Strings {
   // Assets
   static const String loadingAnimation = "assets/loading_animation.json";
+  static const String noInternetAnimation = "assets/no_internet.json";
   static const String appBarDrop = "assets/drop.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
 

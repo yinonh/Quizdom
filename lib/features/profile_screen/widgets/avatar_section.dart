@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trivia/common_widgets/user_avater.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';

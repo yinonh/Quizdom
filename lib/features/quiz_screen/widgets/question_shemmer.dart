@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ShimmerLoadingQuestionWidget extends StatelessWidget {
-  const ShimmerLoadingQuestionWidget({Key? key}) : super(key: key);
+  const ShimmerLoadingQuestionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

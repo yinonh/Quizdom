@@ -107,7 +107,7 @@ class FluttermojiController extends GetxController {
     String _facialhair = FacialHair.generateFacialHair(
         facialHairType: _getFluttermojiProperty('facialHairType'),
         fhColor: _getFluttermojiProperty('facialHairColor'))!;
-    String _mouth = mouth['${_getFluttermojiProperty('mouthType')}'];
+    String _mouth = mouth[_getFluttermojiProperty('mouthType')];
     String _nose = nose['Default'];
     String _eyes = eyes['${_getFluttermojiProperty('eyeType')}'];
     String _eyebrows = eyebrow['${_getFluttermojiProperty('eyebrowType')}'];
