@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/common_widgets/app_bar.dart';
 import 'package:trivia/common_widgets/customProgressIndicator.dart';
+import 'package:trivia/common_widgets/loading_overly.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
@@ -22,6 +23,27 @@ class AvatarScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final avatarState = ref.watch(avatarScreenManagerProvider);
     final avatarNotifier = ref.read(avatarScreenManagerProvider.notifier);
+
+    ref.listen<AsyncValue<AvatarState>>(avatarScreenManagerProvider,
+        (previous, next) {
+      next.whenData((data) {
+        if (data.navigate) {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            if (context.mounted) {
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: const Duration(milliseconds: 700),
+                  pageBuilder: (_, __, ___) => const CategoriesScreen(),
+                ),
+              );
+            }
+          }
+        }
+      });
+    });
 
     return Scaffold(
       backgroundColor: AppConstant.primaryColor.toColor(),
@@ -103,21 +125,6 @@ class AvatarScreen extends ConsumerWidget {
                     } else {
                       avatarNotifier.saveImage();
                     }
-                    if (context.mounted && Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    } else {
-                      if (context.mounted) {
-                        Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 700),
-                            pageBuilder: (_, __, ___) =>
-                                const CategoriesScreen(),
-                          ),
-                        );
-                      }
-                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: calcHeight(15)),
@@ -165,6 +172,7 @@ class AvatarScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (state.isLoading) const LoadingViewOverlay(),
           ],
         ),
         loading: () => const Center(child: CustomProgressIndicator()),

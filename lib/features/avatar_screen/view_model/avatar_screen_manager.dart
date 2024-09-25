@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -21,8 +22,10 @@ class AvatarState with _$AvatarState {
     required String userName,
     File? selectedImage,
     File? originalImage,
-    required bool showTrashIcon,
     required CustomImageCropController cropController,
+    @Default(false) showTrashIcon,
+    @Default(false) bool isLoading,
+    @Default(false) navigate,
   }) = _AvatarState;
 }
 
@@ -38,7 +41,6 @@ class AvatarScreenManager extends _$AvatarScreenManager {
         originalImagePath != null ? File(originalImagePath) : userImage;
     return AvatarState(
       userName: currentUser.name ?? "",
-      showTrashIcon: false,
       selectedImage: userImage,
       originalImage: originalImage,
       cropController: CustomImageCropController(),
@@ -70,6 +72,9 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
   Future<void> saveImage() async {
     state.whenData((data) async {
+      state.whenData((data) {
+        state = AsyncValue.data(data.copyWith(isLoading: true));
+      });
       final MemoryImage? croppedImage = await data.cropController.onCropImage();
 
       if (croppedImage != null) {
@@ -94,6 +99,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
         await ref.read(userProvider.notifier).setImage(file);
       }
+      state = AsyncValue.data(data.copyWith(navigate: true, isLoading: false));
     });
   }
 
@@ -106,8 +112,14 @@ class AvatarScreenManager extends _$AvatarScreenManager {
   }
 
   Future<void> saveAvatar() async {
+    state.whenData((data) {
+      state = AsyncValue.data(data.copyWith(isLoading: true));
+    });
     final fluttermojiController = Get.find<FluttermojiController>();
     await fluttermojiController.setFluttermoji();
     await ref.read(userProvider.notifier).setAvatar();
+    state.whenData((data) {
+      state = AsyncValue.data(data.copyWith(navigate: true, isLoading: false));
+    });
   }
 }
