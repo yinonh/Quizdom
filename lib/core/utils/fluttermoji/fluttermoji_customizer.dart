@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 import 'defaults.dart';
-import 'fluttermojiController.dart';
-import 'fluttermojiThemeData.dart';
+import 'fluttermoji_controller.dart';
+import 'fluttermoji_theme_data.dart';
 import 'fluttermoji_assets/fluttermojimodel.dart';
 
 class FluttermojiCustomizer extends StatefulWidget {

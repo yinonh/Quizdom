@@ -9,9 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/fluttermoji/fluttermojiController.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_controller.dart';
+import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 part 'avatar_screen_manager.freezed.dart';
 part 'avatar_screen_manager.g.dart';

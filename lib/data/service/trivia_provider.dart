@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/models/trivia_categories.dart';
-import 'package:trivia/models/trivia_response.dart';
-import 'package:trivia/service/server.dart';
+import 'package:trivia/data/models/trivia_categories.dart';
+import 'package:trivia/data/models/trivia_response.dart';
+import 'package:trivia/core/network/server.dart';
 
 part 'trivia_provider.freezed.dart';
 part 'trivia_provider.g.dart';

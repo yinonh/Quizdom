@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 class ShimmerLoadingScreen extends StatelessWidget {
   const ShimmerLoadingScreen({super.key});

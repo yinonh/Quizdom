@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/common_widgets/stars.dart';
+import 'package:trivia/core/common_widgets/stars.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 import 'editable_field.dart';
 
@@ -43,9 +42,9 @@ class ProfileContent extends ConsumerWidget {
               Container(
                 width: calcWidth(150),
                 padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: AppConstant.onPrimary.toColor(),
-                  borderRadius: const BorderRadius.all(Radius.circular(30)),
+                decoration: const BoxDecoration(
+                  color: AppConstant.onPrimary,
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
                 child: const UserStars(),
               ),
@@ -82,7 +81,7 @@ class ProfileContent extends ConsumerWidget {
                 profileState.isEditing
                     ? Icons.save_rounded
                     : Icons.edit_rounded,
-                color: AppConstant.primaryColor.toColor(),
+                color: AppConstant.primaryColor,
               ),
               onPressed: profileNotifier.toggleIsEditing,
             ),
@@ -98,10 +97,10 @@ class ProfileContent extends ConsumerWidget {
       children: [
         Text(
           "$label:",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppConstant.highlightColor.toColor(),
+            color: AppConstant.highlightColor,
           ),
         ),
         const SizedBox(width: 5),

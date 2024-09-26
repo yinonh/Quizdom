@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'customProgressIndicator.dart';
+import 'custom_progress_indicator.dart';
 
 class LoadingViewOverlay extends StatelessWidget {
   final int? overlayAlpha;

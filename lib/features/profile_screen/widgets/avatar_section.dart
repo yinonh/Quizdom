@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class AvatarSection extends StatelessWidget {
   const AvatarSection({super.key});
@@ -30,10 +29,10 @@ class AvatarSection extends StatelessWidget {
                 SizedBox(
                   width: calcWidth(145),
                   height: calcWidth(145),
-                  child: CircularProgressIndicator(
+                  child: const CircularProgressIndicator(
                     strokeWidth: 8.0,
                     value: 0.8,
-                    color: AppConstant.onPrimary.toColor(),
+                    color: AppConstant.onPrimary,
                   ),
                 ),
                 GestureDetector(

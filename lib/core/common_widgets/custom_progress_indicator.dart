@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class CustomProgressIndicator extends StatelessWidget {
   const CustomProgressIndicator({super.key});

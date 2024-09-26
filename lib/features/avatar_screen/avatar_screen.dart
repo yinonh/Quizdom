@@ -1,18 +1,16 @@
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/common_widgets/app_bar.dart';
-import 'package:trivia/common_widgets/customProgressIndicator.dart';
-import 'package:trivia/common_widgets/loading_overly.dart';
+import 'package:trivia/core/common_widgets/app_bar.dart';
+import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/common_widgets/loading_overly.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/fluttermoji/fluttermojiCustomizer.dart';
-import 'package:trivia/utility/fluttermoji/fluttermojiThemeData.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class AvatarScreen extends ConsumerWidget {
   static const routeName = Strings.avatarRouteName;
@@ -46,7 +44,7 @@ class AvatarScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      backgroundColor: AppConstant.primaryColor.toColor(),
+      backgroundColor: AppConstant.primaryColor,
       appBar: const CustomAppBar(
         title: Strings.setImage,
       ),
@@ -102,8 +100,7 @@ class AvatarScreen extends ConsumerWidget {
                           : FluttermojiCustomizer(
                               autosave: false,
                               theme: FluttermojiThemeData(
-                                  selectedIconColor:
-                                      AppConstant.onPrimary.toColor(),
+                                  selectedIconColor: AppConstant.onPrimary,
                                   boxDecoration: const BoxDecoration(
                                       boxShadow: [BoxShadow()])),
                             ),
@@ -131,12 +128,10 @@ class AvatarScreen extends ConsumerWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: AppConstant.secondaryColor.toColor(),
+                      color: AppConstant.secondaryColor,
                       boxShadow: [
                         BoxShadow(
-                          color: AppConstant.secondaryColor
-                              .toColor()
-                              .withOpacity(0.5),
+                          color: AppConstant.secondaryColor.withOpacity(0.5),
                           spreadRadius: 4,
                           blurRadius: 5,
                           offset: const Offset(1, 2),

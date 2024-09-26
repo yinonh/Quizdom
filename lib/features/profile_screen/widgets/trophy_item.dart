@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 class TrophyItem extends StatelessWidget {
   final String trophyName;
@@ -22,9 +21,9 @@ class TrophyItem extends StatelessWidget {
         SizedBox(height: calcHeight(8)),
         Text(
           trophyName,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
-            color: AppConstant.primaryColor.toColor(),
+            color: AppConstant.primaryColor,
           ),
         ),
       ],

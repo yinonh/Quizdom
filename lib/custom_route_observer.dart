@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/service/trivia_provider.dart';
+import 'package:trivia/data/service/trivia_provider.dart';
 
 class CustomRouteObserver extends RouteObserver<PageRoute> {
   WidgetRef ref;

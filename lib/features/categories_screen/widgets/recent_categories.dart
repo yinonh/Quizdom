@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class RecentCategories extends StatelessWidget {
   final CategoriesState categoriesState;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/data/models/trivia_categories.dart';
 
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
-import 'package:trivia/models/trivia_categories.dart';
-import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class ExpandableHorizontalList extends ConsumerStatefulWidget {
   final List<TriviaCategory>? categories;

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/data/service/user_provider.dart';
 
 class UserAvatar extends ConsumerWidget {
   final double radius;
@@ -26,7 +25,7 @@ class UserAvatar extends ConsumerWidget {
           )
         : userState.currentUser.avatar != null
             ? CircleAvatar(
-                backgroundColor: AppConstant.userAvatarBackground.toColor(),
+                backgroundColor: AppConstant.userAvatarBackground,
                 radius: calcWidth(radius),
                 child: ClipOval(
                   child: SvgPicture.string(
@@ -38,7 +37,7 @@ class UserAvatar extends ConsumerWidget {
                 ),
               )
             : CircleAvatar(
-                backgroundColor: AppConstant.userAvatarBackground.toColor(),
+                backgroundColor: AppConstant.userAvatarBackground,
                 radius: calcWidth(radius),
               );
   }

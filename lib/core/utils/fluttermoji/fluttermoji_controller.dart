@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'fluttermojiFunctions.dart';
+import 'fluttermoji_functions.dart';
 import 'fluttermoji_assets/clothes/clothes.dart';
 import 'fluttermoji_assets/face/eyebrow/eyebrow.dart';
 import 'fluttermoji_assets/face/eyes/eyes.dart';

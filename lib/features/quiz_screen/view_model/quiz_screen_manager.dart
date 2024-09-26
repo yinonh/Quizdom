@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/models/trivia_response.dart';
-import 'package:trivia/models/user_achievements.dart';
-import 'package:trivia/service/trivia_provider.dart';
-import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utility/app_constant.dart';
+import 'package:trivia/data/models/trivia_response.dart';
+import 'package:trivia/data/models/user_achievements.dart';
+import 'package:trivia/data/service/trivia_provider.dart';
+import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 part 'quiz_screen_manager.freezed.dart';
 part 'quiz_screen_manager.g.dart';

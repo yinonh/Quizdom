@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class EditableField extends StatelessWidget {
   final String label;
@@ -26,19 +25,19 @@ class EditableField extends StatelessWidget {
           labelStyle: const TextStyle(
             color: Colors.black,
           ),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppConstant.highlightColor.toColor(),
+              color: AppConstant.highlightColor,
             ),
           ),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppConstant.highlightColor.toColor(),
+              color: AppConstant.highlightColor,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
-              color: AppConstant.highlightColor.toColor(),
+              color: AppConstant.highlightColor,
             ),
           ),
         ),

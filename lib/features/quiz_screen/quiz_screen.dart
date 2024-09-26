@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/common_widgets/app_bar.dart';
+import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class QuizScreen extends ConsumerWidget {
   static const routeName = Strings.quizRouteName;
@@ -15,7 +14,7 @@ class QuizScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final questionsState = ref.watch(quizScreenManagerProvider);
     return Scaffold(
-      backgroundColor: AppConstant.primaryColor.toColor(),
+      backgroundColor: AppConstant.primaryColor,
       appBar: CustomAppBar(
         title:
             '${Strings.question} ${(questionsState.asData?.value.questionIndex ?? 0) + 1}',

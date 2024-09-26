@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
-import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';
@@ -146,8 +146,6 @@ class AuthScreenManager extends _$AuthScreenManager {
               user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
         }
       }
-      ref.read(userProvider.notifier).updateAutoLogin(true);
-
       state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(

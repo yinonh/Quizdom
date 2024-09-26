@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:trivia/common_widgets/customProgressIndicator.dart';
+import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/fluttermoji/fluttermojiCircleAvatar.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class EditAvatar extends ConsumerWidget {
   const EditAvatar({super.key});
@@ -39,8 +38,7 @@ class EditAvatar extends ConsumerWidget {
                             radius: calcWidth(70),
                           )
                         : FluttermojiCircleAvatar(
-                            backgroundColor:
-                                AppConstant.userAvatarBackground.toColor(),
+                            backgroundColor: AppConstant.userAvatarBackground,
                             radius: calcWidth(70),
                           ),
                     if (state.showTrashIcon)
@@ -86,10 +84,10 @@ class EditAvatar extends ConsumerWidget {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.camera,
                         size: 30,
-                        color: AppConstant.onPrimary.toColor(),
+                        color: AppConstant.onPrimary,
                       ),
                     ),
                   ),
@@ -107,10 +105,10 @@ class EditAvatar extends ConsumerWidget {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.image,
                         size: 30,
-                        color: AppConstant.onPrimary.toColor(),
+                        color: AppConstant.onPrimary,
                       ),
                     ),
                   ),

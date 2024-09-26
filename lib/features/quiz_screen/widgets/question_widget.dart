@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class QuestionWidget extends ConsumerWidget {
   bool _hasNavigatedToResults = false;
@@ -53,12 +51,12 @@ class QuestionWidget extends ConsumerWidget {
                         ? Colors.red
                         : data.timeLeft / data.questions.length < 0.5
                             ? Colors.amber
-                            : AppConstant.onPrimary.toColor(),
+                            : AppConstant.onPrimary,
                   )
-                : LinearProgressIndicator(
+                : const LinearProgressIndicator(
                     minHeight: 10,
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    color: AppConstant.onPrimary.toColor(),
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: AppConstant.onPrimary,
                   ),
             const SizedBox(
               height: 20,

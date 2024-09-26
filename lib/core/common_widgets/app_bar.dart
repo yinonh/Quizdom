@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -18,9 +17,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       children: [
         Container(
           height: preferredSize.height,
-          decoration: BoxDecoration(
-            color: AppConstant.primaryColor.toColor(),
-            borderRadius: const BorderRadius.vertical(
+          decoration: const BoxDecoration(
+            color: AppConstant.primaryColor,
+            borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(7),
             ),
           ),

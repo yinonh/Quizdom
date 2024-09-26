@@ -6,9 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trivia/models/user.dart';
-import 'package:trivia/models/user_achievements.dart';
-import 'package:trivia/utility/constant_strings.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/user_achievements.dart';
 
 part 'user_provider.freezed.dart';
 
@@ -55,7 +55,6 @@ class User extends _$User {
     UserAchievements? achievements,
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
-    bool? autoLogin,
     List<int>? trophies,
     double? userXp,
   }) {
@@ -181,7 +180,6 @@ class User extends _$User {
         final lastLogin = DateTime.parse(userData['lastLogin']);
         final recentTriviaCategories =
             List<int>.from(userData['recentTriviaCategories']);
-        final autoLogin = userData['autoLogin'] as bool;
         final trophies = List<int>.from(userData['trophies']);
         final userXp = userData['userXp'] as double;
 
@@ -202,7 +200,6 @@ class User extends _$User {
           avatar: avatar,
           lastLogin: lastLogin,
           recentTriviaCategories: recentTriviaCategories,
-          autoLogin: autoLogin,
           trophies: trophies,
           userXp: userXp,
         );
@@ -220,7 +217,6 @@ class User extends _$User {
       'email': email,
       'lastLogin': now.toIso8601String(),
       'recentTriviaCategories': [],
-      'autoLogin': true,
       'trophies': [],
       'userXp': 0.0,
     });
@@ -231,7 +227,6 @@ class User extends _$User {
       email: email,
       lastLogin: now,
       recentTriviaCategories: [],
-      autoLogin: false,
       trophies: [],
       userXp: 0.0,
     );
@@ -256,15 +251,6 @@ class User extends _$User {
 
     await _firestore.collection('users').doc(state.currentUser.uid).update({
       'lastLogin': now.toIso8601String(),
-    });
-  }
-
-  void updateAutoLogin(bool autoLogin) {
-    final updatedUser = updateCurrentUser(autoLogin: autoLogin);
-    state = state.copyWith(currentUser: updatedUser);
-
-    _firestore.collection('users').doc(state.currentUser.uid).update({
-      'autoLogin': autoLogin,
     });
   }
 

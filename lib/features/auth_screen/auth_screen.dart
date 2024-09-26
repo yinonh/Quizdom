@@ -4,14 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:trivia/common_widgets/customProgressIndicator.dart';
+import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
 import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class AuthScreen extends ConsumerWidget {
   static const String routeName = Strings.authRouteName;
@@ -35,7 +34,7 @@ class AuthScreen extends ConsumerWidget {
           Overlay.of(context),
           CustomSnackBar.info(
             message: message,
-            backgroundColor: AppConstant.onPrimary.toColor(),
+            backgroundColor: AppConstant.onPrimary,
             icon: Icon(
               Icons.warning_rounded,
               color: Colors.black.withOpacity(0.2),
@@ -70,7 +69,7 @@ class AuthScreen extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: AppConstant.onPrimary.toColor(),
+                color: AppConstant.onPrimary,
                 shadows: [
                   BoxShadow(
                     color: Colors.white.withOpacity(0.3),
@@ -175,12 +174,11 @@ class AuthScreen extends ConsumerWidget {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: AppConstant.secondaryColor.toColor(),
+                          color: AppConstant.secondaryColor,
                           boxShadow: [
                             BoxShadow(
-                              color: AppConstant.secondaryColor
-                                  .toColor()
-                                  .withOpacity(0.5),
+                              color:
+                                  AppConstant.secondaryColor.withOpacity(0.5),
                               spreadRadius: 4,
                               blurRadius: 5,
                               offset: const Offset(1, 2),
@@ -204,8 +202,7 @@ class AuthScreen extends ConsumerWidget {
                     authState.isLogin
                         ? Strings.switchToSignUp
                         : Strings.switchToLogin,
-                    style:
-                        TextStyle(color: AppConstant.highlightColor.toColor()),
+                    style: const TextStyle(color: AppConstant.highlightColor),
                   ),
                 ),
               ],

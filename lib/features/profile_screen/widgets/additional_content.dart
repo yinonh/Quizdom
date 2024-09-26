@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/profile_screen/widgets/trophy_item.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class AdditionalContent extends StatelessWidget {
   const AdditionalContent({super.key});
@@ -23,12 +22,12 @@ class AdditionalContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             Strings.trophies,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppConstant.primaryColor.toColor(),
+              color: AppConstant.primaryColor,
             ),
           ),
           const SizedBox(height: 16),
@@ -68,12 +67,12 @@ class AdditionalContent extends StatelessWidget {
             ],
           ),
           SizedBox(height: calcHeight(15)),
-          Text(
+          const Text(
             Strings.statisticsTitle,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppConstant.primaryColor.toColor(),
+              color: AppConstant.primaryColor,
             ),
           ),
           const SizedBox(height: 16),

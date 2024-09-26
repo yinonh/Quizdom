@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trivia/models/user_achievements.dart';
+import 'package:trivia/data/models/user_achievements.dart';
 
 part 'user.freezed.dart';
 part 'user.g.dart';

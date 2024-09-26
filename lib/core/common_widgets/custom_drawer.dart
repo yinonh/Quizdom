@@ -1,17 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/common_widgets/stars.dart';
-import 'package:trivia/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/stars.dart';
+import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/profile_screen/profile_screen.dart';
-import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
@@ -40,10 +39,9 @@ class CustomDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userProvider);
-    final userNotifier = ref.read(userProvider.notifier);
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.7,
-      backgroundColor: AppConstant.primaryColor.toColor(),
+      backgroundColor: AppConstant.primaryColor,
       child: Column(
         children: <Widget>[
           CustomDrawerHeader(userState: userState),
@@ -76,7 +74,6 @@ class CustomDrawer extends ConsumerWidget {
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               if (context.mounted) {
-                userNotifier.updateAutoLogin(false);
                 Navigator.of(context)
                     .pushReplacementNamed(AuthScreen.routeName);
               }
@@ -100,7 +97,7 @@ class CustomDrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        color: AppConstant.primaryColor.toColor(),
+        color: AppConstant.primaryColor,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

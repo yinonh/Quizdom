@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trivia/common_widgets/stars.dart';
-import 'package:trivia/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/stars.dart';
+import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/service/user_provider.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
@@ -31,7 +30,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           child: Container(
             height: calcHeight(95),
             width: double.infinity,
-            color: AppConstant.primaryColor.toColor(),
+            color: AppConstant.primaryColor,
           ),
         ),
         Positioned(
@@ -44,8 +43,8 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
               child: SvgPicture.asset(
                 Strings.appBarDrop,
                 height: calcHeight(55),
-                colorFilter: ColorFilter.mode(
-                  AppConstant.primaryColor.toColor(),
+                colorFilter: const ColorFilter.mode(
+                  AppConstant.primaryColor,
                   BlendMode.srcIn,
                 ),
               ),
@@ -95,7 +94,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       child: CircularProgressIndicator(
                         strokeWidth: 5.0,
                         value: userState.currentUser.userXp / 100,
-                        color: AppConstant.onPrimary.toColor(),
+                        color: AppConstant.onPrimary,
                       ),
                     ),
                     const UserAvatar(),

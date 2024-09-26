@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/common_widgets/background.dart';
-import 'package:trivia/common_widgets/custom_drawer.dart';
-import 'package:trivia/common_widgets/user_app_bar.dart';
+import 'package:trivia/core/common_widgets/background.dart';
+import 'package:trivia/core/common_widgets/custom_drawer.dart';
+import 'package:trivia/core/common_widgets/user_app_bar.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/categories_screen/widgets/categories_screen_shimmer.dart';
 import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
 import 'package:trivia/features/categories_screen/widgets/recent_categories.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
-import 'package:trivia/utility/app_constant.dart';
-import 'package:trivia/utility/color_utility.dart';
-import 'package:trivia/utility/constant_strings.dart';
-import 'package:trivia/utility/size_config.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routeName = Strings.categoriesRouteName;
@@ -44,7 +43,7 @@ class CategoriesScreen extends ConsumerWidget {
                             TopButton(
                               icon: Icons.add_rounded,
                               label: Strings.createQuiz,
-                              color: AppConstant.highlightColor.toColor(),
+                              color: AppConstant.highlightColor,
                               onTap: () {
                                 // Handle create quiz tap
                               },
@@ -52,7 +51,7 @@ class CategoriesScreen extends ConsumerWidget {
                             TopButton(
                               icon: Icons.person_2,
                               label: Strings.soloMode,
-                              color: AppConstant.secondaryColor.toColor(),
+                              color: AppConstant.secondaryColor,
                               onTap: () {
                                 // Handle solo mode tap
                               },
@@ -60,7 +59,7 @@ class CategoriesScreen extends ConsumerWidget {
                             TopButton(
                               icon: Icons.groups_2,
                               label: Strings.multiplayer,
-                              color: AppConstant.onPrimary.toColor(),
+                              color: AppConstant.onPrimary,
                               onTap: () {
                                 // Handle multiplayer tap
                               },
