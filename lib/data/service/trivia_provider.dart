@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -16,13 +16,12 @@ class TriviaState with _$TriviaState {
     required Dio client,
     required String? token,
     required int? categoryId,
+    TriviaCategories? categories,
   }) = _TriviaState;
 }
 
 @Riverpod(keepAlive: true)
 class Trivia extends _$Trivia {
-  TriviaCategories? _cachedCategories;
-
   @override
   TriviaState build() {
     return TriviaState(
@@ -43,8 +42,8 @@ class Trivia extends _$Trivia {
   }
 
   Future<TriviaCategories> getCategories() async {
-    if (_cachedCategories != null) {
-      return _cachedCategories!;
+    if (state.categories != null) {
+      return state.categories!;
     }
 
     final response = await state.client
@@ -56,12 +55,22 @@ class Trivia extends _$Trivia {
         ...?categories.triviaCategories
       ]);
 
-      _cachedCategories = categories;
+      state = state.copyWith(categories: categories);
 
       return categories;
     } else {
       throw Exception('Failed to load trivia data');
     }
+  }
+
+  TriviaCategory? getCategoryById(int id) {
+    if (state.categories != null) {
+      return state.categories?.triviaCategories?.firstWhere(
+        (category) => category.id == id,
+        orElse: () => const TriviaCategory(id: -1, name: 'Unknown'),
+      );
+    }
+    return null;
   }
 
   void setCategory(int categoryId) {

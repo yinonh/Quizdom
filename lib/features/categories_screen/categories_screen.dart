@@ -78,7 +78,6 @@ class CategoriesScreen extends ConsumerWidget {
                           categories: data.categories.triviaCategories,
                           title: Strings.featuredCategories,
                         ),
-                        // WheelOfFortune(),
                         const InfoContainer(text: "Personal Rooms Information"),
                         const InfoContainer(text: "Personal Rooms Information"),
                         const InfoContainer(text: "Personal Rooms Information"),

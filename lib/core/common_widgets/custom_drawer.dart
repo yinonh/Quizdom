@@ -106,7 +106,9 @@ class CustomDrawerHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  child: const UserAvatar(),
+                  child: const UserAvatar(
+                    showProgress: true,
+                  ),
                   onTap: () {
                     Scaffold.of(context).closeDrawer();
                     Navigator.pushNamed(context, AvatarScreen.routeName);

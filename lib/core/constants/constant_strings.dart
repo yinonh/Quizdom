@@ -19,7 +19,8 @@ class Strings {
   static const String categoriesRouteName = "/categories_screen";
   static const String profileRouteName = "/profile";
   static const String quizRouteName = "/quiz_screen";
-  static const String resultsRouteName = "results_screen";
+  static const String resultsRouteName = "/results_screen";
+  static const String triviaIntroScreen = "/triviaIntroScreen";
 
   // Common Strings
   static const String error = "Error:";

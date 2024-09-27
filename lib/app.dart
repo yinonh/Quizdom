@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/global_providers/connectivity_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
 import 'core/common_widgets/custom_progress_indicator.dart';
 import 'core/constants/app_constant.dart';
@@ -84,6 +85,9 @@ class MyApp extends ConsumerWidget {
                 break;
               case ProfileScreen.routeName:
                 page = const ProfileScreen();
+                break;
+              case TriviaIntroScreen.routeName:
+                page = const TriviaIntroScreen();
                 break;
               default:
                 page = const SizedBox();

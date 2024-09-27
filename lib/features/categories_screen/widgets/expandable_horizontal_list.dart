@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
 
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
 class ExpandableHorizontalList extends ConsumerStatefulWidget {
   final List<TriviaCategory>? categories;
@@ -76,7 +76,7 @@ class _ExpandableHorizontalListState
                     onTap: () {
                       categoriesNotifier.setCategory(category.id!);
                       categoriesNotifier.resetAchievements();
-                      Navigator.pushNamed(context, QuizScreen.routeName);
+                      Navigator.pushNamed(context, TriviaIntroScreen.routeName);
                     },
                     child: Container(
                       width: 150,

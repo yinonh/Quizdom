@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
 import 'package:trivia/core/common_widgets/user_avater.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -19,8 +18,6 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider);
-
     return Stack(
       children: [
         Positioned(
@@ -82,23 +79,11 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   ),
                 );
               },
-              child: Hero(
+              child: const Hero(
                 transitionOnUserGestures: true,
                 tag: Strings.userAvatarTag,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: calcWidth(90),
-                      height: calcWidth(90),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 5.0,
-                        value: userState.currentUser.userXp / 100,
-                        color: AppConstant.onPrimary,
-                      ),
-                    ),
-                    const UserAvatar(),
-                  ],
+                child: UserAvatar(
+                  showProgress: true,
                 ),
               ),
             ),

@@ -1,9 +1,12 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'server.g.dart';
+
+final logger = Logger(
+  printer: PrettyPrinter(),
+);
 
 @Riverpod(keepAlive: true)
 Dio dio(DioRef ref) {
@@ -22,27 +25,31 @@ class DioInterceptor implements Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    log('🌍 Sending network request: ${options.baseUrl}${options.path}');
+    logger.i('🌍 Sending network request: ${options.baseUrl}${options.path}');
     return handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    // log('❌ Dio Error!: ${err.message}');
-    // log('❌ Url: ${err.requestOptions.uri}');
-    // log('❌ ${err.stackTrace}');
-    // log('❌ Response Error: ${err.response?.data}');
+    logger.e("Dio Error!: ${err.message}");
+    logger.e("Url: ${err.requestOptions.uri}");
+    logger.e("${err.stackTrace}");
+    logger.e("Response Error: ${err.response?.data}");
     return handler.next(err);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    // log('⬅️ Received network response');
-    // log('${response.statusCode != 200 ? '❌ ${response.statusCode} ❌' : '✅ 200 ✅'} ${response.requestOptions.baseUrl}${response.requestOptions.path}');
-    // log('Query params: ${response.requestOptions.queryParameters}');
-    // log('Full Response: ${response.toString()}');
-    // log('Response Data: ${response.data}');
-    // log('-------------------------');
+    if (response.statusCode == 200) {
+      logger.i(
+          "${response.requestOptions.baseUrl}${response.requestOptions.path}");
+    } else {
+      logger.e(
+          "${response.requestOptions.baseUrl}${response.requestOptions.path}");
+    }
+    logger.i("Query params: ${response.requestOptions.queryParameters}");
+    logger.i("Full Response: ${response.toString()}");
+    logger.i("Response Data: ${response.data}");
     return handler.next(response);
   }
 }
