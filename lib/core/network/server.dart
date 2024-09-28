@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/constants/api_endpoints.dart';
 
 part 'server.g.dart';
 
@@ -15,7 +16,7 @@ Dio dio(DioRef ref) {
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         responseType: ResponseType.json,
-        baseUrl: 'https://opentdb.com/'),
+        baseUrl: ApiEndpoints.baseUrl),
   );
   dio.interceptors.add(DioInterceptor());
   return dio;

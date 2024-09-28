@@ -50,3 +50,6 @@ firebase_options.dart
 # Generated Dart code
 *.freezed.dart
 *.g.dart
+
+# FVM Version Cache
+.fvm/
