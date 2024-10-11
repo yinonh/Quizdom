@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
+import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 
@@ -149,46 +150,9 @@ class AuthScreenManager extends _$AuthScreenManager {
       state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
-          firebaseErrorMessage: _mapFirebaseErrorCodeToMessage(e));
+          firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
     } finally {
       state = state.copyWith(isLoading: false);
-    }
-  }
-
-  String _mapFirebaseErrorCodeToMessage(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'invalid-email':
-        return Strings.invalidEmail;
-      case 'user-disabled':
-        return Strings.userDisabled;
-      case 'user-not-found':
-        return Strings.userNotFound;
-      case 'wrong-password':
-        return Strings.wrongPassword;
-      case 'email-already-in-use':
-        return Strings.emailAlreadyUse;
-      case 'operation-not-allowed':
-        return Strings.operationNotAllowed;
-      case 'weak-password':
-        return Strings.passwordTooWeak;
-      case 'invalid-credential':
-        return Strings.invalidCredential;
-      case 'account-exists-with-different-credential':
-        return Strings.accountExistsWithDifferentCredential;
-      case 'invalid-verification-code':
-        return Strings.invalidVerificationCode;
-      case 'invalid-verification-id':
-        return Strings.invalidVerificationID;
-      case 'session-cookie-expired':
-        return Strings.sessionCookieExpired;
-      case 'session-cookie-revoked':
-        return Strings.sessionCookieRevoked;
-      case 'too-many-requests':
-        return Strings.tooManyRequests;
-      case 'missing-email':
-        return Strings.missingEmail;
-      default:
-        return Strings.undefinedError;
     }
   }
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 
 import 'editable_field.dart';
 
@@ -15,6 +17,31 @@ class ProfileContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(profileScreenManagerProvider);
     final profileNotifier = ref.read(profileScreenManagerProvider.notifier);
+
+    ref.listen<ProfileState>(profileScreenManagerProvider, (previous, next) {
+      if (next.firebaseErrorMessage != null) {
+        final message = next.firebaseErrorMessage!;
+        profileNotifier.deleteFirebaseMessage();
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.info(
+            message: message,
+            backgroundColor: AppConstant.onPrimary,
+            icon: Icon(
+              Icons.warning_rounded,
+              color: Colors.black.withOpacity(0.2),
+              size: 120,
+            ),
+          ),
+          snackBarPosition: SnackBarPosition.bottom,
+          padding: EdgeInsets.symmetric(
+            horizontal: calcWidth(20),
+            vertical: calcHeight(80),
+          ),
+          displayDuration: const Duration(seconds: 1, milliseconds: 500),
+        );
+      }
+    });
 
     return Container(
       width: double.infinity,
@@ -61,14 +88,29 @@ class ProfileContent extends ConsumerWidget {
                   ? EditableField(
                       controller: profileState.emailController,
                       label: Strings.email,
+                      errorText: profileState.emailErrorMessage.isNotEmpty
+                          ? profileState.emailErrorMessage
+                          : null,
                     )
                   : _buildDisplayText(
                       Strings.email, profileState.emailController.text),
-              SizedBox(height: calcHeight(8)),
+              const SizedBox(height: 8),
               if (profileState.isEditing)
                 EditableField(
-                  label: Strings.password,
-                  controller: profileState.passwordController,
+                  label: "Old Password",
+                  controller: profileState.oldPasswordController,
+                  errorText: profileState.oldPasswordErrorMessage.isNotEmpty
+                      ? profileState.oldPasswordErrorMessage
+                      : null,
+                ),
+              const SizedBox(height: 8),
+              if (profileState.isEditing)
+                EditableField(
+                  label: "New Password",
+                  controller: profileState.newPasswordController,
+                  errorText: profileState.newPasswordErrorMessage.isNotEmpty
+                      ? profileState.newPasswordErrorMessage
+                      : null,
                 ),
               SizedBox(height: calcHeight(5)),
             ],
@@ -83,7 +125,11 @@ class ProfileContent extends ConsumerWidget {
                     : Icons.edit_rounded,
                 color: AppConstant.primaryColor,
               ),
-              onPressed: profileNotifier.toggleIsEditing,
+              onPressed: profileState.isEditing
+                  ? () async {
+                      await profileNotifier.updateUserDetails();
+                    }
+                  : profileNotifier.toggleIsEditing,
             ),
           )
         ],

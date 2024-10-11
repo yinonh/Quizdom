@@ -35,37 +35,45 @@ class UserDataSource extends _$UserDataSource {
     await state.firestore.collection('users').doc(uid).set({
       'name': name,
       'email': email,
-      'lastLogin': now.toIso8601String(),
+      'lastLogin': now,
       'recentTriviaCategories': [],
       'trophies': [],
       'userXp': 0.0,
     });
   }
 
-  Future<void> updateUserXp(String userId, double userXp) async {
-    await state.firestore.collection('users').doc(userId).update({
-      'userXp': userXp,
-    });
-  }
+  Future<void> updateUser({
+    required String userId,
+    double? userXp,
+    UserAchievements? achievements,
+    String? avatarUrl,
+    DateTime? lastLogin,
+    List<int>? recentTriviaCategories,
+  }) async {
+    // Initialize the updates map
+    Map<String, dynamic> updates = {};
 
-  Future<void> updateUserAchievements(
-      String userId, UserAchievements achievements) async {
-    await state.firestore.collection('users').doc(userId).update({
-      'achievements': achievements.toJson(),
-    });
-  }
+    // Add fields to the map only if they are not null
+    if (userXp != null) {
+      updates['userXp'] = userXp;
+    }
+    if (achievements != null) {
+      updates['achievements'] = achievements.toJson();
+    }
+    if (avatarUrl != null) {
+      updates['userAvatar'] = avatarUrl;
+    }
+    if (lastLogin != null) {
+      updates['lastLogin'] = lastLogin;
+    }
+    if (recentTriviaCategories != null) {
+      updates['recentTriviaCategories'] = recentTriviaCategories;
+    }
 
-  Future<void> resetUserAchievements(String userId) async {
-    const defaultAchievements = UserAchievements(
-      correctAnswers: 0,
-      wrongAnswers: 0,
-      unanswered: 0,
-      sumResponseTime: 0.0,
-    );
-
-    await state.firestore.collection('users').doc(userId).update({
-      'achievements': defaultAchievements.toJson(),
-    });
+    // Only make the update call if there are updates to send
+    if (updates.isNotEmpty) {
+      await state.firestore.collection('users').doc(userId).update(updates);
+    }
   }
 
   Future<void> updateUserImage(String userId, File image) async {
@@ -83,12 +91,6 @@ class UserDataSource extends _$UserDataSource {
     final uploadTask = await storageRef.putString(avatarSvg);
     final downloadUrl = await uploadTask.ref.getDownloadURL();
     return downloadUrl;
-  }
-
-  Future<void> updateUserAvatar(String userId, String avatarUrl) async {
-    await state.firestore.collection('users').doc(userId).update({
-      'userAvatar': avatarUrl,
-    });
   }
 
   Future<void> deleteUserImageIfExists(String userId) async {
@@ -110,20 +112,6 @@ class UserDataSource extends _$UserDataSource {
   Future<void> deleteUserAvatar(String userId) async {
     await state.firestore.collection('users').doc(userId).update({
       'userAvatar': FieldValue.delete(),
-    });
-  }
-
-  Future<void> updateLastLogin(String userId) async {
-    final now = DateTime.now();
-    await state.firestore.collection('users').doc(userId).update({
-      'lastLogin': now.toIso8601String(),
-    });
-  }
-
-  Future<void> updateRecentTriviaCategories(
-      String userId, List<int> categories) async {
-    await state.firestore.collection('users').doc(userId).update({
-      'recentTriviaCategories': categories,
     });
   }
 

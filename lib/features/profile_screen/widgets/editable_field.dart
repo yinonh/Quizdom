@@ -5,10 +5,12 @@ class EditableField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final bool isPassword;
+  final String? errorText;
 
   const EditableField({
     required this.label,
     required this.controller,
+    this.errorText,
     this.isPassword = false,
     super.key,
   });
@@ -22,6 +24,11 @@ class EditableField extends StatelessWidget {
         obscureText: isPassword,
         decoration: InputDecoration(
           labelText: label,
+          errorText: errorText,
+          errorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          errorStyle: TextStyle(color: Colors.red),
           labelStyle: const TextStyle(
             color: Colors.black,
           ),
