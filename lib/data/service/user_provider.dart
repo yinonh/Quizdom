@@ -158,6 +158,9 @@ class User extends _$User {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(Strings.croppedUserImagePathKey, image.path);
 
+      // Check if an image already exists in Firestore, if yes, delete it
+      await _userDataSource.deleteUserAvatar(state.currentUser.uid!);
+
       final updatedUser = updateCurrentUser(userImage: image);
       state = state.copyWith(currentUser: updatedUser, imageLoading: false);
     }

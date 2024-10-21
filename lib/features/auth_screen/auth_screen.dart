@@ -205,6 +205,13 @@ class AuthScreen extends ConsumerWidget {
                     style: const TextStyle(color: AppConstant.highlightColor),
                   ),
                 ),
+                TextButton(
+                  onPressed: authNotifier.signInWithGoogle,
+                  child: const Text(
+                    "Sign in with Google",
+                    style: TextStyle(color: AppConstant.highlightColor),
+                  ),
+                ),
               ],
             ),
           ),

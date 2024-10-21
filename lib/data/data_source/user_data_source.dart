@@ -102,6 +102,16 @@ class UserDataSource extends _$UserDataSource {
     }
   }
 
+  Future<void> deleteUserAvatarIfExists(String userId) async {
+    final userDoc = await state.firestore.collection('users').doc(userId).get();
+    final userAvatarExists = userDoc.data()?['userAvatar'] != null;
+    if (userAvatarExists) {
+      await state.firestore.collection('users').doc(userId).update({
+        'userAvatar': FieldValue.delete(),
+      });
+    }
+  }
+
   Future<void> deleteUserImage(String userId) async {
     await state.firestore.collection('users').doc(userId).update({
       'userImage': FieldValue.delete(),

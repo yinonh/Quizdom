@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
 import 'package:trivia/core/common_widgets/user_avater.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -73,6 +74,7 @@ class CustomDrawer extends ConsumerWidget {
             title: Strings.logout,
             onTap: () async {
               await FirebaseAuth.instance.signOut();
+              await GoogleSignIn().signOut();
               if (context.mounted) {
                 Navigator.of(context)
                     .pushReplacementNamed(AuthScreen.routeName);

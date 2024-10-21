@@ -57,6 +57,7 @@ dependencies:
   connectivity_plus: ^6.0.5
   logger: ^2.4.0
   riverpod_lint: ^2.3.12
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
