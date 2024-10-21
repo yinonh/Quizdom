@@ -4,11 +4,10 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
-
-import 'editable_field.dart';
+import 'package:trivia/features/profile_screen/widgets/edit_user_details.dart';
+import 'package:trivia/features/profile_screen/widgets/user_details.dart';
 
 class ProfileContent extends ConsumerWidget {
   const ProfileContent({super.key});
@@ -77,42 +76,8 @@ class ProfileContent extends ConsumerWidget {
               ),
               SizedBox(height: calcHeight(16)),
               profileState.isEditing
-                  ? EditableField(
-                      label: Strings.username,
-                      controller: profileState.nameController,
-                    )
-                  : _buildDisplayText(
-                      Strings.username, profileState.nameController.text),
-              const SizedBox(height: 8),
-              profileState.isEditing
-                  ? EditableField(
-                      controller: profileState.emailController,
-                      label: Strings.email,
-                      errorText: profileState.emailErrorMessage.isNotEmpty
-                          ? profileState.emailErrorMessage
-                          : null,
-                    )
-                  : _buildDisplayText(
-                      Strings.email, profileState.emailController.text),
-              const SizedBox(height: 8),
-              if (profileState.isEditing)
-                EditableField(
-                  label: "Old Password",
-                  controller: profileState.oldPasswordController,
-                  errorText: profileState.oldPasswordErrorMessage.isNotEmpty
-                      ? profileState.oldPasswordErrorMessage
-                      : null,
-                ),
-              const SizedBox(height: 8),
-              if (profileState.isEditing)
-                EditableField(
-                  label: "New Password",
-                  controller: profileState.newPasswordController,
-                  errorText: profileState.newPasswordErrorMessage.isNotEmpty
-                      ? profileState.newPasswordErrorMessage
-                      : null,
-                ),
-              SizedBox(height: calcHeight(5)),
+                  ? const EditUserDetails()
+                  : const UserDetails()
             ],
           ),
           Positioned(
@@ -121,43 +86,15 @@ class ProfileContent extends ConsumerWidget {
             child: IconButton(
               icon: Icon(
                 profileState.isEditing
-                    ? Icons.save_rounded
+                    ? Icons.edit_off_rounded
                     : Icons.edit_rounded,
                 color: AppConstant.primaryColor,
               ),
-              onPressed: profileState.isEditing
-                  ? () async {
-                      await profileNotifier.updateUserDetails();
-                    }
-                  : profileNotifier.toggleIsEditing,
+              onPressed: profileNotifier.toggleIsEditing,
             ),
           )
         ],
       ),
-    );
-  }
-
-  Widget _buildDisplayText(String label, String text) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          "$label:",
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppConstant.highlightColor,
-          ),
-        ),
-        const SizedBox(width: 5),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black,
-          ),
-        ),
-      ],
     );
   }
 }

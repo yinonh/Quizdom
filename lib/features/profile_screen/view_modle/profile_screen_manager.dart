@@ -1,4 +1,3 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -20,10 +19,8 @@ class ProfileState with _$ProfileState {
     required bool isEditing,
     required bool isLoading,
     required TextEditingController nameController,
-    required TextEditingController emailController,
     required TextEditingController oldPasswordController,
     required TextEditingController newPasswordController,
-    required String emailErrorMessage,
     required String oldPasswordErrorMessage,
     required String newPasswordErrorMessage,
     String? firebaseErrorMessage,
@@ -40,17 +37,18 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       isEditing: false,
       isLoading: false,
       nameController: TextEditingController(text: currentUser.name),
-      emailController: TextEditingController(text: currentUser.email),
       oldPasswordController: TextEditingController(),
       newPasswordController: TextEditingController(),
-      emailErrorMessage: '',
       oldPasswordErrorMessage: '',
       newPasswordErrorMessage: '',
     );
   }
 
   void toggleIsEditing() {
-    state = state.copyWith(isEditing: !state.isEditing);
+    state = state.copyWith(
+        isEditing: !state.isEditing,
+        oldPasswordErrorMessage: '',
+        newPasswordErrorMessage: '');
   }
 
   void deleteFirebaseMessage() {
@@ -58,14 +56,8 @@ class ProfileScreenManager extends _$ProfileScreenManager {
   }
 
   Future<void> updateUserDetails() async {
-    String emailError = '';
     String oldPasswordError = '';
     String newPasswordError = '';
-
-    // Email validation
-    if (!EmailValidator.validate(state.emailController.text)) {
-      emailError = Strings.invalidEmail;
-    }
 
     // Password validation (for new password)
     if (state.newPasswordController.text.isNotEmpty &&
@@ -75,14 +67,11 @@ class ProfileScreenManager extends _$ProfileScreenManager {
 
     // Old password validation
     if (state.oldPasswordController.text.isEmpty) {
-      oldPasswordError = "Old Password Required";
+      oldPasswordError = Strings.currentPasswordRequired;
     }
 
-    if (emailError.isNotEmpty ||
-        oldPasswordError.isNotEmpty ||
-        newPasswordError.isNotEmpty) {
+    if (oldPasswordError.isNotEmpty || newPasswordError.isNotEmpty) {
       state = state.copyWith(
-        emailErrorMessage: emailError,
         oldPasswordErrorMessage: oldPasswordError,
         newPasswordErrorMessage: newPasswordError,
       );
@@ -91,7 +80,6 @@ class ProfileScreenManager extends _$ProfileScreenManager {
 
     state = state.copyWith(
       isLoading: true,
-      emailErrorMessage: '',
       oldPasswordErrorMessage: '',
       newPasswordErrorMessage: '',
     );
@@ -107,11 +95,6 @@ class ProfileScreenManager extends _$ProfileScreenManager {
 
       await currentUser.reauthenticateWithCredential(credential);
 
-      // Update email in Firebase Auth
-      if (currentUser.email != state.emailController.text) {
-        await currentUser.verifyBeforeUpdateEmail(state.emailController.text);
-      }
-
       // Update password in Firebase Auth (if provided)
       if (state.newPasswordController.text.isNotEmpty) {
         await currentUser.updatePassword(state.newPasswordController.text);
@@ -121,7 +104,6 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       await ref.read(userProvider.notifier).updateUserDetails(
             uid: currentUser.uid,
             name: state.nameController.text,
-            email: state.emailController.text,
           );
 
       // Reset the editing state

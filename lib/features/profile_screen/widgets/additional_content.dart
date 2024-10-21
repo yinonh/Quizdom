@@ -10,13 +10,12 @@ class AdditionalContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 15, left: 10, right: 10),
-      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(35.0),
-          topRight: Radius.circular(35.0),
+        borderRadius: BorderRadius.all(
+          Radius.circular(35.0),
         ),
       ),
       child: Column(

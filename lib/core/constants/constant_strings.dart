@@ -49,7 +49,7 @@ class Strings {
   // Categories Screen
   static const String recentPlayedCategories = "Recent Played Categories";
   static const String createQuiz = "Create Quiz";
-  static const String soloMode = "Solo Mode";
+  static const String soloMode = "Friendly Duel";
   static const String multiplayer = "Multiplayer";
   static const String featuredCategories = "Featured Categories";
 
@@ -66,6 +66,9 @@ class Strings {
   static const String correctAnswersText = 'Correct answers in round: ';
   static const String bestTimeText = 'Best time: ';
   static const String bestTotalScoreText = 'Best total score: ';
+  static const String currentPassword = 'Current Password';
+  static const String currentPasswordRequired = 'Current Password Required';
+  static const String newPassword = 'New Password';
 
   // Quiz Screen
   static const String question = 'Question';

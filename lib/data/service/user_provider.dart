@@ -82,7 +82,7 @@ class User extends _$User {
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>;
         final name = userData['name'];
-        final email = userData['email'];
+        final email = FirebaseAuth.instance.currentUser?.email;
 
         // Updated lastLogin to handle Timestamp
         final lastLoginTimestamp = userData['lastLogin'] as Timestamp;
@@ -120,7 +120,7 @@ class User extends _$User {
   }
 
   Future<void> saveUser(String uid, String name, String email) async {
-    await _userDataSource.saveUser(uid, name, email);
+    await _userDataSource.saveUser(uid, name);
     state = state.copyWith(
       currentUser: updateCurrentUser(uid: uid, name: name, email: email),
     );
@@ -129,16 +129,13 @@ class User extends _$User {
   Future<void> updateUserDetails({
     required String uid,
     required String name,
-    required String email,
   }) async {
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'name': name,
-      'email': email,
     });
     final updatedUser = updateCurrentUser(
       uid: uid,
       name: name,
-      email: email,
     );
     state = state.copyWith(currentUser: updatedUser);
   }

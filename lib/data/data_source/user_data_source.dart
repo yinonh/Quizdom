@@ -30,11 +30,10 @@ class UserDataSource extends _$UserDataSource {
     return await state.firestore.collection('users').doc(userId).get();
   }
 
-  Future<void> saveUser(String uid, String name, String email) async {
+  Future<void> saveUser(String uid, String name) async {
     final now = DateTime.now();
     await state.firestore.collection('users').doc(uid).set({
       'name': name,
-      'email': email,
       'lastLogin': now,
       'recentTriviaCategories': [],
       'trophies': [],

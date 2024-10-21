@@ -2,6 +2,7 @@ import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
+import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
 import 'package:trivia/core/common_widgets/loading_overly.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
@@ -115,7 +116,8 @@ class AvatarScreen extends ConsumerWidget {
               bottom: calcHeight(50),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: calcWidth(13)),
-                child: GestureDetector(
+                child: CustomButton(
+                  text: Strings.save,
                   onTap: () async {
                     if (state.selectedImage == null) {
                       avatarNotifier.saveAvatar();
@@ -123,30 +125,8 @@ class AvatarScreen extends ConsumerWidget {
                       avatarNotifier.saveImage();
                     }
                   },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: calcHeight(15)),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: AppConstant.secondaryColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppConstant.secondaryColor.withOpacity(0.5),
-                          spreadRadius: 4,
-                          blurRadius: 5,
-                          offset: const Offset(1, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Text(
-                      Strings.save,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: calcHeight(15)),
+                  color: AppConstant.secondaryColor,
                 ),
               ),
             ),

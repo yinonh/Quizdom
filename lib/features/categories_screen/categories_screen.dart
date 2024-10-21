@@ -49,7 +49,7 @@ class CategoriesScreen extends ConsumerWidget {
                               },
                             ),
                             TopButton(
-                              icon: Icons.person_2,
+                              icon: Icons.handshake_rounded,
                               label: Strings.soloMode,
                               color: AppConstant.secondaryColor,
                               onTap: () {
