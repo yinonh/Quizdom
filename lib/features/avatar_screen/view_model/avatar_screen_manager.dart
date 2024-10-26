@@ -4,12 +4,11 @@ import 'dart:typed_data';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji_controller.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 
@@ -115,8 +114,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     state.whenData((data) {
       state = AsyncValue.data(data.copyWith(isLoading: true));
     });
-    final fluttermojiController = Get.find<FluttermojiController>();
-    await fluttermojiController.setFluttermoji();
+    await ref.read(fluttermojiNotifierProvider.notifier).setFluttermoji();
     await ref.read(userProvider.notifier).setAvatar();
     state.whenData((data) {
       state = AsyncValue.data(data.copyWith(navigate: true, isLoading: false));

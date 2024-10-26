@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar2.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/service/user_provider.dart';
 
 class UserAvatar extends ConsumerWidget {
@@ -38,17 +38,9 @@ class UserAvatar extends ConsumerWidget {
                 radius: calcWidth(radius),
               )
             : userState.currentUser.avatar != null
-                ? CircleAvatar(
+                ? FluttermojiCircleAvatar(
                     backgroundColor: AppConstant.userAvatarBackground,
                     radius: calcWidth(radius),
-                    child: ClipOval(
-                      child: SvgPicture.string(
-                        userState.currentUser.avatar!,
-                        fit: BoxFit.cover,
-                        height: calcWidth(radius * 2),
-                        width: calcWidth(radius * 2),
-                      ),
-                    ),
                   )
                 : CircleAvatar(
                     backgroundColor: AppConstant.userAvatarBackground,
