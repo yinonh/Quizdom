@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar2.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/service/user_provider.dart';
 
@@ -37,15 +37,10 @@ class UserAvatar extends ConsumerWidget {
                 backgroundImage: FileImage(userState.currentUser.userImage!),
                 radius: calcWidth(radius),
               )
-            : userState.currentUser.avatar != null
-                ? FluttermojiCircleAvatar(
-                    backgroundColor: AppConstant.userAvatarBackground,
-                    radius: calcWidth(radius),
-                  )
-                : CircleAvatar(
-                    backgroundColor: AppConstant.userAvatarBackground,
-                    radius: calcWidth(radius),
-                  ),
+            : FluttermojiCircleAvatar(
+                backgroundColor: AppConstant.userAvatarBackground,
+                radius: calcWidth(radius),
+              ),
       ],
     );
   }

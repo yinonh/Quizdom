@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar2.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';

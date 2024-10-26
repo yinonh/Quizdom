@@ -1,47 +1,49 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-
-import 'fluttermoji_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'fluttermoji_provider.dart';
 
 /// This widget renders the Fluttermoji of the user on screen
 ///
 /// Accepts a [radius] which defaults to 75.0
 /// and a [backgroundColor] which defaults to blueAccent
 ///
-/// Advice the users to set up their Fluttermoji first to avoid unexpected issues.
-class FluttermojiCircleAvatar extends StatelessWidget {
+/// Advises the users to set up their Fluttermoji first to avoid unexpected issues.
+class FluttermojiCircleAvatar extends ConsumerWidget {
   final double radius;
   final Color? backgroundColor;
-  const FluttermojiCircleAvatar(
-      {super.key, this.radius = 75.0, this.backgroundColor});
+
+  const FluttermojiCircleAvatar({
+    super.key,
+    this.radius = 75.0,
+    this.backgroundColor,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    if (backgroundColor == null) {
-      CircleAvatar(radius: radius, child: buildGetX());
-    }
-    return CircleAvatar(
-        radius: radius, backgroundColor: backgroundColor, child: buildGetX());
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fluttermojiState = ref.watch(fluttermojiNotifierProvider);
 
-  GetX<FluttermojiController> buildGetX() {
-    return GetX<FluttermojiController>(
-        init: FluttermojiController(),
-        autoRemove: false,
-        builder: (snapshot) {
-          if (snapshot.fluttermoji.value.isEmpty) {
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: backgroundColor,
+      child: fluttermojiState.when(
+        data: (state) {
+          if (state.fluttermoji.isEmpty) {
             return const CupertinoActivityIndicator();
           }
           return SvgPicture.string(
-            snapshot.fluttermoji.value,
+            state.fluttermoji,
             height: radius * 1.6,
             semanticsLabel: "Your Fluttermoji",
             placeholderBuilder: (context) => const Center(
               child: CupertinoActivityIndicator(),
             ),
           );
-        });
+        },
+        loading: () => const CupertinoActivityIndicator(),
+        error: (error, stackTrace) => Center(child: Text('Error: $error')),
+      ),
+    );
   }
 }

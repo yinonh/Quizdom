@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -184,11 +185,26 @@ class AuthScreenManager extends _$AuthScreenManager {
       // Here you can save user info to your database
       final user = userCredential.user;
       if (user != null) {
-        ref.read(userProvider.notifier).saveUser(
-              user.uid,
-              user.email?.split('@')[0] ?? '',
-              user.email ?? '',
-            );
+        // Check if the user already exists in Firestore
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          // If the user doesn't exist, create the user document with default data
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'displayName': user.displayName ?? '',
+            'email': user.email ?? '',
+            // Add any default data you want to set
+          });
+        }
+
+        // Save user info to your provider
+        ref.read(userProvider.notifier).initializeUser();
       }
       state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {

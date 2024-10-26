@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
 import 'defaults.dart';
-import 'fluttermoji_controller.dart';
-import 'fluttermoji_theme_data.dart';
 import 'fluttermoji_assets/fluttermojimodel.dart';
+import 'fluttermoji_provider.dart';
+import 'fluttermoji_theme_data.dart';
 
 class FluttermojiCustomizer extends StatefulWidget {
   FluttermojiCustomizer({
@@ -48,7 +48,6 @@ class FluttermojiCustomizer extends StatefulWidget {
 
 class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
     with SingleTickerProviderStateMixin {
-  late FluttermojiController fluttermojiController;
   late TabController tabController;
   final attributesCount = 11;
   var heightFactor = 0.4, widthFactor = 0.95;
@@ -56,27 +55,21 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
   @override
   void initState() {
     super.initState();
-    Get.put(FluttermojiController());
-    fluttermojiController = Get.find<FluttermojiController>();
     tabController = TabController(length: attributesCount, vsync: this);
     tabController.addListener(() {
       setState(() {});
     });
   }
 
-  @override
-  void dispose() {
-    fluttermojiController.restoreState();
-    super.dispose();
-  }
-
-  void onTapOption(int index, int? i, AttributeItem attribute) {
-    if (index != i) {
-      setState(() {
-        fluttermojiController.selectedOptions[attribute.key] = index;
-      });
-      fluttermojiController.updatePreview();
-      if (widget.autosave) fluttermojiController.setFluttermoji();
+  void onTapOption(
+      int index, int? currentIndex, AttributeItem attribute, WidgetRef ref) {
+    if (index != currentIndex) {
+      ref
+          .read(fluttermojiNotifierProvider.notifier)
+          .setSelectedOption(attribute.key!, index);
+      if (widget.autosave) {
+        ref.read(fluttermojiNotifierProvider.notifier).setFluttermoji();
+      }
     }
   }
 
@@ -100,14 +93,32 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
     return SizedBox(
       height: widget.scaffoldHeight ?? (size.height * heightFactor),
       width: widget.scaffoldWidth ?? size.width,
-      child: body(
-        attributes: List<AttributeItem>.generate(
-            attributesCount,
-            (index) => AttributeItem(
-                iconAsset: widget.attributeIcons[index],
-                title: widget.attributeTitles[index],
-                key: attributeKeys[index]),
-            growable: false),
+      child: Consumer(
+        builder: (context, ref, _) {
+          final fluttermojiState = ref.watch(fluttermojiNotifierProvider);
+
+          return fluttermojiState.when(
+            data: (data) {
+              return body(
+                attributes: List<AttributeItem>.generate(
+                  attributesCount,
+                  (index) => AttributeItem(
+                    iconAsset: widget.attributeIcons[index],
+                    title: widget.attributeTitles[index],
+                    key: attributeKeys[index],
+                  ),
+                  growable: false,
+                ),
+                state: data,
+                ref: ref,
+              );
+            },
+            loading: () => const Center(child: CupertinoActivityIndicator()),
+            error: (err, stack) {
+              throw (err);
+            },
+          );
+        },
       ),
     );
   }
@@ -172,7 +183,11 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
     );
   }
 
-  Widget body({required List<AttributeItem> attributes}) {
+  Widget body({
+    required List<AttributeItem> attributes,
+    required FluttermojiState state,
+    required WidgetRef ref,
+  }) {
     var size = MediaQuery.of(context).size;
 
     var attributeGrids = <Widget>[];
@@ -182,23 +197,17 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
         attributeIndex < attributes.length;
         attributeIndex++) {
       var attribute = attributes[attributeIndex];
-      if (!fluttermojiController.selectedOptions.containsKey(attribute.key)) {
-        fluttermojiController.selectedOptions[attribute.key] = 0;
-      }
-
+      final selectedIndex = state.selectedOptions[attribute.key] ?? 0;
       var attributeListLength =
           fluttermojiProperties[attribute.key!]!.property!.length;
 
       int gridCrossAxisCount;
-
       if (attributeListLength < 12)
         gridCrossAxisCount = 3;
       else if (attributeListLength < 9)
         gridCrossAxisCount = 2;
       else
         gridCrossAxisCount = 4;
-
-      int? i = fluttermojiController.selectedOptions[attribute.key];
 
       var _tileGrid = GridView.builder(
         physics: widget.theme.scrollPhysics,
@@ -209,13 +218,13 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
           mainAxisSpacing: 8.0,
         ),
         itemBuilder: (BuildContext context, int index) => InkWell(
-          onTap: () => onTapOption(index, i, attribute),
+          onTap: () => onTapOption(index, selectedIndex, attribute, ref),
           child: AnimatedContainer(
             duration: Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              color: index == i ? Colors.white : Colors.transparent,
+              color: index == selectedIndex ? Colors.white : Colors.transparent,
               borderRadius: BorderRadius.circular(8.0),
-              boxShadow: index == i
+              boxShadow: index == selectedIndex
                   ? [
                       const BoxShadow(
                         color: Colors.black26,
@@ -228,7 +237,9 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
             margin: widget.theme.tileMargin,
             padding: widget.theme.tilePadding,
             child: SvgPicture.string(
-              fluttermojiController.getComponentSVG(attribute.key, index),
+              ref
+                  .read(fluttermojiNotifierProvider.notifier)
+                  .getComponentSVG(attribute.key, index),
               height: 20,
               semanticsLabel: 'Your Fluttermoji',
               placeholderBuilder: (context) => const Center(
@@ -244,10 +255,9 @@ class _FluttermojiCustomizerState extends State<FluttermojiCustomizer>
               vertical: calcHeight(5), horizontal: calcWidth(10)),
           child: SvgPicture.asset(
             attribute.iconAsset!,
-            height: attribute.iconsize ??
-                (widget.scaffoldHeight != null
-                    ? widget.scaffoldHeight! / heightFactor * 0.03
-                    : size.height * 0.03),
+            height: widget.scaffoldHeight != null
+                ? widget.scaffoldHeight! / heightFactor * 0.03
+                : size.height * 0.03,
             colorFilter: ColorFilter.mode(
                 attributeIndex == tabController.index
                     ? widget.theme.selectedIconColor
