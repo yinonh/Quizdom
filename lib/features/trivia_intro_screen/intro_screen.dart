@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
 import 'package:trivia/core/common_widgets/user_avater.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -16,155 +17,158 @@ class TriviaIntroScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final introState = ref.watch(introScreenManagerProvider);
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background with diagonal split
-          Positioned.fill(
-            child: CustomPaint(
-              painter: DiagonalSplitPainter(),
-            ),
-          ),
-
-          // User details in the top right corner
-          Positioned(
-            top: 70,
-            right: 50,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const UserAvatar(
-                  radius: 60,
-                ), // competition image
-                const SizedBox(width: 10),
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  margin: const EdgeInsets.symmetric(vertical: 3),
-                  decoration: const BoxDecoration(
-                    color: AppConstant.highlightColor,
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  child: const UserStars(),
-                ),
-                const Text(
-                  'User XP: 1200',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-
-          Positioned(
-            bottom: 70,
-            left: 50,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const UserAvatar(
-                  radius: 60,
-                ), // competition image
-                const SizedBox(width: 10),
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  margin: const EdgeInsets.symmetric(vertical: 3),
-                  decoration: const BoxDecoration(
-                    color: AppConstant.highlightColor,
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                  ),
-                  child: const UserStars(),
-                ),
-                const Text(
-                  'User XP: 1200',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
+    return BaseScreen(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Background with diagonal split
+            Positioned.fill(
+              child: CustomPaint(
+                painter: DiagonalSplitPainter(),
               ),
+            ),
+
+            // User details in the top right corner
+            Positioned(
+              top: 70,
+              right: 50,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '${introState.category.name}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
+                  const UserAvatar(
+                    radius: 60,
+                  ), // competition image
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.symmetric(vertical: 3),
+                    decoration: const BoxDecoration(
+                      color: AppConstant.highlightColor,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: const UserStars(),
                   ),
-                  SizedBox(height: calcHeight(10)),
                   const Text(
-                    'Number of Questions: 10',
-                    style: TextStyle(fontSize: 16),
+                    'User XP: 1200',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
-                  SizedBox(height: calcHeight(10)),
-                  const Text(
-                    'Hardness: Medium',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: calcHeight(10)),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                            padding: const EdgeInsets.all(12.0),
-                            decoration: BoxDecoration(
-                              color:
-                                  AppConstant.secondaryColor.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            alignment: Alignment.center, // Center the text
-                            child: const Text(
-                              "back",
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: calcWidth(10),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushReplacementNamed(
-                                context, QuizScreen.routeName);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                            padding: const EdgeInsets.all(12.0),
-                            decoration: BoxDecoration(
-                              color:
-                                  AppConstant.secondaryColor.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            alignment: Alignment.center, // Center the text
-                            child: const Text(
-                              "continue",
-                              style: TextStyle(
-                                  fontSize: 16.0, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),
-          ),
-        ],
+
+            Positioned(
+              bottom: 70,
+              left: 50,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const UserAvatar(
+                    radius: 60,
+                  ), // competition image
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    margin: const EdgeInsets.symmetric(vertical: 3),
+                    decoration: const BoxDecoration(
+                      color: AppConstant.highlightColor,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: const UserStars(),
+                  ),
+                  const Text(
+                    'User XP: 1200',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${introState.category.name}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: calcHeight(10)),
+                    const Text(
+                      'Number of Questions: 10',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: calcHeight(10)),
+                    const Text(
+                      'Hardness: Medium',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: calcHeight(10)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 8.0),
+                              padding: const EdgeInsets.all(12.0),
+                              decoration: BoxDecoration(
+                                color:
+                                    AppConstant.secondaryColor.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              alignment: Alignment.center, // Center the text
+                              child: const Text(
+                                "back",
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: calcWidth(10),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, QuizScreen.routeName);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 8.0),
+                              padding: const EdgeInsets.all(12.0),
+                              decoration: BoxDecoration(
+                                color:
+                                    AppConstant.secondaryColor.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              alignment: Alignment.center, // Center the text
+                              child: const Text(
+                                "continue",
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

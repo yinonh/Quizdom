@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
+import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -25,7 +24,6 @@ class AuthState with _$AuthState {
     required String passwordErrorMessage,
     required String confirmPasswordErrorMessage,
     String? firebaseErrorMessage,
-    required bool isLoading,
     required bool navigate,
     required GlobalKey formKey,
   }) = _AuthState;
@@ -33,9 +31,6 @@ class AuthState with _$AuthState {
 
 @riverpod
 class AuthScreenManager extends _$AuthScreenManager {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
   @override
   AuthState build() {
     return AuthState(
@@ -48,13 +43,13 @@ class AuthScreenManager extends _$AuthScreenManager {
       emailErrorMessage: '',
       passwordErrorMessage: '',
       confirmPasswordErrorMessage: '',
-      isLoading: false,
       navigate: false,
       formKey: GlobalKey<FormState>(),
     );
   }
 
   void toggleFormMode() {
+    ref.read(loadingProvider.notifier).state = false;
     state = state.copyWith(
       isLogin: !state.isLogin,
       showPassword: false,
@@ -66,7 +61,6 @@ class AuthScreenManager extends _$AuthScreenManager {
       passwordErrorMessage: '',
       confirmPasswordErrorMessage: '',
       firebaseErrorMessage: null,
-      isLoading: false,
       navigate: false,
       formKey: GlobalKey<FormState>(),
     );
@@ -96,6 +90,10 @@ class AuthScreenManager extends _$AuthScreenManager {
     state = state.copyWith(firebaseErrorMessage: null);
   }
 
+  void resetNavigate() {
+    state = state.copyWith(navigate: false);
+  }
+
   Future<void> submit() async {
     String emailError = '';
     String passwordError = '';
@@ -122,90 +120,34 @@ class AuthScreenManager extends _$AuthScreenManager {
       return;
     }
 
+    ref.read(loadingProvider.notifier).state = true;
     state = state.copyWith(
-      isLoading: true,
-      emailErrorMessage: '',
-      passwordErrorMessage: '',
-      confirmPasswordErrorMessage: '',
-    );
+        emailErrorMessage: '',
+        passwordErrorMessage: '',
+        confirmPasswordErrorMessage: '');
 
     try {
-      UserCredential userCredential;
       if (state.isLogin) {
-        userCredential = await _auth.signInWithEmailAndPassword(
-          email: state.email,
-          password: state.password,
-        );
-        await ref.read(userProvider.notifier).initializeUser();
-        ref.read(userProvider.notifier).updateLastLogin();
+        await ref
+            .read(authProvider.notifier)
+            .signIn(state.email, state.password);
       } else {
-        userCredential = await _auth.createUserWithEmailAndPassword(
-          email: state.email,
-          password: state.password,
-        );
-
-        final user = userCredential.user;
-        if (user != null) {
-          ref.read(userProvider.notifier).saveUser(
-              user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
-        }
+        await ref
+            .read(authProvider.notifier)
+            .createUser(state.email, state.password);
       }
       state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
     } finally {
-      state = state.copyWith(isLoading: false);
+      ref.read(loadingProvider.notifier).state = false;
     }
-  }
-
-  void resetNavigate() {
-    state = state.copyWith(navigate: false);
   }
 
   Future<void> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // This token can be used to sign in the user
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-
-      // Here you can save user info to your database
-      final user = userCredential.user;
-      if (user != null) {
-        // Check if the user already exists in Firestore
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
-
-        if (!userDoc.exists) {
-          // If the user doesn't exist, create the user document with default data
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-            'displayName': user.displayName ?? '',
-            'email': user.email ?? '',
-            // Add any default data you want to set
-          });
-        }
-
-        // Save user info to your provider
-        ref.read(userProvider.notifier).initializeUser();
-      }
+      await ref.read(authProvider.notifier).signInWithGoogle();
       state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(

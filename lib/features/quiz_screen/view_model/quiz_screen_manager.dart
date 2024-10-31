@@ -115,7 +115,7 @@ class QuizScreenManager extends _$QuizScreenManager {
   }
 
   void selectAnswer(int index) {
-    final userNotifier = ref.read(userProvider.notifier);
+    final userNotifier = ref.read(authProvider.notifier);
     state.whenData(
       (quizState) {
         if (quizState.selectedAnswerIndex == null) {

@@ -1,13 +1,16 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
 import 'package:trivia/data/models/user_achievements.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -15,20 +18,23 @@ part 'user_provider.g.dart';
 @freezed
 class UserState with _$UserState {
   const factory UserState({
+    required User? firebaseUser,
     required TriviaUser currentUser,
     required bool imageLoading,
   }) = _UserState;
 }
 
 @Riverpod(keepAlive: true)
-class User extends _$User {
+class Auth extends _$Auth {
   late final UserDataSource _userDataSource;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   UserState build() {
     _userDataSource = ref.read(userDataSourceProvider.notifier);
 
     return UserState(
+      firebaseUser: FirebaseAuth.instance.currentUser,
       currentUser: TriviaUser(
         achievements: const UserAchievements(
           correctAnswers: 0,
@@ -204,11 +210,11 @@ class User extends _$User {
   }
 
   Future<String?> setAvatar() async {
-    final prefs = await SharedPreferences.getInstance();
-    final avatarSvg = prefs.getString(Strings.userAvatarKey) ?? "";
+    final fluttermojiState = ref.read(fluttermojiNotifierProvider);
+    final avatarSvg = fluttermojiState.value?.fluttermoji;
     final userId = state.currentUser.uid;
 
-    if (userId == null) return null;
+    if (userId == null || avatarSvg == null) return null;
 
     // Upload the avatar SVG to Firebase Storage and get the download URL
     final avatarUrl =
@@ -216,9 +222,6 @@ class User extends _$User {
 
     // Update the avatar URL in Firestore
     await _userDataSource.updateUser(userId: userId, avatarUrl: avatarUrl);
-
-    // Remove the locally stored cropped user image
-    await prefs.remove(Strings.croppedUserImagePathKey);
 
     // Check if an image already exists in Firestore, if yes, delete it
     await _userDataSource.deleteUserImageIfExists(userId);
@@ -279,5 +282,62 @@ class User extends _$User {
 
     // await _userDataSource.updateUser(
     //     userId: state.currentUser.uid!, achievements: updatedAchievements);
+  }
+
+  Future<UserCredential> signIn(String email, String password) async {
+    final userCredential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    await initializeUser();
+    updateLastLogin();
+    return userCredential;
+  }
+
+  Future<UserCredential> createUser(String email, String password) async {
+    final userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final user = userCredential.user;
+    if (user != null) {
+      await saveUser(
+          user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
+    }
+    return userCredential;
+  }
+
+  Future<void> signInWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    if (googleUser == null) {
+      throw FirebaseAuthException(code: 'ERROR_ABORTED_BY_USER');
+    }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final userCredential = await _auth.signInWithCredential(credential);
+    final user = userCredential.user;
+
+    if (user != null) {
+      await initializeUser();
+    }
+  }
+
+  bool isGoogleSignIn() {
+    if (state.firebaseUser?.providerData.isEmpty ?? true) {
+      return false;
+    }
+    for (var userInfo in state.firebaseUser!.providerData) {
+      if (userInfo.providerId == 'google.com') {
+        return true;
+      }
+    }
+    return false;
   }
 }

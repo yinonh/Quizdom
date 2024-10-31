@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
 import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 
 class AuthScreen extends ConsumerWidget {
   static const String routeName = Strings.authRouteName;
@@ -51,120 +51,121 @@ class AuthScreen extends ConsumerWidget {
       }
     });
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          SvgPicture.asset(
-            Strings.authBackground,
-            fit: BoxFit.cover,
-            height: double.infinity, //MediaQuery.of(context).size.height,
-            width: double.infinity, //MediaQuery.of(context).size.width,
-          ),
-          Positioned(
-            left: 30,
-            top: 100,
-            child: Text(
-              !authState.isLogin ? Strings.createAccount : Strings.welcomeBack,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: AppConstant.onPrimary,
-                shadows: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.3),
-                    spreadRadius: 4,
-                    blurRadius: 5,
-                    offset: const Offset(1, 2),
-                  ),
-                ],
+    return BaseScreen(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: [
+            SvgPicture.asset(
+              Strings.authBackground,
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            Positioned(
+              left: 30,
+              top: 100,
+              child: Text(
+                !authState.isLogin
+                    ? Strings.createAccount
+                    : Strings.welcomeBack,
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: AppConstant.onPrimary,
+                  shadows: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.3),
+                      spreadRadius: 4,
+                      blurRadius: 5,
+                      offset: const Offset(1, 2),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Form(
-                    key: authState.formKey,
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          label: Strings.email,
-                          keyboardType: TextInputType.emailAddress,
-                          prefixIcon: Icons.email_rounded,
-                          onChanged: authNotifier.setEmail,
-                          suffixIcon: authState.email.isNotEmpty &&
-                                  EmailValidator.validate(authState.email)
-                              ? const Icon(Icons.check_circle_rounded,
-                                  color: Colors.white)
-                              : const SizedBox.shrink(),
-                          errorText: authState.emailErrorMessage.isNotEmpty
-                              ? authState.emailErrorMessage
-                              : null,
-                        ),
-                        SizedBox(
-                          height: calcHeight(20),
-                        ),
-                        CustomTextField(
-                          label: Strings.password,
-                          prefixIcon: Icons.lock_rounded,
-                          onChanged: authNotifier.setPassword,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              authState.showPassword
-                                  ? Icons.visibility_rounded
-                                  : Icons.visibility_off_rounded,
-                              color: Colors.white,
-                            ),
-                            onPressed: authNotifier.toggleShowPassword,
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Form(
+                      key: authState.formKey,
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            label: Strings.email,
+                            keyboardType: TextInputType.emailAddress,
+                            prefixIcon: Icons.email_rounded,
+                            onChanged: authNotifier.setEmail,
+                            suffixIcon: authState.email.isNotEmpty &&
+                                    EmailValidator.validate(authState.email)
+                                ? const Icon(Icons.check_circle_rounded,
+                                    color: Colors.white)
+                                : const SizedBox.shrink(),
+                            errorText: authState.emailErrorMessage.isNotEmpty
+                                ? authState.emailErrorMessage
+                                : null,
                           ),
-                          errorText: authState.passwordErrorMessage.isNotEmpty
-                              ? authState.passwordErrorMessage
-                              : null,
-                          obscureText: !authState.showPassword,
-                        ),
-                        if (!authState.isLogin) ...[
                           SizedBox(
                             height: calcHeight(20),
                           ),
                           CustomTextField(
-                            label: Strings.confirmPassword,
+                            label: Strings.password,
                             prefixIcon: Icons.lock_rounded,
-                            onChanged: authNotifier.setConfirmPassword,
+                            onChanged: authNotifier.setPassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                authState.showConfirmPassword
+                                authState.showPassword
                                     ? Icons.visibility_rounded
                                     : Icons.visibility_off_rounded,
                                 color: Colors.white,
                               ),
-                              onPressed: authNotifier.toggleShowConfirmPassword,
+                              onPressed: authNotifier.toggleShowPassword,
                             ),
-                            errorText:
-                                authState.confirmPasswordErrorMessage.isNotEmpty
-                                    ? authState.confirmPasswordErrorMessage
-                                    : null,
-                            obscureText: !authState.showConfirmPassword,
+                            errorText: authState.passwordErrorMessage.isNotEmpty
+                                ? authState.passwordErrorMessage
+                                : null,
+                            obscureText: !authState.showPassword,
                           ),
+                          if (!authState.isLogin) ...[
+                            SizedBox(
+                              height: calcHeight(20),
+                            ),
+                            CustomTextField(
+                              label: Strings.confirmPassword,
+                              prefixIcon: Icons.lock_rounded,
+                              onChanged: authNotifier.setConfirmPassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  authState.showConfirmPassword
+                                      ? Icons.visibility_rounded
+                                      : Icons.visibility_off_rounded,
+                                  color: Colors.white,
+                                ),
+                                onPressed:
+                                    authNotifier.toggleShowConfirmPassword,
+                              ),
+                              errorText: authState
+                                      .confirmPasswordErrorMessage.isNotEmpty
+                                  ? authState.confirmPasswordErrorMessage
+                                  : null,
+                              obscureText: !authState.showConfirmPassword,
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 10,
-            child: Column(
-              children: [
-                if (authState.isLoading)
-                  const CustomProgressIndicator()
-                else
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 10,
+              child: Column(
+                children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 13.0),
                     child: GestureDetector(
@@ -195,27 +196,28 @@ class AuthScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                SizedBox(height: calcHeight(10)),
-                TextButton(
-                  onPressed: authNotifier.toggleFormMode,
-                  child: Text(
-                    authState.isLogin
-                        ? Strings.switchToSignUp
-                        : Strings.switchToLogin,
-                    style: const TextStyle(color: AppConstant.highlightColor),
+                  SizedBox(height: calcHeight(10)),
+                  TextButton(
+                    onPressed: authNotifier.toggleFormMode,
+                    child: Text(
+                      authState.isLogin
+                          ? Strings.switchToSignUp
+                          : Strings.switchToLogin,
+                      style: const TextStyle(color: AppConstant.highlightColor),
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: authNotifier.signInWithGoogle,
-                  child: const Text(
-                    "Sign in with Google",
-                    style: TextStyle(color: AppConstant.highlightColor),
+                  TextButton(
+                    onPressed: authNotifier.signInWithGoogle,
+                    child: const Text(
+                      "Sign in with Google",
+                      style: TextStyle(color: AppConstant.highlightColor),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

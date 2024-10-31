@@ -13,7 +13,7 @@ class UserAvatar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider);
+    final userState = ref.watch(authProvider);
     if (userState.imageLoading) {
       return const Center(
         child: CircularProgressIndicator(),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -28,58 +29,60 @@ class ResultsScreen extends ConsumerWidget {
       },
     );
 
-    return Scaffold(
-      appBar: UserAppBar(
-        prefix: IconButton(
-          icon: const Icon(
-            CupertinoIcons.back,
-            color: Colors.white,
+    return BaseScreen(
+      child: Scaffold(
+        appBar: UserAppBar(
+          prefix: IconButton(
+            icon: const Icon(
+              CupertinoIcons.back,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
-      ),
-      body: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
-        child: resultState.when(
-          data: (data) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: calcHeight(20)),
-                StatCard(
-                  title: Strings.correctAnswers,
-                  value: data.userAchievements.correctAnswers.toString(),
-                  icon: Icons.check_circle,
-                  color: Colors.green,
-                ),
-                SizedBox(height: calcHeight(10)),
-                StatCard(
-                  title: Strings.wrongAnswers,
-                  value: data.userAchievements.wrongAnswers.toString(),
-                  icon: Icons.cancel,
-                  color: Colors.red,
-                ),
-                SizedBox(height: calcHeight(10)),
-                StatCard(
-                  title: Strings.didntAnswer,
-                  value: data.userAchievements.unanswered.toString(),
-                  icon: Icons.help_outline,
-                  color: Colors.grey,
-                ),
-                SizedBox(height: calcHeight(10)),
-                StatCard(
-                  title: Strings.averageTime,
-                  value: resultNotifier.getTimeAvg().toStringAsFixed(2),
-                  icon: Icons.timer,
-                  color: Colors.blue,
-                ),
-              ],
-            );
-          },
-          error: (_, __) => const SizedBox(),
-          loading: () => const Center(child: CustomProgressIndicator()),
+        body: AnimatedSwitcher(
+          duration: const Duration(seconds: 1),
+          child: resultState.when(
+            data: (data) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: calcHeight(20)),
+                  StatCard(
+                    title: Strings.correctAnswers,
+                    value: data.userAchievements.correctAnswers.toString(),
+                    icon: Icons.check_circle,
+                    color: Colors.green,
+                  ),
+                  SizedBox(height: calcHeight(10)),
+                  StatCard(
+                    title: Strings.wrongAnswers,
+                    value: data.userAchievements.wrongAnswers.toString(),
+                    icon: Icons.cancel,
+                    color: Colors.red,
+                  ),
+                  SizedBox(height: calcHeight(10)),
+                  StatCard(
+                    title: Strings.didntAnswer,
+                    value: data.userAchievements.unanswered.toString(),
+                    icon: Icons.help_outline,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: calcHeight(10)),
+                  StatCard(
+                    title: Strings.averageTime,
+                    value: resultNotifier.getTimeAvg().toStringAsFixed(2),
+                    icon: Icons.timer,
+                    color: Colors.blue,
+                  ),
+                ],
+              );
+            },
+            error: (_, __) => const SizedBox(),
+            loading: () => const Center(child: CustomProgressIndicator()),
+          ),
         ),
       ),
     );

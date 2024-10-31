@@ -8,9 +8,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 
 part 'avatar_screen_manager.freezed.dart';
 part 'avatar_screen_manager.g.dart';
@@ -23,7 +24,6 @@ class AvatarState with _$AvatarState {
     File? originalImage,
     required CustomImageCropController cropController,
     @Default(false) showTrashIcon,
-    @Default(false) bool isLoading,
     @Default(false) navigate,
   }) = _AvatarState;
 }
@@ -32,7 +32,7 @@ class AvatarState with _$AvatarState {
 class AvatarScreenManager extends _$AvatarScreenManager {
   @override
   Future<AvatarState> build() async {
-    final currentUser = ref.read(userProvider).currentUser;
+    final currentUser = ref.read(authProvider).currentUser;
     File? userImage = currentUser.userImage;
     final prefs = await SharedPreferences.getInstance();
     final originalImagePath = prefs.getString(Strings.originalUserImagePathKey);
@@ -71,9 +71,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
   Future<void> saveImage() async {
     state.whenData((data) async {
-      state.whenData((data) {
-        state = AsyncValue.data(data.copyWith(isLoading: true));
-      });
+      ref.read(loadingProvider.notifier).state = true;
       final MemoryImage? croppedImage = await data.cropController.onCropImage();
 
       if (croppedImage != null) {
@@ -96,9 +94,10 @@ class AvatarScreenManager extends _$AvatarScreenManager {
         await prefs.setString(
             Strings.originalUserImagePathKey, originalImagePath);
 
-        await ref.read(userProvider.notifier).setImage(file);
+        await ref.read(authProvider.notifier).setImage(file);
       }
-      state = AsyncValue.data(data.copyWith(navigate: true, isLoading: false));
+      state = AsyncValue.data(data.copyWith(navigate: true));
+      ref.read(loadingProvider.notifier).state = false;
     });
   }
 
@@ -111,13 +110,14 @@ class AvatarScreenManager extends _$AvatarScreenManager {
   }
 
   Future<void> saveAvatar() async {
-    state.whenData((data) {
-      state = AsyncValue.data(data.copyWith(isLoading: true));
-    });
+    ref.read(loadingProvider.notifier).state = true;
     await ref.read(fluttermojiNotifierProvider.notifier).setFluttermoji();
-    await ref.read(userProvider.notifier).setAvatar();
-    state.whenData((data) {
-      state = AsyncValue.data(data.copyWith(navigate: true, isLoading: false));
-    });
+    await ref.read(authProvider.notifier).setAvatar();
+    state.whenData(
+      (data) {
+        state = AsyncValue.data(data.copyWith(navigate: true));
+      },
+    );
+    ref.read(loadingProvider.notifier).state = false;
   }
 }

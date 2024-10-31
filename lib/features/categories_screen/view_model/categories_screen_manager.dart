@@ -19,20 +19,20 @@ class CategoriesState with _$CategoriesState {
 @riverpod
 class CategoriesScreenManager extends _$CategoriesScreenManager {
   Trivia? _triviaProviderNotifier;
-  User? _userProviderNotifier;
+  Auth? _userProviderNotifier;
 
   Trivia? get triviaProviderNotifier {
     return _triviaProviderNotifier ??= ref.read(triviaProvider.notifier);
   }
 
-  User? get userProviderNotifier {
-    return _userProviderNotifier ??= ref.read(userProvider.notifier);
+  Auth? get userProviderNotifier {
+    return _userProviderNotifier ??= ref.read(authProvider.notifier);
   }
 
   @override
   Future<CategoriesState> build() async {
     // Fetch necessary data
-    final currentUser = ref.watch(userProvider).currentUser;
+    final currentUser = ref.watch(authProvider).currentUser;
     return CategoriesState(
       categories: await triviaProviderNotifier?.getCategories() ??
           const TriviaCategories(),

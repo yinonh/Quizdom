@@ -21,12 +21,12 @@ class ResultScreenManager extends _$ResultScreenManager {
   @override
   Future<ResultState> build() async {
     return ResultState(
-      userAchievements: ref.read(userProvider).currentUser.achievements,
+      userAchievements: ref.read(authProvider).currentUser.achievements,
     );
   }
 
   double getTimeAvg() {
-    final achievements = ref.read(userProvider).currentUser.achievements;
+    final achievements = ref.read(authProvider).currentUser.achievements;
     final totalQuestions = achievements.correctAnswers +
         achievements.wrongAnswers +
         achievements.unanswered;
@@ -38,6 +38,6 @@ class ResultScreenManager extends _$ResultScreenManager {
   }
 
   void addXpToUser() {
-    ref.read(userProvider.notifier).addXp(5.0);
+    ref.read(authProvider.notifier).addXp(5.0);
   }
 }

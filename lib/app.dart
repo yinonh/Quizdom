@@ -35,7 +35,7 @@ class MyApp extends ConsumerWidget {
     }
 
     return FutureBuilder(
-      future: ref.read(userProvider.notifier).initializeUser(),
+      future: ref.read(authProvider.notifier).initializeUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(

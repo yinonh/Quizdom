@@ -39,7 +39,7 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(userProvider);
+    final userState = ref.watch(authProvider);
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.7,
       backgroundColor: AppConstant.primaryColor,

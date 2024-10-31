@@ -21,24 +21,29 @@ class EditUserDetails extends ConsumerWidget {
           label: Strings.username,
           controller: profileState.nameController,
         ),
-        const SizedBox(height: 8),
-        EditableField(
-          label: Strings.currentPassword,
-          isPassword: true,
-          controller: profileState.oldPasswordController,
-          errorText: profileState.oldPasswordErrorMessage.isNotEmpty
-              ? profileState.oldPasswordErrorMessage
-              : null,
-        ),
-        const SizedBox(height: 8),
-        EditableField(
-          label: Strings.newPassword,
-          isPassword: true,
-          controller: profileState.newPasswordController,
-          errorText: profileState.newPasswordErrorMessage.isNotEmpty
-              ? profileState.newPasswordErrorMessage
-              : null,
-        ),
+        if (!profileState.isGoogleAuth)
+          Column(
+            children: [
+              const SizedBox(height: 8),
+              EditableField(
+                label: Strings.currentPassword,
+                isPassword: true,
+                controller: profileState.oldPasswordController,
+                errorText: profileState.oldPasswordErrorMessage.isNotEmpty
+                    ? profileState.oldPasswordErrorMessage
+                    : null,
+              ),
+              const SizedBox(height: 8),
+              EditableField(
+                label: Strings.newPassword,
+                isPassword: true,
+                controller: profileState.newPasswordController,
+                errorText: profileState.newPasswordErrorMessage.isNotEmpty
+                    ? profileState.newPasswordErrorMessage
+                    : null,
+              ),
+            ],
+          ),
         SizedBox(height: calcHeight(8)),
         CustomButton(
           text: Strings.save,
