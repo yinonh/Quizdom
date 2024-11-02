@@ -31,11 +31,6 @@ class FluttermojiState with _$FluttermojiState {
 class FluttermojiNotifier extends _$FluttermojiNotifier {
   @override
   Future<FluttermojiState> build() async {
-    return await _loadFluttermojiOptions();
-  }
-
-  /// Load the fluttermoji options from Firestore, or defaults if none exist.
-  Future<FluttermojiState> _loadFluttermojiOptions() async {
     final options = await getFluttermojiOptions();
     final fluttermojiSvg = getFluttermojiFromOptions(options);
 

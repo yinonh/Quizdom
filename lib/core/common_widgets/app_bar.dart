@@ -5,8 +5,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Widget? leading;
   final List<Widget>? actions;
+  final void Function()? onBack;
+
   const CustomAppBar(
-      {required this.title, this.leading, this.actions, super.key});
+      {required this.title,
+      this.leading,
+      this.actions,
+      this.onBack,
+      super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -35,6 +41,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         color: Colors.white,
                       ),
                       onPressed: () {
+                        if (onBack != null) {
+                          onBack!();
+                        }
                         Navigator.pop(context);
                       })
                   : null),

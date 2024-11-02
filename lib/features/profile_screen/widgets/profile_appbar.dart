@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 
-class ProfileAppbar extends ConsumerWidget {
+class ProfileAppbar extends StatelessWidget {
   const ProfileAppbar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return CustomAppBar(
       title: Strings.profile,
       leading: IconButton(

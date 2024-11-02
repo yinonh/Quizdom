@@ -20,6 +20,8 @@ part 'avatar_screen_manager.g.dart';
 class AvatarState with _$AvatarState {
   const factory AvatarState({
     required String userName,
+    required bool showImage,
+    String? currentImage,
     File? selectedImage,
     File? originalImage,
     required CustomImageCropController cropController,
@@ -33,26 +35,33 @@ class AvatarScreenManager extends _$AvatarScreenManager {
   @override
   Future<AvatarState> build() async {
     final currentUser = ref.read(authProvider).currentUser;
-    File? userImage = currentUser.userImage;
+    String? userImage = currentUser.imageUrl;
     final prefs = await SharedPreferences.getInstance();
     final originalImagePath = prefs.getString(Strings.originalUserImagePathKey);
     final originalImage =
-        originalImagePath != null ? File(originalImagePath) : userImage;
+        originalImagePath != null ? File(originalImagePath) : null;
     return AvatarState(
       userName: currentUser.name ?? "",
-      selectedImage: userImage,
+      showImage: userImage != null,
+      currentImage: userImage,
+      selectedImage: null,
       originalImage: originalImage,
       cropController: CustomImageCropController(),
     );
   }
 
   void switchImage(XFile? image) {
-    state.whenData((data) {
-      state = AsyncValue.data(data.copyWith(
-        originalImage: image != null ? File(image.path) : null,
-        selectedImage: image != null ? File(image.path) : null,
-      ));
-    });
+    state.whenData(
+      (data) {
+        state = AsyncValue.data(
+          data.copyWith(
+            originalImage: image != null ? File(image.path) : null,
+            selectedImage: image != null ? File(image.path) : null,
+            showImage: image != null,
+          ),
+        );
+      },
+    );
   }
 
   Future<File> convertMemoryImageToFile(
@@ -119,5 +128,9 @@ class AvatarScreenManager extends _$AvatarScreenManager {
       },
     );
     ref.read(loadingProvider.notifier).state = false;
+  }
+
+  Future<void> revertChanges() async {
+    await ref.read(fluttermojiNotifierProvider.notifier).restoreState();
   }
 }

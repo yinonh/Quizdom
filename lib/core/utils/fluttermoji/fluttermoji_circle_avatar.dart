@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/network/server.dart';
 import 'fluttermoji_provider.dart';
 
 /// This widget renders the Fluttermoji of the user on screen
@@ -30,18 +31,19 @@ class FluttermojiCircleAvatar extends ConsumerWidget {
       child: fluttermojiState.when(
         data: (state) {
           if (state.fluttermoji.isEmpty) {
-            return const CupertinoActivityIndicator();
+            logger.e("fluttermoji avatar is empty");
+            return const CircularProgressIndicator();
           }
           return SvgPicture.string(
             state.fluttermoji,
             height: radius * 1.6,
             semanticsLabel: "Your Fluttermoji",
             placeholderBuilder: (context) => const Center(
-              child: CupertinoActivityIndicator(),
+              child: CircularProgressIndicator(),
             ),
           );
         },
-        loading: () => const CupertinoActivityIndicator(),
+        loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) => Center(child: Text('Error: $error')),
       ),
     );

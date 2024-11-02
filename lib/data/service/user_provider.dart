@@ -5,9 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
+
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
 import 'package:trivia/data/models/user_achievements.dart';
@@ -26,13 +24,12 @@ class UserState with _$UserState {
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {
-  late final UserDataSource _userDataSource;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  late final UserDataSource _userDataSource =
+      ref.read(userDataSourceProvider.notifier);
 
   @override
   UserState build() {
-    _userDataSource = ref.read(userDataSourceProvider.notifier);
-
     return UserState(
       firebaseUser: FirebaseAuth.instance.currentUser,
       currentUser: TriviaUser(
@@ -55,8 +52,7 @@ class Auth extends _$Auth {
     String? uid,
     String? name,
     String? email,
-    File? userImage,
-    String? avatar,
+    String? imageUrl,
     UserAchievements? achievements,
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
@@ -67,8 +63,7 @@ class Auth extends _$Auth {
       uid: uid ?? state.currentUser.uid,
       name: name ?? state.currentUser.name,
       email: email ?? state.currentUser.email,
-      userImage: userImage ?? state.currentUser.userImage,
-      avatar: avatar ?? state.currentUser.avatar,
+      imageUrl: imageUrl ?? state.currentUser.imageUrl,
       achievements: achievements ?? state.currentUser.achievements,
       lastLogin: lastLogin ?? state.currentUser.lastLogin,
       recentTriviaCategories:
@@ -79,7 +74,6 @@ class Auth extends _$Auth {
   }
 
   Future<void> initializeUser() async {
-    final prefs = await SharedPreferences.getInstance();
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId != null) {
@@ -98,22 +92,13 @@ class Auth extends _$Auth {
             List<int>.from(userData['recentTriviaCategories']);
         final trophies = List<int>.from(userData['trophies']);
         final userXp = userData['userXp'] as double;
-
-        String? imagePath;
-        if (prefs.containsKey(Strings.croppedUserImagePathKey)) {
-          imagePath = prefs.getString(Strings.croppedUserImagePathKey);
-        }
-        String? avatar = prefs.getString(Strings.userAvatarKey);
-        File? userImage = imagePath != null && await File(imagePath).exists()
-            ? File(imagePath)
-            : null;
+        final imageUrl = userData['userImage'];
 
         final updatedUser = updateCurrentUser(
           uid: userId,
           name: name,
           email: email,
-          userImage: userImage,
-          avatar: avatar,
+          imageUrl: imageUrl,
           lastLogin: lastLogin,
           recentTriviaCategories: recentTriviaCategories,
           trophies: trophies,
@@ -159,15 +144,13 @@ class Auth extends _$Auth {
     state = state.copyWith(imageLoading: true);
 
     if (image != null) {
-      await _userDataSource.updateUserImage(state.currentUser.uid!, image);
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(Strings.croppedUserImagePathKey, image.path);
+      final imageUrl =
+          await _userDataSource.updateUserImage(state.currentUser.uid!, image);
 
       // Check if an image already exists in Firestore, if yes, delete it
       await _userDataSource.deleteUserAvatar(state.currentUser.uid!);
 
-      final updatedUser = updateCurrentUser(userImage: image);
+      final updatedUser = updateCurrentUser(imageUrl: imageUrl);
       state = state.copyWith(currentUser: updatedUser, imageLoading: false);
     }
   }
@@ -209,29 +192,16 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<String?> setAvatar() async {
-    final fluttermojiState = ref.read(fluttermojiNotifierProvider);
-    final avatarSvg = fluttermojiState.value?.fluttermoji;
+  Future<void> setAvatar() async {
     final userId = state.currentUser.uid;
 
-    if (userId == null || avatarSvg == null) return null;
+    if (userId != null) {
+      await _userDataSource.deleteUserImageIfExists(userId);
 
-    // Upload the avatar SVG to Firebase Storage and get the download URL
-    final avatarUrl =
-        await _userDataSource.uploadAvatarToStorage(userId, avatarSvg);
-
-    // Update the avatar URL in Firestore
-    await _userDataSource.updateUser(userId: userId, avatarUrl: avatarUrl);
-
-    // Check if an image already exists in Firestore, if yes, delete it
-    await _userDataSource.deleteUserImageIfExists(userId);
-
-    // Update the local state with the new avatar and remove the image
-    final updatedUser =
-        state.currentUser.copyWith(avatar: avatarSvg, userImage: null);
-    state = state.copyWith(currentUser: updatedUser);
-
-    return null;
+      // Update the local state with the new avatar and remove the image
+      final updatedUser = state.currentUser.copyWith(imageUrl: null);
+      state = state.copyWith(currentUser: updatedUser);
+    }
   }
 
   void resetAchievements() async {

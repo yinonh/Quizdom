@@ -26,15 +26,18 @@ class EditAvatar extends ConsumerWidget {
               tag: Strings.userAvatarTag,
               child: GestureDetector(
                 onTap: () {
-                  if (state.selectedImage != null) {
+                  if (state.showImage) {
                     avatarNotifier.toggleShowTrashIcon();
                   }
                 },
                 child: Stack(
                   children: [
-                    state.selectedImage != null
+                    state.showImage
                         ? CircleAvatar(
-                            backgroundImage: FileImage(state.selectedImage!),
+                            backgroundImage: state.selectedImage != null
+                                ? FileImage(state.selectedImage!)
+                                    as ImageProvider
+                                : NetworkImage(state.currentImage!),
                             radius: calcWidth(70),
                           )
                         : FluttermojiCircleAvatar(

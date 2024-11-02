@@ -32,9 +32,9 @@ class UserAvatar extends ConsumerWidget {
               color: AppConstant.onPrimary,
             ),
           ),
-        userState.currentUser.userImage != null
+        userState.currentUser.imageUrl != null
             ? CircleAvatar(
-                backgroundImage: FileImage(userState.currentUser.userImage!),
+                backgroundImage: NetworkImage(userState.currentUser.imageUrl!),
                 radius: calcWidth(radius),
               )
             : FluttermojiCircleAvatar(

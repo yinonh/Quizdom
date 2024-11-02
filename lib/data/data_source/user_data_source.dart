@@ -75,7 +75,7 @@ class UserDataSource extends _$UserDataSource {
     }
   }
 
-  Future<void> updateUserImage(String userId, File image) async {
+  Future<String> updateUserImage(String userId, File image) async {
     final storageRef = state.storage.ref().child('user_images/$userId');
     final uploadTask = await storageRef.putFile(image);
     final downloadUrl = await uploadTask.ref.getDownloadURL();
@@ -83,12 +83,6 @@ class UserDataSource extends _$UserDataSource {
     await state.firestore.collection('users').doc(userId).update({
       'userImage': downloadUrl,
     });
-  }
-
-  Future<String> uploadAvatarToStorage(String userId, String avatarSvg) async {
-    final storageRef = state.storage.ref().child('user_images/$userId');
-    final uploadTask = await storageRef.putString(avatarSvg);
-    final downloadUrl = await uploadTask.ref.getDownloadURL();
     return downloadUrl;
   }
 

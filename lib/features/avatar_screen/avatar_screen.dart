@@ -1,17 +1,18 @@
 import 'package:custom_image_crop/custom_image_crop.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
 import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 
 class AvatarScreen extends ConsumerWidget {
   static const routeName = Strings.avatarRouteName;
@@ -47,8 +48,9 @@ class AvatarScreen extends ConsumerWidget {
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
-        appBar: const CustomAppBar(
+        appBar: CustomAppBar(
           title: Strings.setImage,
+          onBack: avatarNotifier.revertChanges,
         ),
         body: avatarState.when(
           data: (state) => Stack(
@@ -81,7 +83,7 @@ class AvatarScreen extends ConsumerWidget {
                           bottom: calcHeight(30),
                           top: calcHeight(100),
                         ),
-                        child: state.selectedImage != null
+                        child: state.showImage
                             ? SizedBox(
                                 width: calcWidth(500),
                                 height: calcHeight(300),
@@ -120,10 +122,10 @@ class AvatarScreen extends ConsumerWidget {
                   child: CustomButton(
                     text: Strings.save,
                     onTap: () async {
-                      if (state.selectedImage == null) {
-                        avatarNotifier.saveAvatar();
-                      } else {
+                      if (state.showImage) {
                         avatarNotifier.saveImage();
+                      } else {
+                        avatarNotifier.saveAvatar();
                       }
                     },
                     padding: EdgeInsets.symmetric(vertical: calcHeight(15)),
