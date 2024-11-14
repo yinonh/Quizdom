@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/data/models/trivia_categories.dart';
-
-import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/models/trivia_categories.dart';
+import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
 class ExpandableHorizontalList extends ConsumerStatefulWidget {
@@ -59,16 +60,19 @@ class _ExpandableHorizontalListState
         ),
         AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          height: isExpanded ? 250.0 : 160.0,
+          height: isExpanded ? calcHeight(250) : calcHeight(160),
           child: SingleChildScrollView(
             physics: isExpanded
                 ? const AlwaysScrollableScrollPhysics()
                 : const NeverScrollableScrollPhysics(),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              padding: EdgeInsets.symmetric(
+                vertical: calcHeight(8),
+                horizontal: calcWidth(8),
+              ),
               child: Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
+                spacing: calcWidth(8),
+                runSpacing: calcWidth(8),
                 children: categories
                     .take(isExpanded ? categories.length : 4)
                     .map((category) {
@@ -79,8 +83,8 @@ class _ExpandableHorizontalListState
                       Navigator.pushNamed(context, TriviaIntroScreen.routeName);
                     },
                     child: Container(
-                      width: 150,
-                      height: 70,
+                      width: (MediaQuery.of(context).size.width * 0.9) / 2,
+                      height: calcHeight(80),
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
                         color: backgroundColor,
@@ -113,12 +117,12 @@ class _ExpandableHorizontalListState
                                   Icons.category,
                               color: AppConstant.categoryColors[category.id] ??
                                   Colors.black,
-                              size: 20.0,
+                              size: calcWidth(20),
                             ),
                           ),
                           const SizedBox(width: 8.0),
                           Expanded(
-                            child: Text(
+                            child: AutoSizeText(
                               categoriesNotifier
                                   .cleanCategoryName(category.name!)
                                   .toUpperCase(),
@@ -127,7 +131,7 @@ class _ExpandableHorizontalListState
                               ),
                               textAlign: TextAlign.start,
                               maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                              // overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],

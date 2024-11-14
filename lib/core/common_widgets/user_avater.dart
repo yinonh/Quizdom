@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -33,10 +35,26 @@ class UserAvatar extends ConsumerWidget {
             ),
           ),
         userState.currentUser.imageUrl != null
-            ? CircleAvatar(
-                backgroundImage: NetworkImage(userState.currentUser.imageUrl!),
-                radius: calcWidth(radius),
+            ? CachedNetworkImage(
+                imageUrl: userState.currentUser.imageUrl!,
+                placeholder: (context, url) => Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[300]!,
+                    radius: calcWidth(radius),
+                  ),
+                ),
+                imageBuilder: (context, image) => CircleAvatar(
+                  backgroundImage: image,
+                  radius: calcWidth(radius),
+                ),
               )
+
+            // ? CircleAvatar(
+            //     backgroundImage: NetworkImage(userState.currentUser.imageUrl!),
+            //     radius: calcWidth(radius),
+            //   )
             : FluttermojiCircleAvatar(
                 backgroundColor: AppConstant.userAvatarBackground,
                 radius: calcWidth(radius),

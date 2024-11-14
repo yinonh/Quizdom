@@ -89,6 +89,7 @@ class UserDataSource extends _$UserDataSource {
   Future<void> deleteUserImageIfExists(String userId) async {
     final userDoc = await state.firestore.collection('users').doc(userId).get();
     final userImageExists = userDoc.data()?['userImage'] != null;
+
     if (userImageExists) {
       await state.firestore.collection('users').doc(userId).update({
         'userImage': FieldValue.delete(),

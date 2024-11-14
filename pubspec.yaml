@@ -58,6 +58,8 @@ dependencies:
   logger: ^2.4.0
   riverpod_lint: ^2.3.12
   google_sign_in: ^6.2.1
+  auto_size_text: ^3.0.0
+  cached_network_image: ^3.4.0
 
 dev_dependencies:
   flutter_test:

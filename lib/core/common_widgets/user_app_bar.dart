@@ -31,7 +31,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
         ),
         Positioned(
-          bottom: 1,
+          top: calcHeight(93),
           left: 0,
           right: 0,
           child: Container(

@@ -1,12 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 
 class EditAvatar extends ConsumerWidget {
   const EditAvatar({super.key});
@@ -32,18 +34,45 @@ class EditAvatar extends ConsumerWidget {
                 },
                 child: Stack(
                   children: [
-                    state.showImage
-                        ? CircleAvatar(
-                            backgroundImage: state.selectedImage != null
-                                ? FileImage(state.selectedImage!)
-                                    as ImageProvider
-                                : NetworkImage(state.currentImage!),
-                            radius: calcWidth(70),
-                          )
-                        : FluttermojiCircleAvatar(
-                            backgroundColor: AppConstant.userAvatarBackground,
-                            radius: calcWidth(70),
-                          ),
+                    if (state.showImage)
+                      (state.selectedImage != null
+                          ? CircleAvatar(
+                              backgroundImage: FileImage(state.selectedImage!)
+                                  as ImageProvider,
+                              radius: calcWidth(70),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: state.currentImage!,
+                              placeholder: (context, url) => Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey[300]!,
+                                  radius: calcWidth(70),
+                                ),
+                              ),
+                              imageBuilder: (context, image) => CircleAvatar(
+                                backgroundImage: image,
+                                radius: calcWidth(70),
+                              ),
+                            ))
+                    else
+                      FluttermojiCircleAvatar(
+                        backgroundColor: AppConstant.userAvatarBackground,
+                        radius: calcWidth(70),
+                      ),
+                    // state.showImage
+                    //     ? CircleAvatar(
+                    //         backgroundImage: state.selectedImage != null
+                    //             ? FileImage(state.selectedImage!)
+                    //                 as ImageProvider
+                    //             : NetworkImage(state.currentImage!),
+                    //         radius: calcWidth(70),
+                    //       )
+                    //     : FluttermojiCircleAvatar(
+                    //         backgroundColor: AppConstant.userAvatarBackground,
+                    //         radius: calcWidth(70),
+                    //       ),
                     if (state.showTrashIcon)
                       Container(
                         width: calcWidth(140),

@@ -32,7 +32,7 @@ class CategoriesScreen extends ConsumerWidget {
           child: categoriesState.when(
               data: (data) => SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(1),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

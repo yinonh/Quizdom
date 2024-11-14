@@ -166,6 +166,7 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
 
   /// Restore the fluttermoji state from Firestore
   Future<void> restoreState() async {
+    if (state.value == null) return;
     final options = await getFluttermojiOptions();
     final fluttermojiSvg = getFluttermojiFromOptions(options);
 
