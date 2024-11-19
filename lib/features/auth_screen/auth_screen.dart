@@ -11,6 +11,7 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
 import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
+import 'package:trivia/features/categories_screen/categories_screen.dart';
 
 class AuthScreen extends ConsumerWidget {
   static const String routeName = Strings.authRouteName;
@@ -23,8 +24,11 @@ class AuthScreen extends ConsumerWidget {
     final authNotifier = ref.read(authScreenManagerProvider.notifier);
 
     ref.listen<AuthState>(authScreenManagerProvider, (previous, next) {
-      if (next.navigate) {
+      if (next.navigate && next.isNewUser) {
         Navigator.pushReplacementNamed(context, AvatarScreen.routeName);
+        authNotifier.resetNavigate();
+      } else if (next.navigate) {
+        Navigator.pushReplacementNamed(context, CategoriesScreen.routeName);
         authNotifier.resetNavigate();
       }
       if (next.firebaseErrorMessage != null) {

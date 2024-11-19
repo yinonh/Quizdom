@@ -20,6 +20,7 @@ part 'avatar_screen_manager.g.dart';
 class AvatarState with _$AvatarState {
   const factory AvatarState({
     required String userName,
+    required String? currentUserUid,
     required bool showImage,
     String? currentImage,
     File? selectedImage,
@@ -37,11 +38,13 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     final currentUser = ref.read(authProvider).currentUser;
     String? userImage = currentUser.imageUrl;
     final prefs = await SharedPreferences.getInstance();
-    final originalImagePath = prefs.getString(Strings.originalUserImagePathKey);
+    final originalImagePath = prefs
+        .getString("${Strings.originalUserImagePathKey} - ${currentUser.uid}");
     final originalImage =
         originalImagePath != null ? File(originalImagePath) : null;
     return AvatarState(
       userName: currentUser.name ?? "",
+      currentUserUid: currentUser.uid,
       showImage: userImage != null,
       currentImage: userImage,
       selectedImage: null,
@@ -80,6 +83,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
   Future<void> saveImage() async {
     state.whenData((data) async {
+      if (data.currentUserUid == null) return;
       ref.read(loadingProvider.notifier).state = true;
       final MemoryImage? croppedImage = await data.cropController.onCropImage();
 
@@ -94,14 +98,17 @@ class AvatarScreenManager extends _$AvatarScreenManager {
         await file.writeAsBytes(
             buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
-        // Now copy the file to the Application Documents Directory
-        final originalImagePath =
-            Strings.getOriginalImagePath(appDir.path, currentTime);
-        await data.originalImage!.copy(originalImagePath);
+        if (data.originalImage != null) {
+          // Now copy the file to the Application Documents Directory
+          final originalImagePath =
+              Strings.getOriginalImagePath(appDir.path, currentTime);
+          await data.originalImage!.copy(originalImagePath);
 
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-            Strings.originalUserImagePathKey, originalImagePath);
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+              "${Strings.originalUserImagePathKey} - ${data.currentUserUid}",
+              originalImagePath);
+        }
 
         await ref.read(authProvider.notifier).setImage(file);
       }

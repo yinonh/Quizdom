@@ -89,8 +89,10 @@ class AvatarScreen extends ConsumerWidget {
                                 height: calcHeight(300),
                                 child: CustomImageCrop(
                                   cropController: state.cropController,
-                                  image: FileImage(state.originalImage!)
-                                      as ImageProvider<Object>,
+                                  image: state.originalImage != null
+                                      ? FileImage(state.originalImage!)
+                                      : NetworkImage(state.currentImage!)
+                                          as ImageProvider<Object>,
                                   shape: CustomCropShape.Circle,
                                   canRotate: true,
                                   canMove: true,

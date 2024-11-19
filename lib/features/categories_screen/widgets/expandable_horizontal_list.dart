@@ -44,9 +44,12 @@ class _ExpandableHorizontalListState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              widget.title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                widget.title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             IconButton(
               icon: Icon(

@@ -277,7 +277,7 @@ class Auth extends _$Auth {
     return userCredential;
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<AdditionalUserInfo?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser == null) {
@@ -292,11 +292,13 @@ class Auth extends _$Auth {
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
+
     final user = userCredential.user;
 
     if (user != null) {
       await initializeUser();
     }
+    return userCredential.additionalUserInfo;
   }
 
   bool isGoogleSignIn() {

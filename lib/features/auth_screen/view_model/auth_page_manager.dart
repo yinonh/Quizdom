@@ -25,6 +25,7 @@ class AuthState with _$AuthState {
     required String confirmPasswordErrorMessage,
     String? firebaseErrorMessage,
     required bool navigate,
+    required bool isNewUser,
     required GlobalKey formKey,
   }) = _AuthState;
 }
@@ -44,6 +45,7 @@ class AuthScreenManager extends _$AuthScreenManager {
       passwordErrorMessage: '',
       confirmPasswordErrorMessage: '',
       navigate: false,
+      isNewUser: false,
       formKey: GlobalKey<FormState>(),
     );
   }
@@ -62,6 +64,7 @@ class AuthScreenManager extends _$AuthScreenManager {
       confirmPasswordErrorMessage: '',
       firebaseErrorMessage: null,
       navigate: false,
+      isNewUser: !state.isLogin,
       formKey: GlobalKey<FormState>(),
     );
   }
@@ -147,8 +150,10 @@ class AuthScreenManager extends _$AuthScreenManager {
 
   Future<void> signInWithGoogle() async {
     try {
-      await ref.read(authProvider.notifier).signInWithGoogle();
-      state = state.copyWith(navigate: true);
+      final additionalUserInfo =
+          await ref.read(authProvider.notifier).signInWithGoogle();
+      state = state.copyWith(
+          navigate: true, isNewUser: additionalUserInfo?.isNewUser ?? true);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));

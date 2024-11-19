@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'app.dart';
 import 'firebase_options.dart';
+import 'app.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
