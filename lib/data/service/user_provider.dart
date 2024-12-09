@@ -84,10 +84,6 @@ class Auth extends _$Auth {
         final name = userData['name'];
         final email = FirebaseAuth.instance.currentUser?.email;
 
-        // Updated lastLogin to handle Timestamp
-        final lastLoginTimestamp = userData['lastLogin'] as Timestamp;
-        final lastLogin = lastLoginTimestamp.toDate();
-
         final recentTriviaCategories =
             List<int>.from(userData['recentTriviaCategories']);
         final trophies = List<int>.from(userData['trophies']);
@@ -99,7 +95,7 @@ class Auth extends _$Auth {
           name: name,
           email: email,
           imageUrl: imageUrl,
-          lastLogin: lastLogin,
+          lastLogin: FirebaseAuth.instance.currentUser?.metadata.lastSignInTime,
           recentTriviaCategories: recentTriviaCategories,
           trophies: trophies,
           userXp: userXp,
@@ -153,15 +149,6 @@ class Auth extends _$Auth {
       final updatedUser = updateCurrentUser(imageUrl: imageUrl);
       state = state.copyWith(currentUser: updatedUser, imageLoading: false);
     }
-  }
-
-  Future<void> updateLastLogin() async {
-    final now = DateTime.now();
-    final updatedUser = updateCurrentUser(lastLogin: now);
-    state = state.copyWith(currentUser: updatedUser);
-
-    await _userDataSource.updateUser(
-        userId: state.currentUser.uid!, lastLogin: DateTime.now());
   }
 
   void addTriviaCategory(int categoryId) async {
@@ -249,9 +236,6 @@ class Auth extends _$Auth {
 
     final updatedUser = updateCurrentUser(achievements: updatedAchievements);
     state = state.copyWith(currentUser: updatedUser);
-
-    // await _userDataSource.updateUser(
-    //     userId: state.currentUser.uid!, achievements: updatedAchievements);
   }
 
   Future<UserCredential> signIn(String email, String password) async {
@@ -260,7 +244,6 @@ class Auth extends _$Auth {
       password: password,
     );
     await initializeUser();
-    updateLastLogin();
     return userCredential;
   }
 

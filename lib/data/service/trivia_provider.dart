@@ -24,9 +24,7 @@ class Trivia extends _$Trivia {
 
   @override
   TriviaState build() {
-    final dioClient = ref.watch(dioProvider);
-    final dataSource = TriviaDataSource(client: dioClient);
-    repository = TriviaRepository(dataSource: dataSource);
+    repository = ref.read(triviaRepositoryProvider);
 
     return const TriviaState(
       categoryId: null,

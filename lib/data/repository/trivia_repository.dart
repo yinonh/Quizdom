@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
 
 import 'dart:convert';
@@ -5,10 +7,25 @@ import 'dart:convert';
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/trivia_response.dart';
 
+final triviaRepositoryProvider = Provider<TriviaRepository>((ref) {
+  final dioClient = ref.watch(dioProvider);
+  final dataSource = TriviaDataSource(client: dioClient);
+  return TriviaRepository(dataSource: dataSource);
+});
+
 class TriviaRepository {
   final TriviaDataSource dataSource;
 
-  TriviaRepository({required this.dataSource});
+  // Private static instance
+  static TriviaRepository? _instance;
+
+  // Private constructor
+  TriviaRepository._internal({required this.dataSource});
+
+  // Factory constructor to return the singleton instance
+  factory TriviaRepository({required TriviaDataSource dataSource}) {
+    return _instance ??= TriviaRepository._internal(dataSource: dataSource);
+  }
 
   Future<String> getToken() async {
     final data = await dataSource.requestToken();
