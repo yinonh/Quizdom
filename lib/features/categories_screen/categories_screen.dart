@@ -77,7 +77,7 @@ class CategoriesScreen extends ConsumerWidget {
                                 )
                               : const SizedBox.shrink(),
                           ExpandableHorizontalList(
-                            categories: data.categories.triviaCategories,
+                            triviaRoom: data.triviaRooms,
                             title: Strings.featuredCategories,
                           ),
                           const InfoContainer(

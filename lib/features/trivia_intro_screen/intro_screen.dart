@@ -95,7 +95,7 @@ class TriviaIntroScreen extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '${introState.category.name}',
+                      introState.room?.categoryName ?? "All",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),

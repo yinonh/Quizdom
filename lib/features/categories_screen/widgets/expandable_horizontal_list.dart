@@ -3,17 +3,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/trivia_categories.dart';
+import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
 class ExpandableHorizontalList extends ConsumerStatefulWidget {
-  final List<TriviaCategory>? categories;
+  final List<GeneralTriviaRoom>? triviaRoom;
   final String title;
 
   const ExpandableHorizontalList({
     super.key,
-    required this.categories,
+    required this.triviaRoom,
     required this.title,
   });
 
@@ -37,7 +37,7 @@ class _ExpandableHorizontalListState
     final categoriesNotifier =
         ref.read(categoriesScreenManagerProvider.notifier);
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final categories = widget.categories ?? [];
+    final categoriesTriviaRoom = widget.triviaRoom ?? [];
 
     return Column(
       children: [
@@ -76,12 +76,12 @@ class _ExpandableHorizontalListState
               child: Wrap(
                 spacing: calcWidth(8),
                 runSpacing: calcWidth(8),
-                children: categories
-                    .take(isExpanded ? categories.length : 4)
+                children: categoriesTriviaRoom
+                    .take(isExpanded ? categoriesTriviaRoom.length : 4)
                     .map((category) {
                   return GestureDetector(
                     onTap: () {
-                      categoriesNotifier.setCategory(category.id!);
+                      categoriesNotifier.setTriviaRoom(category.roomId!);
                       categoriesNotifier.resetAchievements();
                       Navigator.pushNamed(context, TriviaIntroScreen.routeName);
                     },
@@ -116,9 +116,10 @@ class _ExpandableHorizontalListState
                               ],
                             ),
                             child: Icon(
-                              AppConstant.categoryIcons[category.id] ??
+                              AppConstant.categoryIcons[category.categoryId] ??
                                   Icons.category,
-                              color: AppConstant.categoryColors[category.id] ??
+                              color: AppConstant
+                                      .categoryColors[category.categoryId] ??
                                   Colors.black,
                               size: calcWidth(20),
                             ),
@@ -127,14 +128,13 @@ class _ExpandableHorizontalListState
                           Expanded(
                             child: AutoSizeText(
                               categoriesNotifier
-                                  .cleanCategoryName(category.name!)
+                                  .cleanCategoryName(category.categoryName)
                                   .toUpperCase(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.start,
                               maxLines: 2,
-                              // overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],

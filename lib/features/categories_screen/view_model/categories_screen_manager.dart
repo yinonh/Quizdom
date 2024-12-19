@@ -1,7 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/models/trivia_categories.dart';
+import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
+import 'package:trivia/data/service/trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
 
 part 'categories_screen_manager.freezed.dart';
@@ -11,7 +12,7 @@ part 'categories_screen_manager.g.dart';
 @freezed
 class CategoriesState with _$CategoriesState {
   const factory CategoriesState({
-    required TriviaCategories categories,
+    required List<GeneralTriviaRoom>? triviaRooms,
     required List<int> userRecentCategories,
   }) = _CategoriesState;
 }
@@ -32,11 +33,10 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   @override
   Future<CategoriesState> build() async {
     // Fetch necessary data
-    final currentUser = ref.watch(authProvider).currentUser;
+    final user = ref.watch(authProvider);
     return CategoriesState(
-      categories: await triviaProviderNotifier?.getCategories() ??
-          const TriviaCategories(),
-      userRecentCategories: currentUser.recentTriviaCategories,
+      triviaRooms: ref.watch(triviaRoomsProvider).generalTriviaRooms,
+      userRecentCategories: user.currentUser.recentTriviaCategories,
     );
   }
 
@@ -45,10 +45,10 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     userProviderNotifier?.resetAchievements();
   }
 
-  // Set a category and update user's recent categories
-  void setCategory(int categoryId) {
-    triviaProviderNotifier?.setCategory(categoryId);
-    userProviderNotifier?.addTriviaCategory(categoryId);
+  void setTriviaRoom(String triviaRoomId) {
+    ref.read(triviaRoomsProvider.notifier).selectRoom(triviaRoomId);
+    userProviderNotifier?.addTriviaCategory(
+        ref.read(triviaRoomsProvider).selectedRoom?.categoryId ?? -1);
   }
 
   // Function to clean up category names

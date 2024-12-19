@@ -11,6 +11,7 @@ class TriviaRoom with _$TriviaRoom {
     required String? roomId,
     required int questionCount,
     required int categoryId,
+    required String categoryName,
     required String difficulty,
     required bool isPublic,
     @TimestampConverter() required DateTime createdAt,

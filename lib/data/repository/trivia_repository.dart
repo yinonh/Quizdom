@@ -1,11 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
-
-import 'dart:convert';
-
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/trivia_response.dart';
+import 'package:trivia/data/models/trivia_room.dart';
 
 final triviaRepositoryProvider = Provider<TriviaRepository>((ref) {
   final dioClient = ref.watch(dioProvider);
@@ -50,8 +50,8 @@ class TriviaRepository {
   }
 
   Future<TriviaResponse> getTriviaQuestions(
-      int? categoryId, String? token) async {
-    final data = await dataSource.fetchTriviaQuestions(categoryId, token);
+      TriviaRoom? triviaRoom, String? token) async {
+    final data = await dataSource.fetchTriviaQuestions(triviaRoom, token);
     List decodedResults = (data['results'] as List).map((result) {
       return decodeFields(result);
     }).toList();

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/global_providers/connectivity_provider.dart';
+import 'package:trivia/data/service/trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
@@ -24,6 +25,11 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SizeConfig().init(context);
 
+    Future<void> startAppInitialization() async {
+      await ref.read(authProvider.notifier).initializeUser();
+      await ref.read(triviaRoomsProvider.notifier).initializeTriviaRoom();
+    }
+
     // Listen to connectivity state
     final isConnected = ref.watch(connectivityProvider);
 
@@ -35,7 +41,7 @@ class MyApp extends ConsumerWidget {
     }
 
     return FutureBuilder(
-      future: ref.read(authProvider.notifier).initializeUser(),
+      future: startAppInitialization(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const MaterialApp(
