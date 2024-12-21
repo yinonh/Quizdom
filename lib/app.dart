@@ -9,7 +9,6 @@ import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 import 'core/common_widgets/custom_progress_indicator.dart';
 import 'core/constants/app_constant.dart';
 import 'core/utils/size_config.dart';
-import 'custom_route_observer.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';
@@ -106,7 +105,7 @@ class MyApp extends ConsumerWidget {
               settings: settings,
             );
           },
-          navigatorObservers: [CustomRouteObserver(ref: ref)],
+          // navigatorObservers: [CustomRouteObserver(ref: ref)],
         );
       },
     );

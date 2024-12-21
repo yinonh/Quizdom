@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
-import 'package:trivia/data/models/trivia_response.dart';
-import 'package:trivia/data/models/trivia_room.dart';
+import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/repository/trivia_repository.dart';
 
 part 'trivia_provider.freezed.dart';
@@ -12,7 +12,7 @@ part 'trivia_provider.g.dart';
 class TriviaState with _$TriviaState {
   const factory TriviaState({
     required String? token,
-    required TriviaRoom? triviaRoom,
+    required GeneralTriviaRoom? triviaRoom,
     TriviaCategories? categories,
   }) = _TriviaState;
 }
@@ -56,11 +56,11 @@ class Trivia extends _$Trivia {
     return null;
   }
 
-  void setTriviaRoom(TriviaRoom triviaRoom) {
+  void setTriviaRoom(GeneralTriviaRoom triviaRoom) {
     state = state.copyWith(triviaRoom: triviaRoom);
   }
 
-  Future<TriviaResponse> getTriviaQuestions() async {
+  Future<List<Question>?> getTriviaQuestions() async {
     return repository.getTriviaQuestions(state.triviaRoom, state.token);
   }
 }

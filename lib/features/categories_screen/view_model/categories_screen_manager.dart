@@ -35,7 +35,7 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     // Fetch necessary data
     final user = ref.watch(authProvider);
     return CategoriesState(
-      triviaRooms: ref.watch(triviaRoomsProvider).generalTriviaRooms,
+      triviaRooms: ref.read(triviaRoomsProvider).generalTriviaRooms,
       userRecentCategories: user.currentUser.recentTriviaCategories,
     );
   }
