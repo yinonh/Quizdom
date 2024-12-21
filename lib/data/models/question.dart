@@ -1,18 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'trivia_response.freezed.dart';
-part 'trivia_response.g.dart';
-
-@freezed
-class TriviaResponse with _$TriviaResponse {
-  const factory TriviaResponse({
-    @JsonKey(name: "response_code") int? responseCode,
-    @JsonKey(name: "results") List<Question>? results,
-  }) = _TriviaResponse;
-
-  factory TriviaResponse.fromJson(Map<String, dynamic> json) =>
-      _$TriviaResponseFromJson(json);
-}
+part 'question.freezed.dart';
+part 'question.g.dart';
 
 @freezed
 class Question with _$Question {
@@ -23,7 +12,7 @@ class Question with _$Question {
     @JsonKey(name: "question") String? question,
     @JsonKey(name: "correct_answer") String? correctAnswer,
     @JsonKey(name: "incorrect_answers") List<String>? incorrectAnswers,
-  }) = _Result;
+  }) = _Question;
 
   factory Question.fromJson(Map<String, dynamic> json) =>
       _$QuestionFromJson(json);

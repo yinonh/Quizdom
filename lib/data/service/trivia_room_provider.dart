@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/models/trivia_room.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
 
 part 'trivia_room_provider.freezed.dart';
@@ -11,9 +10,8 @@ part 'trivia_room_provider.g.dart';
 @freezed
 class TriviaRoomsState with _$TriviaRoomsState {
   const factory TriviaRoomsState({
-    required List<GeneralTriviaRoom>?
-        generalTriviaRooms, // List of all trivia rooms
-    TriviaRoom? selectedRoom, // Currently selected trivia room
+    required List<GeneralTriviaRoom>? generalTriviaRooms,
+    GeneralTriviaRoom? selectedRoom,
   }) = _TriviaRoomsState;
 }
 
@@ -77,8 +75,10 @@ class TriviaRooms extends _$TriviaRooms {
   }
 
   /// Selects a trivia room by ID
-  Future<void> selectRoom(String roomId) async {
-    final room = await _dataSource.getRoomById(roomId);
+  void selectRoom(String roomId) {
+    final room =
+        state.generalTriviaRooms?.firstWhere((room) => room.roomId == roomId);
+    // final room = await _dataSource.getRoomById(roomId);
     if (room == null) {
       throw Exception("Room not found");
     }
@@ -108,7 +108,7 @@ class TriviaRooms extends _$TriviaRooms {
     );
     // Refresh selected room
     if (state.selectedRoom?.roomId == roomId) {
-      await selectRoom(roomId);
+      selectRoom(roomId);
     }
   }
 
@@ -125,7 +125,7 @@ class TriviaRooms extends _$TriviaRooms {
     );
     // Refresh selected room
     if (state.selectedRoom?.roomId == roomId) {
-      await selectRoom(roomId);
+      selectRoom(roomId);
     }
   }
 }

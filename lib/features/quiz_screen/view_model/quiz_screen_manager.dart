@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/models/trivia_response.dart';
+import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/user_achievements.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
@@ -41,13 +41,13 @@ class QuizScreenManager extends _$QuizScreenManager {
   Future<QuizState> build() async {
     final triviaNotifier = ref.read(triviaProvider.notifier);
     final response = await triviaNotifier.getTriviaQuestions();
-    final initialShuffledData = _getShuffledOptions(response.results![0]);
+    final initialShuffledData = _getShuffledOptions(response![0]);
     ref.onDispose(() {
       _timer?.cancel();
     });
 
     return QuizState(
-      questions: response.results!,
+      questions: response,
       timeLeft: AppConstant.questionTime.toDouble(),
       questionIndex: 0,
       shuffledOptions: initialShuffledData.options,
