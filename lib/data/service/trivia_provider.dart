@@ -56,7 +56,7 @@ class Trivia extends _$Trivia {
     return null;
   }
 
-  void setTriviaRoom(GeneralTriviaRoom triviaRoom) {
+  void setGeneralTriviaRoom(GeneralTriviaRoom triviaRoom) {
     state = state.copyWith(triviaRoom: triviaRoom);
   }
 

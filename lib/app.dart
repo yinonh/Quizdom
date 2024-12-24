@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/global_providers/connectivity_provider.dart';
-import 'package:trivia/data/service/trivia_room_provider.dart';
+import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
@@ -26,7 +26,9 @@ class MyApp extends ConsumerWidget {
 
     Future<void> startAppInitialization() async {
       await ref.read(authProvider.notifier).initializeUser();
-      await ref.read(triviaRoomsProvider.notifier).initializeTriviaRoom();
+      await ref
+          .read(generalTriviaRoomsProvider.notifier)
+          .initializeGeneralTriviaRoom();
     }
 
     // Listen to connectivity state

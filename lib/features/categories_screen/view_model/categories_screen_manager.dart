@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
-import 'package:trivia/data/service/trivia_room_provider.dart';
+import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
 
 part 'categories_screen_manager.freezed.dart';
@@ -35,7 +35,7 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     // Fetch necessary data
     final user = ref.watch(authProvider);
     return CategoriesState(
-      triviaRooms: ref.read(triviaRoomsProvider).generalTriviaRooms,
+      triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
       userRecentCategories: user.currentUser.recentTriviaCategories,
     );
   }
@@ -46,9 +46,9 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   }
 
   void setTriviaRoom(String triviaRoomId) {
-    ref.read(triviaRoomsProvider.notifier).selectRoom(triviaRoomId);
+    ref.read(generalTriviaRoomsProvider.notifier).selectRoom(triviaRoomId);
     userProviderNotifier?.addTriviaCategory(
-        ref.read(triviaRoomsProvider).selectedRoom?.categoryId ?? -1);
+        ref.read(generalTriviaRoomsProvider).selectedRoom?.categoryId ?? -1);
   }
 
   // Function to clean up category names

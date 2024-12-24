@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/service/trivia_room_provider.dart';
+import 'package:trivia/data/service/general_trivia_room_provider.dart';
 
 part 'intro_screen_manager.freezed.dart';
 part 'intro_screen_manager.g.dart';
@@ -17,7 +17,7 @@ class IntroState with _$IntroState {
 class IntroScreenManager extends _$IntroScreenManager {
   @override
   IntroState build() {
-    final triviaRoomState = ref.watch(triviaRoomsProvider);
+    final triviaRoomState = ref.watch(generalTriviaRoomsProvider);
 
     return IntroState(
       room: triviaRoomState.selectedRoom,

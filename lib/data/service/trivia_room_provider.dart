@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/service/trivia_provider.dart';
+import 'package:trivia/data/models/trivia_room.dart';
 
 part 'trivia_room_provider.freezed.dart';
 part 'trivia_room_provider.g.dart';
@@ -10,8 +10,8 @@ part 'trivia_room_provider.g.dart';
 @freezed
 class TriviaRoomsState with _$TriviaRoomsState {
   const factory TriviaRoomsState({
-    required List<GeneralTriviaRoom>? generalTriviaRooms,
-    GeneralTriviaRoom? selectedRoom,
+    required List<TriviaRoom>? triviaRooms,
+    TriviaRoom? selectedRoom,
   }) = _TriviaRoomsState;
 }
 
@@ -22,13 +22,7 @@ class TriviaRooms extends _$TriviaRooms {
   @override
   TriviaRoomsState build() {
     _dataSource = TriviaRoomDataSource();
-    return const TriviaRoomsState(generalTriviaRooms: null, selectedRoom: null);
-  }
-
-  Future<void> initializeTriviaRoom() async {
-    final rooms = await _fetchAllGeneralRooms();
-    state = TriviaRoomsState(generalTriviaRooms: rooms, selectedRoom: null);
-    ref.read(triviaProvider.notifier).setToken();
+    return const TriviaRoomsState(triviaRooms: null, selectedRoom: null);
   }
 
   /// Fetches all trivia rooms from the data source
@@ -69,30 +63,23 @@ class TriviaRooms extends _$TriviaRooms {
       difficulty: difficulty,
       isPublic: isPublic,
     );
-    // Refresh rooms
-    state = state.copyWith(
-      generalTriviaRooms: await _fetchAllGeneralRooms(),
-    );
+    // TODO: Refresh rooms
   }
 
   /// Selects a trivia room by ID
   void selectRoom(String roomId) {
-    final room =
-        state.generalTriviaRooms?.firstWhere((room) => room.roomId == roomId);
+    final room = state.triviaRooms?.firstWhere((room) => room.roomId == roomId);
     if (room == null) {
       throw Exception("Room not found");
     }
-    ref.read(triviaProvider.notifier).setTriviaRoom(room);
+    // TODO: set the room
     state = state.copyWith(selectedRoom: room);
   }
 
   /// Deletes a trivia room by ID
   Future<void> deleteRoom(String roomId) async {
     await _dataSource.deleteRoom(roomId);
-    // Refresh rooms
-    state = state.copyWith(
-      generalTriviaRooms: await _fetchAllGeneralRooms(),
-    );
+    // TODO: Refresh rooms
   }
 
   /// Joins a user to a trivia room
