@@ -1,9 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/network/server.dart';
+import 'package:trivia/core/utils/general_functions.dart';
+import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/question.dart';
-import 'package:trivia/data/repository/trivia_repository.dart';
 
 part 'trivia_provider.freezed.dart';
 part 'trivia_provider.g.dart';
@@ -13,29 +15,28 @@ class TriviaState with _$TriviaState {
   const factory TriviaState({
     required String? token,
     required GeneralTriviaRoom? triviaRoom,
+    required TriviaDataSource dataSource,
     TriviaCategories? categories,
   }) = _TriviaState;
 }
 
 @Riverpod(keepAlive: true)
 class Trivia extends _$Trivia {
-  late final TriviaRepository repository;
-
   @override
   TriviaState build() {
-    repository = ref.read(triviaRepositoryProvider);
+    final dioClient = ref.watch(dioProvider);
 
-    return const TriviaState(
-      triviaRoom: null,
-      token: null,
-    );
+    return TriviaState(
+        triviaRoom: null,
+        token: null,
+        dataSource: TriviaDataSource(client: dioClient));
   }
 
   get categoryId => state.triviaRoom?.categoryId;
 
   Future<void> setToken() async {
-    final token = await repository.getToken();
-    state = state.copyWith(token: token);
+    final data = await state.dataSource.requestToken();
+    state = state.copyWith(token: data['token'] as String);
   }
 
   Future<TriviaCategories> getCategories() async {
@@ -43,7 +44,12 @@ class Trivia extends _$Trivia {
       return state.categories!;
     }
 
-    final categories = await repository.getCategories(state.token);
+    final data = await state.dataSource.fetchCategories(state.token);
+    TriviaCategories categories = TriviaCategories.fromJson(data);
+    categories = categories.copyWith(triviaCategories: [
+      const TriviaCategory(name: "All", id: -1),
+      ...?categories.triviaCategories,
+    ]);
     state = state.copyWith(categories: categories);
 
     return categories;
@@ -51,7 +57,10 @@ class Trivia extends _$Trivia {
 
   TriviaCategory? getCategoryById(int id) {
     if (state.categories != null) {
-      return repository.getCategoryById(state.categories!, id);
+      return state.categories?.triviaCategories?.firstWhere(
+        (category) => category.id == id,
+        orElse: () => const TriviaCategory(id: -1, name: 'Unknown'),
+      );
     }
     return null;
   }
@@ -61,6 +70,13 @@ class Trivia extends _$Trivia {
   }
 
   Future<List<Question>?> getTriviaQuestions() async {
-    return repository.getTriviaQuestions(state.triviaRoom, state.token);
+    final data = await state.dataSource
+        .fetchTriviaQuestions(state.triviaRoom, state.token);
+
+    final List<Question> questions = (data['results'] as List).map((result) {
+      final decodedResult = decodeFields(result);
+      return Question.fromJson(decodedResult);
+    }).toList();
+    return questions;
   }
 }
