@@ -36,8 +36,7 @@ class GeneralTriviaRoomDataSource {
         .delete();
   }
 
-  // Updates the scores of users in a trivia room
-  Future<void> updateUserScore({
+  Future<Map<String, int>> updateUserScore({
     required String roomId,
     required String userId,
     required int newScore,
@@ -63,11 +62,16 @@ class GeneralTriviaRoomDataSource {
       ..sort((a, b) => (b.value as int).compareTo(a.value as int));
 
     // Take the top 5 users
-    final top5 = Map<String, dynamic>.fromEntries(sortedEntries.take(5));
+    final top5 = Map<String, int>.fromEntries(
+      sortedEntries.take(5).map((e) => MapEntry(e.key, e.value as int)),
+    );
 
     // Update the database
     await roomRef.update({
       'topUsers': top5,
     });
+
+    // Return the updated top users
+    return top5;
   }
 }

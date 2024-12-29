@@ -6,9 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
-import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/features/results_screen/widgets/top_user_podium.dart';
 
 class ResultsScreen extends ConsumerWidget {
   static const routeName = Strings.resultsRouteName;
@@ -18,24 +18,6 @@ class ResultsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resultState = ref.watch(resultScreenManagerProvider);
-    final resultNotifier = ref.read(resultScreenManagerProvider.notifier);
-
-    // Listen to the ResultState and update user score once the state is loaded
-    ref.listen<AsyncValue<ResultState>>(
-      resultScreenManagerProvider,
-      (previous, next) async {
-        if (next is AsyncData) {
-          await resultNotifier.updateUserScoreOnServer();
-        }
-      },
-    );
-    final topUsers = ref
-            .watch(generalTriviaRoomsProvider)
-            .selectedRoom
-            ?.topUsers
-            .values
-            .toList() ??
-        [];
 
     return BaseScreen(
       child: Scaffold(
@@ -58,27 +40,30 @@ class ResultsScreen extends ConsumerWidget {
                 // Carousel for Achievements
                 CarouselSlider(
                   items: [
-                    _buildAchievementCard(
-                      title: Strings.correctAnswers,
-                      value: data.userAchievements.correctAnswers.toString(),
-                      icon: Icons.check_circle,
-                      color: Colors.green,
-                    ),
-                    _buildAchievementCard(
-                      title: Strings.wrongAnswers,
-                      value: data.userAchievements.wrongAnswers.toString(),
-                      icon: Icons.cancel,
-                      color: Colors.red,
-                    ),
-                    _buildAchievementCard(
-                      title: Strings.didntAnswer,
-                      value: data.userAchievements.unanswered.toString(),
-                      icon: Icons.help_outline,
-                      color: Colors.grey,
-                    ),
+                    if (data.userAchievements.correctAnswers > 0)
+                      _buildAchievementCard(
+                        title: Strings.correctAnswers,
+                        value: data.userAchievements.correctAnswers.toString(),
+                        icon: Icons.check_circle,
+                        color: Colors.green,
+                      ),
+                    if (data.userAchievements.wrongAnswers > 0)
+                      _buildAchievementCard(
+                        title: Strings.wrongAnswers,
+                        value: data.userAchievements.wrongAnswers.toString(),
+                        icon: Icons.cancel,
+                        color: Colors.red,
+                      ),
+                    if (data.userAchievements.unanswered > 0)
+                      _buildAchievementCard(
+                        title: Strings.didntAnswer,
+                        value: data.userAchievements.unanswered.toString(),
+                        icon: Icons.help_outline,
+                        color: Colors.grey,
+                      ),
                     _buildAchievementCard(
                       title: Strings.averageTime,
-                      value: resultNotifier.getTimeAvg().toStringAsFixed(2),
+                      value: data.avgTime.toStringAsFixed(2),
                       icon: Icons.timer,
                       color: Colors.blue,
                     ),
@@ -87,17 +72,17 @@ class ResultsScreen extends ConsumerWidget {
                     height: 200,
                     enlargeCenterPage: true,
                     enableInfiniteScroll: true,
+                    viewportFraction: 0.5,
+                    initialPage: 0,
                   ),
                 ),
                 const SizedBox(height: 20),
 
                 // Podium for Top 3 Users
                 const Text("Top 3 Players", style: TextStyle(fontSize: 18)),
-                topUsers.length >= 3
-                    ? Podium(
-                        firstPosition: Text(topUsers[0].toString()),
-                        secondPosition: Text(topUsers[1].toString()),
-                        thirdPosition: Text(topUsers[2].toString()),
+                (data.topUsersScores?.length ?? 0) >= 3
+                    ? TopUsersPodium(
+                        topUsersScores: data.topUsersScores!,
                       )
                     : const Podium(
                         firstPosition: Text("first"),
@@ -138,15 +123,20 @@ class ResultsScreen extends ConsumerWidget {
     required Color color,
   }) {
     return Card(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 50),
-          const SizedBox(height: 10),
-          Text(title, style: const TextStyle(fontSize: 16)),
-          const SizedBox(height: 5),
-          Text(value, style: const TextStyle(fontSize: 24)),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 50),
+            const SizedBox(height: 10),
+            Text(title, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 5),
+            Text(value,
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }

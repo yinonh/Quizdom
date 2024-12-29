@@ -61,14 +61,17 @@ class GeneralTriviaRooms extends _$GeneralTriviaRooms {
     required String userId,
     required int newScore,
   }) async {
-    await _dataSource.updateUserScore(
+    // Update the user's score and get the new top users
+    final newTopUsers = await _dataSource.updateUserScore(
       roomId: roomId,
       userId: userId,
       newScore: newScore,
     );
-    // Refresh selected room
+
+    // Update the state if the selected room matches
     if (state.selectedRoom?.roomId == roomId) {
-      selectRoom(roomId);
+      final updatedRoom = state.selectedRoom!.copyWith(topUsers: newTopUsers);
+      state = state.copyWith(selectedRoom: updatedRoom);
     }
   }
 }
