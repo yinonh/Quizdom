@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
@@ -15,7 +14,6 @@ class TriviaState with _$TriviaState {
   const factory TriviaState({
     required String? token,
     required GeneralTriviaRoom? triviaRoom,
-    required TriviaDataSource dataSource,
     TriviaCategories? categories,
   }) = _TriviaState;
 }
@@ -24,18 +22,16 @@ class TriviaState with _$TriviaState {
 class Trivia extends _$Trivia {
   @override
   TriviaState build() {
-    final dioClient = ref.watch(dioProvider);
-
-    return TriviaState(
-        triviaRoom: null,
-        token: null,
-        dataSource: TriviaDataSource(client: dioClient));
+    return const TriviaState(
+      triviaRoom: null,
+      token: null,
+    );
   }
 
   get categoryId => state.triviaRoom?.categoryId;
 
   Future<void> setToken() async {
-    final data = await state.dataSource.requestToken();
+    final data = await TriviaDataSource.requestToken();
     state = state.copyWith(token: data['token'] as String);
   }
 
@@ -44,7 +40,7 @@ class Trivia extends _$Trivia {
       return state.categories!;
     }
 
-    final data = await state.dataSource.fetchCategories(state.token);
+    final data = await TriviaDataSource.fetchCategories(state.token);
     TriviaCategories categories = TriviaCategories.fromJson(data);
     categories = categories.copyWith(triviaCategories: [
       const TriviaCategory(name: "All", id: -1),
@@ -70,8 +66,8 @@ class Trivia extends _$Trivia {
   }
 
   Future<List<Question>?> getTriviaQuestions() async {
-    final data = await state.dataSource
-        .fetchTriviaQuestions(state.triviaRoom, state.token);
+    final data = await TriviaDataSource.fetchTriviaQuestions(
+        state.triviaRoom, state.token);
 
     final List<Question> questions = (data['results'] as List).map((result) {
       final decodedResult = decodeFields(result);

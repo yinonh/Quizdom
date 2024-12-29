@@ -1,34 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/data/models/general_trivia_room.dart';
 
 class GeneralTriviaRoomDataSource {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  static Future<List<GeneralTriviaRoom>> fetchAllGeneralRooms() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('generalTriviaRooms').get();
 
-  // /// Fetch a trivia room by its ID and deserialize it into a TriviaRoom
-  // Future<TriviaRoom?> getRoomById(String roomId) async {
-  //   final roomSnapshot =
-  //       await firestore.collection('triviaRooms').doc(roomId).get();
-  //
-  //   if (!roomSnapshot.exists) {
-  //     return null; // Return null if the room doesn't exist
-  //   }
-  //
-  //   final data = roomSnapshot.data();
-  //   if (data == null) {
-  //     return null;
-  //   }
-  //
-  //   TriviaRoom room = TriviaRoom.fromJson(data);
-  //
-  //   // Deserialize Firestore data into a TriviaRoom object
-  //   return room.copyWith(roomId: roomId);
-  // }
+    // Map the documents to TriviaRoom instances
+    return snapshot.docs.map((doc) {
+      final data = doc.data(); // Retrieve the document data
+      return GeneralTriviaRoom.fromJson({
+        ...data, // Spread the document data
+        'roomId': doc.id, // Add the document ID as 'roomId'
+      });
+    }).toList();
+  }
 
-  Future<void> updateRoom({
+  static Future<void> updateRoom({
     required String roomId,
     Map<String, dynamic>? updates,
   }) async {
     if (updates != null) {
-      await firestore
+      await FirebaseFirestore.instance
           .collection('generalTriviaRooms')
           .doc(roomId)
           .update(updates);
@@ -36,8 +29,11 @@ class GeneralTriviaRoomDataSource {
   }
 
   // Deletes a trivia room
-  Future<void> deleteRoom(String roomId) async {
-    await firestore.collection('triviaRooms').doc(roomId).delete();
+  static Future<void> deleteRoom(String roomId) async {
+    await FirebaseFirestore.instance
+        .collection('triviaRooms')
+        .doc(roomId)
+        .delete();
   }
 
   // Updates the scores of users in a trivia room
@@ -46,7 +42,8 @@ class GeneralTriviaRoomDataSource {
     required String userId,
     required int newScore,
   }) async {
-    final roomRef = firestore.collection('generalTriviaRooms').doc(roomId);
+    final roomRef =
+        FirebaseFirestore.instance.collection('generalTriviaRooms').doc(roomId);
 
     // Fetch the current room data
     final snapshot = await roomRef.get();

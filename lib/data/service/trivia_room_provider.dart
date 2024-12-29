@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
-import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/trivia_room.dart';
 
 part 'trivia_room_provider.freezed.dart';
@@ -17,33 +16,9 @@ class TriviaRoomsState with _$TriviaRoomsState {
 
 @Riverpod(keepAlive: true)
 class TriviaRooms extends _$TriviaRooms {
-  late final TriviaRoomDataSource _dataSource;
-
   @override
   TriviaRoomsState build() {
-    _dataSource = TriviaRoomDataSource();
     return const TriviaRoomsState(triviaRooms: null, selectedRoom: null);
-  }
-
-  /// Fetches all trivia rooms from the data source
-  Future<List<GeneralTriviaRoom>> _fetchAllGeneralRooms() async {
-    try {
-      final snapshot =
-          await _dataSource.firestore.collection('generalTriviaRooms').get();
-
-      // Map the documents to TriviaRoom instances
-      return snapshot.docs.map((doc) {
-        final data = doc.data(); // Retrieve the document data
-        return GeneralTriviaRoom.fromJson({
-          ...data, // Spread the document data
-          'roomId': doc.id, // Add the document ID as 'roomId'
-        });
-      }).toList();
-    } catch (e) {
-      // Handle potential errors
-      print('Error fetching rooms: $e');
-      return [];
-    }
   }
 
   /// Creates a new trivia room
@@ -55,7 +30,7 @@ class TriviaRooms extends _$TriviaRooms {
     required String difficulty,
     required bool isPublic,
   }) async {
-    await _dataSource.createRoom(
+    await TriviaRoomDataSource.createRoom(
       roomId: roomId,
       questionCount: questionCount,
       categoryId: categoryId,
@@ -78,7 +53,7 @@ class TriviaRooms extends _$TriviaRooms {
 
   /// Deletes a trivia room by ID
   Future<void> deleteRoom(String roomId) async {
-    await _dataSource.deleteRoom(roomId);
+    await TriviaRoomDataSource.deleteRoom(roomId);
     // TODO: Refresh rooms
   }
 
@@ -88,7 +63,7 @@ class TriviaRooms extends _$TriviaRooms {
     required String userId,
     String? userName,
   }) async {
-    await _dataSource.joinRoom(
+    await TriviaRoomDataSource.joinRoom(
       roomId: roomId,
       userId: userId,
       userName: userName,
@@ -105,7 +80,7 @@ class TriviaRooms extends _$TriviaRooms {
     required String userId,
     required int newScore,
   }) async {
-    await _dataSource.updateUserScore(
+    await TriviaRoomDataSource.updateUserScore(
       roomId: roomId,
       userId: userId,
       newScore: newScore,

@@ -1,28 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/api_endpoints.dart';
-
-part 'server.g.dart';
 
 final logger = Logger(
   printer: PrettyPrinter(),
 );
 
-@Riverpod(keepAlive: true)
-Dio dio(DioRef ref) {
-  final dio = Dio(
+class DioClient {
+  // Private constructor
+  DioClient._internal();
+
+  // Static instance of Dio
+  static final Dio _dio = Dio(
     BaseOptions(
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        responseType: ResponseType.json,
-        baseUrl: ApiEndpoints.baseUrl),
-  );
-  dio.interceptors.add(DioInterceptor());
-  return dio;
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      responseType: ResponseType.json,
+      baseUrl: ApiEndpoints.baseUrl,
+    ),
+  )..interceptors.add(_DioInterceptor());
+
+  // Public getter for the Dio instance
+  static Dio get instance => _dio;
 }
 
-class DioInterceptor implements Interceptor {
+class _DioInterceptor implements Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {

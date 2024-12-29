@@ -1,38 +1,19 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/user_achievements.dart';
 
-part 'user_data_source.freezed.dart';
-part 'user_data_source.g.dart';
-
-@freezed
-class UserDataSourceState with _$UserDataSourceState {
-  const factory UserDataSourceState({
-    required FirebaseFirestore firestore,
-    required FirebaseStorage storage,
-  }) = _UserDataSourceState;
-}
-
-@Riverpod(keepAlive: true)
-class UserDataSource extends _$UserDataSource {
-  @override
-  UserDataSourceState build() {
-    return UserDataSourceState(
-      firestore: FirebaseFirestore.instance,
-      storage: FirebaseStorage.instance,
-    );
+class UserDataSource {
+  static Future<DocumentSnapshot> getUserDocument(String userId) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
   }
 
-  Future<DocumentSnapshot> getUserDocument(String userId) async {
-    return await state.firestore.collection('users').doc(userId).get();
-  }
-
-  Future<void> saveUser(String uid, String name) async {
+  static Future<void> saveUser(String uid, String name) async {
     final now = DateTime.now();
-    await state.firestore.collection('users').doc(uid).set({
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
       'name': name,
       'lastLogin': now,
       'recentTriviaCategories': [],
@@ -41,13 +22,14 @@ class UserDataSource extends _$UserDataSource {
     });
   }
 
-  Future<void> updateUser({
+  static Future<void> updateUser({
     required String userId,
     double? userXp,
     UserAchievements? achievements,
     String? avatarUrl,
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
+    String? name,
   }) async {
     // Initialize the updates map
     Map<String, dynamic> updates = {};
@@ -68,58 +50,67 @@ class UserDataSource extends _$UserDataSource {
     if (recentTriviaCategories != null) {
       updates['recentTriviaCategories'] = recentTriviaCategories;
     }
+    if (name != null) {
+      updates['name'] = name;
+    }
 
     // Only make the update call if there are updates to send
     if (updates.isNotEmpty) {
-      await state.firestore.collection('users').doc(userId).update(updates);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update(updates);
     }
   }
 
-  Future<String> updateUserImage(String userId, File image) async {
-    final storageRef = state.storage.ref().child('user_images/$userId');
+  static Future<String> updateUserImage(String userId, File image) async {
+    final storageRef =
+        FirebaseStorage.instance.ref().child('user_images/$userId');
     final uploadTask = await storageRef.putFile(image);
     final downloadUrl = await uploadTask.ref.getDownloadURL();
 
-    await state.firestore.collection('users').doc(userId).update({
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
       'userImage': downloadUrl,
     });
     return downloadUrl;
   }
 
-  Future<void> deleteUserImageIfExists(String userId) async {
-    final userDoc = await state.firestore.collection('users').doc(userId).get();
+  static Future<void> deleteUserImageIfExists(String userId) async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
     final userImageExists = userDoc.data()?['userImage'] != null;
 
     if (userImageExists) {
-      await state.firestore.collection('users').doc(userId).update({
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'userImage': FieldValue.delete(),
       });
     }
   }
 
-  Future<void> deleteUserAvatarIfExists(String userId) async {
-    final userDoc = await state.firestore.collection('users').doc(userId).get();
+  static Future<void> deleteUserAvatarIfExists(String userId) async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
     final userAvatarExists = userDoc.data()?['userAvatar'] != null;
     if (userAvatarExists) {
-      await state.firestore.collection('users').doc(userId).update({
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'userAvatar': FieldValue.delete(),
       });
     }
   }
 
-  Future<void> deleteUserImage(String userId) async {
-    await state.firestore.collection('users').doc(userId).update({
+  static Future<void> deleteUserImage(String userId) async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
       'userImage': FieldValue.delete(),
     });
   }
 
-  Future<void> deleteUserAvatar(String userId) async {
-    await state.firestore.collection('users').doc(userId).update({
+  static Future<void> deleteUserAvatar(String userId) async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).update({
       'userAvatar': FieldValue.delete(),
     });
   }
 
-  Future<void> clearUser(String userId) async {
-    await state.firestore.collection('users').doc(userId).delete();
+  static Future<void> clearUser(String userId) async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).delete();
   }
 }

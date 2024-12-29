@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TriviaRoomDataSource {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   // Creates a new trivia room
-  Future<void> createRoom({
+  static Future<void> createRoom({
     required String roomId,
     required int questionCount,
     required int categoryId,
@@ -12,7 +10,7 @@ class TriviaRoomDataSource {
     required String difficulty,
     required bool isPublic,
   }) async {
-    await firestore.collection('triviaRooms').doc(roomId).set({
+    await FirebaseFirestore.instance.collection('triviaRooms').doc(roomId).set({
       'questionCount': questionCount,
       'categoryId': categoryId,
       'categoryName': categoryName,
@@ -25,27 +23,34 @@ class TriviaRoomDataSource {
   }
 
   // Updates room details (e.g., updating user scores or other room details)
-  Future<void> updateRoom({
+  static Future<void> updateRoom({
     required String roomId,
     Map<String, dynamic>? updates,
   }) async {
     if (updates != null) {
-      await firestore.collection('triviaRooms').doc(roomId).update(updates);
+      await FirebaseFirestore.instance
+          .collection('triviaRooms')
+          .doc(roomId)
+          .update(updates);
     }
   }
 
   // Deletes a trivia room
-  Future<void> deleteRoom(String roomId) async {
-    await firestore.collection('triviaRooms').doc(roomId).delete();
+  static Future<void> deleteRoom(String roomId) async {
+    await FirebaseFirestore.instance
+        .collection('triviaRooms')
+        .doc(roomId)
+        .delete();
   }
 
   // Allows a user to join a trivia room
-  Future<void> joinRoom({
+  static Future<void> joinRoom({
     required String roomId,
     required String userId,
     String? userName,
   }) async {
-    final roomRef = firestore.collection('triviaRooms').doc(roomId);
+    final roomRef =
+        FirebaseFirestore.instance.collection('triviaRooms').doc(roomId);
 
     // Add the user to the room
     await roomRef.update({
@@ -60,12 +65,13 @@ class TriviaRoomDataSource {
   }
 
   // Updates the scores of users in a trivia room
-  Future<void> updateUserScore({
+  static Future<void> updateUserScore({
     required String roomId,
     required String userId,
     required int newScore,
   }) async {
-    final roomRef = firestore.collection('triviaRooms').doc(roomId);
+    final roomRef =
+        FirebaseFirestore.instance.collection('triviaRooms').doc(roomId);
 
     // Fetch the current room data
     final snapshot = await roomRef.get();

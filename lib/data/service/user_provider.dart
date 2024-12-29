@@ -1,11 +1,8 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
 import 'package:trivia/data/models/user_achievements.dart';
@@ -24,10 +21,6 @@ class UserState with _$UserState {
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  late final UserDataSource _userDataSource =
-      ref.read(userDataSourceProvider.notifier);
-
   @override
   UserState build() {
     return UserState(
@@ -77,7 +70,7 @@ class Auth extends _$Auth {
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId != null) {
-      final userDoc = await _userDataSource.getUserDocument(userId);
+      final userDoc = await UserDataSource.getUserDocument(userId);
 
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>;
@@ -107,7 +100,7 @@ class Auth extends _$Auth {
   }
 
   Future<void> saveUser(String uid, String name, String email) async {
-    await _userDataSource.saveUser(uid, name);
+    await UserDataSource.saveUser(uid, name);
     state = state.copyWith(
       currentUser: updateCurrentUser(uid: uid, name: name, email: email),
     );
@@ -117,9 +110,7 @@ class Auth extends _$Auth {
     required String uid,
     required String name,
   }) async {
-    await FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'name': name,
-    });
+    UserDataSource.updateUser(userId: uid, name: name);
     final updatedUser = updateCurrentUser(
       uid: uid,
       name: name,
@@ -132,7 +123,7 @@ class Auth extends _$Auth {
         updateCurrentUser(userXp: state.currentUser.userXp + xp);
     state = state.copyWith(currentUser: updatedUser);
 
-    await _userDataSource.updateUser(
+    await UserDataSource.updateUser(
         userId: state.currentUser.uid!, userXp: updatedUser.userXp);
   }
 
@@ -141,10 +132,10 @@ class Auth extends _$Auth {
 
     if (image != null) {
       final imageUrl =
-          await _userDataSource.updateUserImage(state.currentUser.uid!, image);
+          await UserDataSource.updateUserImage(state.currentUser.uid!, image);
 
       // Check if an image already exists in Firestore, if yes, delete it
-      await _userDataSource.deleteUserAvatar(state.currentUser.uid!);
+      await UserDataSource.deleteUserAvatar(state.currentUser.uid!);
 
       final updatedUser = updateCurrentUser(imageUrl: imageUrl);
       state = state.copyWith(currentUser: updatedUser, imageLoading: false);
@@ -165,14 +156,14 @@ class Auth extends _$Auth {
         state.currentUser.copyWith(recentTriviaCategories: recentCategories);
     state = state.copyWith(currentUser: updatedUser);
 
-    await _userDataSource.updateUser(
+    await UserDataSource.updateUser(
         userId: state.currentUser.uid!,
         recentTriviaCategories: recentCategories);
   }
 
   Future<void> clearUser() async {
     if (state.currentUser.uid != null) {
-      await _userDataSource.clearUser(state.currentUser.uid!);
+      await UserDataSource.clearUser(state.currentUser.uid!);
 
       final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
       state = state.copyWith(currentUser: updatedUser);
@@ -183,7 +174,7 @@ class Auth extends _$Auth {
     final userId = state.currentUser.uid;
 
     if (userId != null) {
-      await _userDataSource.deleteUserImageIfExists(userId);
+      await UserDataSource.deleteUserImageIfExists(userId);
 
       // Update the local state with the new avatar and remove the image
       final updatedUser = state.currentUser.copyWith(imageUrl: null);
@@ -239,7 +230,8 @@ class Auth extends _$Auth {
   }
 
   Future<UserCredential> signIn(String email, String password) async {
-    final userCredential = await _auth.signInWithEmailAndPassword(
+    final userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -248,7 +240,8 @@ class Auth extends _$Auth {
   }
 
   Future<UserCredential> createUser(String email, String password) async {
-    final userCredential = await _auth.createUserWithEmailAndPassword(
+    final userCredential =
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -274,7 +267,8 @@ class Auth extends _$Auth {
       idToken: googleAuth.idToken,
     );
 
-    final userCredential = await _auth.signInWithCredential(credential);
+    final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
 
     final user = userCredential.user;
 

@@ -36,17 +36,7 @@ class GeneralTriviaRooms extends _$GeneralTriviaRooms {
   /// Fetches all trivia rooms from the data source
   Future<List<GeneralTriviaRoom>> _fetchAllGeneralRooms() async {
     try {
-      final snapshot =
-          await _dataSource.firestore.collection('generalTriviaRooms').get();
-
-      // Map the documents to TriviaRoom instances
-      return snapshot.docs.map((doc) {
-        final data = doc.data(); // Retrieve the document data
-        return GeneralTriviaRoom.fromJson({
-          ...data, // Spread the document data
-          'roomId': doc.id, // Add the document ID as 'roomId'
-        });
-      }).toList();
+      return GeneralTriviaRoomDataSource.fetchAllGeneralRooms();
     } catch (e) {
       // Handle potential errors
       print('Error fetching rooms: $e');

@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:trivia/core/constants/api_endpoints.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 
 class TriviaDataSource {
-  final Dio client;
+  static final Dio client = DioClient.instance;
 
-  TriviaDataSource({required this.client});
-
-  Future<Map<String, dynamic>> requestToken() async {
+  static Future<Map<String, dynamic>> requestToken() async {
     final response = await client
         .get(ApiEndpoints.apiToken, queryParameters: {"command": "request"});
     if (response.statusCode == 200) {
@@ -62,7 +61,7 @@ class TriviaDataSource {
   //   }
   // }
 
-  Future<Map<String, dynamic>> fetchCategories(String? token) async {
+  static Future<Map<String, dynamic>> fetchCategories(String? token) async {
     final response = await client
         .get(ApiEndpoints.apiCategory, queryParameters: {"token": token});
     if (response.statusCode == 200) {
@@ -72,7 +71,7 @@ class TriviaDataSource {
     }
   }
 
-  Future<Map<String, dynamic>> fetchTriviaQuestions(
+  static Future<Map<String, dynamic>> fetchTriviaQuestions(
       GeneralTriviaRoom? triviaRoom, String? token) async {
     final response = await client.get(
       ApiEndpoints.apiTrivia,
