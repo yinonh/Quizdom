@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/user_achievements.dart';
+import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
@@ -35,6 +36,30 @@ class ResultScreenManager extends _$ResultScreenManager {
 
     return AppConstant.questionTime -
         (achievements.sumResponseTime / totalQuestions);
+  }
+
+  /// Calculates total score from achievements
+  int calculateTotalScore() {
+    final achievements = ref.read(authProvider).currentUser.achievements;
+    // Example formula for calculating score
+    return (achievements.correctAnswers * 10) - (achievements.wrongAnswers * 5);
+  }
+
+  /// Updates the user's score in the server
+  Future<void> updateUserScoreOnServer() async {
+    final userId = ref.read(authProvider).currentUser.uid;
+    final selectedRoom = ref.read(generalTriviaRoomsProvider).selectedRoom;
+
+    if (selectedRoom == null) {
+      throw Exception("No selected trivia room");
+    }
+
+    final totalScore = calculateTotalScore();
+    await ref.read(generalTriviaRoomsProvider.notifier).updateUserScore(
+          roomId: selectedRoom.roomId ?? "",
+          userId: userId ?? "",
+          newScore: totalScore,
+        );
   }
 
   void addXpToUser() {

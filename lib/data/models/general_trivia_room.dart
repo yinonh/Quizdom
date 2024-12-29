@@ -10,7 +10,7 @@ class GeneralTriviaRoom with _$GeneralTriviaRoom {
     required int questionCount,
     required int categoryId,
     required String categoryName,
-    @Default([]) List<String> topUsers,
+    @Default({}) Map<String, int> topUsers,
   }) = _GeneralTriviaRoom;
 
   factory GeneralTriviaRoom.fromJson(Map<String, dynamic> json) =>

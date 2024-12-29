@@ -53,27 +53,23 @@ class GeneralTriviaRoomDataSource {
     if (!snapshot.exists) throw Exception("Room not found");
 
     final data = snapshot.data() as Map<String, dynamic>;
-    final users = (data['users'] as List<dynamic>).cast<Map<String, dynamic>>();
 
-    // Update the user's score
-    final updatedUsers = users.map((user) {
-      if (user['id'] == userId) {
-        return {
-          ...user,
-          'score': newScore,
-        };
-      }
-      return user;
-    }).toList();
+    // Get the topUsers map
+    final Map<String, dynamic> topUsers =
+        (data['topUsers'] as Map<String, dynamic>).cast<String, dynamic>();
 
-    // Update the top 5 users based on scores
-    final topUsers = updatedUsers.map((user) => user).toList()
-      ..sort((a, b) => (b['score'] as int).compareTo(a['score'] as int));
-    final top5 = topUsers.take(5).toList();
+    // Update the user's score or add the user if not present
+    topUsers[userId] = newScore;
+
+    // Sort the map by scores in descending order
+    final sortedEntries = topUsers.entries.toList()
+      ..sort((a, b) => (b.value as int).compareTo(a.value as int));
+
+    // Take the top 5 users
+    final top5 = Map<String, dynamic>.fromEntries(sortedEntries.take(5));
 
     // Update the database
     await roomRef.update({
-      'users': updatedUsers,
       'topUsers': top5,
     });
   }
