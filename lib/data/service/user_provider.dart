@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -26,6 +27,7 @@ class Auth extends _$Auth {
     return UserState(
       firebaseUser: FirebaseAuth.instance.currentUser,
       currentUser: TriviaUser(
+        uid: FirebaseAuth.instance.currentUser?.uid,
         achievements: const UserAchievements(
           correctAnswers: 0,
           wrongAnswers: 0,
@@ -68,34 +70,21 @@ class Auth extends _$Auth {
 
   Future<void> initializeUser() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
-
     if (userId != null) {
-      final userDoc = await UserDataSource.getUserDocument(userId);
+      final currentUser = await UserDataSource.getUserById(userId);
 
-      if (userDoc.exists) {
-        final userData = userDoc.data() as Map<String, dynamic>;
-        final name = userData['name'];
-        final email = FirebaseAuth.instance.currentUser?.email;
+      final updatedUser = updateCurrentUser(
+        uid: userId,
+        name: currentUser?.name,
+        email: currentUser?.email,
+        imageUrl: currentUser?.imageUrl,
+        lastLogin: currentUser?.lastLogin,
+        recentTriviaCategories: currentUser?.recentTriviaCategories,
+        trophies: currentUser?.trophies,
+        userXp: currentUser?.userXp,
+      );
 
-        final recentTriviaCategories =
-            List<int>.from(userData['recentTriviaCategories']);
-        final trophies = List<int>.from(userData['trophies']);
-        final userXp = userData['userXp'] as double;
-        final imageUrl = userData['userImage'];
-
-        final updatedUser = updateCurrentUser(
-          uid: userId,
-          name: name,
-          email: email,
-          imageUrl: imageUrl,
-          lastLogin: FirebaseAuth.instance.currentUser?.metadata.lastSignInTime,
-          recentTriviaCategories: recentTriviaCategories,
-          trophies: trophies,
-          userXp: userXp,
-        );
-
-        state = state.copyWith(currentUser: updatedUser);
-      }
+      state = state.copyWith(currentUser: updatedUser);
     }
   }
 

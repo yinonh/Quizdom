@@ -7,11 +7,12 @@ import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/service/user_provider.dart';
 
-class UserAvatar extends ConsumerWidget {
+class CurrentUserAvatar extends ConsumerWidget {
   final double radius;
   final bool showProgress;
 
-  const UserAvatar({this.radius = 42, this.showProgress = false, super.key});
+  const CurrentUserAvatar(
+      {this.radius = 42, this.showProgress = false, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

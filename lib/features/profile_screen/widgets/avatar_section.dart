@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 
@@ -26,7 +26,7 @@ class AvatarSection extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(context, AvatarScreen.routeName);
               },
-              child: const UserAvatar(
+              child: const CurrentUserAvatar(
                 showProgress: true,
                 radius: 70,
               ),

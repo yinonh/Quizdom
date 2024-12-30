@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
-import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -82,7 +82,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
               child: const Hero(
                 transitionOnUserGestures: true,
                 tag: Strings.userAvatarTag,
-                child: UserAvatar(
+                child: CurrentUserAvatar(
                   showProgress: true,
                 ),
               ),

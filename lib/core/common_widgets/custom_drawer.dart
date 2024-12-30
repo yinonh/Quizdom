@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
-import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
@@ -108,7 +108,7 @@ class CustomDrawerHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  child: const UserAvatar(
+                  child: const CurrentUserAvatar(
                     showProgress: true,
                   ),
                   onTap: () {

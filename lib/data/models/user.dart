@@ -16,8 +16,9 @@ File? fileFromJson(String? path) {
 
 @freezed
 class TriviaUser with _$TriviaUser {
+  @Assert('uid != null', 'uid cannot be null when used as a map key')
   const factory TriviaUser({
-    String? uid,
+    required String? uid,
     String? name,
     String? email,
     String? imageUrl,
@@ -28,6 +29,17 @@ class TriviaUser with _$TriviaUser {
     required double userXp,
   }) = _TriviaUser;
 
+  const TriviaUser._();
+
   factory TriviaUser.fromJson(Map<String, dynamic> json) =>
       _$TriviaUserFromJson(json);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is TriviaUser && uid != null && other.uid == uid);
+  }
+
+  @override
+  int get hashCode => uid.hashCode;
 }

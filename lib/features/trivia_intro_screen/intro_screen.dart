@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/stars.dart';
-import 'package:trivia/core/common_widgets/user_avater.dart';
+import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -35,7 +35,7 @@ class TriviaIntroScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const UserAvatar(
+                  const CurrentUserAvatar(
                     radius: 60,
                   ), // competition image
                   const SizedBox(width: 10),
@@ -62,7 +62,7 @@ class TriviaIntroScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const UserAvatar(
+                  const CurrentUserAvatar(
                     radius: 60,
                   ), // competition image
                   const SizedBox(width: 10),

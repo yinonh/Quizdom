@@ -54,19 +54,57 @@ class GeneralTriviaRoomDataSource {
     final Map<String, dynamic> topUsers =
         (data['topUsers'] as Map<String, dynamic>).cast<String, dynamic>();
 
-    // Update the user's score or add the user if not present
-    topUsers[userId] = newScore;
+    // Check if user already exists in top users
+    if (topUsers.containsKey(userId)) {
+      final currentScore = topUsers[userId] as int;
+      // Only update if the new score is higher than current score
+      if (newScore <= currentScore) {
+        // Return current top users without any changes if new score isn't higher
+        return Map<String, int>.from(topUsers);
+      }
+    }
+
+    // If we have less than 5 users, add the new score
+    if (topUsers.length < 5) {
+      topUsers[userId] = newScore;
+    } else {
+      // If user is not in top 5, check if their score qualifies
+      if (!topUsers.containsKey(userId)) {
+        // Find the lowest score in top 5
+        final lowestScore = topUsers.values
+            .map((v) => v as int)
+            .reduce((min, score) => score < min ? score : min);
+
+        // Only add if new score is higher than the lowest score
+        if (newScore > lowestScore) {
+          // Remove the user with lowest score
+          final userToRemove = topUsers.entries
+              .firstWhere((entry) => entry.value == lowestScore)
+              .key;
+          topUsers.remove(userToRemove);
+
+          // Add the new user
+          topUsers[userId] = newScore;
+        } else {
+          // If score doesn't qualify for top 5, return current top users without updating database
+          return Map<String, int>.from(topUsers);
+        }
+      } else {
+        // User is in top 5 and we already checked above that new score is higher
+        topUsers[userId] = newScore;
+      }
+    }
 
     // Sort the map by scores in descending order
     final sortedEntries = topUsers.entries.toList()
       ..sort((a, b) => (b.value as int).compareTo(a.value as int));
 
-    // Take the top 5 users
+    // Create the top 5 map
     final top5 = Map<String, int>.fromEntries(
       sortedEntries.take(5).map((e) => MapEntry(e.key, e.value as int)),
     );
 
-    // Update the database
+    // Only update the database if we made changes
     await roomRef.update({
       'topUsers': top5,
     });

@@ -79,10 +79,12 @@ class ResultsScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
 
                 // Podium for Top 3 Users
-                const Text("Top 3 Players", style: TextStyle(fontSize: 18)),
-                (data.topUsersScores?.length ?? 0) >= 3
+                const Text("Top 3 Players",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                (data.topUsers.length) >= 3
                     ? TopUsersPodium(
-                        topUsersScores: data.topUsersScores!,
+                        topUsersScores: data.topUsers,
                       )
                     : const Podium(
                         firstPosition: Text("first"),

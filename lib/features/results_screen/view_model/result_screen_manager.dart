@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
 import 'package:trivia/data/models/user_achievements.dart';
 import 'package:trivia/data/service/general_trivia_room_provider.dart';
@@ -15,9 +16,8 @@ part 'result_screen_manager.g.dart';
 class ResultState with _$ResultState {
   const factory ResultState({
     required UserAchievements userAchievements,
-    required List<TriviaUser>? topUsers,
     required double avgTime,
-    required Map<String, int>? topUsersScores,
+    required Map<TriviaUser, int> topUsers,
   }) = _ResultState;
 }
 
@@ -26,14 +26,20 @@ class ResultScreenManager extends _$ResultScreenManager {
   @override
   Future<ResultState> build() async {
     await updateUserScoreOnServer();
-    final topUsers =
+    final topUsersScores =
         ref.read(generalTriviaRoomsProvider).selectedRoom?.topUsers;
+    Map<TriviaUser, int> topUsers = {};
+    for (String userId in topUsersScores?.keys.toList() ?? []) {
+      final userForId = await UserDataSource.getUserById(userId);
+      if (await UserDataSource.getUserById(userId) != null) {
+        topUsers[userForId!] = topUsersScores![userId]!;
+      }
+    }
     final userAchievements = ref.read(authProvider).currentUser.achievements;
     return ResultState(
       userAchievements: ref.read(authProvider).currentUser.achievements,
       avgTime: getTimeAvg(userAchievements),
-      topUsersScores: topUsers,
-      topUsers: [],
+      topUsers: topUsers,
     );
   }
 
