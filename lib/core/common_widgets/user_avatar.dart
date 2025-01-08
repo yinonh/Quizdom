@@ -1,27 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/models/user.dart';
 
-class CurrentUserAvatar extends ConsumerWidget {
+class UserAvatar extends ConsumerWidget {
   final double radius;
   final bool showProgress;
+  final TriviaUser? user;
 
-  const CurrentUserAvatar(
-      {this.radius = 42, this.showProgress = false, super.key});
+  const UserAvatar({
+    required this.user,
+    this.radius = 42,
+    this.showProgress = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userState = ref.watch(authProvider);
-    if (userState.imageLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -31,13 +31,13 @@ class CurrentUserAvatar extends ConsumerWidget {
             height: calcWidth(radius * 2.1),
             child: CircularProgressIndicator(
               strokeWidth: 6.0,
-              value: userState.currentUser.userXp / 100,
+              value: user?.userXp ?? 0 / 100,
               color: AppConstant.onPrimary,
             ),
           ),
-        userState.currentUser.imageUrl != null
+        user != null && user?.imageUrl != null
             ? CachedNetworkImage(
-                imageUrl: userState.currentUser.imageUrl!,
+                imageUrl: user!.imageUrl!,
                 placeholder: (context, url) => Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
                   highlightColor: Colors.grey[100]!,
@@ -51,10 +51,25 @@ class CurrentUserAvatar extends ConsumerWidget {
                   radius: calcWidth(radius),
                 ),
               )
-            : FluttermojiCircleAvatar(
-                backgroundColor: AppConstant.userAvatarBackground,
-                radius: calcWidth(radius),
-              ),
+            : user != null && user?.fluttermojiOptions != null
+                ? CircleAvatar(
+                    radius: calcWidth(radius),
+                    backgroundColor: AppConstant.userAvatarBackground,
+                    child: SvgPicture.string(
+                      ref
+                          .read(fluttermojiNotifierProvider.notifier)
+                          .getFluttermojiFromOptions(user!.fluttermojiOptions!),
+                    ),
+                  )
+                : CircleAvatar(
+                    radius: calcWidth(radius),
+                    backgroundColor: AppConstant.userAvatarBackground,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white.withOpacity(0.7),
+                      size: calcWidth(radius * 1.5),
+                    ),
+                  )
       ],
     );
   }

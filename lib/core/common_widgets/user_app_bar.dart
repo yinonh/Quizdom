@@ -12,8 +12,9 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
   final Widget? prefix;
+  final bool isEditable;
 
-  UserAppBar({this.prefix, super.key})
+  UserAppBar({this.prefix, this.isEditable = true, super.key})
       : preferredSize = Size.fromHeight(calcHeight(120));
 
   @override
@@ -70,15 +71,17 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           right: 0,
           child: Center(
             child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 700),
-                    pageBuilder: (_, __, ___) => const AvatarScreen(),
-                  ),
-                );
-              },
+              onTap: isEditable
+                  ? () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 700),
+                          pageBuilder: (_, __, ___) => const AvatarScreen(),
+                        ),
+                      );
+                    }
+                  : null,
               child: const Hero(
                 transitionOnUserGestures: true,
                 tag: Strings.userAvatarTag,

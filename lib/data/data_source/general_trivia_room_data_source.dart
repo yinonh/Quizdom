@@ -64,13 +64,13 @@ class GeneralTriviaRoomDataSource {
       }
     }
 
-    // If we have less than 5 users, add the new score
-    if (topUsers.length < 5) {
+    // If we have less than 10 users, add the new score
+    if (topUsers.length < 10) {
       topUsers[userId] = newScore;
     } else {
-      // If user is not in top 5, check if their score qualifies
+      // If user is not in top 10, check if their score qualifies
       if (!topUsers.containsKey(userId)) {
-        // Find the lowest score in top 5
+        // Find the lowest score in top 10
         final lowestScore = topUsers.values
             .map((v) => v as int)
             .reduce((min, score) => score < min ? score : min);
@@ -86,11 +86,11 @@ class GeneralTriviaRoomDataSource {
           // Add the new user
           topUsers[userId] = newScore;
         } else {
-          // If score doesn't qualify for top 5, return current top users without updating database
+          // If score doesn't qualify for top 10, return current top users without updating database
           return Map<String, int>.from(topUsers);
         }
       } else {
-        // User is in top 5 and we already checked above that new score is higher
+        // User is in top 10 and we already checked above that new score is higher
         topUsers[userId] = newScore;
       }
     }

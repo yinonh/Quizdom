@@ -14,9 +14,12 @@ class RecentCategories extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          Strings.recentPlayedCategories,
-          style: TextStyle(fontWeight: FontWeight.bold),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(
+            Strings.recentPlayedCategories,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
         SizedBox(
           height: calcHeight(15),

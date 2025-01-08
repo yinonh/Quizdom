@@ -16,6 +16,7 @@ part 'result_screen_manager.g.dart';
 class ResultState with _$ResultState {
   const factory ResultState({
     required UserAchievements userAchievements,
+    required int totalScore,
     required double avgTime,
     required Map<TriviaUser, int> topUsers,
   }) = _ResultState;
@@ -38,6 +39,7 @@ class ResultScreenManager extends _$ResultScreenManager {
     final userAchievements = ref.read(authProvider).currentUser.achievements;
     return ResultState(
       userAchievements: ref.read(authProvider).currentUser.achievements,
+      totalScore: calculateTotalScore(userAchievements),
       avgTime: getTimeAvg(userAchievements),
       topUsers: topUsers,
     );
@@ -54,7 +56,7 @@ class ResultScreenManager extends _$ResultScreenManager {
         (achievements.sumResponseTime / totalQuestions);
   }
 
-  Future<int> calculateTotalScore(UserAchievements achievements) async {
+  int calculateTotalScore(UserAchievements achievements) {
     // Define weights
     const int maxScore = 100;
     const double correctWeight = 0.7; // 70% weight for correct answers

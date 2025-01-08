@@ -1,39 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_podium/src/podium_bar.dart';
-import 'package:trivia/core/common_widgets/current_user_avatar.dart';
+import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/user.dart';
 
 class TopUsersPodium extends StatelessWidget {
-  final Map<TriviaUser, int> topUsersScores;
+  final List<MapEntry<TriviaUser, int>> topUsersScores;
 
   const TopUsersPodium({super.key, required this.topUsersScores});
 
   @override
   Widget build(BuildContext context) {
-    // Sort the map by values (descending order) and take the top 3
-    final sortedTopUsers = topUsersScores.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    final topThree = sortedTopUsers.take(3).toList();
-
     // Extract user names and scores for the podium
-    final firstUser = topThree.isNotEmpty ? topThree[0].key : "N/A";
-    final firstScore = topThree.isNotEmpty ? topThree[0].value : 0;
+    final firstUser = topUsersScores[0].key;
+    final firstScore = topUsersScores[0].value;
 
-    final secondUser = topThree.length > 1 ? topThree[1].key : "N/A";
-    final secondScore = topThree.length > 1 ? topThree[1].value : 0;
+    final secondUser = topUsersScores[1].key;
+    final secondScore = topUsersScores[1].value;
 
-    final thirdUser = topThree.length > 2 ? topThree[2].key : "N/A";
-    final thirdScore = topThree.length > 2 ? topThree[2].value : 0;
+    final thirdUser = topUsersScores[2].key;
+    final thirdScore = topUsersScores[2].value;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         PodiumBar(
-          title: const CurrentUserAvatar(radius: 35),
+          title: UserAvatar(
+            user: secondUser,
+            radius: 30,
+          ),
           width: calcWidth(110),
           displayRankingNumberInsteadOfText: false,
           hideRanking: false,
@@ -51,7 +49,10 @@ class TopUsersPodium extends StatelessWidget {
           width: 3,
         ),
         PodiumBar(
-          title: const CurrentUserAvatar(radius: 35),
+          title: UserAvatar(
+            user: firstUser,
+            radius: 30,
+          ),
           width: calcWidth(110),
           displayRankingNumberInsteadOfText: false,
           hideRanking: false,
@@ -69,7 +70,10 @@ class TopUsersPodium extends StatelessWidget {
           width: 3,
         ),
         PodiumBar(
-          title: const CurrentUserAvatar(radius: 35),
+          title: UserAvatar(
+            user: thirdUser,
+            radius: 30,
+          ),
           width: calcWidth(110),
           displayRankingNumberInsteadOfText: false,
           hideRanking: false,

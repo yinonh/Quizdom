@@ -27,6 +27,7 @@ class TriviaUser with _$TriviaUser {
     required List<int> recentTriviaCategories,
     required List<int> trophies,
     required double userXp,
+    Map<String, dynamic>? fluttermojiOptions,
   }) = _TriviaUser;
 
   const TriviaUser._();

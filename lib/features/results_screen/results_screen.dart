@@ -1,13 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_podium/flutter_podium.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
-import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
+import 'package:trivia/core/common_widgets/user_avatar.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
+import 'package:trivia/features/results_screen/widgets/achievement_card.dart';
 import 'package:trivia/features/results_screen/widgets/top_user_podium.dart';
 
 class ResultsScreen extends ConsumerWidget {
@@ -21,7 +25,9 @@ class ResultsScreen extends ConsumerWidget {
 
     return BaseScreen(
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: UserAppBar(
+          isEditable: false,
           prefix: IconButton(
             icon: const Icon(
               CupertinoIcons.back,
@@ -32,112 +38,133 @@ class ResultsScreen extends ConsumerWidget {
             },
           ),
         ),
-        body: resultState.when(
-          data: (data) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Carousel for Achievements
-                CarouselSlider(
-                  items: [
-                    if (data.userAchievements.correctAnswers > 0)
-                      _buildAchievementCard(
-                        title: Strings.correctAnswers,
-                        value: data.userAchievements.correctAnswers.toString(),
-                        icon: Icons.check_circle,
-                        color: Colors.green,
+        body: CustomBackground(
+          child: resultState.when(
+            data: (data) {
+              final sortedUsers = data.topUsers.entries.toList()
+                ..sort((a, b) => b.value.compareTo(a.value));
+
+              // Separate the top 3 users for the podium and the rest
+              final topThreeUsers = sortedUsers.take(3).toList();
+              final restOfUsers = sortedUsers.skip(3).take(7).toList();
+              return ListView(
+                children: [
+                  CarouselSlider(
+                    items: [
+                      if (data.userAchievements.correctAnswers > 0)
+                        AchievementCard(
+                          title: Strings.correctAnswers,
+                          value:
+                              data.userAchievements.correctAnswers.toString(),
+                          icon: Icons.check_circle,
+                          iconColor: Colors.green,
+                        ),
+                      if (data.userAchievements.wrongAnswers > 0)
+                        AchievementCard(
+                          title: Strings.wrongAnswers,
+                          value: data.userAchievements.wrongAnswers.toString(),
+                          icon: Icons.cancel,
+                          iconColor: Colors.red,
+                        ),
+                      if (data.userAchievements.unanswered > 0)
+                        AchievementCard(
+                          title: Strings.didntAnswer,
+                          value: data.userAchievements.unanswered.toString(),
+                          icon: Icons.help_outline,
+                          iconColor: Colors.grey,
+                        ),
+                      AchievementCard(
+                        title: Strings.averageTime,
+                        value: data.avgTime.toStringAsFixed(2),
+                        icon: Icons.timer,
+                        iconColor: Colors.blue,
                       ),
-                    if (data.userAchievements.wrongAnswers > 0)
-                      _buildAchievementCard(
-                        title: Strings.wrongAnswers,
-                        value: data.userAchievements.wrongAnswers.toString(),
-                        icon: Icons.cancel,
-                        color: Colors.red,
-                      ),
-                    if (data.userAchievements.unanswered > 0)
-                      _buildAchievementCard(
-                        title: Strings.didntAnswer,
-                        value: data.userAchievements.unanswered.toString(),
-                        icon: Icons.help_outline,
-                        color: Colors.grey,
-                      ),
-                    _buildAchievementCard(
-                      title: Strings.averageTime,
-                      value: data.avgTime.toStringAsFixed(2),
-                      icon: Icons.timer,
-                      color: Colors.blue,
+                    ],
+                    options: CarouselOptions(
+                      height: calcHeight(250),
+                      enlargeCenterPage: true,
+                      enableInfiniteScroll: true,
+                      viewportFraction: 0.5,
+                      initialPage: 0,
                     ),
-                  ],
-                  options: CarouselOptions(
-                    height: 200,
-                    enlargeCenterPage: true,
-                    enableInfiniteScroll: true,
-                    viewportFraction: 0.5,
-                    initialPage: 0,
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // Podium for Top 3 Users
-                const Text("Top 3 Players",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                (data.topUsers.length) >= 3
-                    ? TopUsersPodium(
-                        topUsersScores: data.topUsers,
-                      )
-                    : const Podium(
-                        firstPosition: Text("first"),
-                        secondPosition: Text("second"),
-                        thirdPosition: Text("third"),
+                  // const SizedBox(height: 20),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                    width: double.infinity,
+                    child: Card(
+                      color: AppConstant.onPrimary,
+                      child: Column(
+                        children: [
+                          const Text(
+                            Strings.totalScore,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            data.totalScore.toString(),
+                            style: const TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ],
                       ),
-                const SizedBox(height: 20),
-
-                // List for Top 5 Users
-                const Text("Top 5 Players", style: TextStyle(fontSize: 18)),
-                Expanded(
-                  child: ListView.builder(
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text(Strings.topPlayers,
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  if ((data.topUsers.length) >= 3)
+                    TopUsersPodium(
+                      topUsersScores: topThreeUsers,
+                    ),
+                  const SizedBox(height: 20),
+                  ListView.builder(
                     shrinkWrap: true,
-                    itemCount: 2,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: restOfUsers.length,
                     itemBuilder: (context, index) {
-                      return const ListTile(
-                        leading: Text("#name"),
-                        title: Text("name 2"),
-                        trailing: Text("name 3"),
+                      final user = restOfUsers[index].key;
+                      final score = restOfUsers[index].value;
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 2,
+                        child: ListTile(
+                          leading: UserAvatar(
+                            user: user,
+                            radius: 15,
+                          ),
+                          title: Text(
+                            user.name ?? "",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Text(
+                            "${score.toString()} pts",
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ),
                       );
                     },
                   ),
-                ),
-              ],
-            );
-          },
-          error: (_, __) => const SizedBox(),
-          loading: () => const Center(child: CustomProgressIndicator()),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAchievementCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 50),
-            const SizedBox(height: 10),
-            Text(title, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 5),
-            Text(value,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          ],
+                ],
+              );
+            },
+            error: (_, __) => const SizedBox(),
+            loading: () => const Center(child: CustomProgressIndicator()),
+          ),
         ),
       ),
     );

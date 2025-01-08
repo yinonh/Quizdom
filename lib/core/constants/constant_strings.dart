@@ -76,6 +76,8 @@ class Strings {
   static const String wrongAnswers = 'Wrong Answers';
   static const String didntAnswer = 'Didn\'t Answer';
   static const String averageTime = 'Average Time';
+  static const String totalScore = 'Total Score';
+  static const String topPlayers = 'Top Players';
 
   // Auth Screen
   static const String createAccount = "Create Account";
