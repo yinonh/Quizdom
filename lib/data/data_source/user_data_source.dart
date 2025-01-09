@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/models/user.dart';
-import 'package:trivia/data/models/user_achievements.dart';
 
 class UserDataSource {
   static Future<DocumentSnapshot> getUserDocument(String userId) async {
@@ -23,34 +22,14 @@ class UserDataSource {
 
         if (userDoc.exists) {
           final userData = userDoc.data() as Map<String, dynamic>;
-          final name = userData['name'];
-          final email = FirebaseAuth.instance.currentUser?.email;
 
-          final recentTriviaCategories =
-              List<int>.from(userData['recentTriviaCategories']);
-          final trophies = List<int>.from(userData['trophies']);
-          final userXp = userData['userXp'] as double;
-          final imageUrl = userData['userImage'];
-          final fluttermojiOptions = userData['fluttermojiOptions'];
-
-          return TriviaUser(
-              uid: userId,
-              name: name,
-              email: email,
-              imageUrl: imageUrl,
-              lastLogin:
-                  (FirebaseAuth.instance.currentUser?.metadata.lastSignInTime ??
-                      DateTime.now()),
-              recentTriviaCategories: recentTriviaCategories,
-              trophies: trophies,
-              userXp: userXp,
-              achievements: const UserAchievements(
-                correctAnswers: 0,
-                wrongAnswers: 0,
-                unanswered: 0,
-                sumResponseTime: 0,
-              ),
-              fluttermojiOptions: fluttermojiOptions);
+          // Use fromJson to map the data to TriviaUser
+          return TriviaUser.fromJson({
+            ...userData,
+            'uid': userId,
+            'email':
+                FirebaseAuth.instance.currentUser?.email, // Add current email
+          });
         }
       }
     } catch (e) {
@@ -73,7 +52,6 @@ class UserDataSource {
   static Future<void> updateUser({
     required String userId,
     double? userXp,
-    UserAchievements? achievements,
     String? avatarUrl,
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
@@ -85,9 +63,6 @@ class UserDataSource {
     // Add fields to the map only if they are not null
     if (userXp != null) {
       updates['userXp'] = userXp;
-    }
-    if (achievements != null) {
-      updates['achievements'] = achievements.toJson();
     }
     if (avatarUrl != null) {
       updates['userAvatar'] = avatarUrl;

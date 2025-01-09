@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/question.dart';
-import 'package:trivia/data/models/user_achievements.dart';
+import 'package:trivia/data/models/trivia_achievements.dart';
+import 'package:trivia/data/service/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
-import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
 part 'quiz_screen_manager.freezed.dart';
@@ -115,20 +115,25 @@ class QuizScreenManager extends _$QuizScreenManager {
   }
 
   void selectAnswer(int index) {
-    final userNotifier = ref.read(authProvider.notifier);
     state.whenData(
       (quizState) {
         if (quizState.selectedAnswerIndex == null) {
           if (quizState.correctAnswerIndex == index) {
-            userNotifier.updateAchievements(
-                field: AchievementField.correctAnswers,
-                sumResponseTime: quizState.timeLeft);
+            ref
+                .read(currentTriviaAchievementsProvider.notifier)
+                .updateAchievements(
+                    field: AchievementField.correctAnswers,
+                    sumResponseTime: quizState.timeLeft);
           } else if (index == -1) {
-            userNotifier.updateAchievements(field: AchievementField.unanswered);
+            ref
+                .read(currentTriviaAchievementsProvider.notifier)
+                .updateAchievements(field: AchievementField.unanswered);
           } else {
-            userNotifier.updateAchievements(
-                field: AchievementField.wrongAnswers,
-                sumResponseTime: quizState.timeLeft);
+            ref
+                .read(currentTriviaAchievementsProvider.notifier)
+                .updateAchievements(
+                    field: AchievementField.wrongAnswers,
+                    sumResponseTime: quizState.timeLeft);
           }
           state = AsyncValue.data(
               quizState.copyWith(selectedAnswerIndex: index, timeLeft: 1));

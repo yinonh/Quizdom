@@ -75,6 +75,7 @@ class CustomDrawer extends ConsumerWidget {
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               await GoogleSignIn().signOut();
+              ref.read(authProvider.notifier).logOut();
               if (context.mounted) {
                 Navigator.of(context)
                     .pushReplacementNamed(AuthScreen.routeName);

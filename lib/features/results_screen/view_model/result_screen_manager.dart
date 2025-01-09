@@ -5,9 +5,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
-import 'package:trivia/data/models/user_achievements.dart';
+import 'package:trivia/data/models/trivia_achievements.dart';
+import 'package:trivia/data/service/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/service/user_statistics_provider.dart';
 
 part 'result_screen_manager.freezed.dart';
 part 'result_screen_manager.g.dart';
@@ -15,7 +17,7 @@ part 'result_screen_manager.g.dart';
 @freezed
 class ResultState with _$ResultState {
   const factory ResultState({
-    required UserAchievements userAchievements,
+    required TriviaAchievements userAchievements,
     required int totalScore,
     required double avgTime,
     required Map<TriviaUser, int> topUsers,
@@ -26,26 +28,43 @@ class ResultState with _$ResultState {
 class ResultScreenManager extends _$ResultScreenManager {
   @override
   Future<ResultState> build() async {
+    // First get the achievements from current trivia session
+    final userAchievements =
+        ref.read(currentTriviaAchievementsProvider).currentAchievements;
+    final totalScore = calculateTotalScore(userAchievements);
+    final avgTime = getTimeAvg(userAchievements);
+
+    // Update the user statistics with the new achievements
+    await ref.read(statisticsProvider.notifier).updateUserStatistics(
+          addToTotalGamesPlayed: 1,
+          addToCorrectAnswers: userAchievements.correctAnswers,
+          addToWrongAnswers: userAchievements.wrongAnswers,
+          newAnswerTime: avgTime,
+          addToScore: totalScore,
+        );
+
+    // Update server score and get top users
     await updateUserScoreOnServer();
     final topUsersScores =
         ref.read(generalTriviaRoomsProvider).selectedRoom?.topUsers;
+
     Map<TriviaUser, int> topUsers = {};
     for (String userId in topUsersScores?.keys.toList() ?? []) {
       final userForId = await UserDataSource.getUserById(userId);
-      if (await UserDataSource.getUserById(userId) != null) {
-        topUsers[userForId!] = topUsersScores![userId]!;
+      if (userForId != null) {
+        topUsers[userForId] = topUsersScores![userId]!;
       }
     }
-    final userAchievements = ref.read(authProvider).currentUser.achievements;
+
     return ResultState(
-      userAchievements: ref.read(authProvider).currentUser.achievements,
-      totalScore: calculateTotalScore(userAchievements),
-      avgTime: getTimeAvg(userAchievements),
+      userAchievements: userAchievements,
+      totalScore: totalScore,
+      avgTime: avgTime,
       topUsers: topUsers,
     );
   }
 
-  double getTimeAvg(UserAchievements achievements) {
+  double getTimeAvg(TriviaAchievements achievements) {
     final totalQuestions = achievements.correctAnswers +
         achievements.wrongAnswers +
         achievements.unanswered;
@@ -56,7 +75,7 @@ class ResultScreenManager extends _$ResultScreenManager {
         (achievements.sumResponseTime / totalQuestions);
   }
 
-  int calculateTotalScore(UserAchievements achievements) {
+  int calculateTotalScore(TriviaAchievements achievements) {
     // Define weights
     const int maxScore = 100;
     const double correctWeight = 0.7; // 70% weight for correct answers
@@ -96,7 +115,7 @@ class ResultScreenManager extends _$ResultScreenManager {
     }
 
     final totalScore = await calculateTotalScore(
-        ref.read(authProvider).currentUser.achievements);
+        ref.read(currentTriviaAchievementsProvider).currentAchievements);
     await ref.read(generalTriviaRoomsProvider.notifier).updateUserScore(
           roomId: selectedRoom.roomId ?? "",
           userId: userId ?? "",

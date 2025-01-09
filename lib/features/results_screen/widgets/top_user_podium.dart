@@ -28,9 +28,16 @@ class TopUsersPodium extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         PodiumBar(
-          title: UserAvatar(
-            user: secondUser,
-            radius: 30,
+          title: Column(
+            children: [
+              UserAvatar(
+                user: secondUser,
+                radius: 30,
+              ),
+              Text(
+                secondUser.name ?? "",
+              )
+            ],
           ),
           width: calcWidth(110),
           displayRankingNumberInsteadOfText: false,
@@ -49,9 +56,16 @@ class TopUsersPodium extends StatelessWidget {
           width: 3,
         ),
         PodiumBar(
-          title: UserAvatar(
-            user: firstUser,
-            radius: 30,
+          title: Column(
+            children: [
+              UserAvatar(
+                user: firstUser,
+                radius: 30,
+              ),
+              Text(
+                firstUser.name ?? "",
+              )
+            ],
           ),
           width: calcWidth(110),
           displayRankingNumberInsteadOfText: false,
@@ -70,9 +84,16 @@ class TopUsersPodium extends StatelessWidget {
           width: 3,
         ),
         PodiumBar(
-          title: UserAvatar(
-            user: thirdUser,
-            radius: 30,
+          title: Column(
+            children: [
+              UserAvatar(
+                user: thirdUser,
+                radius: 30,
+              ),
+              Text(
+                thirdUser.name ?? "",
+              )
+            ],
           ),
           width: calcWidth(110),
           displayRankingNumberInsteadOfText: false,

@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trivia/data/models/user_achievements.dart';
+import 'package:trivia/core/utils/timestamp_converter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'user.freezed.dart';
 part 'user.g.dart';
@@ -21,11 +22,9 @@ class TriviaUser with _$TriviaUser {
     required String? uid,
     String? name,
     String? email,
-    String? imageUrl,
-    required UserAchievements achievements,
-    required DateTime lastLogin,
+    @JsonKey(name: "userImage") String? imageUrl,
+    @TimestampConverter() DateTime? lastLogin,
     required List<int> recentTriviaCategories,
-    required List<int> trophies,
     required double userXp,
     Map<String, dynamic>? fluttermojiOptions,
   }) = _TriviaUser;

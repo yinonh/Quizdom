@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/global_providers/connectivity_provider.dart';
 import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/service/user_statistics_provider.dart';
 import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
 
 import 'core/common_widgets/custom_progress_indicator.dart';
 import 'core/constants/app_constant.dart';
 import 'core/utils/size_config.dart';
+import 'data/service/current_trivia_achievements_provider.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';
@@ -25,10 +27,12 @@ class MyApp extends ConsumerWidget {
     SizeConfig().init(context);
 
     Future<void> startAppInitialization() async {
-      await ref.read(authProvider.notifier).initializeUser();
       await ref
           .read(generalTriviaRoomsProvider.notifier)
           .initializeGeneralTriviaRoom();
+      await ref.read(authProvider.notifier).initializeUser();
+      await ref.read(statisticsProvider.notifier).initializeUserStatistics();
+      ref.read(currentTriviaAchievementsProvider);
     }
 
     // Listen to connectivity state

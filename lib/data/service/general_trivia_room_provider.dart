@@ -36,7 +36,14 @@ class GeneralTriviaRooms extends _$GeneralTriviaRooms {
   /// Fetches all trivia rooms from the data source
   Future<List<GeneralTriviaRoom>> _fetchAllGeneralRooms() async {
     try {
-      return GeneralTriviaRoomDataSource.fetchAllGeneralRooms();
+      // Fetch the rooms
+      List<GeneralTriviaRoom> rooms =
+          await GeneralTriviaRoomDataSource.fetchAllGeneralRooms();
+
+      // Sort the rooms by categoryId
+      rooms.sort((a, b) => a.categoryId.compareTo(b.categoryId));
+
+      return rooms;
     } catch (e) {
       // Handle potential errors
       print('Error fetching rooms: $e');

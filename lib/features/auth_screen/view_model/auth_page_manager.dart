@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
+import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 
@@ -134,12 +135,15 @@ class AuthScreenManager extends _$AuthScreenManager {
         await ref
             .read(authProvider.notifier)
             .signIn(state.email, state.password);
+        state = state.copyWith(navigate: true, isNewUser: false);
       } else {
-        await ref
+        final userCredential = await ref
             .read(authProvider.notifier)
             .createUser(state.email, state.password);
+        final newUserUid = userCredential.user!.uid;
+        await UserStatisticsDataSource.createUserStatistics(newUserUid);
+        state = state.copyWith(navigate: true, isNewUser: true);
       }
-      state = state.copyWith(navigate: true);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));

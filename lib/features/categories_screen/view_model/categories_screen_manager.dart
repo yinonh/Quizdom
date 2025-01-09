@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
+import 'package:trivia/data/service/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
 import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
@@ -40,13 +41,9 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     );
   }
 
-  // Reset achievements using the initialized notifier
-  void resetAchievements() {
-    userProviderNotifier?.resetAchievements();
-  }
-
   void setTriviaRoom(String triviaRoomId) {
     ref.read(generalTriviaRoomsProvider.notifier).selectRoom(triviaRoomId);
+    ref.read(currentTriviaAchievementsProvider.notifier).resetAchievements();
     userProviderNotifier?.addTriviaCategory(
         ref.read(generalTriviaRoomsProvider).selectedRoom?.categoryId ?? -1);
   }

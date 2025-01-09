@@ -122,10 +122,43 @@ class ResultsScreen extends ConsumerWidget {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
-                  if ((data.topUsers.length) >= 3)
-                    TopUsersPodium(
-                      topUsersScores: topThreeUsers,
-                    ),
+                  (data.topUsers.length) >= 3
+                      ? TopUsersPodium(
+                          topUsersScores: topThreeUsers,
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: topThreeUsers.length,
+                          itemBuilder: (context, index) {
+                            final user = topThreeUsers[index].key;
+                            final score = topThreeUsers[index].value;
+
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 2,
+                              child: ListTile(
+                                leading: UserAvatar(
+                                  user: user,
+                                  radius: 15,
+                                ),
+                                title: Text(
+                                  user.name ?? "",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                trailing: Text(
+                                  "${score.toString()} pts",
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                   const SizedBox(height: 20),
                   ListView.builder(
                     shrinkWrap: true,

@@ -82,7 +82,6 @@ class _ExpandableHorizontalListState
                   return GestureDetector(
                     onTap: () {
                       categoriesNotifier.setTriviaRoom(category.roomId!);
-                      categoriesNotifier.resetAchievements();
                       Navigator.pushNamed(context, TriviaIntroScreen.routeName);
                     },
                     child: Container(

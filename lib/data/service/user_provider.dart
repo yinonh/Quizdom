@@ -6,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
-import 'package:trivia/data/models/user_achievements.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -28,15 +27,8 @@ class Auth extends _$Auth {
       firebaseUser: FirebaseAuth.instance.currentUser,
       currentUser: TriviaUser(
         uid: FirebaseAuth.instance.currentUser?.uid,
-        achievements: const UserAchievements(
-          correctAnswers: 0,
-          wrongAnswers: 0,
-          unanswered: 0,
-          sumResponseTime: 0.0,
-        ),
         lastLogin: DateTime.now(),
         recentTriviaCategories: [],
-        trophies: [],
         userXp: 0.0,
       ),
       imageLoading: false,
@@ -48,10 +40,8 @@ class Auth extends _$Auth {
     String? name,
     String? email,
     String? imageUrl,
-    UserAchievements? achievements,
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
-    List<int>? trophies,
     double? userXp,
   }) {
     return state.currentUser.copyWith(
@@ -59,11 +49,9 @@ class Auth extends _$Auth {
       name: name ?? state.currentUser.name,
       email: email ?? state.currentUser.email,
       imageUrl: imageUrl ?? state.currentUser.imageUrl,
-      achievements: achievements ?? state.currentUser.achievements,
       lastLogin: lastLogin ?? state.currentUser.lastLogin,
       recentTriviaCategories:
           recentTriviaCategories ?? state.currentUser.recentTriviaCategories,
-      trophies: trophies ?? state.currentUser.trophies,
       userXp: userXp ?? state.currentUser.userXp,
     );
   }
@@ -80,12 +68,27 @@ class Auth extends _$Auth {
         imageUrl: currentUser?.imageUrl,
         lastLogin: currentUser?.lastLogin,
         recentTriviaCategories: currentUser?.recentTriviaCategories,
-        trophies: currentUser?.trophies,
         userXp: currentUser?.userXp,
       );
 
       state = state.copyWith(currentUser: updatedUser);
+
+      await UserDataSource.updateUser(
+          userId: userId, lastLogin: DateTime.now());
     }
+  }
+
+  void logOut() {
+    state = UserState(
+      firebaseUser: null,
+      currentUser: TriviaUser(
+        uid: "",
+        lastLogin: DateTime.now(),
+        recentTriviaCategories: [],
+        userXp: 0.0,
+      ),
+      imageLoading: false,
+    );
   }
 
   Future<void> saveUser(String uid, String name, String email) async {
@@ -169,53 +172,6 @@ class Auth extends _$Auth {
       final updatedUser = state.currentUser.copyWith(imageUrl: null);
       state = state.copyWith(currentUser: updatedUser);
     }
-  }
-
-  void resetAchievements() async {
-    final updatedUser = updateCurrentUser(
-      achievements: const UserAchievements(
-        correctAnswers: 0,
-        wrongAnswers: 0,
-        unanswered: 0,
-        sumResponseTime: 0.0,
-      ),
-    );
-    state = state.copyWith(currentUser: updatedUser);
-  }
-
-  void updateAchievements({
-    required AchievementField field,
-    double? sumResponseTime,
-  }) async {
-    UserAchievements updatedAchievements;
-
-    switch (field) {
-      case AchievementField.correctAnswers:
-        updatedAchievements = state.currentUser.achievements.copyWith(
-          correctAnswers: state.currentUser.achievements.correctAnswers + 1,
-        );
-        break;
-      case AchievementField.wrongAnswers:
-        updatedAchievements = state.currentUser.achievements.copyWith(
-          wrongAnswers: state.currentUser.achievements.wrongAnswers + 1,
-        );
-        break;
-      case AchievementField.unanswered:
-        updatedAchievements = state.currentUser.achievements.copyWith(
-          unanswered: state.currentUser.achievements.unanswered + 1,
-        );
-        break;
-    }
-
-    updatedAchievements = updatedAchievements.copyWith(
-      sumResponseTime: updatedAchievements.sumResponseTime +
-          (field != AchievementField.unanswered
-              ? (sumResponseTime ?? 10.0)
-              : 10),
-    );
-
-    final updatedUser = updateCurrentUser(achievements: updatedAchievements);
-    state = state.copyWith(currentUser: updatedUser);
   }
 
   Future<UserCredential> signIn(String email, String password) async {
