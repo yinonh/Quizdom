@@ -9,14 +9,17 @@ class UserStatisticsDataSource {
         .set(const UserStatistics().toJson());
   }
 
-  static Future updateUserStatistics({
+  static Future<void> updateUserStatistics({
     required String userId,
     required UserStatistics updatedStatistics,
   }) async {
-    await FirebaseFirestore.instance
-        .collection('userStatistics')
-        .doc(userId)
-        .update(updatedStatistics.toJson());
+    final docRef =
+        FirebaseFirestore.instance.collection('userStatistics').doc(userId);
+
+    await docRef.set(
+      updatedStatistics.toJson(),
+      SetOptions(merge: true), // Merge with existing data or create new doc.
+    );
   }
 
   static Future<UserStatistics?> getUserStatistics(String userId) async {

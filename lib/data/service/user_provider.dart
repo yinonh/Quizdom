@@ -201,6 +201,7 @@ class Auth extends _$Auth {
   Future<AdditionalUserInfo?> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
     if (googleUser == null) {
       throw FirebaseAuthException(code: 'ERROR_ABORTED_BY_USER');
     }
@@ -217,9 +218,12 @@ class Auth extends _$Auth {
 
     final user = userCredential.user;
 
-    if (user != null) {
-      await initializeUser();
+    if (user == null || user.uid == null) {
+      throw AssertionError('User UID cannot be null after sign-in.');
     }
+
+    await initializeUser();
+
     return userCredential.additionalUserInfo;
   }
 
