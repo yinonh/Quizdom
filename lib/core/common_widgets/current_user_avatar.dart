@@ -32,7 +32,7 @@ class CurrentUserAvatar extends ConsumerWidget {
             child: CircularProgressIndicator(
               strokeWidth: 6.0,
               value: userState.currentUser.userXp / 100,
-              color: AppConstant.onPrimary,
+              color: AppConstant.onPrimaryColor,
             ),
           ),
         userState.currentUser.imageUrl != null
@@ -52,7 +52,7 @@ class CurrentUserAvatar extends ConsumerWidget {
                 ),
               )
             : FluttermojiCircleAvatar(
-                backgroundColor: AppConstant.userAvatarBackground,
+                backgroundColor: AppConstant.softHighlightColor,
                 radius: calcWidth(radius),
               ),
       ],

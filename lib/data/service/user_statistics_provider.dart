@@ -25,7 +25,7 @@ class Statistics extends _$Statistics {
 
   Future<void> initializeUserStatistics() async {
     final userId = ref.read(authProvider).currentUser.uid;
-    if (userId != null) {
+    if (userId != "") {
       final userStatistics =
           await UserStatisticsDataSource.getUserStatistics(userId);
       if (userStatistics != null) {
@@ -39,28 +39,28 @@ class Statistics extends _$Statistics {
     int? addToTotalGamesPlayed,
     int? addToCorrectAnswers,
     int? addToWrongAnswers,
-    double? newAnswerTime,
+    int? addToUnanswered,
+    double? sessionAvgAnswerTime,
     int? addToGamesAgainstPlayers,
     bool? wonGame,
     int? addToScore,
   }) async {
-    final userId = ref.read(authProvider).currentUser.uid;
-    if (userId == null) return;
+    String userId = ref.read(authProvider).currentUser.uid;
+    if (userId == "") return;
 
     // Get current statistics
     final currentStats = state.userStatistics;
 
     // Calculate new avg answer time if provided
     double newAvgAnswerTime = currentStats.avgAnswerTime;
-    if (newAnswerTime != null) {
-      final totalAnswers =
-          currentStats.totalCorrectAnswers + currentStats.totalWrongAnswers;
-      if (totalAnswers > 0) {
+    if (sessionAvgAnswerTime != null) {
+      if (currentStats.totalGamesPlayed > 0) {
         newAvgAnswerTime =
-            ((currentStats.avgAnswerTime * totalAnswers) + newAnswerTime) /
-                (totalAnswers + 1);
+            ((currentStats.avgAnswerTime * currentStats.totalGamesPlayed) +
+                    sessionAvgAnswerTime) /
+                (currentStats.totalGamesPlayed + (addToTotalGamesPlayed ?? 0));
       } else {
-        newAvgAnswerTime = newAnswerTime;
+        newAvgAnswerTime = sessionAvgAnswerTime;
       }
     }
 
@@ -84,6 +84,7 @@ class Statistics extends _$Statistics {
           currentStats.totalCorrectAnswers + (addToCorrectAnswers ?? 0),
       totalWrongAnswers:
           currentStats.totalWrongAnswers + (addToWrongAnswers ?? 0),
+      totalUnanswered: currentStats.totalUnanswered + (addToWrongAnswers ?? 0),
       avgAnswerTime: newAvgAnswerTime,
       gamesPlayedAgainstPlayers: currentStats.gamesPlayedAgainstPlayers +
           (addToGamesAgainstPlayers ?? 0),

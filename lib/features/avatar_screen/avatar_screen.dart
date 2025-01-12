@@ -106,7 +106,8 @@ class AvatarScreen extends ConsumerWidget {
                             : FluttermojiCustomizer(
                                 autosave: false,
                                 theme: FluttermojiThemeData(
-                                    selectedIconColor: AppConstant.onPrimary,
+                                    selectedIconColor:
+                                        AppConstant.onPrimaryColor,
                                     boxDecoration: const BoxDecoration(
                                         boxShadow: [BoxShadow()])),
                               ),

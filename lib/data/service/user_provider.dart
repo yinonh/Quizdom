@@ -4,8 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/service/user_statistics_provider.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -16,6 +18,7 @@ class UserState with _$UserState {
     required User? firebaseUser,
     required TriviaUser currentUser,
     required bool imageLoading,
+    required bool loginNewDayInARow,
   }) = _UserState;
 }
 
@@ -26,13 +29,18 @@ class Auth extends _$Auth {
     return UserState(
       firebaseUser: FirebaseAuth.instance.currentUser,
       currentUser: TriviaUser(
-        uid: FirebaseAuth.instance.currentUser?.uid,
+        uid: FirebaseAuth.instance.currentUser?.uid ?? "",
         lastLogin: DateTime.now(),
         recentTriviaCategories: [],
         userXp: 0.0,
       ),
       imageLoading: false,
+      loginNewDayInARow: false,
     );
+  }
+
+  void onClaim() {
+    state = state.copyWith(loginNewDayInARow: false);
   }
 
   TriviaUser updateCurrentUser({
@@ -57,21 +65,29 @@ class Auth extends _$Auth {
   }
 
   Future<void> initializeUser() async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId != null) {
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+    if (userId != "") {
       final currentUser = await UserDataSource.getUserById(userId);
 
-      final updatedUser = updateCurrentUser(
+      final updatedUser = TriviaUser(
         uid: userId,
         name: currentUser?.name,
         email: currentUser?.email,
         imageUrl: currentUser?.imageUrl,
         lastLogin: currentUser?.lastLogin,
-        recentTriviaCategories: currentUser?.recentTriviaCategories,
-        userXp: currentUser?.userXp,
+        recentTriviaCategories: currentUser?.recentTriviaCategories ?? [],
+        userXp: currentUser?.userXp ?? 0,
       );
 
-      state = state.copyWith(currentUser: updatedUser);
+      if (updatedUser.lastLogin?.isYesterday ?? false) {
+        await ref
+            .read(statisticsProvider.notifier)
+            .updateUserStatistics(addToLoginStreak: 1);
+        state =
+            state.copyWith(currentUser: updatedUser, loginNewDayInARow: true);
+      } else {
+        state = state.copyWith(currentUser: updatedUser);
+      }
 
       await UserDataSource.updateUser(
           userId: userId, lastLogin: DateTime.now());
@@ -88,6 +104,7 @@ class Auth extends _$Auth {
         userXp: 0.0,
       ),
       imageLoading: false,
+      loginNewDayInARow: false,
     );
   }
 
@@ -116,7 +133,7 @@ class Auth extends _$Auth {
     state = state.copyWith(currentUser: updatedUser);
 
     await UserDataSource.updateUser(
-        userId: state.currentUser.uid!, userXp: updatedUser.userXp);
+        userId: state.currentUser.uid, userXp: updatedUser.userXp);
   }
 
   Future<void> setImage(File? image) async {
@@ -124,10 +141,10 @@ class Auth extends _$Auth {
 
     if (image != null) {
       final imageUrl =
-          await UserDataSource.updateUserImage(state.currentUser.uid!, image);
+          await UserDataSource.updateUserImage(state.currentUser.uid, image);
 
       // Check if an image already exists in Firestore, if yes, delete it
-      await UserDataSource.deleteUserAvatar(state.currentUser.uid!);
+      await UserDataSource.deleteUserAvatar(state.currentUser.uid);
 
       final updatedUser = updateCurrentUser(imageUrl: imageUrl);
       state = state.copyWith(currentUser: updatedUser, imageLoading: false);
@@ -149,13 +166,13 @@ class Auth extends _$Auth {
     state = state.copyWith(currentUser: updatedUser);
 
     await UserDataSource.updateUser(
-        userId: state.currentUser.uid!,
+        userId: state.currentUser.uid,
         recentTriviaCategories: recentCategories);
   }
 
   Future<void> clearUser() async {
-    if (state.currentUser.uid != null) {
-      await UserDataSource.clearUser(state.currentUser.uid!);
+    if (state.currentUser.uid != "") {
+      await UserDataSource.clearUser(state.currentUser.uid);
 
       final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
       state = state.copyWith(currentUser: updatedUser);
@@ -165,7 +182,7 @@ class Auth extends _$Auth {
   Future<void> setAvatar() async {
     final userId = state.currentUser.uid;
 
-    if (userId != null) {
+    if (userId != "") {
       await UserDataSource.deleteUserImageIfExists(userId);
 
       // Update the local state with the new avatar and remove the image
@@ -218,7 +235,7 @@ class Auth extends _$Auth {
 
     final user = userCredential.user;
 
-    if (user == null || user.uid == null) {
+    if (user == null || user.uid == "") {
       throw AssertionError('User UID cannot be null after sign-in.');
     }
 

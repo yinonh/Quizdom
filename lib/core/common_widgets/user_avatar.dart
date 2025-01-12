@@ -32,7 +32,7 @@ class UserAvatar extends ConsumerWidget {
             child: CircularProgressIndicator(
               strokeWidth: 6.0,
               value: user?.userXp ?? 0 / 100,
-              color: AppConstant.onPrimary,
+              color: AppConstant.onPrimaryColor,
             ),
           ),
         user != null && user?.imageUrl != null
@@ -54,7 +54,7 @@ class UserAvatar extends ConsumerWidget {
             : user != null && user?.fluttermojiOptions != null
                 ? CircleAvatar(
                     radius: calcWidth(radius),
-                    backgroundColor: AppConstant.userAvatarBackground,
+                    backgroundColor: AppConstant.softHighlightColor,
                     child: SvgPicture.string(
                       ref
                           .read(fluttermojiNotifierProvider.notifier)
@@ -63,7 +63,7 @@ class UserAvatar extends ConsumerWidget {
                   )
                 : CircleAvatar(
                     radius: calcWidth(radius),
-                    backgroundColor: AppConstant.userAvatarBackground,
+                    backgroundColor: AppConstant.softHighlightColor,
                     child: Icon(
                       Icons.person,
                       color: Colors.white.withOpacity(0.7),

@@ -4,8 +4,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
-import 'package:trivia/data/models/user.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
+import 'package:trivia/data/models/user.dart';
 import 'package:trivia/data/service/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
@@ -39,7 +39,8 @@ class ResultScreenManager extends _$ResultScreenManager {
           addToTotalGamesPlayed: 1,
           addToCorrectAnswers: userAchievements.correctAnswers,
           addToWrongAnswers: userAchievements.wrongAnswers,
-          newAnswerTime: avgTime,
+          addToUnanswered: userAchievements.unanswered,
+          sessionAvgAnswerTime: avgTime,
           addToScore: totalScore,
         );
 
@@ -114,11 +115,11 @@ class ResultScreenManager extends _$ResultScreenManager {
       throw Exception("No selected trivia room");
     }
 
-    final totalScore = await calculateTotalScore(
+    final totalScore = calculateTotalScore(
         ref.read(currentTriviaAchievementsProvider).currentAchievements);
     await ref.read(generalTriviaRoomsProvider.notifier).updateUserScore(
           roomId: selectedRoom.roomId ?? "",
-          userId: userId ?? "",
+          userId: userId,
           newScore: totalScore,
         );
   }

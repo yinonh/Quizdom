@@ -11,6 +11,7 @@ class UserStatistics with _$UserStatistics {
     @Default(0) int totalGamesPlayed,
     @Default(0) int totalCorrectAnswers,
     @Default(0) int totalWrongAnswers,
+    @Default(0) int totalUnanswered,
     @Default(0) double avgAnswerTime,
     @Default(0) int gamesPlayedAgainstPlayers,
     @Default(0) int gamesWon,

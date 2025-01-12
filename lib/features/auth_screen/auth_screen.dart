@@ -38,7 +38,7 @@ class AuthScreen extends ConsumerWidget {
           Overlay.of(context),
           CustomSnackBar.info(
             message: message,
-            backgroundColor: AppConstant.onPrimary,
+            backgroundColor: AppConstant.onPrimaryColor,
             icon: Icon(
               Icons.warning_rounded,
               color: Colors.black.withOpacity(0.2),
@@ -76,7 +76,7 @@ class AuthScreen extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
-                  color: AppConstant.onPrimary,
+                  color: AppConstant.onPrimaryColor,
                   shadows: [
                     BoxShadow(
                       color: Colors.white.withOpacity(0.3),

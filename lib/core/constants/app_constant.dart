@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class AppConstant {
   static const Color primaryColor = Color(0xFF00AFFF);
   static const Color secondaryColor = Color(0xFF82D3C8);
-  static const Color onPrimary = Color(0xFFFF9000);
+  static const Color onPrimaryColor = Color(0xFFFF9000);
   static const Color highlightColor = Color(0xFFC357CB);
-  static const Color userAvatarBackground = Color(0xFFEDCAEB);
-  static const Color goldStars = Color(0xFFFFD700);
+  static const Color softHighlightColor = Color(0xFFEDCAEB);
+  static const Color goldColor = Color(0xFFFFD700);
 
   // Trophy Colors
-  static const Color goldColor = Color(0xFFFFD700);
+
   static const Color silverColor = Color(0xFFC0C0C0);
   static const Color bronzeColor = Color(0xFFCD7F32);
   static const Color platinumColor = Color(0xFFE5E4E2);

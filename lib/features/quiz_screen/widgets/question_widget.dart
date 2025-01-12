@@ -51,12 +51,12 @@ class QuestionWidget extends ConsumerWidget {
                         ? Colors.red
                         : data.timeLeft / data.questions.length < 0.5
                             ? Colors.amber
-                            : AppConstant.onPrimary,
+                            : AppConstant.onPrimaryColor,
                   )
                 : const LinearProgressIndicator(
                     minHeight: 10,
                     borderRadius: BorderRadius.all(Radius.circular(20)),
-                    color: AppConstant.onPrimary,
+                    color: AppConstant.onPrimaryColor,
                   ),
             const SizedBox(
               height: 20,

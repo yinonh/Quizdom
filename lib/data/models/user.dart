@@ -19,7 +19,7 @@ File? fileFromJson(String? path) {
 class TriviaUser with _$TriviaUser {
   @Assert('uid != null', 'uid cannot be null when used as a map key')
   const factory TriviaUser({
-    required String? uid,
+    required String uid,
     String? name,
     String? email,
     @JsonKey(name: "userImage") String? imageUrl,
@@ -37,7 +37,7 @@ class TriviaUser with _$TriviaUser {
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is TriviaUser && uid != null && other.uid == uid);
+        (other is TriviaUser && uid != "" && other.uid == uid);
   }
 
   @override

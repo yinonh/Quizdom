@@ -58,7 +58,7 @@ class EditAvatar extends ConsumerWidget {
                             ))
                     else
                       FluttermojiCircleAvatar(
-                        backgroundColor: AppConstant.userAvatarBackground,
+                        backgroundColor: AppConstant.softHighlightColor,
                         radius: calcWidth(70),
                       ),
                     // state.showImage
@@ -119,7 +119,7 @@ class EditAvatar extends ConsumerWidget {
                       child: const Icon(
                         Icons.camera,
                         size: 30,
-                        color: AppConstant.onPrimary,
+                        color: AppConstant.onPrimaryColor,
                       ),
                     ),
                   ),
@@ -140,7 +140,7 @@ class EditAvatar extends ConsumerWidget {
                       child: const Icon(
                         Icons.image,
                         size: 30,
-                        color: AppConstant.onPrimary,
+                        color: AppConstant.onPrimaryColor,
                       ),
                     ),
                   ),

@@ -94,7 +94,7 @@ class ResultsScreen extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                     width: double.infinity,
                     child: Card(
-                      color: AppConstant.onPrimary,
+                      color: AppConstant.onPrimaryColor,
                       child: Column(
                         children: [
                           const Text(

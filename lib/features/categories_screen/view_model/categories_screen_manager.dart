@@ -15,6 +15,7 @@ class CategoriesState with _$CategoriesState {
   const factory CategoriesState({
     required List<GeneralTriviaRoom>? triviaRooms,
     required List<int> userRecentCategories,
+    required bool showRowLogin,
   }) = _CategoriesState;
 }
 
@@ -36,9 +37,13 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     // Fetch necessary data
     final user = ref.watch(authProvider);
     return CategoriesState(
-      triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
-      userRecentCategories: user.currentUser.recentTriviaCategories,
-    );
+        triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
+        userRecentCategories: user.currentUser.recentTriviaCategories,
+        showRowLogin: user.loginNewDayInARow);
+  }
+
+  void onClaim() {
+    ref.read(authProvider.notifier).onClaim();
   }
 
   void setTriviaRoom(String triviaRoomId) {

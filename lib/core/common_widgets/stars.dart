@@ -11,7 +11,7 @@ class UserStars extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(
         3,
-        (index) => const Icon(Icons.star, color: AppConstant.goldStars),
+        (index) => const Icon(Icons.star, color: AppConstant.goldColor),
       ),
     );
   }

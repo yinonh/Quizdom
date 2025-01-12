@@ -25,7 +25,7 @@ class ProfileContent extends ConsumerWidget {
           Overlay.of(context),
           CustomSnackBar.info(
             message: message,
-            backgroundColor: AppConstant.onPrimary,
+            backgroundColor: AppConstant.onPrimaryColor,
             icon: Icon(
               Icons.warning_rounded,
               color: Colors.black.withOpacity(0.2),
@@ -69,7 +69,7 @@ class ProfileContent extends ConsumerWidget {
                 width: calcWidth(150),
                 padding: const EdgeInsets.all(3),
                 decoration: const BoxDecoration(
-                  color: AppConstant.onPrimary,
+                  color: AppConstant.onPrimaryColor,
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
                 child: const UserStars(),
