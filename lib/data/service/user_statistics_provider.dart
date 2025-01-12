@@ -24,18 +24,24 @@ class Statistics extends _$Statistics {
   }
 
   Future<void> initializeUserStatistics() async {
-    final userId = ref.read(authProvider).currentUser.uid;
-    if (userId != "") {
+    final user = ref.read(authProvider).currentUser;
+    final loginNewDayInARow = ref.read(authProvider).loginNewDayInARow;
+    if (user.uid != "") {
       final userStatistics =
-          await UserStatisticsDataSource.getUserStatistics(userId);
+          await UserStatisticsDataSource.getUserStatistics(user.uid);
       if (userStatistics != null) {
         state = state.copyWith(userStatistics: userStatistics);
+      }
+      if (loginNewDayInARow) {
+        await updateUserStatistics(incrementLoginStreak: true);
+      } else {
+        await updateUserStatistics(incrementLoginStreak: false);
       }
     }
   }
 
   Future<void> updateUserStatistics({
-    int? addToLoginStreak,
+    bool? incrementLoginStreak,
     int? addToTotalGamesPlayed,
     int? addToCorrectAnswers,
     int? addToWrongAnswers,
@@ -67,10 +73,15 @@ class Statistics extends _$Statistics {
     // Update login streak
     int newLoginStreak = currentStats.currentLoginStreak;
     int newLongestStreak = currentStats.longestLoginStreak;
-    if (addToLoginStreak != null) {
-      newLoginStreak += addToLoginStreak;
-      if (newLoginStreak > newLongestStreak) {
-        newLongestStreak = newLoginStreak;
+
+    if (incrementLoginStreak != null) {
+      if (incrementLoginStreak) {
+        newLoginStreak += 1;
+        if (newLoginStreak > newLongestStreak) {
+          newLongestStreak = newLoginStreak;
+        }
+      } else {
+        newLoginStreak = 0;
       }
     }
 
@@ -84,7 +95,7 @@ class Statistics extends _$Statistics {
           currentStats.totalCorrectAnswers + (addToCorrectAnswers ?? 0),
       totalWrongAnswers:
           currentStats.totalWrongAnswers + (addToWrongAnswers ?? 0),
-      totalUnanswered: currentStats.totalUnanswered + (addToWrongAnswers ?? 0),
+      totalUnanswered: currentStats.totalUnanswered + (addToUnanswered ?? 0),
       avgAnswerTime: newAvgAnswerTime,
       gamesPlayedAgainstPlayers: currentStats.gamesPlayedAgainstPlayers +
           (addToGamesAgainstPlayers ?? 0),

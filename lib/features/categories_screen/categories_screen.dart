@@ -41,9 +41,9 @@ class CategoriesScreen extends ConsumerWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return DailyLoginPopupContent(
-                          streakDays: 1,
+                          streakDays: data.daysInRow,
                           startDay: 1,
-                          rewards: const [10, 35, 50, 100, 135, 200],
+                          rewards: const [0, 10, 35, 50, 100, 200],
                           onClaim: () {
                             Navigator.pop(context);
                           },

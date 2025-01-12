@@ -5,6 +5,7 @@ import 'package:trivia/data/service/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/service/trivia_provider.dart';
 import 'package:trivia/data/service/general_trivia_room_provider.dart';
 import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/service/user_statistics_provider.dart';
 
 part 'categories_screen_manager.freezed.dart';
 
@@ -16,6 +17,7 @@ class CategoriesState with _$CategoriesState {
     required List<GeneralTriviaRoom>? triviaRooms,
     required List<int> userRecentCategories,
     required bool showRowLogin,
+    required int daysInRow,
   }) = _CategoriesState;
 }
 
@@ -36,10 +38,13 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   Future<CategoriesState> build() async {
     // Fetch necessary data
     final user = ref.watch(authProvider);
+    final userStatistics = ref.read(statisticsProvider).userStatistics;
     return CategoriesState(
-        triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
-        userRecentCategories: user.currentUser.recentTriviaCategories,
-        showRowLogin: user.loginNewDayInARow);
+      triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
+      userRecentCategories: user.currentUser.recentTriviaCategories,
+      showRowLogin: user.loginNewDayInARow,
+      daysInRow: userStatistics.currentLoginStreak,
+    );
   }
 
   void onClaim() {

@@ -7,7 +7,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/user.dart';
-import 'package:trivia/data/service/user_statistics_provider.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -80,9 +79,6 @@ class Auth extends _$Auth {
       );
 
       if (updatedUser.lastLogin?.isYesterday ?? false) {
-        await ref
-            .read(statisticsProvider.notifier)
-            .updateUserStatistics(addToLoginStreak: 1);
         state =
             state.copyWith(currentUser: updatedUser, loginNewDayInARow: true);
       } else {
