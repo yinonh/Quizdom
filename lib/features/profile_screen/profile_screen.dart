@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
-import 'package:trivia/features/profile_screen/widgets/statistics_section.dart';
 import 'package:trivia/features/profile_screen/widgets/avatar_section.dart';
 import 'package:trivia/features/profile_screen/widgets/profile_appbar.dart';
 import 'package:trivia/features/profile_screen/widgets/profile_content.dart';
-import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/features/profile_screen/widgets/statistics_section.dart';
 import 'package:trivia/features/profile_screen/widgets/trophies_section.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -17,6 +17,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userStatistics = ref.read(profileScreenManagerProvider).statistics;
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
@@ -31,10 +32,8 @@ class ProfileScreen extends ConsumerWidget {
                   AvatarSection(),
                 ],
               ),
-              const TrophiesSection(),
-              StatisticsSection(
-                  statistics:
-                      ref.read(profileScreenManagerProvider).statistics),
+              TrophiesSection(statistics: userStatistics),
+              StatisticsSection(statistics: userStatistics),
             ],
           ),
         ),
