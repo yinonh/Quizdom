@@ -8,7 +8,9 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
 import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/user_statistics.dart';
 import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/service/user_statistics_provider.dart';
 
 part 'profile_screen_manager.freezed.dart';
 
@@ -18,6 +20,7 @@ part 'profile_screen_manager.g.dart';
 class ProfileState with _$ProfileState {
   const factory ProfileState({
     TriviaUser? currentUser,
+    required UserStatistics statistics,
     required bool isEditing,
     required bool isGoogleAuth,
     required TextEditingController nameController,
@@ -35,8 +38,10 @@ class ProfileScreenManager extends _$ProfileScreenManager {
   ProfileState build() {
     final currentUser = ref.watch(authProvider).currentUser;
     final userNotifier = ref.read(authProvider.notifier);
+    final statistics = ref.watch(statisticsProvider).userStatistics;
     return ProfileState(
       currentUser: currentUser,
+      statistics: statistics,
       isEditing: false,
       isGoogleAuth: userNotifier.isGoogleSignIn(),
       nameController: TextEditingController(text: currentUser.name),

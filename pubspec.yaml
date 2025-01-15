@@ -62,6 +62,7 @@ dependencies:
   cached_network_image: ^3.4.0
   carousel_slider: ^5.0.0
   flutter_podium: ^1.0.4
+  fl_chart: ^0.70.1
 
 dev_dependencies:
   flutter_test:

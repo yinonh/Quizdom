@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 import 'package:trivia/features/profile_screen/widgets/additional_content.dart';
 import 'package:trivia/features/profile_screen/widgets/avatar_section.dart';
 import 'package:trivia/features/profile_screen/widgets/profile_appbar.dart';
@@ -15,7 +16,7 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const BaseScreen(
+    return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
         body: SingleChildScrollView(
@@ -28,7 +29,9 @@ class ProfileScreen extends ConsumerWidget {
                   AvatarSection(),
                 ],
               ),
-              AdditionalContent(),
+              AdditionalContent(
+                  statistics:
+                      ref.read(profileScreenManagerProvider).statistics),
             ],
           ),
         ),
