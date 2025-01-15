@@ -67,6 +67,28 @@ class Strings {
   static const String currentPassword = 'Current Password';
   static const String currentPasswordRequired = 'Current Password Required';
   static const String newPassword = 'New Password';
+  static const String statisticsNotAvailableYet =
+      'Statistics Not Available Yet';
+  static const String answerDistribution = 'Answer Distribution';
+  static const String correct = 'Correct';
+  static const String wrong = 'Wrong';
+  static const String skipped = 'Skipped';
+  static const String accuracyRate = 'Accuracy Rate:';
+  static const String gamesPlayed = 'Games Played';
+  static const String loginStreak = 'Login Streak';
+  static const String current = 'Current';
+  static const String best = 'Best';
+  static const String gameModes = 'Game Modes';
+  static const String singlePlayer = 'Single Player';
+  static const String timePerformance = 'Time Performance';
+  static const String averageResponseTime = 'Average Response Time';
+  static const String perquestion = 'per question';
+  static const String averageGameDuration = 'Average Game Duration';
+  static const String pergame = 'per game';
+  static const String lightningFast = 'Lightning Fast! ⚡';
+  static const String quickThinker = 'Quick Thinker 🏃';
+  static const String steadyPace = 'Steady Pace 👍';
+  static const String takingTime = 'Taking Time 🤔';
 
   // Quiz Screen
   static const String question = 'Question';
