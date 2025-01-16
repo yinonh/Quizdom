@@ -150,4 +150,14 @@ class Strings {
       "Too many requests. Please try again later.";
   static const String missingEmail = "An email address must be provided.";
   static const String undefinedError = "An undefined error occurred.";
+
+  // Profile Overview Screen
+  static const String mysteryPlayer = 'Mystery Player';
+  static const String xp = 'XP';
+  static const String gameStats = 'Game Stats';
+  static const String winRate = 'Win Rate';
+  static const String performance = 'Performance';
+  static const String accuracy = 'Accuracy';
+  static const String avgTime = 'Avg Time';
+  static const String close = 'Close';
 }

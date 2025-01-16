@@ -96,6 +96,7 @@ class ResultsScreen extends ConsumerWidget {
                     child: Card(
                       color: AppConstant.onPrimaryColor,
                       child: Column(
+                        spacing: calcHeight(10),
                         children: [
                           const Text(
                             Strings.totalScore,
@@ -104,7 +105,6 @@ class ResultsScreen extends ConsumerWidget {
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
                           ),
-                          const SizedBox(height: 10),
                           Text(
                             data.totalScore.toString(),
                             style: const TextStyle(
@@ -135,8 +135,9 @@ class ResultsScreen extends ConsumerWidget {
                             final score = topThreeUsers[index].value;
 
                             return Card(
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: calcHeight(5),
+                                  horizontal: calcWidth(10)),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
