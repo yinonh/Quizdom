@@ -13,10 +13,10 @@ class CustomBackground extends StatelessWidget {
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
           colors: [
-            Colors.orangeAccent.withOpacity(0.1),
-            Colors.white.withOpacity(0.1),
-            Colors.white.withOpacity(0.1),
-            Colors.purpleAccent.withOpacity(0.1),
+            Colors.orangeAccent.withValues(alpha:0.1),
+            Colors.white.withValues(alpha:0.1),
+            Colors.white.withValues(alpha:0.1),
+            Colors.purpleAccent.withValues(alpha:0.1),
           ],
           stops: const [
             0,

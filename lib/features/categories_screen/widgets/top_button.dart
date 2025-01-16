@@ -25,7 +25,7 @@ class TopButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha:0.1),
               spreadRadius: 1,
               blurRadius: 1,
               offset: const Offset(0, 2),
@@ -37,7 +37,7 @@ class TopButton extends StatelessWidget {
           children: [
             ShaderMask(
               shaderCallback: (bounds) => LinearGradient(
-                colors: [Colors.white, Colors.white.withOpacity(0.2)],
+                colors: [Colors.white, Colors.white.withValues(alpha:0.2)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ).createShader(bounds),

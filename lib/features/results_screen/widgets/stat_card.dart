@@ -6,7 +6,8 @@ class StatCard extends StatelessWidget {
   final IconData icon;
   final Color color;
 
-  const StatCard({super.key, 
+  const StatCard({
+    super.key,
     required this.title,
     required this.value,
     required this.icon,
@@ -20,7 +21,7 @@ class StatCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.2),
+          backgroundColor: color.withValues(alpha: 0.2),
           child: Icon(
             icon,
             color: color,

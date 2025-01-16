@@ -90,19 +90,19 @@ class Auth extends _$Auth {
     }
   }
 
-  void logOut() {
-    state = UserState(
-      firebaseUser: null,
-      currentUser: TriviaUser(
-        uid: "",
-        lastLogin: DateTime.now(),
-        recentTriviaCategories: [],
-        userXp: 0.0,
-      ),
-      imageLoading: false,
-      loginNewDayInARow: false,
-    );
-  }
+  // void logOut() {
+  //   state = UserState(
+  //     firebaseUser: null,
+  //     currentUser: TriviaUser(
+  //       uid: "",
+  //       lastLogin: DateTime.now(),
+  //       recentTriviaCategories: [],
+  //       userXp: 0.0,
+  //     ),
+  //     imageLoading: false,
+  //     loginNewDayInARow: false,
+  //   );
+  // }
 
   Future<void> saveUser(String uid, String name, String email) async {
     await UserDataSource.saveUser(uid, name);

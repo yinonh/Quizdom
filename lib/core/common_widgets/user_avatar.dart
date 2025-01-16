@@ -66,7 +66,7 @@ class UserAvatar extends ConsumerWidget {
                     backgroundColor: AppConstant.softHighlightColor,
                     child: Icon(
                       Icons.person,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha:0.7),
                       size: calcWidth(radius * 1.5),
                     ),
                   )

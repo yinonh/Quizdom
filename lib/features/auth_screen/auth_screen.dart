@@ -41,7 +41,7 @@ class AuthScreen extends ConsumerWidget {
             backgroundColor: AppConstant.onPrimaryColor,
             icon: Icon(
               Icons.warning_rounded,
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha:0.2),
               size: 120,
             ),
           ),
@@ -79,7 +79,7 @@ class AuthScreen extends ConsumerWidget {
                   color: AppConstant.onPrimaryColor,
                   shadows: [
                     BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha:0.3),
                       spreadRadius: 4,
                       blurRadius: 5,
                       offset: const Offset(1, 2),
@@ -183,7 +183,7 @@ class AuthScreen extends ConsumerWidget {
                           boxShadow: [
                             BoxShadow(
                               color:
-                                  AppConstant.secondaryColor.withOpacity(0.5),
+                                  AppConstant.secondaryColor.withValues(alpha:0.5),
                               spreadRadius: 4,
                               blurRadius: 5,
                               offset: const Offset(1, 2),

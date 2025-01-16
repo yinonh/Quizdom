@@ -123,7 +123,7 @@ class TriviaIntroScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(12.0),
                               decoration: BoxDecoration(
                                 color:
-                                    AppConstant.secondaryColor.withOpacity(0.5),
+                                    AppConstant.secondaryColor.withValues(alpha:0.5),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               alignment: Alignment.center, // Center the text
@@ -148,7 +148,7 @@ class TriviaIntroScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(12.0),
                               decoration: BoxDecoration(
                                 color:
-                                    AppConstant.secondaryColor.withOpacity(0.5),
+                                    AppConstant.secondaryColor.withValues(alpha:0.5),
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               alignment: Alignment.center, // Center the text

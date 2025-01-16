@@ -78,7 +78,7 @@ class EditAvatar extends ConsumerWidget {
                         width: calcWidth(140),
                         height: calcWidth(140),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha:0.5),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -91,7 +91,7 @@ class EditAvatar extends ConsumerWidget {
                 bottom: 35,
                 child: IconButton(
                   icon:
-                      Icon(Icons.delete, color: Colors.white.withOpacity(0.5)),
+                      Icon(Icons.delete, color: Colors.white.withValues(alpha:0.5)),
                   onPressed: () {
                     avatarNotifier.switchImage(null);
                     avatarNotifier.toggleShowTrashIcon(false);

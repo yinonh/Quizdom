@@ -26,8 +26,8 @@ class AchievementCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                AppConstant.highlightColor.withOpacity(0.1),
-                AppConstant.highlightColor.withOpacity(0.3)
+                AppConstant.highlightColor.withValues(alpha:0.1),
+                AppConstant.highlightColor.withValues(alpha:0.3)
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

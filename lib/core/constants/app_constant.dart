@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/utils/enums/level_enum.dart';
+import 'package:trivia/core/utils/enums/trophy_type.dart';
 
 class AppConstant {
   static const Color primaryColor = Color(0xFF00AFFF);
@@ -9,12 +11,13 @@ class AppConstant {
   static const Color goldColor = Color(0xFFFFD700);
 
   // Trophy Colors
-
-  static const Color silverColor = Color(0xFFC0C0C0);
-  static const Color bronzeColor = Color(0xFFCD7F32);
-  static const Color platinumColor = Color(0xFFE5E4E2);
-  static const Color diamondColor = Color(0xFFB9F2FF);
-  static const Color rubyColor = Color(0xFFE0115F);
+  static const Color darkGoldColor = Color(0xFFFFB627);
+  static const Color silverColor = Color(0xFF5C6B73);
+  static const Color bronzeColor = Color(0xFFB87333);
+  static const Color platinumColor = Color(0xFF2E294E);
+  static const Color diamondColor = Color(0xFF00B4D8);
+  static const Color rubyColor = Color(0xFFD81159);
+  static const Color defaultColor = Color(0xFFD1D1D1);
 
   static const int questionTime = 10;
 
@@ -71,4 +74,66 @@ class AppConstant {
     31: Colors.orange,
     32: Colors.amber,
   };
+
+  static const loginStreakThresholds = {
+    Level.bronze: 3,
+    Level.silver: 7,
+    Level.gold: 14,
+    Level.platinum: 30,
+    Level.diamond: 60,
+    Level.ruby: 90,
+  };
+
+  static const gamesPlayedThresholds = {
+    Level.bronze: 10,
+    Level.silver: 50,
+    Level.gold: 100,
+    Level.platinum: 200,
+    Level.diamond: 500,
+    Level.ruby: 1000,
+  };
+
+  static const gamesWonThresholds = {
+    Level.bronze: 5,
+    Level.silver: 25,
+    Level.gold: 50,
+    Level.platinum: 100,
+    Level.diamond: 250,
+    Level.ruby: 500,
+  };
+
+  static const totalScoreThresholds = {
+    Level.bronze: 1000,
+    Level.silver: 5000,
+    Level.gold: 10000,
+    Level.platinum: 25000,
+    Level.diamond: 50000,
+    Level.ruby: 100000,
+  };
+
+  // Get trophy level based on thresholds and value
+  static Level getTrophyLevel(Map<Level, int> thresholds, int value) {
+    if (value >= thresholds[Level.ruby]!) return Level.ruby;
+    if (value >= thresholds[Level.diamond]!) return Level.diamond;
+    if (value >= thresholds[Level.platinum]!) return Level.platinum;
+    if (value >= thresholds[Level.gold]!) return Level.gold;
+    if (value >= thresholds[Level.silver]!) return Level.silver;
+    if (value >= thresholds[Level.bronze]!) return Level.bronze;
+    return Level.none;
+  }
+
+  static IconData getTrophyIcon(TrophyType category) {
+    switch (category) {
+      case TrophyType.login:
+        return Icons.calendar_today_rounded;
+      case TrophyType.games:
+        return Icons.sports_esports_rounded;
+      case TrophyType.wins:
+        return Icons.emoji_events_rounded;
+      case TrophyType.score:
+        return Icons.check_circle_rounded;
+      case TrophyType.points:
+        return Icons.stars_rounded;
+    }
+  }
 }

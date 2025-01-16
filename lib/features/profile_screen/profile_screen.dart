@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 import 'package:trivia/features/profile_screen/widgets/avatar_section.dart';
 import 'package:trivia/features/profile_screen/widgets/profile_appbar.dart';
@@ -23,7 +24,7 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: AppConstant.primaryColor,
         body: SingleChildScrollView(
           child: Column(
-            spacing: 15,
+            spacing: calcHeight(15),
             children: [
               const ProfileAppbar(),
               const Stack(

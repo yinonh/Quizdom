@@ -28,7 +28,7 @@ class ProfileContent extends ConsumerWidget {
             backgroundColor: AppConstant.onPrimaryColor,
             icon: Icon(
               Icons.warning_rounded,
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha:0.2),
               size: 120,
             ),
           ),

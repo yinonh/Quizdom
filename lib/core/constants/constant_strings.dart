@@ -67,6 +67,20 @@ class Strings {
   static const String currentPassword = 'Current Password';
   static const String currentPasswordRequired = 'Current Password Required';
   static const String newPassword = 'New Password';
+
+  //Achievements Section
+  static const String moreTo = 'more to';
+  static const String maxLevelAchieved = 'Max level achieved!';
+  static const String achievements = 'Achievements';
+  static const String dailyStreak = 'Daily Streak';
+  static const String games = 'games';
+  static const String victories = 'Victories';
+  static const String wins = 'wins';
+  static const String points = 'points';
+  // static const String correctAnswers = 'Correct Answers';
+  // static const String answers = 'answers';
+
+  // Statistics Section
   static const String statisticsNotAvailableYet =
       'Statistics Not Available Yet';
   static const String answerDistribution = 'Answer Distribution';
