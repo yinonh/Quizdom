@@ -434,30 +434,13 @@ class StatisticsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: calcHeight(20),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                Strings.timePerformance,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppConstant.highlightColor,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppConstant.highlightColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.timer,
-                  color: AppConstant.highlightColor.withValues(alpha: 0.7),
-                  size: 24,
-                ),
-              ),
-            ],
+          const Text(
+            Strings.timePerformance,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppConstant.highlightColor,
+            ),
           ),
           Row(
             children: [

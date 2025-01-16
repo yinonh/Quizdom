@@ -32,10 +32,12 @@ class Statistics extends _$Statistics {
       if (userStatistics != null) {
         state = state.copyWith(userStatistics: userStatistics);
       }
-      if (loginNewDayInARow) {
-        await updateUserStatistics(incrementLoginStreak: true);
-      } else {
-        await updateUserStatistics(incrementLoginStreak: false);
+      if (loginNewDayInARow != null) {
+        if (loginNewDayInARow) {
+          await updateUserStatistics(incrementLoginStreak: true);
+        } else {
+          await updateUserStatistics(incrementLoginStreak: false);
+        }
       }
     }
   }

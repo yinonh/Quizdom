@@ -70,7 +70,7 @@ class TrophiesSection extends StatelessWidget {
       children: [
         TrophyItem(
           title: Strings.dailyStreak,
-          value: statistics.currentLoginStreak,
+          value: statistics.longestLoginStreak,
           thresholds: AppConstant.loginStreakThresholds,
           category: TrophyType.login,
         ),

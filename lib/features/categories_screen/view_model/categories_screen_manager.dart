@@ -42,7 +42,7 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     return CategoriesState(
       triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
       userRecentCategories: user.currentUser.recentTriviaCategories,
-      showRowLogin: user.loginNewDayInARow,
+      showRowLogin: user.loginNewDayInARow ?? false,
       daysInRow: userStatistics.currentLoginStreak,
     );
   }

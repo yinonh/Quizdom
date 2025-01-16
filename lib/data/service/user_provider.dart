@@ -17,7 +17,7 @@ class UserState with _$UserState {
     required User? firebaseUser,
     required TriviaUser currentUser,
     required bool imageLoading,
-    required bool loginNewDayInARow,
+    bool? loginNewDayInARow,
   }) = _UserState;
 }
 
@@ -34,7 +34,6 @@ class Auth extends _$Auth {
         userXp: 0.0,
       ),
       imageLoading: false,
-      loginNewDayInARow: false,
     );
   }
 
@@ -81,28 +80,15 @@ class Auth extends _$Auth {
       if (updatedUser.lastLogin?.isYesterday ?? false) {
         state =
             state.copyWith(currentUser: updatedUser, loginNewDayInARow: true);
-      } else {
-        state = state.copyWith(currentUser: updatedUser);
+      } else if (updatedUser.lastLogin?.isOlderThanYesterday ?? true) {
+        state =
+            state.copyWith(currentUser: updatedUser, loginNewDayInARow: false);
       }
 
       await UserDataSource.updateUser(
           userId: userId, lastLogin: DateTime.now());
     }
   }
-
-  // void logOut() {
-  //   state = UserState(
-  //     firebaseUser: null,
-  //     currentUser: TriviaUser(
-  //       uid: "",
-  //       lastLogin: DateTime.now(),
-  //       recentTriviaCategories: [],
-  //       userXp: 0.0,
-  //     ),
-  //     imageLoading: false,
-  //     loginNewDayInARow: false,
-  //   );
-  // }
 
   Future<void> saveUser(String uid, String name, String email) async {
     await UserDataSource.saveUser(uid, name);
