@@ -1,9 +1,12 @@
+import 'dart:math' show pi;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/custom_clipper.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/user.dart';
@@ -55,14 +58,17 @@ class UserAvatar extends ConsumerWidget {
                   ),
                 )
               : user != null && user?.fluttermojiOptions != null
-                  ? CircleAvatar(
-                      radius: calcWidth(radius),
-                      backgroundColor: AppConstant.softHighlightColor,
-                      child: SvgPicture.string(
-                        ref
-                            .read(fluttermojiNotifierProvider.notifier)
-                            .getFluttermojiFromOptions(
-                                user!.fluttermojiOptions!),
+                  ? ClipPath(
+                      clipper: HalfCircleClipper(),
+                      child: CircleAvatar(
+                        radius: calcWidth(radius),
+                        backgroundColor: AppConstant.softHighlightColor,
+                        child: SvgPicture.string(
+                          ref
+                              .read(fluttermojiNotifierProvider.notifier)
+                              .getFluttermojiFromOptions(
+                                  user!.fluttermojiOptions!),
+                        ),
                       ),
                     )
                   : CircleAvatar(

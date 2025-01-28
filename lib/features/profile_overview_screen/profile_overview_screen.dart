@@ -58,8 +58,7 @@ class ProfileOverview extends ConsumerWidget {
                   IgnorePointer(
                     child: UserAvatar(
                       user: user,
-                      radius: 50,
-                      showProgress: true,
+                      radius: 55,
                     ),
                   ),
                 ],

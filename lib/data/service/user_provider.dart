@@ -83,6 +83,9 @@ class Auth extends _$Auth {
       } else if (updatedUser.lastLogin?.isOlderThanYesterday ?? true) {
         state =
             state.copyWith(currentUser: updatedUser, loginNewDayInARow: false);
+      } else {
+        state =
+            state.copyWith(currentUser: updatedUser, loginNewDayInARow: null);
       }
 
       await UserDataSource.updateUser(
