@@ -7,7 +7,7 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/custom_clipper.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/profile_overview_screen.dart';
 
 class UserAvatar extends ConsumerWidget {

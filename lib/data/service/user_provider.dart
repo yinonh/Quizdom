@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
-import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -32,6 +32,7 @@ class Auth extends _$Auth {
         lastLogin: DateTime.now(),
         recentTriviaCategories: [],
         userXp: 0.0,
+        coins: 100,
       ),
       imageLoading: false,
     );
@@ -68,14 +69,14 @@ class Auth extends _$Auth {
       final currentUser = await UserDataSource.getUserById(userId);
 
       final updatedUser = TriviaUser(
-        uid: userId,
-        name: currentUser?.name,
-        email: currentUser?.email,
-        imageUrl: currentUser?.imageUrl,
-        lastLogin: currentUser?.lastLogin,
-        recentTriviaCategories: currentUser?.recentTriviaCategories ?? [],
-        userXp: currentUser?.userXp ?? 0,
-      );
+          uid: userId,
+          name: currentUser?.name,
+          email: currentUser?.email,
+          imageUrl: currentUser?.imageUrl,
+          lastLogin: currentUser?.lastLogin,
+          recentTriviaCategories: currentUser?.recentTriviaCategories ?? [],
+          userXp: currentUser?.userXp ?? 0,
+          coins: currentUser?.coins ?? 0);
 
       if (updatedUser.lastLogin?.isYesterday ?? false) {
         state =

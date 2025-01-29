@@ -4,7 +4,7 @@ import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 
 class TopUsersPodium extends StatelessWidget {
   final List<MapEntry<TriviaUser, int>> topUsersScores;

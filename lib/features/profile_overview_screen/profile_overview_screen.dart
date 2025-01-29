@@ -5,7 +5,7 @@ import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/view_model/profile_overview_screen_manager.dart';
 
 class ProfileOverview extends ConsumerWidget {

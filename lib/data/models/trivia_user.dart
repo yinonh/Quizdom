@@ -4,8 +4,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trivia/core/utils/timestamp_converter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'user.freezed.dart';
-part 'user.g.dart';
+part 'trivia_user.freezed.dart';
+part 'trivia_user.g.dart';
 
 String? fileToJson(File? file) {
   return file?.path;
@@ -27,6 +27,7 @@ class TriviaUser with _$TriviaUser {
     required List<int> recentTriviaCategories,
     required double userXp,
     Map<String, dynamic>? fluttermojiOptions,
+    required int coins,
   }) = _TriviaUser;
 
   const TriviaUser._();

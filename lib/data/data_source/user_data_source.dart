@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:trivia/core/network/server.dart';
-import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 
 class UserDataSource {
   static Future<DocumentSnapshot> getUserDocument(String userId) async {
@@ -46,6 +46,7 @@ class UserDataSource {
       'recentTriviaCategories': [],
       'trophies': [],
       'userXp': 0.0,
+      'coins': 100,
     });
   }
 
@@ -56,6 +57,7 @@ class UserDataSource {
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
     String? name,
+    int? coins,
   }) async {
     // Initialize the updates map
     Map<String, dynamic> updates = {};
@@ -75,6 +77,9 @@ class UserDataSource {
     }
     if (name != null) {
       updates['name'] = name;
+    }
+    if (coins != null) {
+      updates['coins'] = coins;
     }
 
     // Only make the update call if there are updates to send

@@ -7,7 +7,7 @@ import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
-import 'package:trivia/data/models/user.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 import 'package:trivia/data/service/user_provider.dart';
 import 'package:trivia/data/service/user_statistics_provider.dart';

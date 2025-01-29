@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trivia/core/common_widgets/stars.dart';
+import 'package:trivia/core/common_widgets/user_coins.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
@@ -52,7 +52,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
         const Positioned(
           top: 50.0,
           right: 1.0,
-          child: UserStars(),
+          child: UserCoins(),
         ),
         Positioned(
           top: 35.0,

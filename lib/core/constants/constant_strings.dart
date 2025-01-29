@@ -3,6 +3,7 @@ class Strings {
   static const String loadingAnimation = "assets/loading_animation.json";
   static const String noInternetAnimation = "assets/no_internet.json";
   static const String appBarDrop = "assets/drop.svg";
+  static const String coinsIcon = "assets/icons/coins_icon.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
 
   // Shared Preferences
