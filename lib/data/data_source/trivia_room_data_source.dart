@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class TriviaRoomDataSource {
   // Creates a new trivia room
@@ -91,15 +92,15 @@ class TriviaRoomDataSource {
       return user;
     }).toList();
 
-    // Update the top 5 users based on scores
+    // Update the top 10 users based on scores
     final topUsers = updatedUsers.map((user) => user).toList()
       ..sort((a, b) => (b['score'] as int).compareTo(a['score'] as int));
-    final top5 = topUsers.take(5).toList();
+    final top10 = topUsers.take(AppConstant.topUsersLength).toList();
 
     // Update the database
     await roomRef.update({
       'users': updatedUsers,
-      'topUsers': top5,
+      'topUsers': top10,
     });
   }
 }

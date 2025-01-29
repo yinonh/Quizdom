@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 
 class GeneralTriviaRoomDataSource {
@@ -65,7 +66,7 @@ class GeneralTriviaRoomDataSource {
     }
 
     // If we have less than 10 users, add the new score
-    if (topUsers.length < 10) {
+    if (topUsers.length < AppConstant.topUsersLength) {
       topUsers[userId] = newScore;
     } else {
       // If user is not in top 10, check if their score qualifies
@@ -99,17 +100,19 @@ class GeneralTriviaRoomDataSource {
     final sortedEntries = topUsers.entries.toList()
       ..sort((a, b) => (b.value as int).compareTo(a.value as int));
 
-    // Create the top 5 map
-    final top5 = Map<String, int>.fromEntries(
-      sortedEntries.take(5).map((e) => MapEntry(e.key, e.value as int)),
+    // Create the top 10 map
+    final top10 = Map<String, int>.fromEntries(
+      sortedEntries
+          .take(AppConstant.topUsersLength)
+          .map((e) => MapEntry(e.key, e.value as int)),
     );
 
     // Only update the database if we made changes
     await roomRef.update({
-      'topUsers': top5,
+      'topUsers': top10,
     });
 
     // Return the updated top users
-    return top5;
+    return top10;
   }
 }

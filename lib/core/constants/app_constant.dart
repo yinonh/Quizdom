@@ -19,7 +19,11 @@ class AppConstant {
   static const Color rubyColor = Color(0xFFD81159);
   static const Color defaultColor = Color(0xFFD1D1D1);
 
+  // Game Settings
   static const int questionTime = 10;
+  static const int numberOfQuestions = 10;
+  static const String questionsDifficulty = "medium";
+  static const int topUsersLength = 10;
 
   static const Map<int, IconData> categoryIcons = {
     9: Icons.public_rounded, // General Knowledge

@@ -160,4 +160,17 @@ class Strings {
   static const String accuracy = 'Accuracy';
   static const String avgTime = 'Avg Time';
   static const String close = 'Close';
+
+  // Intro Screen
+  static const String back = 'Back';
+  static const String start = 'Start';
+  static const String ready = 'Ready';
+  static const String soloChallenge = 'Solo Challenge';
+  static const String questions = 'Questions:';
+  static const String difficulty = 'Difficulty:';
+  static const String timePerQuestion = 'Time per Question:';
+  static const String players = 'Players';
+  static const String groupChallenge = 'Group Challenge';
+  static const String duelMode = 'Duel Mode';
+  static const String waitingForMorePlayers = 'Waiting for more players...';
 }

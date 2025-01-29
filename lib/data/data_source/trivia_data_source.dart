@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:trivia/core/constants/api_endpoints.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 
@@ -76,9 +77,9 @@ class TriviaDataSource {
     final response = await client.get(
       ApiEndpoints.apiTrivia,
       queryParameters: {
-        "amount": 10,
+        "amount": AppConstant.numberOfQuestions,
         "category": triviaRoom?.categoryId == -1 ? "" : triviaRoom?.categoryId,
-        "difficulty": "medium", //triviaRoom?.difficulty,
+        "difficulty": AppConstant.questionsDifficulty, //triviaRoom?.difficulty,
         "encode": "base64",
         "token": token,
       },
