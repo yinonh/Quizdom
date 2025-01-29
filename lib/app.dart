@@ -14,6 +14,7 @@ import 'features/profile_screen/profile_screen.dart';
 import 'features/quiz_screen/quiz_screen.dart';
 import 'features/results_screen/results_screen.dart';
 import 'features/trivia_intro_screen/intro_screen.dart';
+import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
@@ -85,6 +86,9 @@ class MyApp extends ConsumerWidget {
             break;
           case TriviaIntroScreen.routeName:
             page = const TriviaIntroScreen();
+            break;
+          case WheelSpinScreen.routeName:
+            page = const WheelSpinScreen();
             break;
           default:
             page = const SizedBox();

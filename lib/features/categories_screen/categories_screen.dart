@@ -36,14 +36,16 @@ class CategoriesScreen extends ConsumerWidget {
               data: (data) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (data.showRowLogin) {
-                    categoriesNotifier.onClaim();
+                    categoriesNotifier.onClaim(AppConstant.loginAwards[
+                        data.daysInRow % AppConstant.loginAwards.length]);
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return DailyLoginPopupContent(
-                          streakDays: data.daysInRow % 6,
+                          streakDays:
+                              data.daysInRow % AppConstant.loginAwards.length,
                           startDay: 1,
-                          rewards: const [0, 10, 35, 50, 100, 200],
+                          rewards: AppConstant.loginAwards,
                           onClaim: () {
                             Navigator.pop(context);
                           },

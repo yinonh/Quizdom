@@ -12,6 +12,7 @@ import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/profile_screen/profile_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/features/wheel_spin_screen/wheel_spin_screen.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
@@ -67,6 +68,7 @@ class CustomDrawer extends ConsumerWidget {
             title: Strings.about,
             onTap: () {
               Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(WheelSpinScreen.routeName);
             },
           ),
           drawerOption(

@@ -24,6 +24,7 @@ class AppConstant {
   static const int numberOfQuestions = 10;
   static const String questionsDifficulty = "medium";
   static const int topUsersLength = 10;
+  static const List<int> loginAwards = [0, 10, 35, 50, 100, 200];
 
   static const Map<int, IconData> categoryIcons = {
     9: Icons.public_rounded, // General Knowledge

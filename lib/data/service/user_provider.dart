@@ -38,8 +38,17 @@ class Auth extends _$Auth {
     );
   }
 
-  void onClaim() {
+  void onClaim(int award) async {
+    updateCoins(award);
     state = state.copyWith(loginNewDayInARow: false);
+  }
+
+  void updateCoins(int amount) async {
+    await UserDataSource.updateUser(
+        userId: state.currentUser.uid, coins: state.currentUser.coins + amount);
+    state = state.copyWith(
+        currentUser: state.currentUser
+            .copyWith(coins: state.currentUser.coins + amount));
   }
 
   TriviaUser updateCurrentUser({
@@ -50,6 +59,7 @@ class Auth extends _$Auth {
     DateTime? lastLogin,
     List<int>? recentTriviaCategories,
     double? userXp,
+    int? coins,
   }) {
     return state.currentUser.copyWith(
       uid: uid ?? state.currentUser.uid,
@@ -60,6 +70,7 @@ class Auth extends _$Auth {
       recentTriviaCategories:
           recentTriviaCategories ?? state.currentUser.recentTriviaCategories,
       userXp: userXp ?? state.currentUser.userXp,
+      coins: coins ?? state.currentUser.coins,
     );
   }
 

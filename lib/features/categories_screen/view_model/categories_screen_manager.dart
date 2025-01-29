@@ -47,8 +47,8 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     );
   }
 
-  void onClaim() {
-    ref.read(authProvider.notifier).onClaim();
+  void onClaim(int award) {
+    ref.read(authProvider.notifier).onClaim(award);
   }
 
   void setTriviaRoom(String triviaRoomId) {
