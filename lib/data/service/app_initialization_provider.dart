@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trivia/data/service/user_provider.dart';
@@ -26,7 +25,7 @@ class AppInitialization extends _$AppInitialization {
           await _initializeAppData();
         }
       },
-      loading: () async => null,
+      loading: () async {},
       error: (error, stack) async => throw error,
     );
   }

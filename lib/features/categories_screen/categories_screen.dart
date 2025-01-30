@@ -14,6 +14,7 @@ import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
 import 'package:trivia/features/categories_screen/widgets/recent_categories.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
+import 'package:trivia/features/categories_screen/widgets/wheel_of_fortune_banner.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routeName = Strings.categoriesRouteName;
@@ -104,7 +105,7 @@ class CategoriesScreen extends ConsumerWidget {
                           triviaRoom: data.triviaRooms,
                           title: Strings.featuredCategories,
                         ),
-                        const InfoContainer(text: "Personal Rooms Information"),
+                        const WheelOfFortuneBanner(),
                         const InfoContainer(text: "Personal Rooms Information"),
                         const InfoContainer(text: "Personal Rooms Information"),
                       ],

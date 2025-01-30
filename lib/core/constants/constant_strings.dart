@@ -5,6 +5,7 @@ class Strings {
   static const String appBarDrop = "assets/drop.svg";
   static const String coinsIcon = "assets/icons/coins_icon.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
+  static const String wheelOfFortune = "assets/wheel_of_fortune.png";
 
   // Shared Preferences
   static const String originalUserImagePathKey = "original_user_image_path";
@@ -170,8 +171,24 @@ class Strings {
   static const String questions = 'Questions:';
   static const String difficulty = 'Difficulty:';
   static const String timePerQuestion = 'Time per Question:';
+  static const String price = 'Price:';
   static const String players = 'Players';
   static const String groupChallenge = 'Group Challenge';
   static const String duelMode = 'Duel Mode';
   static const String waitingForMorePlayers = 'Waiting for more players...';
+
+  // Fortune Wheel Screen
+  static const String congratulations = 'Congratulations!';
+  static const String youWon = 'You won';
+  static const String coinsExclamationMark = 'coins!';
+  static const String coins = 'coins';
+  static const String awesome = 'Awesome!';
+  static const String betterLuckNextTime = 'Better luck next time!';
+  static const String keepPlayingWinCoins = 'Keep playing to win coins!';
+  static const String spinAndWin = 'Spin & Win!';
+  static const String tryYourLuckWinCoins = 'Try your luck to win coins!';
+  static const String noPrize = 'No Prize';
+  static const String spinning = 'Spinning...';
+  static const String spinNow = 'SPIN NOW!';
+  static const String tenCoins = '(10 coins)';
 }

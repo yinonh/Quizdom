@@ -27,12 +27,14 @@ class AuthState with _$AuthState {
     String? firebaseErrorMessage,
     required bool navigate,
     required bool isNewUser,
-    required GlobalKey formKey,
+    required GlobalKey<FormState> formKey,
   }) = _AuthState;
 }
 
 @riverpod
 class AuthScreenManager extends _$AuthScreenManager {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   AuthState build() {
     return AuthState(
@@ -47,7 +49,7 @@ class AuthScreenManager extends _$AuthScreenManager {
       confirmPasswordErrorMessage: '',
       navigate: false,
       isNewUser: false,
-      formKey: GlobalKey<FormState>(),
+      formKey: _formKey,
     );
   }
 

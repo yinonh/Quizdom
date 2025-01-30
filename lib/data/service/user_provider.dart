@@ -194,7 +194,6 @@ class Auth extends _$Auth {
       email: email,
       password: password,
     );
-    await initializeUser();
     return userCredential;
   }
 
@@ -235,8 +234,6 @@ class Auth extends _$Auth {
     if (user == null || user.uid == "") {
       throw AssertionError('User UID cannot be null after sign-in.');
     }
-
-    await initializeUser();
 
     return userCredential.additionalUserInfo;
   }

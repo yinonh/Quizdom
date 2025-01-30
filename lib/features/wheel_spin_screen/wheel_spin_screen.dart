@@ -1,43 +1,50 @@
+import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
-import 'dart:async';
-
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/features/wheel_spin_screen/view_model/wheel_screen_manager.dart';
+import 'package:trivia/features/wheel_spin_screen/widgets/lose_dialog.dart';
+import 'package:trivia/features/wheel_spin_screen/widgets/win_dialog.dart';
 
-class WheelSpinScreen extends StatefulWidget {
+class WheelSpinScreen extends ConsumerStatefulWidget {
   const WheelSpinScreen({super.key});
+
   static const routeName = '/wheel-spin';
 
   @override
   _WheelSpinScreenState createState() => _WheelSpinScreenState();
 }
 
-class _WheelSpinScreenState extends State<WheelSpinScreen> {
+class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
   bool isSpinning = false;
+
   // Changed to broadcast StreamController
   final StreamController<int> _controller = StreamController<int>.broadcast();
   int _selectedValue = 0;
 
   final List<WheelItem> items = [
     WheelItem(coins: 100, backgroundColor: AppConstant.primaryColor),
-    WheelItem(coins: 0, backgroundColor: AppConstant.secondaryColor),
-    WheelItem(coins: 50, backgroundColor: AppConstant.onPrimaryColor),
+    WheelItem(coins: 5, backgroundColor: AppConstant.secondaryColor),
+    WheelItem(coins: 20, backgroundColor: AppConstant.onPrimaryColor),
     WheelItem(coins: 0, backgroundColor: AppConstant.highlightColor),
-    WheelItem(coins: 200, backgroundColor: AppConstant.softHighlightColor),
-    WheelItem(coins: 0, backgroundColor: AppConstant.primaryColor),
-    WheelItem(coins: 75, backgroundColor: AppConstant.onPrimaryColor),
-    WheelItem(coins: 150, backgroundColor: AppConstant.highlightColor),
+    WheelItem(coins: 50, backgroundColor: AppConstant.primaryColor),
+    WheelItem(coins: 0, backgroundColor: AppConstant.secondaryColor),
+    WheelItem(coins: 10, backgroundColor: AppConstant.onPrimaryColor),
+    WheelItem(coins: 0, backgroundColor: AppConstant.highlightColor),
   ];
 
   @override
   void initState() {
     super.initState();
-    // Listen to the stream and update _selectedValue
     _controller.stream.listen((value) {
       _selectedValue = value;
     });
@@ -53,11 +60,14 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
     setState(() {
       isSpinning = false;
     });
-
     // Use the stored _selectedValue instead of accessing the stream again
     if (items[_selectedValue].coins > 0) {
+      ref
+          .read(wheelScreenManagerProvider.notifier)
+          .updateCoins(items[_selectedValue].coins - 10);
       _showWinDialog(items[_selectedValue].coins);
     } else {
+      ref.read(wheelScreenManagerProvider.notifier).updateCoins(-10);
       _showBetterLuckDialog();
     }
   }
@@ -65,80 +75,14 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
   void _showWinDialog(int coins) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Colors.white,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.celebration,
-              color: AppConstant.goldColor,
-              size: 50,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Congratulations! 🎉',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppConstant.primaryColor,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'You won $coins coins!',
-              style: const TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Awesome!'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+      builder: (context) => WinDialog(coins: coins),
     );
   }
 
   void _showBetterLuckDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Colors.white,
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.sentiment_neutral,
-              color: AppConstant.secondaryColor,
-              size: 50,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Better luck next time!',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppConstant.primaryColor,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Keep playing to win coins!',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            child: const Text('Try Again'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+      builder: (context) => const LoseDialog(),
     );
   }
 
@@ -164,24 +108,22 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
             SafeArea(
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
                   const Text(
-                    'Spin & Win!',
+                    Strings.spinAndWin,
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: AppConstant.primaryColor,
                     ),
                   ),
-                  const SizedBox(height: 10),
                   const Text(
-                    'Try your luck to win coins!',
+                    Strings.tryYourLuckWinCoins,
                     style: TextStyle(
                       fontSize: 18,
                       color: AppConstant.highlightColor,
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: calcHeight(40)),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(20),
@@ -203,8 +145,8 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
                                   padding: const EdgeInsets.all(16),
                                   child: Text(
                                     item.coins > 0
-                                        ? '${item.coins} coins'
-                                        : 'Try Again',
+                                        ? '${item.coins} ${Strings.coins}'
+                                        : Strings.noPrize,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -219,7 +161,7 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: calcHeight(40)),
                   ElevatedButton(
                     onPressed: isSpinning
                         ? null
@@ -231,16 +173,18 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
                           },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppConstant.onPrimaryColor,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 16,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: calcWidth(40),
+                        vertical: calcHeight(16),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
                     child: Text(
-                      isSpinning ? 'Spinning...' : 'SPIN NOW!',
+                      isSpinning
+                          ? Strings.spinning
+                          : "${Strings.spinNow} ${Strings.tenCoins}",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -248,7 +192,7 @@ class _WheelSpinScreenState extends State<WheelSpinScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: calcHeight(40)),
                 ],
               ),
             ),

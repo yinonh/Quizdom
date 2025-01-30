@@ -16,6 +16,7 @@ class SoloIntroContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final introState = ref.watch(introScreenManagerProvider);
+    final introNotifier = ref.read(introScreenManagerProvider.notifier);
     return Stack(
       children: [
         // Background with gradient
@@ -72,6 +73,9 @@ class SoloIntroContent extends ConsumerWidget {
                     icon: Icons.timer,
                     text:
                         '${Strings.timePerQuestion} ${AppConstant.questionTime}s'),
+                const DetailRow(
+                    icon: Icons.monetization_on,
+                    text: '${Strings.price} 10 coins'),
                 SizedBox(height: calcHeight(30)),
                 Row(
                   spacing: calcWidth(10),
@@ -87,8 +91,11 @@ class SoloIntroContent extends ConsumerWidget {
                       child: CustomBottomButton(
                         text: Strings.start,
                         onTap: () {
+                          introNotifier.payCoins(-10);
                           Navigator.pushReplacementNamed(
-                              context, QuizScreen.routeName);
+                            context,
+                            QuizScreen.routeName,
+                          );
                         },
                       ),
                     ),

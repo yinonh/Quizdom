@@ -33,4 +33,8 @@ class IntroScreenManager extends _$IntroScreenManager {
       currentUser: currentUser,
     );
   }
+
+  void payCoins(int amount) {
+    ref.read(authProvider.notifier).updateCoins(amount);
+  }
 }
