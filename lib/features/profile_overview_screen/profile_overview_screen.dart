@@ -63,31 +63,37 @@ class ProfileOverview extends ConsumerWidget {
                   ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    user.name ?? Strings.mysteryPlayer,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  Text(
-                    '${user.userXp.toStringAsFixed(1)} ${Strings.xp}',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppConstant.goldColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ],
-              ),
               userStatsAsync.when(
                 data: (stats) {
                   if (stats == null) return const SizedBox.shrink();
                   return Column(
                     spacing: calcHeight(12),
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            user.name ?? Strings.mysteryPlayer,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          Text(
+                            '${stats.totalScore} ${Strings.xp}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: AppConstant.goldColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
                       _buildStatSection(
                         title: Strings.gameStats,
                         icon: Icons.sports_esports,

@@ -5,11 +5,13 @@ import 'package:trivia/core/utils/size_config.dart';
 class DetailRow extends StatelessWidget {
   final IconData icon;
   final String text;
+  final Color? iconColor;
 
   const DetailRow({
     super.key,
     required this.icon,
     required this.text,
+    this.iconColor,
   });
 
   @override
@@ -18,7 +20,7 @@ class DetailRow extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: calcHeight(8)),
       child: Row(
         children: [
-          Icon(icon, color: AppConstant.primaryColor),
+          Icon(icon, color: iconColor ?? AppConstant.primaryColor),
           SizedBox(width: calcWidth(10)),
           Text(
             text,

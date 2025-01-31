@@ -73,9 +73,13 @@ class SoloIntroContent extends ConsumerWidget {
                     icon: Icons.timer,
                     text:
                         '${Strings.timePerQuestion} ${AppConstant.questionTime}s'),
-                const DetailRow(
-                    icon: Icons.monetization_on,
-                    text: '${Strings.price} 10 coins'),
+                DetailRow(
+                  icon: Icons.monetization_on,
+                  text: '${Strings.price} 10 coins',
+                  iconColor: introState.currentUser.coins > 10
+                      ? AppConstant.onPrimaryColor
+                      : Colors.red,
+                ),
                 SizedBox(height: calcHeight(30)),
                 Row(
                   spacing: calcWidth(10),
@@ -90,13 +94,15 @@ class SoloIntroContent extends ConsumerWidget {
                     Expanded(
                       child: CustomBottomButton(
                         text: Strings.start,
-                        onTap: () {
-                          introNotifier.payCoins(-10);
-                          Navigator.pushReplacementNamed(
-                            context,
-                            QuizScreen.routeName,
-                          );
-                        },
+                        onTap: introState.currentUser.coins < 10
+                            ? null
+                            : () {
+                                introNotifier.payCoins(-10);
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  QuizScreen.routeName,
+                                );
+                              },
                       ),
                     ),
                   ],

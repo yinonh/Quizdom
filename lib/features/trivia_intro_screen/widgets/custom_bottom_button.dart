@@ -3,7 +3,7 @@ import 'package:trivia/core/constants/app_constant.dart';
 
 class CustomBottomButton extends StatelessWidget {
   final String text;
-  final VoidCallback onTap;
+  final void Function()? onTap;
   final bool isSecondary;
 
   const CustomBottomButton({
@@ -20,17 +20,21 @@ class CustomBottomButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: isSecondary
-              ? AppConstant.secondaryColor.withValues(alpha: 0.5)
-              : AppConstant.primaryColor,
+          color: onTap == null
+              ? Colors.grey
+              : (isSecondary
+                  ? AppConstant.secondaryColor.withValues(alpha: 0.5)
+                  : AppConstant.primaryColor),
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 2,
-              spreadRadius: 1,
-            ),
-          ],
+          boxShadow: onTap == null
+              ? [] // No shadow when disabled
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 2,
+                    spreadRadius: 1,
+                  ),
+                ],
         ),
         alignment: Alignment.center,
         child: Text(
@@ -38,7 +42,9 @@ class CustomBottomButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: isSecondary ? FontWeight.normal : FontWeight.bold,
-            color: isSecondary ? Colors.black : Colors.white,
+            color: onTap == null
+                ? Colors.white60 // Lighter text color when disabled
+                : (isSecondary ? Colors.black : Colors.white),
           ),
         ),
       ),

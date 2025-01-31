@@ -88,6 +88,7 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final wheelState = ref.watch(wheelScreenManagerProvider);
     return Scaffold(
       appBar: UserAppBar(
         prefix: IconButton(
@@ -163,7 +164,7 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
                   ),
                   SizedBox(height: calcHeight(40)),
                   ElevatedButton(
-                    onPressed: isSpinning
+                    onPressed: isSpinning || wheelState.currentUser.coins < 10
                         ? null
                         : () {
                             setState(() {

@@ -4,6 +4,7 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:trivia/core/common_widgets/user_coins.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 import 'package:trivia/features/profile_screen/widgets/edit_user_details.dart';
@@ -65,14 +66,35 @@ class ProfileContent extends ConsumerWidget {
                 ),
                 child: const SizedBox(height: 5),
               ),
-              Container(
-                width: calcWidth(150),
-                padding: const EdgeInsets.all(3),
-                decoration: const BoxDecoration(
-                  color: AppConstant.onPrimaryColor,
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                child: const UserCoins(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: calcHeight(3), horizontal: calcWidth(5)),
+                    decoration: const BoxDecoration(
+                      color: AppConstant.onPrimaryColor,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: const UserCoins(),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: calcHeight(3), horizontal: calcWidth(5)),
+                    decoration: const BoxDecoration(
+                      color: AppConstant.onPrimaryColor,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    child: Text(
+                      '${profileState.statistics.totalScore} ${Strings.xp}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: calcHeight(16)),
               profileState.isEditing
