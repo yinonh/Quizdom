@@ -4,6 +4,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/view_model/profile_overview_screen_manager.dart';
@@ -20,6 +21,8 @@ class ProfileOverview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.invalidate(userStatisticsProvider(user.uid));
+
     final userStatsAsync = ref.watch(userStatisticsProvider(user.uid));
 
     return Dialog(
@@ -83,7 +86,7 @@ class ProfileOverview extends ConsumerWidget {
                                 ),
                           ),
                           Text(
-                            '${stats.totalScore} ${Strings.xp}',
+                            '${formatNumber(stats.totalScore)} ${Strings.xp}',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium

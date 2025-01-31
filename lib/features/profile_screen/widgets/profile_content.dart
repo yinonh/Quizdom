@@ -86,7 +86,7 @@ class ProfileContent extends ConsumerWidget {
                       borderRadius: BorderRadius.all(Radius.circular(30)),
                     ),
                     child: Text(
-                      '${profileState.statistics.totalScore} ${Strings.xp}',
+                      '${(profileState.statistics.totalScore)} ${Strings.xp}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
