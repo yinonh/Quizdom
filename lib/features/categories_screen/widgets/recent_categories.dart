@@ -35,7 +35,7 @@ class RecentCategories extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(categoriesScreenManagerProvider.notifier)
-                    .setTriviaRoom("room_$categoryIndex");
+                    .setGeneralTriviaRoom("room_$categoryIndex");
                 Navigator.pushNamed(context, TriviaIntroScreen.routeName);
               },
               child: Container(

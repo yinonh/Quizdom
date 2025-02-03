@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
 
 class UserCoins extends ConsumerStatefulWidget {
   const UserCoins({super.key});

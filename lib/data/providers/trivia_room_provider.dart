@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/trivia_room.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
 
 part 'trivia_room_provider.freezed.dart';
 part 'trivia_room_provider.g.dart';
@@ -10,7 +11,6 @@ part 'trivia_room_provider.g.dart';
 class TriviaRoomsState with _$TriviaRoomsState {
   const factory TriviaRoomsState({
     required List<TriviaRoom>? triviaRooms,
-    TriviaRoom? selectedRoom,
   }) = _TriviaRoomsState;
 }
 
@@ -18,7 +18,7 @@ class TriviaRoomsState with _$TriviaRoomsState {
 class TriviaRooms extends _$TriviaRooms {
   @override
   TriviaRoomsState build() {
-    return const TriviaRoomsState(triviaRooms: null, selectedRoom: null);
+    return const TriviaRoomsState(triviaRooms: null);
   }
 
   /// Creates a new trivia room
@@ -48,7 +48,7 @@ class TriviaRooms extends _$TriviaRooms {
       throw Exception("Room not found");
     }
     // TODO: set the room
-    state = state.copyWith(selectedRoom: room);
+    ref.read(triviaProvider.notifier).setTriviaRoom(room);
   }
 
   /// Deletes a trivia room by ID
@@ -69,7 +69,7 @@ class TriviaRooms extends _$TriviaRooms {
       userName: userName,
     );
     // Refresh selected room
-    if (state.selectedRoom?.roomId == roomId) {
+    if (ref.read(triviaProvider).triviaRoom?.roomId == roomId) {
       selectRoom(roomId);
     }
   }
@@ -86,7 +86,7 @@ class TriviaRooms extends _$TriviaRooms {
       newScore: newScore,
     );
     // Refresh selected room
-    if (state.selectedRoom?.roomId == roomId) {
+    if (ref.read(triviaProvider).triviaRoom?.roomId == roomId) {
       selectRoom(roomId);
     }
   }

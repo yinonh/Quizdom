@@ -7,7 +7,6 @@ final userStatisticsProvider = FutureProvider.family<UserStatistics?, String>(
     try {
       return await UserStatisticsDataSource.getUserStatistics(userId);
     } catch (e) {
-      // Handle error or return null
       return null;
     }
   },

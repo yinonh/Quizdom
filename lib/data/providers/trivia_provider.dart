@@ -5,6 +5,7 @@ import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/question.dart';
+import 'package:trivia/data/models/trivia_room.dart';
 
 part 'trivia_provider.freezed.dart';
 part 'trivia_provider.g.dart';
@@ -13,7 +14,8 @@ part 'trivia_provider.g.dart';
 class TriviaState with _$TriviaState {
   const factory TriviaState({
     required String? token,
-    required GeneralTriviaRoom? triviaRoom,
+    required GeneralTriviaRoom? generalTriviaRoom,
+    required TriviaRoom? triviaRoom,
     TriviaCategories? categories,
   }) = _TriviaState;
 }
@@ -23,6 +25,7 @@ class Trivia extends _$Trivia {
   @override
   TriviaState build() {
     return const TriviaState(
+      generalTriviaRoom: null,
       triviaRoom: null,
       token: null,
     );
@@ -62,12 +65,16 @@ class Trivia extends _$Trivia {
   }
 
   void setGeneralTriviaRoom(GeneralTriviaRoom triviaRoom) {
+    state = state.copyWith(generalTriviaRoom: triviaRoom);
+  }
+
+  void setTriviaRoom(TriviaRoom triviaRoom) {
     state = state.copyWith(triviaRoom: triviaRoom);
   }
 
   Future<List<Question>?> getTriviaQuestions() async {
     final data = await TriviaDataSource.fetchTriviaQuestions(
-        state.triviaRoom, state.token);
+        state.generalTriviaRoom, state.token);
 
     final List<Question> questions = (data['results'] as List).map((result) {
       final decodedResult = decodeFields(result);

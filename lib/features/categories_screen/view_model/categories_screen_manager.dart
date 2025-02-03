@@ -1,14 +1,15 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/utils/enums/game_mode.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/service/current_trivia_achievements_provider.dart';
-import 'package:trivia/data/service/trivia_provider.dart';
-import 'package:trivia/data/service/general_trivia_room_provider.dart';
-import 'package:trivia/data/service/user_provider.dart';
-import 'package:trivia/data/service/user_statistics_provider.dart';
+import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
+import 'package:trivia/data/providers/game_mode_provider.dart';
+import 'package:trivia/data/providers/general_trivia_room_provider.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/data/providers/user_statistics_provider.dart';
 
 part 'categories_screen_manager.freezed.dart';
-
 part 'categories_screen_manager.g.dart';
 
 @freezed
@@ -51,11 +52,36 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     ref.read(authProvider.notifier).onClaim(award);
   }
 
-  void setTriviaRoom(String triviaRoomId) {
+  void setGeneralTriviaRoom(String triviaRoomId) {
     ref.read(generalTriviaRoomsProvider.notifier).selectRoom(triviaRoomId);
     ref.read(currentTriviaAchievementsProvider.notifier).resetAchievements();
+    ref.read(gameModeNotifierProvider.notifier).setMode(GameMode.solo);
     userProviderNotifier?.addTriviaCategory(
         ref.read(generalTriviaRoomsProvider).selectedRoom?.categoryId ?? -1);
+  }
+
+  void setTriviaRoom() {
+    ref.read(gameModeNotifierProvider.notifier).setMode(GameMode.duel);
+    // Listen to the stream and print rooms
+    // TriviaRoomDataSource.watchAvailableRooms().listen(
+    //   (rooms) {
+    //     print('Available Rooms:');
+    //     for (var room in rooms) {
+    //       print('Room ID: ${room.roomId}');
+    //       print('Users: ${room.users}');
+    //       print('-------------------');
+    //     }
+    //   },
+    //   onError: (error) {
+    //     print('Error watching rooms: $error');
+    //   },
+    // );
+    ref.read(currentTriviaAchievementsProvider.notifier).resetAchievements();
+  }
+
+  void setGroupTriviaRoom() {
+    ref.read(gameModeNotifierProvider.notifier).setMode(GameMode.group);
+    ref.read(currentTriviaAchievementsProvider.notifier).resetAchievements();
   }
 
   // Function to clean up category names

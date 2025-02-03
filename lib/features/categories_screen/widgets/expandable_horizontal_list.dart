@@ -81,7 +81,7 @@ class _ExpandableHorizontalListState
                     .map((category) {
                   return GestureDetector(
                     onTap: () {
-                      categoriesNotifier.setTriviaRoom(category.roomId!);
+                      categoriesNotifier.setGeneralTriviaRoom(category.roomId!);
                       Navigator.pushNamed(context, TriviaIntroScreen.routeName);
                     },
                     child: Container(
@@ -93,7 +93,7 @@ class _ExpandableHorizontalListState
                         borderRadius: BorderRadius.circular(8.0),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha:0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             spreadRadius: 1,
                             blurRadius: 5,
                             offset: const Offset(0, 3),
@@ -107,7 +107,7 @@ class _ExpandableHorizontalListState
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha:0.2),
+                                  color: Colors.grey.withValues(alpha: 0.2),
                                   spreadRadius: 0.01,
                                   blurRadius: 5,
                                   offset: const Offset(0, 1),

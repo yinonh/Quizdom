@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/data/models/trivia_room.dart';
 
 class TriviaRoomDataSource {
   // Creates a new trivia room
@@ -34,6 +35,24 @@ class TriviaRoomDataSource {
           .doc(roomId)
           .update(updates);
     }
+  }
+
+  static Stream<List<TriviaRoom>> watchAvailableRooms() {
+    return FirebaseFirestore.instance
+        .collection('triviaRooms')
+        .where('users', isLessThan: [
+          {}, {} // This checks for arrays with length less than 2
+        ])
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            final data = doc.data();
+            return TriviaRoom.fromJson({
+              ...data,
+              'roomId': doc.id,
+            });
+          }).toList();
+        });
   }
 
   // Deletes a trivia room

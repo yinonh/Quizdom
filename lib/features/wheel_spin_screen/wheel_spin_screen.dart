@@ -34,12 +34,14 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
   final List<WheelItem> items = [
     WheelItem(coins: 100, backgroundColor: AppConstant.primaryColor),
     WheelItem(coins: 5, backgroundColor: AppConstant.secondaryColor),
-    WheelItem(coins: 20, backgroundColor: AppConstant.onPrimaryColor),
-    WheelItem(coins: 0, backgroundColor: AppConstant.highlightColor),
+    WheelItem(coins: 0, backgroundColor: AppConstant.onPrimaryColor),
+    WheelItem(coins: 20, backgroundColor: AppConstant.highlightColor),
     WheelItem(coins: 50, backgroundColor: AppConstant.primaryColor),
     WheelItem(coins: 0, backgroundColor: AppConstant.secondaryColor),
     WheelItem(coins: 10, backgroundColor: AppConstant.onPrimaryColor),
     WheelItem(coins: 0, backgroundColor: AppConstant.highlightColor),
+    WheelItem(coins: 25, backgroundColor: AppConstant.primaryColor),
+    WheelItem(coins: 0, backgroundColor: AppConstant.secondaryColor),
   ];
 
   @override

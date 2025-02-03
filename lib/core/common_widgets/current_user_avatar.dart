@@ -5,7 +5,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
 
 class CurrentUserAvatar extends ConsumerWidget {
   final double radius;

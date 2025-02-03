@@ -5,7 +5,7 @@ import 'core/common_widgets/custom_progress_indicator.dart';
 import 'core/constants/app_constant.dart';
 import 'core/global_providers/connectivity_provider.dart';
 import 'core/utils/size_config.dart';
-import 'data/service/app_initialization_provider.dart';
+import 'data/providers/app_initialization_provider.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';

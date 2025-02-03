@@ -9,8 +9,8 @@ import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/models/user_statistics.dart';
-import 'package:trivia/data/service/user_provider.dart';
-import 'package:trivia/data/service/user_statistics_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/data/providers/user_statistics_provider.dart';
 
 part 'profile_screen_manager.freezed.dart';
 

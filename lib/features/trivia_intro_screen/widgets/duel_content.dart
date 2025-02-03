@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -17,6 +18,51 @@ class DuelIntroContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final introState = ref.watch(introScreenManagerProvider);
+
+    // Determine if rooms are loading
+    final bool isLoading =
+        introState.availableRooms == null || introState.availableRooms!.isEmpty;
+
+    // Shimmer loading widget
+    Widget _buildShimmerLoading() {
+      return Center(
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: 300,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // If rooms are loading, show shimmer
+    if (isLoading) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: DiagonalSplitPainter(),
+            ),
+          ),
+          _buildShimmerLoading(),
+        ],
+      );
+    }
+
+    // Determine current room index
+    final currentRoomIndex = ref.watch(introScreenManagerProvider
+        .select((state) => state.currentRoomIndex ?? 0));
+    final currentRoom = introState.availableRooms![currentRoomIndex];
+
+    // Check if the current room is full
+    bool isRoomFull = currentRoom.users.length >= 2;
+
     return Stack(
       children: [
         Positioned.fill(
@@ -68,24 +114,37 @@ class DuelIntroContent extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(height: calcHeight(10)),
+
+                // Room details
                 DetailRow(
-                    icon: Icons.category,
-                    text: introState.room?.categoryName ?? ""),
+                  icon: Icons.category,
+                  text: currentRoom.categoryName,
+                ),
                 const DetailRow(
-                    icon: Icons.question_answer,
-                    text:
-                        '${Strings.questions} ${AppConstant.numberOfQuestions}'),
+                  icon: Icons.question_answer,
+                  text: '${Strings.questions} ${AppConstant.numberOfQuestions}',
+                ),
                 const DetailRow(
-                    icon: Icons.speed,
-                    text:
-                        '${Strings.difficulty} ${AppConstant.questionsDifficulty}'),
+                  icon: Icons.speed,
+                  text:
+                      '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
+                ),
                 const DetailRow(
-                    icon: Icons.timer,
-                    text:
-                        '${Strings.timePerQuestion} ${AppConstant.questionTime}s'),
+                  icon: Icons.timer,
+                  text:
+                      '${Strings.timePerQuestion} ${AppConstant.questionTime}s',
+                ),
+                DetailRow(
+                  icon: Icons.monetization_on,
+                  text: '${Strings.price} 10 coins',
+                  iconColor: introState.currentUser.coins > 10
+                      ? AppConstant.onPrimaryColor
+                      : Colors.red,
+                ),
+
                 SizedBox(height: calcHeight(20)),
                 Row(
-                  spacing: calcWidth(10),
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: CustomBottomButton(
@@ -94,12 +153,29 @@ class DuelIntroContent extends ConsumerWidget {
                         isSecondary: true,
                       ),
                     ),
+                    SizedBox(width: calcWidth(10)),
                     Expanded(
                       child: CustomBottomButton(
-                        text: Strings.start,
+                        text: _getButtonText(
+                            isRoomFull,
+                            introState.availableRooms!.length,
+                            currentRoomIndex),
                         onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, QuizScreen.routeName);
+                          if (isRoomFull) {
+                            // Navigate to quiz screen
+                            Navigator.pushReplacementNamed(
+                                context, QuizScreen.routeName);
+                          } else if (introState.availableRooms!.length > 1) {
+                            // Switch to next room
+                            ref
+                                .read(introScreenManagerProvider.notifier)
+                                .switchToNextRoom();
+                          } else {
+                            // Mark as ready
+                            ref
+                                .read(introScreenManagerProvider.notifier)
+                                .setReady();
+                          }
                         },
                       ),
                     ),
@@ -111,6 +187,17 @@ class DuelIntroContent extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  // Helper method to determine button text
+  String _getButtonText(bool isRoomFull, int roomCount, int currentIndex) {
+    if (isRoomFull) {
+      return Strings.start;
+    } else if (roomCount > 1) {
+      return "Next Room";
+    } else {
+      return Strings.ready;
+    }
   }
 }
 

@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/user_statistics.dart';
-import 'package:trivia/data/service/user_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
 
 part 'user_statistics_provider.freezed.dart';
 part 'user_statistics_provider.g.dart';

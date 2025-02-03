@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trivia/data/service/user_provider.dart';
-import 'package:trivia/data/service/user_statistics_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/data/providers/user_statistics_provider.dart';
 
 import 'current_trivia_achievements_provider.dart';
 import 'general_trivia_room_provider.dart';
