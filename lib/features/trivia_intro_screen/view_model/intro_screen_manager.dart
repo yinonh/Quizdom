@@ -2,12 +2,14 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/enums/game_mode.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/models/trivia_room.dart';
+import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/trivia_user.dart';
+import 'package:trivia/data/models/user_preference.dart';
 import 'package:trivia/data/providers/game_mode_provider.dart';
 import 'package:trivia/data/providers/general_trivia_room_provider.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
+import 'package:trivia/data/providers/user_preference_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/features/trivia_intro_screen/view_model/available_rooms_provider.dart';
 
 part 'intro_screen_manager.freezed.dart';
 part 'intro_screen_manager.g.dart';
@@ -18,10 +20,10 @@ class IntroState with _$IntroState {
     required GeneralTriviaRoom? room,
     required GameMode gameMode,
     required TriviaUser currentUser,
-    List<TriviaUser>? otherUsers,
-    List<TriviaRoom>? availableRooms,
-    int? currentRoomIndex, // New field to track current room
-    @Default(false) bool isReady, // New field to track ready status
+    required Future<TriviaCategories?> categories,
+    required UserPreference userPreferences,
+    Map<String, UserPreference>? availableUsers,
+    String? currentUserId,
   }) = _IntroState;
 }
 
@@ -32,44 +34,73 @@ class IntroScreenManager extends _$IntroScreenManager {
     final triviaRoomState = ref.watch(generalTriviaRoomsProvider);
     final currentUser = ref.watch(authProvider).currentUser;
     final gameMode = ref.watch(gameModeNotifierProvider) ?? GameMode.solo;
-    List<TriviaRoom>? availableRooms;
+    final categories = ref.read(triviaProvider.notifier).getCategories();
 
-    if (gameMode == GameMode.duel) {
-      // Only listen to available rooms when in duel mode
-      availableRooms = ref.watch(availableRoomsProvider).availableRooms;
-      print("availableRoomsState: $availableRooms");
-    }
+    final availableUsers = gameMode == GameMode.duel
+        ? ref.watch(
+            availableUsersProvider.select((value) => value.availableUsers))
+        : null;
+
+    // Get the first user ID if available
+    final firstUserId = availableUsers?.keys.firstOrNull;
 
     return IntroState(
       room: triviaRoomState.selectedRoom,
       gameMode: gameMode,
       currentUser: currentUser,
-      availableRooms: availableRooms,
-      currentRoomIndex:
-          availableRooms != null && availableRooms.isNotEmpty ? 0 : null,
+      categories: categories,
+      userPreferences: UserPreference.empty(),
+      availableUsers: availableUsers,
+      currentUserId: firstUserId,
     );
+  }
+
+  // Method to switch to the next available user
+  void switchToNextUser() {
+    final users = state.availableUsers;
+    if (users == null || users.isEmpty) return;
+
+    final userIds = users.keys.toList();
+    final currentIndex = userIds.indexOf(state.currentUserId ?? userIds.first);
+
+    // Calculate the next user index, wrapping around if at the end
+    final nextIndex = (currentIndex + 1) % userIds.length;
+
+    state = state.copyWith(currentUserId: userIds[nextIndex]);
   }
 
   void payCoins(int amount) {
     ref.read(authProvider.notifier).updateCoins(amount);
   }
 
-  // Method to switch to the next available room
-  void switchToNextRoom() {
-    final currentRooms = state.availableRooms;
-    if (currentRooms == null || currentRooms.isEmpty) return;
+  // Method to mark user as ready
+  void setReady() {}
 
-    // Calculate the next room index, wrapping around if at the end
-    final nextIndex = state.currentRoomIndex != null
-        ? (state.currentRoomIndex! + 1) % currentRooms.length
-        : 0;
-
-    state = state.copyWith(currentRoomIndex: nextIndex);
+  void updateUserPreferences({
+    int? category,
+    int? numOfQuestions,
+    String? difficulty,
+  }) {
+    state = state.copyWith(
+      userPreferences: state.userPreferences.copyWith(
+        categoryId: category == -1
+            ? null
+            : category ?? state.userPreferences.categoryId,
+        questionCount: numOfQuestions == -1
+            ? null
+            : numOfQuestions ?? state.userPreferences.questionCount,
+        difficulty: difficulty == "-1"
+            ? null
+            : difficulty ?? state.userPreferences.difficulty,
+      ),
+    );
   }
 
-  // Method to mark user as ready
-  void setReady() {
-    state = state.copyWith(isReady: true);
-    // Additional logic for marking ready can be added here
+  int preferencesNum() {
+    int count = 0;
+    if (state.userPreferences.categoryId != null) count++;
+    if (state.userPreferences.questionCount != null) count++;
+    if (state.userPreferences.difficulty != null) count++;
+    return count;
   }
 }

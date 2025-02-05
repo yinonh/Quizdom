@@ -7,7 +7,7 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
 
-import 'custom_bottom_button.dart';
+import '../../../core/common_widgets/custom_bottom_button.dart';
 import 'detail_row.dart';
 
 class SoloIntroContent extends ConsumerWidget {

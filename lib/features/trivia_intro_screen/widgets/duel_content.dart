@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
+import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -9,8 +10,8 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
 
-import 'custom_bottom_button.dart';
 import 'detail_row.dart';
+import 'filter_room.dart';
 
 class DuelIntroContent extends ConsumerWidget {
   const DuelIntroContent({super.key});
@@ -18,13 +19,14 @@ class DuelIntroContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final introState = ref.watch(introScreenManagerProvider);
+    final introNotifier = ref.read(introScreenManagerProvider.notifier);
 
     // Determine if rooms are loading
     final bool isLoading =
-        introState.availableRooms == null || introState.availableRooms!.isEmpty;
+        introState.availableUsers == null || introState.availableUsers!.isEmpty;
 
     // Shimmer loading widget
-    Widget _buildShimmerLoading() {
+    Widget buildShimmerLoading() {
       return Center(
         child: Shimmer.fromColors(
           baseColor: Colors.grey[300]!,
@@ -50,18 +52,16 @@ class DuelIntroContent extends ConsumerWidget {
               painter: DiagonalSplitPainter(),
             ),
           ),
-          _buildShimmerLoading(),
+          buildShimmerLoading(),
         ],
       );
     }
 
-    // Determine current room index
-    final currentRoomIndex = ref.watch(introScreenManagerProvider
-        .select((state) => state.currentRoomIndex ?? 0));
-    final currentRoom = introState.availableRooms![currentRoomIndex];
-
-    // Check if the current room is full
-    bool isRoomFull = currentRoom.users.length >= 2;
+    // Get current user preference
+    final currentUserId = introState.currentUserId;
+    final currentUserPreference = currentUserId != null
+        ? introState.availableUsers![currentUserId]
+        : null;
 
     return Stack(
       children: [
@@ -98,86 +98,114 @@ class DuelIntroContent extends ConsumerWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
               children: [
-                const Icon(Icons.handshake_rounded,
-                    size: 60, color: AppConstant.highlightColor),
-
-                // Title
-                const Text(
-                  Strings.duelMode,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Positioned(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Badge(
+                          label:
+                              Text(introNotifier.preferencesNum().toString()),
+                          isLabelVisible: introNotifier.preferencesNum() > 0,
+                          backgroundColor: AppConstant.onPrimaryColor,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.filter_list,
+                              color: AppConstant.primaryColor,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => const RoomFilterDialog(),
+                              );
+                            },
+                            tooltip: Strings.filterRooms,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                SizedBox(height: calcHeight(10)),
-
-                // Room details
-                DetailRow(
-                  icon: Icons.category,
-                  text: currentRoom.categoryName,
-                ),
-                const DetailRow(
-                  icon: Icons.question_answer,
-                  text: '${Strings.questions} ${AppConstant.numberOfQuestions}',
-                ),
-                const DetailRow(
-                  icon: Icons.speed,
-                  text:
-                      '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
-                ),
-                const DetailRow(
-                  icon: Icons.timer,
-                  text:
-                      '${Strings.timePerQuestion} ${AppConstant.questionTime}s',
-                ),
-                DetailRow(
-                  icon: Icons.monetization_on,
-                  text: '${Strings.price} 10 coins',
-                  iconColor: introState.currentUser.coins > 10
-                      ? AppConstant.onPrimaryColor
-                      : Colors.red,
-                ),
-
-                SizedBox(height: calcHeight(20)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: CustomBottomButton(
-                        text: Strings.back,
-                        onTap: () => Navigator.pop(context),
-                        isSecondary: true,
+                    const Icon(Icons.handshake_rounded,
+                        size: 60, color: AppConstant.highlightColor),
+
+                    // Title
+                    const Text(
+                      Strings.duelMode,
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
                     ),
-                    SizedBox(width: calcWidth(10)),
-                    Expanded(
-                      child: CustomBottomButton(
-                        text: _getButtonText(
-                            isRoomFull,
-                            introState.availableRooms!.length,
-                            currentRoomIndex),
-                        onTap: () {
-                          if (isRoomFull) {
-                            // Navigate to quiz screen
-                            Navigator.pushReplacementNamed(
-                                context, QuizScreen.routeName);
-                          } else if (introState.availableRooms!.length > 1) {
-                            // Switch to next room
-                            ref
-                                .read(introScreenManagerProvider.notifier)
-                                .switchToNextRoom();
-                          } else {
-                            // Mark as ready
-                            ref
-                                .read(introScreenManagerProvider.notifier)
-                                .setReady();
-                          }
-                        },
-                      ),
+                    SizedBox(height: calcHeight(10)),
+
+                    // Room details
+                    DetailRow(
+                      icon: Icons.category,
+                      text:
+                          (currentUserPreference?.categoryId ?? -1).toString(),
+                    ),
+                    const DetailRow(
+                      icon: Icons.question_answer,
+                      text:
+                          '${Strings.questions} ${AppConstant.numberOfQuestions}',
+                    ),
+                    const DetailRow(
+                      icon: Icons.speed,
+                      text:
+                          '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
+                    ),
+                    const DetailRow(
+                      icon: Icons.timer,
+                      text:
+                          '${Strings.timePerQuestion} ${AppConstant.questionTime}s',
+                    ),
+                    DetailRow(
+                      icon: Icons.monetization_on,
+                      text: '${Strings.price} 10 coins',
+                      iconColor: introState.currentUser.coins > 10
+                          ? AppConstant.onPrimaryColor
+                          : Colors.red,
+                    ),
+
+                    SizedBox(height: calcHeight(20)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CustomBottomButton(
+                            text: Strings.back,
+                            onTap: () => Navigator.pop(context),
+                            isSecondary: true,
+                          ),
+                        ),
+                        SizedBox(width: calcWidth(10)),
+                        Expanded(
+                          child: CustomBottomButton(
+                            text: _getButtonText(
+                              false,
+                              introState.availableUsers?.length ?? 0,
+                            ),
+                            onTap: () {
+                              if (introState.availableUsers!.length > 1) {
+                                // Switch to next user
+                                introNotifier.switchToNextUser();
+                              } else {
+                                // Navigate to quiz screen
+                                Navigator.pushReplacementNamed(
+                                    context, QuizScreen.routeName);
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -190,11 +218,11 @@ class DuelIntroContent extends ConsumerWidget {
   }
 
   // Helper method to determine button text
-  String _getButtonText(bool isRoomFull, int roomCount, int currentIndex) {
-    if (isRoomFull) {
+  String _getButtonText(bool isReady, int userCount) {
+    if (isReady) {
       return Strings.start;
-    } else if (roomCount > 1) {
-      return "Next Room";
+    } else if (userCount > 1) {
+      return "Next Player";
     } else {
       return Strings.ready;
     }

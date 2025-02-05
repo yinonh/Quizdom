@@ -8,7 +8,7 @@ import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
 import 'package:trivia/features/trivia_intro_screen/widgets/detail_row.dart';
 
-import 'custom_bottom_button.dart';
+import '../../../core/common_widgets/custom_bottom_button.dart';
 
 class GroupIntroContent extends ConsumerWidget {
   const GroupIntroContent({super.key});

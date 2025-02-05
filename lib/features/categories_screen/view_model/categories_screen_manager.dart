@@ -83,9 +83,4 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     ref.read(gameModeNotifierProvider.notifier).setMode(GameMode.group);
     ref.read(currentTriviaAchievementsProvider.notifier).resetAchievements();
   }
-
-  // Function to clean up category names
-  String cleanCategoryName(String name) {
-    return name.replaceAll(RegExp(r'^(Entertainment: |Science: )'), '').trim();
-  }
 }

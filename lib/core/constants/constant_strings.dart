@@ -70,6 +70,12 @@ class Strings {
   static const String currentPasswordRequired = 'Current Password Required';
   static const String newPassword = 'New Password';
 
+  //No Internet Screen
+  static const String noInternet = 'No Internet';
+  static const String pleaseCheckInternetAndTryAgain =
+      'Please check your internet connection and try again.';
+  static const String retryConnection = 'Retry Connection';
+
   //Achievements Section
   static const String moreTo = 'more to';
   static const String maxLevelAchieved = 'Max level achieved!';
@@ -79,8 +85,6 @@ class Strings {
   static const String victories = 'Victories';
   static const String wins = 'wins';
   static const String points = 'points';
-  // static const String correctAnswers = 'Correct Answers';
-  // static const String answers = 'answers';
 
   // Statistics Section
   static const String statisticsNotAvailableYet =
@@ -176,6 +180,12 @@ class Strings {
   static const String groupChallenge = 'Group Challenge';
   static const String duelMode = 'Duel Mode';
   static const String waitingForMorePlayers = 'Waiting for more players...';
+  static const String filterRooms = 'Filter Rooms';
+  static const String errorLoadingCategories = 'Error loading categories';
+  static const String category = 'Category';
+  static const String numberOfQuestions = 'Number of Questions';
+  static const String any = 'Any';
+  static const String clear = 'Clear';
 
   // Fortune Wheel Screen
   static const String congratulations = 'Congratulations!';

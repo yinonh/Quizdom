@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
@@ -126,8 +127,7 @@ class _ExpandableHorizontalListState
                           const SizedBox(width: 8.0),
                           Expanded(
                             child: AutoSizeText(
-                              categoriesNotifier
-                                  .cleanCategoryName(category.categoryName)
+                              cleanCategoryName(category.categoryName)
                                   .toUpperCase(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,

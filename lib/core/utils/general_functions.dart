@@ -24,3 +24,8 @@ String formatNumber(int number) {
   }
   return number.toString();
 }
+
+// Function to clean up category names
+String cleanCategoryName(String name) {
+  return name.replaceAll(RegExp(r'^(Entertainment: |Science: )'), '').trim();
+}

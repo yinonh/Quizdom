@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/common_widgets/custom_progress_indicator.dart';
 import 'core/constants/app_constant.dart';
-import 'core/global_providers/connectivity_provider.dart';
 import 'core/utils/size_config.dart';
 import 'data/providers/app_initialization_provider.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';
-import 'features/no_internet_screen/no_internet_screen.dart';
+import 'features/no_internet_screen/connectivity_wrapper.dart';
 import 'features/profile_screen/profile_screen.dart';
 import 'features/quiz_screen/quiz_screen.dart';
 import 'features/results_screen/results_screen.dart';
@@ -22,17 +21,6 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     SizeConfig().init(context);
-
-    // Listen to connectivity state
-    final isConnected = ref.watch(connectivityProvider);
-
-    if (!isConnected) {
-      return const MaterialApp(
-        title: 'No Internet',
-        home: NoInternetScreen(),
-      );
-    }
-
     // Watch initialization state using the updated providers
     final initialization = ref.watch(appInitializationProvider);
     final authState = ref.watch(authStateChangesProvider);
@@ -45,6 +33,11 @@ class MyApp extends ConsumerWidget {
         ),
         useMaterial3: true,
       ),
+      builder: (context, child) {
+        return ConnectivityWrapper(
+          child: child!,
+        );
+      },
       home: initialization.when(
         data: (_) => authState.when(
           data: (user) =>

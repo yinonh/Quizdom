@@ -22,6 +22,7 @@ class AppConstant {
   // Game Settings
   static const int questionTime = 10;
   static const int numberOfQuestions = 10;
+  static const List<String> difficultyMap = ["easy", "medium", "hard"];
   static const String questionsDifficulty = "medium";
   static const int topUsersLength = 10;
   static const List<int> loginAwards = [0, 10, 35, 50, 100, 200];
