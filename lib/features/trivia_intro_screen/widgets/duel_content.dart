@@ -18,12 +18,8 @@ class DuelIntroContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introState = ref.watch(introScreenManagerProvider);
+    final introStateAsync = ref.watch(introScreenManagerProvider);
     final introNotifier = ref.read(introScreenManagerProvider.notifier);
-
-    // Determine if rooms are loading
-    final bool isLoading =
-        introState.availableUsers == null || introState.availableUsers!.isEmpty;
 
     // Shimmer loading widget
     Widget buildShimmerLoading() {
@@ -43,9 +39,8 @@ class DuelIntroContent extends ConsumerWidget {
       );
     }
 
-    // If rooms are loading, show shimmer
-    if (isLoading) {
-      return Stack(
+    return introStateAsync.when(
+      loading: () => Stack(
         children: [
           Positioned.fill(
             child: CustomPaint(
@@ -54,166 +49,184 @@ class DuelIntroContent extends ConsumerWidget {
           ),
           buildShimmerLoading(),
         ],
-      );
-    }
+      ),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+      data: (introState) {
+        final isLoading = introState.availableUsers == null ||
+            introState.availableUsers!.isEmpty;
+        final currentUserId = introState.currentUserId;
+        final currentUserPreference = currentUserId != null
+            ? introState.availableUsers![currentUserId]
+            : null;
 
-    // Get current user preference
-    final currentUserId = introState.currentUserId;
-    final currentUserPreference = currentUserId != null
-        ? introState.availableUsers![currentUserId]
-        : null;
-
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: CustomPaint(
-            painter: DiagonalSplitPainter(),
-          ),
-        ),
-
-        // Right user
-        Positioned(
-          top: calcHeight(70),
-          right: calcWidth(60),
-          child: const CurrentUserAvatar(
-            radius: 60,
-          ),
-        ),
-
-        // Left user
-        Positioned(
-          bottom: calcHeight(70),
-          left: calcWidth(60),
-          child: UserAvatar(
-            radius: calcWidth(60),
-            user: introState.currentUser,
-          ),
-        ),
-
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            margin: EdgeInsets.symmetric(horizontal: calcWidth(20)),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Badge(
-                          label:
-                              Text(introNotifier.preferencesNum().toString()),
-                          isLabelVisible: introNotifier.preferencesNum() > 0,
-                          backgroundColor: AppConstant.onPrimaryColor,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.filter_list,
-                              color: AppConstant.primaryColor,
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const RoomFilterDialog(),
-                              );
-                            },
-                            tooltip: Strings.filterRooms,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+        if (isLoading) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: DiagonalSplitPainter(),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.handshake_rounded,
-                        size: 60, color: AppConstant.highlightColor),
+              ),
+              buildShimmerLoading(),
+            ],
+          );
+        }
 
-                    // Title
-                    const Text(
-                      Strings.duelMode,
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: DiagonalSplitPainter(),
+              ),
+            ),
+
+            // Right user
+            Positioned(
+              top: calcHeight(70),
+              right: calcWidth(60),
+              child: const CurrentUserAvatar(
+                radius: 60,
+              ),
+            ),
+
+            // Left user
+            Positioned(
+              bottom: calcHeight(70),
+              left: calcWidth(60),
+              child: UserAvatar(
+                radius: calcWidth(60),
+                user: introState.currentUser,
+              ),
+            ),
+
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                margin: EdgeInsets.symmetric(horizontal: calcWidth(20)),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Badge(
+                              label: Text(
+                                  introNotifier.preferencesNum().toString()),
+                              isLabelVisible:
+                                  introNotifier.preferencesNum() > 0,
+                              backgroundColor: AppConstant.onPrimaryColor,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.filter_list,
+                                  color: AppConstant.primaryColor,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        const RoomFilterDialog(),
+                                  );
+                                },
+                                tooltip: Strings.filterRooms,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(height: calcHeight(10)),
-
-                    // Room details
-                    DetailRow(
-                      icon: Icons.category,
-                      text:
-                          (currentUserPreference?.categoryId ?? -1).toString(),
-                    ),
-                    const DetailRow(
-                      icon: Icons.question_answer,
-                      text:
-                          '${Strings.questions} ${AppConstant.numberOfQuestions}',
-                    ),
-                    const DetailRow(
-                      icon: Icons.speed,
-                      text:
-                          '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
-                    ),
-                    const DetailRow(
-                      icon: Icons.timer,
-                      text:
-                          '${Strings.timePerQuestion} ${AppConstant.questionTime}s',
-                    ),
-                    DetailRow(
-                      icon: Icons.monetization_on,
-                      text: '${Strings.price} 10 coins',
-                      iconColor: introState.currentUser.coins > 10
-                          ? AppConstant.onPrimaryColor
-                          : Colors.red,
-                    ),
-
-                    SizedBox(height: calcHeight(20)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: CustomBottomButton(
-                            text: Strings.back,
-                            onTap: () => Navigator.pop(context),
-                            isSecondary: true,
+                        const Icon(Icons.handshake_rounded,
+                            size: 60, color: AppConstant.highlightColor),
+
+                        // Title
+                        const Text(
+                          Strings.duelMode,
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
                         ),
-                        SizedBox(width: calcWidth(10)),
-                        Expanded(
-                          child: CustomBottomButton(
-                            text: _getButtonText(
-                              false,
-                              introState.availableUsers?.length ?? 0,
+                        SizedBox(height: calcHeight(10)),
+
+                        // Room details
+                        DetailRow(
+                          icon: Icons.category,
+                          text: (currentUserPreference?.categoryId ?? -1)
+                              .toString(),
+                        ),
+                        const DetailRow(
+                          icon: Icons.question_answer,
+                          text:
+                              '${Strings.questions} ${AppConstant.numberOfQuestions}',
+                        ),
+                        const DetailRow(
+                          icon: Icons.speed,
+                          text:
+                              '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
+                        ),
+                        const DetailRow(
+                          icon: Icons.timer,
+                          text:
+                              '${Strings.timePerQuestion} ${AppConstant.questionTime}s',
+                        ),
+                        DetailRow(
+                          icon: Icons.monetization_on,
+                          text: '${Strings.price} 10 coins',
+                          iconColor: introState.currentUser.coins > 10
+                              ? AppConstant.onPrimaryColor
+                              : Colors.red,
+                        ),
+
+                        SizedBox(height: calcHeight(20)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: CustomBottomButton(
+                                text: Strings.back,
+                                onTap: () => Navigator.pop(context),
+                                isSecondary: true,
+                              ),
                             ),
-                            onTap: () {
-                              if (introState.availableUsers!.length > 1) {
-                                // Switch to next user
-                                introNotifier.switchToNextUser();
-                              } else {
-                                // Navigate to quiz screen
-                                Navigator.pushReplacementNamed(
-                                    context, QuizScreen.routeName);
-                              }
-                            },
-                          ),
+                            SizedBox(width: calcWidth(10)),
+                            Expanded(
+                              child: CustomBottomButton(
+                                text: _getButtonText(
+                                  false,
+                                  introState.availableUsers?.length ?? 0,
+                                ),
+                                onTap: () {
+                                  if (introState.availableUsers!.length > 1) {
+                                    // Switch to next user
+                                    introNotifier.switchToNextUser();
+                                  } else {
+                                    // Navigate to quiz screen
+                                    Navigator.pushReplacementNamed(
+                                        context, QuizScreen.routeName);
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 

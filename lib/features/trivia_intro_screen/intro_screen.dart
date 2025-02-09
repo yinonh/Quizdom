@@ -14,11 +14,15 @@ class TriviaIntroScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introState = ref.watch(introScreenManagerProvider);
+    final introStateAsync = ref.watch(introScreenManagerProvider);
 
     return BaseScreen(
       child: Scaffold(
-        body: _buildContent(introState.gameMode),
+        body: introStateAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+          data: (introState) => _buildContent(introState.gameMode),
+        ),
       ),
     );
   }

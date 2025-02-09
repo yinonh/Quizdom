@@ -23,6 +23,20 @@ class UserPreferenceDataSource {
             });
   }
 
+  static Future<Map<String, UserPreference>> getAvailableUsers() async {
+    // Fetch the snapshot once
+    final snapshot =
+        await _collection.orderBy('createdAt', descending: true).get();
+
+    // Convert the snapshot to a map
+    final Map<String, UserPreference> userPreferences = {};
+    for (var doc in snapshot.docs) {
+      userPreferences[doc.id] = UserPreference.fromJson(doc.data());
+    }
+
+    return userPreferences;
+  }
+
   // Update existing user preference
   static Future<void> updateUserPreference({
     required String userId,

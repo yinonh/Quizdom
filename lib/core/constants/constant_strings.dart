@@ -156,6 +156,7 @@ class Strings {
       "Too many requests. Please try again later.";
   static const String missingEmail = "An email address must be provided.";
   static const String undefinedError = "An undefined error occurred.";
+  static const String continueWithGoogle = "Continue with Google";
 
   // Profile Overview Screen
   static const String mysteryPlayer = 'Mystery Player';

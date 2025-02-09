@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -8,161 +9,164 @@ import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
 import 'package:trivia/features/trivia_intro_screen/widgets/detail_row.dart';
 
-import '../../../core/common_widgets/custom_bottom_button.dart';
-
 class GroupIntroContent extends ConsumerWidget {
   const GroupIntroContent({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introState = ref.watch(introScreenManagerProvider);
-    return Stack(
-      children: [
-        // Dynamic gradient background
-        Container(
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              colors: [Colors.blue.shade200, Colors.orange.shade200],
-              center: Alignment.topLeft,
-              radius: 1.8,
-            ),
-          ),
-        ),
-
-        // Game details card with user list
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(25),
-            margin: EdgeInsets.symmetric(horizontal: calcWidth(30)),
+    final introStateAsync = ref.watch(introScreenManagerProvider);
+    return introStateAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+      data: (introState) => Stack(
+        children: [
+          // Dynamic gradient background
+          Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 15,
-                  spreadRadius: 5,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Group icon with gradient
-                const Icon(Icons.groups,
-                    size: 60, color: AppConstant.highlightColor),
-
-                // Title
-                const Text(
-                  Strings.groupChallenge,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: calcHeight(10)),
-                // Game details
-                DetailRow(
-                    icon: Icons.category,
-                    text: introState.room?.categoryName ?? ""),
-                const DetailRow(
-                    icon: Icons.question_answer,
-                    text:
-                        '${Strings.questions} ${AppConstant.numberOfQuestions}'),
-                const DetailRow(
-                    icon: Icons.speed,
-                    text:
-                        '${Strings.difficulty} ${AppConstant.questionsDifficulty}'),
-                const DetailRow(
-                    icon: Icons.timer,
-                    text:
-                        '${Strings.timePerQuestion} ${AppConstant.questionTime}s'),
-                SizedBox(height: calcHeight(20)),
-
-                // Scrollable list of users
-                const Text(
-                  Strings.players,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(
-                  height: calcHeight(120),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6, // Static number of users for now
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: calcWidth(5)),
-                        child: UserAvatar(
-                          user: introState.currentUser,
-                          radius: 35,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Row(
-                  spacing: calcWidth(10),
-                  children: [
-                    Expanded(
-                      child: CustomBottomButton(
-                        text: Strings.back,
-                        onTap: () => Navigator.pop(context),
-                        isSecondary: true,
-                      ),
-                    ),
-                    Expanded(
-                      child: CustomBottomButton(
-                        text: Strings.ready,
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, QuizScreen.routeName);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              gradient: RadialGradient(
+                colors: [Colors.blue.shade200, Colors.orange.shade200],
+                center: Alignment.topLeft,
+                radius: 1.8,
+              ),
             ),
           ),
-        ),
 
-        // Player count indicator with animation
-        Positioned(
-          bottom: calcHeight(35),
-          left: 0,
-          right: 0,
-          child: Center(
+          // Game details card with user list
+          Center(
             child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: calcWidth(20), vertical: calcHeight(12)),
+              padding: const EdgeInsets.all(25),
+              margin: EdgeInsets.symmetric(horizontal: calcWidth(30)),
               decoration: BoxDecoration(
-                color: AppConstant.highlightColor.withValues(alpha: 0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 10,
-                    spreadRadius: 3,
+                    blurRadius: 15,
+                    spreadRadius: 5,
                   ),
                 ],
               ),
-              child: const Text(
-                '${Strings.waitingForMorePlayers} (4/6)',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Group icon with gradient
+                  const Icon(Icons.groups,
+                      size: 60, color: AppConstant.highlightColor),
+
+                  // Title
+                  const Text(
+                    Strings.groupChallenge,
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: calcHeight(10)),
+                  // Game details
+                  DetailRow(
+                      icon: Icons.category,
+                      text: introState.room?.categoryName ?? ""),
+                  const DetailRow(
+                      icon: Icons.question_answer,
+                      text:
+                          '${Strings.questions} ${AppConstant.numberOfQuestions}'),
+                  const DetailRow(
+                      icon: Icons.speed,
+                      text:
+                          '${Strings.difficulty} ${AppConstant.questionsDifficulty}'),
+                  const DetailRow(
+                      icon: Icons.timer,
+                      text:
+                          '${Strings.timePerQuestion} ${AppConstant.questionTime}s'),
+                  SizedBox(height: calcHeight(20)),
+
+                  // Scrollable list of users
+                  const Text(
+                    Strings.players,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(
+                    height: calcHeight(120),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 6, // Static number of users for now
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: calcWidth(5)),
+                          child: UserAvatar(
+                            user: introState.currentUser,
+                            radius: 35,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Row(
+                    spacing: calcWidth(10),
+                    children: [
+                      Expanded(
+                        child: CustomBottomButton(
+                          text: Strings.back,
+                          onTap: () => Navigator.pop(context),
+                          isSecondary: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomBottomButton(
+                          text: Strings.ready,
+                          onTap: () {
+                            Navigator.pushReplacementNamed(
+                                context, QuizScreen.routeName);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Player count indicator with animation
+          Positioned(
+            bottom: calcHeight(35),
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: calcWidth(20), vertical: calcHeight(12)),
+                decoration: BoxDecoration(
+                  color: AppConstant.highlightColor.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      spreadRadius: 3,
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  '${Strings.waitingForMorePlayers} (4/6)',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
