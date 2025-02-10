@@ -209,6 +209,8 @@ class IntroScreenManager extends _$IntroScreenManager {
           ? null
           : difficulty ?? currentData.userPreferences.difficulty,
     );
+    UserPreferenceDataSource.updateUserPreference(
+        userId: currentData.currentUser.uid, updatedPreference: newPreferences);
 
     state = AsyncData(currentData.copyWith(userPreferences: newPreferences));
   }

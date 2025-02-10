@@ -188,6 +188,7 @@ class Strings {
   static const String numberOfQuestions = 'Number of Questions';
   static const String any = 'Any';
   static const String clear = 'Clear';
+  static const String setFilters = 'Set Filters';
 
   // Fortune Wheel Screen
   static const String congratulations = 'Congratulations!';

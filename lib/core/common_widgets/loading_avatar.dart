@@ -116,7 +116,7 @@ class _LoadingAvatarState extends ConsumerState<LoadingAvatar>
             strokeWidth: 6.0,
             value: widget.progress,
             color: AppConstant.onPrimaryColor,
-            backgroundColor: AppConstant.onPrimaryColor.withOpacity(0.2),
+            backgroundColor: AppConstant.onPrimaryColor.withValues(alpha: 0.2),
           ),
         ),
 
@@ -132,7 +132,7 @@ class _LoadingAvatarState extends ConsumerState<LoadingAvatar>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppConstant.onPrimaryColor.withOpacity(0.3),
+                    color: AppConstant.onPrimaryColor.withValues(alpha: 0.3),
                     width: 2.0,
                   ),
                 ),
