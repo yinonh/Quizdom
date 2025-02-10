@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
+import 'package:trivia/core/common_widgets/loading_avatar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -20,35 +20,8 @@ class DuelIntroContent extends ConsumerWidget {
     final introStateAsync = ref.watch(introScreenManagerProvider);
     final introNotifier = ref.read(introScreenManagerProvider.notifier);
 
-    // Shimmer loading widget
-    Widget buildShimmerLoading() {
-      return Center(
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: 300,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-        ),
-      );
-    }
-
     return introStateAsync.when(
-      loading: () => Stack(
-        children: [
-          Positioned.fill(
-            child: CustomPaint(
-              painter: DiagonalSplitPainter(),
-            ),
-          ),
-          buildShimmerLoading(),
-        ],
-      ),
+      loading: () => Container(),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
         final isLoading = introState.matchedUserId == null ||
@@ -56,19 +29,6 @@ class DuelIntroContent extends ConsumerWidget {
         final currentUserId = introState.matchedUserId;
         final currentUserPreference =
             currentUserId != null ? introState.userPreferences : null;
-
-        if (isLoading) {
-          return Stack(
-            children: [
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: DiagonalSplitPainter(),
-                ),
-              ),
-              buildShimmerLoading(),
-            ],
-          );
-        }
 
         return Stack(
           children: [
@@ -91,10 +51,14 @@ class DuelIntroContent extends ConsumerWidget {
             Positioned(
               bottom: calcHeight(70),
               left: calcWidth(60),
-              child: UserAvatar(
-                radius: calcWidth(60),
-                user: introState.currentUser,
-              ),
+              child: isLoading
+                  ? LoadingAvatar(
+                      radius: calcWidth(60),
+                    )
+                  : UserAvatar(
+                      radius: calcWidth(60),
+                      user: introState.matchedUser,
+                    ),
             ),
 
             Center(
@@ -111,8 +75,18 @@ class DuelIntroContent extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios_rounded,
+                                color: AppConstant.primaryColor,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              tooltip: Strings.filterRooms,
+                            ),
                             Badge(
                               label: Text(
                                   introNotifier.preferencesNum().toString()),
@@ -160,21 +134,25 @@ class DuelIntroContent extends ConsumerWidget {
                           icon: Icons.category,
                           text: (currentUserPreference?.categoryId ?? -1)
                               .toString(),
+                          isLoading: isLoading,
                         ),
-                        const DetailRow(
+                        DetailRow(
                           icon: Icons.question_answer,
                           text:
                               '${Strings.questions} ${AppConstant.numberOfQuestions}',
+                          isLoading: isLoading,
                         ),
-                        const DetailRow(
+                        DetailRow(
                           icon: Icons.speed,
                           text:
                               '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
+                          isLoading: isLoading,
                         ),
-                        const DetailRow(
+                        DetailRow(
                           icon: Icons.timer,
                           text:
                               '${Strings.timePerQuestion} ${AppConstant.questionTime}s',
+                          isLoading: isLoading,
                         ),
                         DetailRow(
                           icon: Icons.monetization_on,
@@ -182,6 +160,7 @@ class DuelIntroContent extends ConsumerWidget {
                           iconColor: introState.currentUser.coins > 10
                               ? AppConstant.onPrimaryColor
                               : Colors.red,
+                          isLoading: isLoading,
                         ),
 
                         SizedBox(height: calcHeight(20)),
@@ -190,21 +169,22 @@ class DuelIntroContent extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: CustomBottomButton(
-                                text: Strings.back,
-                                onTap: () => Navigator.pop(context),
+                                text: Strings.nextPlayer,
+                                onTap: isLoading
+                                    ? null // Disable button when loading
+                                    : () => introNotifier.findNewMatch(),
                                 isSecondary: true,
                               ),
                             ),
                             SizedBox(width: calcWidth(10)),
                             Expanded(
                               child: CustomBottomButton(
-                                text: _getButtonText(
-                                  false,
-                                  introState.matchedUserId != null ? 1 : 0,
-                                ),
-                                onTap: () {
-                                  introNotifier.findNewMatch();
-                                },
+                                text: Strings.ready,
+                                onTap: isLoading
+                                    ? null // Disable button when loading
+                                    : () {
+                                        introNotifier.setReady();
+                                      },
                               ),
                             ),
                           ],
@@ -219,17 +199,6 @@ class DuelIntroContent extends ConsumerWidget {
         );
       },
     );
-  }
-
-  // Helper method to determine button text
-  String _getButtonText(bool isReady, int userCount) {
-    if (isReady) {
-      return Strings.start;
-    } else if (userCount > 1) {
-      return "Next Player";
-    } else {
-      return Strings.ready;
-    }
   }
 }
 

@@ -172,6 +172,7 @@ class Strings {
   static const String back = 'Back';
   static const String start = 'Start';
   static const String ready = 'Ready';
+  static const String nextPlayer = 'Next Player';
   static const String soloChallenge = 'Solo Challenge';
   static const String questions = 'Questions:';
   static const String difficulty = 'Difficulty:';

@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/enums/game_mode.dart';
+import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -26,6 +28,7 @@ class IntroState with _$IntroState {
     required UserPreference userPreferences,
     @Default([]) List<String> oldMatchedUsers,
     String? matchedUserId,
+    TriviaUser? matchedUser,
   }) = _IntroState;
 }
 
@@ -39,6 +42,7 @@ class IntroScreenManager extends _$IntroScreenManager {
     final currentUser = ref.watch(authProvider).currentUser;
     final gameMode = ref.watch(gameModeNotifierProvider) ?? GameMode.solo;
     final categories = await ref.read(triviaProvider.notifier).getCategories();
+    TriviaUser? matchedUser;
 
     // Initially, no old matches.
     List<String> oldMatchedUsers = [];
@@ -95,13 +99,25 @@ class IntroScreenManager extends _$IntroScreenManager {
 
     // Listen for changes in matchedUserId and update the state.
     ref.listen<AsyncValue<String?>>(matchedUserProvider, (previous, next) {
-      next.whenData((newMatchedUserId) {
+      next.whenData((newMatchedUserId) async {
         final currentData = state.value;
         if (currentData != null &&
             currentData.matchedUserId != newMatchedUserId) {
-          state = AsyncData(
-            currentData.copyWith(matchedUserId: newMatchedUserId),
-          );
+          if (newMatchedUserId != null) {
+            matchedUser = await UserDataSource.getUserById(newMatchedUserId);
+            state = AsyncData(
+              currentData.copyWith(
+                matchedUserId: newMatchedUserId,
+                matchedUser: matchedUser,
+              ),
+            );
+          } else {
+            state = AsyncData(
+              currentData.copyWith(
+                matchedUserId: newMatchedUserId,
+              ),
+            );
+          }
         }
       });
     });
@@ -119,6 +135,10 @@ class IntroScreenManager extends _$IntroScreenManager {
       });
     });
 
+    if (matchedUserId != null) {
+      matchedUser = await UserDataSource.getUserById(matchedUserId);
+    }
+
     return IntroState(
       room: triviaRoomState.selectedRoom,
       gameMode: gameMode,
@@ -127,6 +147,7 @@ class IntroScreenManager extends _$IntroScreenManager {
       userPreferences: UserPreference.empty(),
       oldMatchedUsers: oldMatchedUsers,
       matchedUserId: matchedUserId,
+      matchedUser: matchedUser,
     );
   }
 
@@ -158,11 +179,6 @@ class IntroScreenManager extends _$IntroScreenManager {
       matchedUserId: newMatch,
       oldMatchedUsers: updatedOldMatches,
     ));
-  }
-
-  /// Switch game: cancel the current match and search for a different opponent.
-  Future<void> switchGame() async {
-    await findNewMatch();
   }
 
   void payCoins(int amount) {
