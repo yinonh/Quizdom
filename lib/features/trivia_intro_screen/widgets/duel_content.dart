@@ -7,7 +7,6 @@ import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
 
 import 'detail_row.dart';
@@ -52,12 +51,11 @@ class DuelIntroContent extends ConsumerWidget {
       ),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
-        final isLoading = introState.availableUsers == null ||
-            introState.availableUsers!.isEmpty;
-        final currentUserId = introState.currentUserId;
-        final currentUserPreference = currentUserId != null
-            ? introState.availableUsers![currentUserId]
-            : null;
+        final isLoading = introState.matchedUserId == null ||
+            introState.matchedUserId!.isEmpty;
+        final currentUserId = introState.matchedUserId;
+        final currentUserPreference =
+            currentUserId != null ? introState.userPreferences : null;
 
         if (isLoading) {
           return Stack(
@@ -202,17 +200,10 @@ class DuelIntroContent extends ConsumerWidget {
                               child: CustomBottomButton(
                                 text: _getButtonText(
                                   false,
-                                  introState.availableUsers?.length ?? 0,
+                                  introState.matchedUserId != null ? 1 : 0,
                                 ),
                                 onTap: () {
-                                  if (introState.availableUsers!.length > 1) {
-                                    // Switch to next user
-                                    introNotifier.switchToNextUser();
-                                  } else {
-                                    // Navigate to quiz screen
-                                    Navigator.pushReplacementNamed(
-                                        context, QuizScreen.routeName);
-                                  }
+                                  introNotifier.findNewMatch();
                                 },
                               ),
                             ),

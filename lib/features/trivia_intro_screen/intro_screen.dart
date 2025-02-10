@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
 import 'package:trivia/core/utils/enums/game_mode.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
 import 'package:trivia/features/trivia_intro_screen/widgets/duel_content.dart';
@@ -19,7 +21,14 @@ class TriviaIntroScreen extends ConsumerWidget {
     return BaseScreen(
       child: Scaffold(
         body: introStateAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Stack(
+            children: [
+              // Background with gradient
+              CustomBackground(
+                child: CustomProgressIndicator(),
+              ),
+            ],
+          ),
           error: (error, stack) => Center(child: Text('Error: $error')),
           data: (introState) => _buildContent(introState.gameMode),
         ),

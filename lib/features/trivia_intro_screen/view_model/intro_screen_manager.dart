@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/enums/game_mode.dart';
@@ -22,13 +24,15 @@ class IntroState with _$IntroState {
     required TriviaUser currentUser,
     required TriviaCategories? categories,
     required UserPreference userPreferences,
-    Map<String, UserPreference>? availableUsers,
-    String? currentUserId,
+    @Default([]) List<String> oldMatchedUsers,
+    String? matchedUserId,
   }) = _IntroState;
 }
 
 @riverpod
 class IntroScreenManager extends _$IntroScreenManager {
+  Timer? _matchTimer;
+
   @override
   Future<IntroState> build() async {
     final triviaRoomState = ref.watch(generalTriviaRoomsProvider);
@@ -36,15 +40,83 @@ class IntroScreenManager extends _$IntroScreenManager {
     final gameMode = ref.watch(gameModeNotifierProvider) ?? GameMode.solo;
     final categories = await ref.read(triviaProvider.notifier).getCategories();
 
-    Map<String, UserPreference>? availableUsers;
+    // Initially, no old matches.
+    List<String> oldMatchedUsers = [];
+    String? matchedUserId;
+
+    // For duel mode, create the user preference document and try to find a match.
     if (gameMode == GameMode.duel) {
-      availableUsers = await UserPreferenceDataSource.getAvailableUsers();
       await UserPreferenceDataSource.createUserPreference(
-          userId: currentUser.uid, preference: UserPreference.empty());
+        userId: currentUser.uid,
+        preference: UserPreference.empty(),
+      );
+
+      matchedUserId = await UserPreferenceDataSource.findMatch(
+        currentUser.uid,
+        excludedIds: oldMatchedUsers,
+      );
+      if (matchedUserId != null) {
+        oldMatchedUsers = List.from(oldMatchedUsers)..add(matchedUserId);
+      }
     }
 
+    // Set up a periodic timer to continuously search for a match if none is found.
+    if (gameMode == GameMode.duel) {
+      _matchTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+        final currentState = state;
+        if (currentState is AsyncData<IntroState>) {
+          if (currentState.value.matchedUserId == null) {
+            print("🔄 Timer: No match found, trying to find match again...");
+            final newMatch = await UserPreferenceDataSource.findMatch(
+              currentUser.uid,
+              excludedIds: currentState.value.oldMatchedUsers.cast<String>(),
+            );
+            if (newMatch != null) {
+              final updatedOldMatches =
+                  List<String>.from(currentState.value.oldMatchedUsers)
+                    ..add(newMatch);
+              state = AsyncData(
+                currentState.value.copyWith(
+                  matchedUserId: newMatch,
+                  oldMatchedUsers: updatedOldMatches,
+                ),
+              );
+            }
+          }
+        }
+      });
+    }
+
+    // Create a provider for the matchedUserId stream.
+    final matchedUserProvider = StreamProvider<String?>((ref) {
+      final currentUser = ref.watch(authProvider).currentUser;
+      return UserPreferenceDataSource.watchMatchedUserId(currentUser.uid);
+    });
+
+    // Listen for changes in matchedUserId and update the state.
+    ref.listen<AsyncValue<String?>>(matchedUserProvider, (previous, next) {
+      next.whenData((newMatchedUserId) {
+        final currentData = state.value;
+        if (currentData != null &&
+            currentData.matchedUserId != newMatchedUserId) {
+          state = AsyncData(
+            currentData.copyWith(matchedUserId: newMatchedUserId),
+          );
+        }
+      });
+    });
+
+    // Cleanup on screen exit: cancel timer, remove our ID from the matched user (if any), and delete our document.
     ref.onDispose(() {
-      UserPreferenceDataSource.deleteUserPreference(currentUser.uid);
+      _matchTimer?.cancel();
+      Future.microtask(() async {
+        final currentData = state.value;
+        if (currentData != null && currentData.matchedUserId != null) {
+          await UserPreferenceDataSource.removeMatchFromOther(
+              currentUser.uid, currentData.matchedUserId!);
+        }
+        await UserPreferenceDataSource.deleteUserPreference(currentUser.uid);
+      });
     });
 
     return IntroState(
@@ -53,25 +125,44 @@ class IntroScreenManager extends _$IntroScreenManager {
       currentUser: currentUser,
       categories: categories,
       userPreferences: UserPreference.empty(),
-      availableUsers: availableUsers,
-      currentUserId: availableUsers?.keys.firstOrNull,
+      oldMatchedUsers: oldMatchedUsers,
+      matchedUserId: matchedUserId,
     );
   }
 
-  void switchToNextUser() {
+  /// Called when the user explicitly asks for a new match.
+  Future<void> findNewMatch() async {
     final currentState = state;
     if (currentState is! AsyncData<IntroState>) return;
-    final currentData = currentState.value;
+    final data = currentState.value;
+    final currentUserId = data.currentUser.uid;
+    // If there's an existing match, remove our ID from the other user's document and reset our own.
+    if (data.matchedUserId != null) {
+      await UserPreferenceDataSource.removeMatchFromOther(
+          currentUserId, data.matchedUserId!);
+      await FirebaseFirestore.instance
+          .collection('availablePlayers')
+          .doc(currentUserId)
+          .update({'matchedUserId': null});
+    }
+    // Look for a new match while excluding previously matched IDs.
+    final newMatch = await UserPreferenceDataSource.findMatch(
+      currentUserId,
+      excludedIds: data.oldMatchedUsers.cast<String>(),
+    );
+    List<String> updatedOldMatches = List.from(data.oldMatchedUsers);
+    if (newMatch != null) {
+      updatedOldMatches.add(newMatch);
+    }
+    state = AsyncData(data.copyWith(
+      matchedUserId: newMatch,
+      oldMatchedUsers: updatedOldMatches,
+    ));
+  }
 
-    final users = currentData.availableUsers;
-    if (users == null || users.isEmpty) return;
-
-    final userIds = users.keys.toList();
-    final currentIndex =
-        userIds.indexOf(currentData.currentUserId ?? userIds.first);
-    final nextIndex = (currentIndex + 1) % userIds.length;
-
-    state = AsyncData(currentData.copyWith(currentUserId: userIds[nextIndex]));
+  /// Switch game: cancel the current match and search for a different opponent.
+  Future<void> switchGame() async {
+    await findNewMatch();
   }
 
   void payCoins(int amount) {
@@ -79,7 +170,7 @@ class IntroScreenManager extends _$IntroScreenManager {
   }
 
   void setReady() {
-    // Implement setReady logic here
+    // Implement ready logic before creating the trivia room.
   }
 
   void updateUserPreferences({
@@ -110,7 +201,6 @@ class IntroScreenManager extends _$IntroScreenManager {
     final currentState = state;
     if (currentState is! AsyncData<IntroState>) return 0;
     final currentData = currentState.value;
-
     int count = 0;
     if (currentData.userPreferences.categoryId != null) count++;
     if (currentData.userPreferences.questionCount != null) count++;

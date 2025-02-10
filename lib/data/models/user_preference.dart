@@ -11,6 +11,7 @@ class UserPreference with _$UserPreference {
     required int? questionCount,
     required int? categoryId,
     required String? difficulty,
+    String? matchedUserId,
     @TimestampConverter() required DateTime? createdAt,
   }) = _UserPreference;
 
