@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -39,26 +40,24 @@ class RecentCategories extends ConsumerWidget {
                 Navigator.pushNamed(context, TriviaIntroScreen.routeName);
               },
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(50.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.3),
-                      spreadRadius: 1,
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  AppConstant.categoryIcons[categoryIndex] ?? Icons.category,
-                  color:
-                      AppConstant.categoryColors[categoryIndex] ?? Colors.black,
-                  size: 24.0,
-                ),
-              ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(50.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.3),
+                        spreadRadius: 1,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(2.0),
+                  child: SvgPicture.asset(
+                    AppConstant.categoryIcons[categoryIndex] ??
+                        "assets/icons/all_icon.svg",
+                    height: calcHeight(40),
+                  )),
             );
           }),
         ),

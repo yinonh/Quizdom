@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -105,25 +106,26 @@ class _ExpandableHorizontalListState
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withValues(alpha: 0.2),
-                                  spreadRadius: 0.01,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              AppConstant.categoryIcons[category.categoryId] ??
-                                  Icons.category,
-                              color: AppConstant
-                                      .categoryColors[category.categoryId] ??
-                                  Colors.black,
-                              size: calcWidth(20),
-                            ),
-                          ),
+                              decoration: BoxDecoration(
+                                shape: BoxShape
+                                    .circle, // Ensures a circular shadow
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(
+                                        alpha: 0.1), // Very light shadow
+                                    spreadRadius: 0, // No unnecessary spreading
+                                    blurRadius: 3, // Small and soft blur
+                                    offset: const Offset(
+                                        0, 2), // Slightly raised effect
+                                  ),
+                                ],
+                              ),
+                              child: SvgPicture.asset(
+                                AppConstant
+                                        .categoryIcons[category.categoryId] ??
+                                    "assets/icons/all_icon.svg",
+                                height: calcHeight(55),
+                              )),
                           const SizedBox(width: 8.0),
                           Expanded(
                             child: AutoSizeText(
