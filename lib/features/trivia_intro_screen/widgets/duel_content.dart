@@ -7,7 +7,7 @@ import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
+import 'package:trivia/features/trivia_intro_screen/view_model/duel_manager.dart';
 
 import 'detail_row.dart';
 import 'filter_room.dart';
@@ -17,10 +17,10 @@ class DuelIntroContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introStateAsync = ref.watch(introScreenManagerProvider);
-    final introNotifier = ref.read(introScreenManagerProvider.notifier);
+    final duelStateAsync = ref.watch(duelManagerProvider);
+    final duelNotifier = ref.read(duelManagerProvider.notifier);
 
-    return introStateAsync.when(
+    return duelStateAsync.when(
       loading: () => Container(),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
@@ -89,9 +89,8 @@ class DuelIntroContent extends ConsumerWidget {
                             ),
                             Badge(
                               label: Text(
-                                  introNotifier.preferencesNum().toString()),
-                              isLabelVisible:
-                                  introNotifier.preferencesNum() > 0,
+                                  duelNotifier.preferencesNum().toString()),
+                              isLabelVisible: duelNotifier.preferencesNum() > 0,
                               backgroundColor: AppConstant.onPrimaryColor,
                               child: IconButton(
                                 icon: const Icon(
@@ -172,7 +171,7 @@ class DuelIntroContent extends ConsumerWidget {
                                 text: Strings.nextPlayer,
                                 onTap: isLoading
                                     ? null // Disable button when loading
-                                    : () => introNotifier.findNewMatch(),
+                                    : () => duelNotifier.findNewMatch(),
                                 isSecondary: true,
                               ),
                             ),
@@ -183,7 +182,7 @@ class DuelIntroContent extends ConsumerWidget {
                                 onTap: isLoading
                                     ? null // Disable button when loading
                                     : () {
-                                        introNotifier.setReady();
+                                        duelNotifier.setReady();
                                       },
                               ),
                             ),

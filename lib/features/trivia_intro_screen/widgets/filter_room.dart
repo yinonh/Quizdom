@@ -5,15 +5,15 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
+import 'package:trivia/features/trivia_intro_screen/view_model/duel_manager.dart';
 
 class RoomFilterDialog extends ConsumerWidget {
   const RoomFilterDialog({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final introStateAsync = ref.watch(introScreenManagerProvider);
-    final introNotifier = ref.read(introScreenManagerProvider.notifier);
+    final introStateAsync = ref.watch(duelManagerProvider);
+    final introNotifier = ref.read(duelManagerProvider.notifier);
 
     return introStateAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),

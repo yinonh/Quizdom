@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/models/user_preference.dart';
 
 class UserPreferenceDataSource {
@@ -35,7 +36,7 @@ class UserPreferenceDataSource {
       final data = doc.data();
       if (data != null && data['matchedUserId'] == currentUserId) {
         await _collection.doc(otherUserId).update({'matchedUserId': null});
-        print(
+        logger.i(
             '🔄 [removeMatchFromOther] Removed $currentUserId from user $otherUserId');
       }
     }
@@ -51,7 +52,7 @@ class UserPreferenceDataSource {
       DocumentSnapshot currentSnapshot = await transaction.get(currentRef);
 
       if (!currentSnapshot.exists) {
-        print('⚠️ [findMatch] User $userId not found in availablePlayers.');
+        logger.i('⚠️ [findMatch] User $userId not found in availablePlayers.');
         return null;
       }
 
@@ -60,11 +61,11 @@ class UserPreferenceDataSource {
 
       // Check if current user is already matched
       if (currentUserPref.matchedUserId != null) {
-        print('⚠️ [findMatch] User $userId is already matched.');
+        logger.w('⚠️ [findMatch] User $userId is already matched.');
         return null;
       }
 
-      print('✅ [findMatch] Current user preference: $currentUserPref');
+      logger.i('✅ [findMatch] Current user preference: $currentUserPref');
 
       // Build query for potential matches
       List<String> idsToExclude = [userId];
@@ -80,14 +81,14 @@ class UserPreferenceDataSource {
           .where('matchedUserId', isNull: true);
 
       QuerySnapshot potentialMatchesSnapshot = await query.get();
-      print(
+      logger.i(
           '📊 [findMatch] Total potential matches found: ${potentialMatchesSnapshot.docs.length}');
 
       List<DocumentSnapshot> validMatches = [];
       for (var doc in potentialMatchesSnapshot.docs) {
         final userPref =
             UserPreference.fromJson(doc.data()! as Map<String, dynamic>);
-        print(
+        logger.i(
             '🔍 Checking potential match: ${doc.id} - Preferences: $userPref');
 
         // Evaluate matching conditions
@@ -113,7 +114,7 @@ class UserPreferenceDataSource {
       }
 
       if (validMatches.isEmpty) {
-        print('⚠️ [findMatch] No suitable match found for user $userId.');
+        logger.w('⚠️ [findMatch] No suitable match found for user $userId.');
         return null;
       }
 
@@ -129,7 +130,7 @@ class UserPreferenceDataSource {
           selectedMatchSnapshot.data()! as Map<String, dynamic>);
 
       if (selectedMatchPref.matchedUserId != null) {
-        print(
+        logger.w(
             '⚠️ [findMatch] Selected match $selectedMatchId is already matched.');
         return null;
       }
@@ -138,7 +139,7 @@ class UserPreferenceDataSource {
       transaction.update(currentRef, {'matchedUserId': selectedMatchId});
       transaction
           .update(_collection.doc(selectedMatchId), {'matchedUserId': userId});
-      print('🔄 [findMatch] Updated documents: $userId ↔️ $selectedMatchId');
+      logger.i('🔄 [findMatch] Updated documents: $userId ↔️ $selectedMatchId');
 
       return selectedMatchId;
     });
@@ -146,7 +147,7 @@ class UserPreferenceDataSource {
 
   /// Deletes the user's preference document.
   static Future<void> deleteUserPreference(String userId) async {
-    print('🗑️ [deleteUserPreference] Removing user: $userId');
+    logger.i('🗑️ [deleteUserPreference] Removing user: $userId');
     await _collection.doc(userId).delete();
   }
 
@@ -175,47 +176,5 @@ class UserPreferenceDataSource {
       updatedPreference.copyWith(createdAt: DateTime.now()).toJson(),
       SetOptions(merge: true),
     );
-  }
-
-  // Get user preference
-  static Future<UserPreference?> getUserPreference(String userId) async {
-    final doc = await _collection.doc(userId).get();
-
-    if (doc.exists) {
-      return UserPreference.fromJson(doc.data()!);
-    }
-
-    return null;
-  }
-
-  // Get all available players
-  static Stream<List<UserPreference>> getAllAvailablePlayers() {
-    return _collection.orderBy('createdAt', descending: true).snapshots().map(
-        (snapshot) => snapshot.docs
-            .map((doc) => UserPreference.fromJson(doc.data()))
-            .toList());
-  }
-
-  // Get available players with filters
-  static Stream<List<UserPreference>> getFilteredAvailablePlayers({
-    int? categoryId,
-    int? questionCount,
-    String? difficulty,
-  }) {
-    var query = _collection.orderBy('createdAt', descending: true);
-
-    if (categoryId != null) {
-      query = query.where('categoryId', isEqualTo: categoryId);
-    }
-    if (questionCount != null) {
-      query = query.where('questionCount', isEqualTo: questionCount);
-    }
-    if (difficulty != null) {
-      query = query.where('difficulty', isEqualTo: difficulty);
-    }
-
-    return query.snapshots().map((snapshot) => snapshot.docs
-        .map((doc) => UserPreference.fromJson(doc.data()))
-        .toList());
   }
 }
