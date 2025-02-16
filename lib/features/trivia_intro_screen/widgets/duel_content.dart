@@ -131,20 +131,20 @@ class DuelIntroContent extends ConsumerWidget {
                         // Room details
                         DetailRow(
                           icon: Icons.category,
-                          text: (currentUserPreference?.categoryId ?? -1)
+                          text: (currentUserPreference?.categoryId ?? "Any")
                               .toString(),
                           isLoading: isLoading,
                         ),
                         DetailRow(
                           icon: Icons.question_answer,
                           text:
-                              '${Strings.questions} ${AppConstant.numberOfQuestions}',
+                              '${Strings.questions} ${currentUserPreference?.questionCount ?? "Any"}',
                           isLoading: isLoading,
                         ),
                         DetailRow(
                           icon: Icons.speed,
                           text:
-                              '${Strings.difficulty} ${AppConstant.questionsDifficulty}',
+                              '${Strings.difficulty} ${currentUserPreference?.difficulty ?? "Any"}',
                           isLoading: isLoading,
                         ),
                         DetailRow(

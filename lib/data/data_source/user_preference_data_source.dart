@@ -15,7 +15,6 @@ class UserPreferenceDataSource {
     required UserPreference preference,
   }) async {
     final data = preference.copyWith(createdAt: DateTime.now()).toJson();
-    data['matchedUserId'] = null;
     await _collection.doc(userId).set(data);
   }
 
@@ -35,11 +34,23 @@ class UserPreferenceDataSource {
     if (doc.exists) {
       final data = doc.data();
       if (data != null && data['matchedUserId'] == currentUserId) {
-        await _collection.doc(otherUserId).update({'matchedUserId': null});
+        await _collection
+            .doc(otherUserId)
+            .update({'matchedUserId': null, "ready": null});
         logger.i(
             '🔄 [removeMatchFromOther] Removed $currentUserId from user $otherUserId');
       }
     }
+  }
+
+  static Future<void> clearMatch(String currentUserId) async {
+    await _collection
+        .doc(currentUserId)
+        .update({'matchedUserId': null, 'ready': null});
+  }
+
+  static Future<void> setUserReady(String currentUserId) async {
+    await _collection.doc(currentUserId).update({'ready': true});
   }
 
   /// Finds a match for the given user and updates both documents in a transaction.
@@ -136,9 +147,10 @@ class UserPreferenceDataSource {
       }
 
       // Atomically update both documents
-      transaction.update(currentRef, {'matchedUserId': selectedMatchId});
-      transaction
-          .update(_collection.doc(selectedMatchId), {'matchedUserId': userId});
+      transaction.update(
+          currentRef, {'matchedUserId': selectedMatchId, "ready": null});
+      transaction.update(_collection.doc(selectedMatchId),
+          {'matchedUserId': userId, "ready": null});
       logger.i('🔄 [findMatch] Updated documents: $userId ↔️ $selectedMatchId');
 
       return selectedMatchId;

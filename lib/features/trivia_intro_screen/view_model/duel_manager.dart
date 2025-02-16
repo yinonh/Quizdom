@@ -141,10 +141,7 @@ class DuelManager extends _$DuelManager {
     if (data.matchedUserId != null) {
       await UserPreferenceDataSource.removeMatchFromOther(
           currentUserId, data.matchedUserId!);
-      await FirebaseFirestore.instance
-          .collection('availablePlayers')
-          .doc(currentUserId)
-          .update({'matchedUserId': null});
+      await UserPreferenceDataSource.clearMatch(currentUserId);
     }
 
     final newMatch = await UserPreferenceDataSource.findMatch(
@@ -163,11 +160,11 @@ class DuelManager extends _$DuelManager {
     ));
   }
 
-  void updateUserPreferences({
+  Future<void> updateUserPreferences({
     int? category,
     int? numOfQuestions,
     String? difficulty,
-  }) {
+  }) async {
     final currentState = state;
     if (currentState is! AsyncData<DuelState>) return;
     final currentData = currentState.value;
@@ -183,12 +180,18 @@ class DuelManager extends _$DuelManager {
           ? null
           : difficulty ?? currentData.userPreferences.difficulty,
     );
+    state.whenData((stateData) async {
+      if (stateData.matchedUserId != null) {
+        await UserPreferenceDataSource.removeMatchFromOther(
+            stateData.currentUser.uid, stateData.matchedUserId!);
+      }
 
-    UserPreferenceDataSource.updateUserPreference(
-        userId: ref.read(authProvider).currentUser.uid,
-        updatedPreference: newPreferences);
+      UserPreferenceDataSource.updateUserPreference(
+          userId: ref.read(authProvider).currentUser.uid,
+          updatedPreference: newPreferences);
 
-    state = AsyncData(currentData.copyWith(userPreferences: newPreferences));
+      state = AsyncData(currentData.copyWith(userPreferences: newPreferences));
+    });
   }
 
   int preferencesNum() {
@@ -203,6 +206,11 @@ class DuelManager extends _$DuelManager {
   }
 
   void setReady() {
-    // Implement ready logic before creating the trivia room.
+    final currentState = state;
+    if (currentState is! AsyncData<DuelState>) return;
+    final currentData = currentState.value;
+    UserPreferenceDataSource.setUserReady(
+      currentData.currentUser.uid,
+    );
   }
 }

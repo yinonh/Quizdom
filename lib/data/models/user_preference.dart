@@ -13,6 +13,7 @@ class UserPreference with _$UserPreference {
     required String? difficulty,
     String? matchedUserId,
     @TimestampConverter() required DateTime? createdAt,
+    bool? ready,
   }) = _UserPreference;
 
   factory UserPreference.empty() => const UserPreference(
