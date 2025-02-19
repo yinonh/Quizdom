@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/user_preference.dart';
 
 class UserPreferenceDataSource {
@@ -19,11 +20,14 @@ class UserPreferenceDataSource {
   }
 
   /// Returns a stream that watches the current user's document and maps it to the matchedUserId field.
-  static Stream<String?> watchMatchedUserId(String userId) {
+  static Stream<Map<String, dynamic>> watchUserPreference(String userId) {
     return _collection.doc(userId).snapshots().map((snapshot) {
-      if (!snapshot.exists) return null;
-      final data = snapshot.data();
-      return data?['matchedUserId'] as String?;
+      if (!snapshot.exists) return {};
+      final data = snapshot.data()!;
+      return {
+        'matchedUserId': data['matchedUserId'] as String?,
+        'triviaRoomId': data['triviaRoomId'] as String?,
+      };
     });
   }
 
@@ -50,7 +54,61 @@ class UserPreferenceDataSource {
   }
 
   static Future<void> setUserReady(String currentUserId) async {
-    await _collection.doc(currentUserId).update({'ready': true});
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    return firestore.runTransaction((transaction) async {
+      // Get current user's document
+      final currentUserDoc =
+          await transaction.get(_collection.doc(currentUserId));
+      if (!currentUserDoc.exists) return;
+
+      final currentUserPref = UserPreference.fromJson(currentUserDoc.data()!);
+
+      if (currentUserPref.matchedUserId == null) return;
+
+      // Get matched user's document
+      final matchedUserDoc = await transaction
+          .get(_collection.doc(currentUserPref.matchedUserId!));
+      if (!matchedUserDoc.exists) return;
+
+      final matchedUserPref = UserPreference.fromJson(matchedUserDoc.data()!);
+
+      // Set current user as ready
+      transaction.update(_collection.doc(currentUserId), {'ready': true});
+
+      // If both users are ready, create trivia room
+      if (matchedUserPref.ready == true) {
+        // Determine room settings based on both users' preferences
+        final questionCount = currentUserPref.questionCount ??
+            matchedUserPref.questionCount ??
+            10;
+        final categoryId =
+            currentUserPref.categoryId ?? matchedUserPref.categoryId ?? -1;
+        final difficulty = currentUserPref.difficulty ??
+            matchedUserPref.difficulty ??
+            "medium";
+
+        // Generate room ID
+        final roomId = firestore.collection('triviaRooms').doc().id;
+
+        // Create the room
+        await TriviaRoomDataSource.createRoom(
+          roomId: roomId,
+          questionCount: questionCount,
+          categoryId: categoryId,
+          categoryName:
+              "Category Name", // You'll need to get this from somewhere
+          difficulty: difficulty,
+          isPublic: false,
+        );
+
+        // Update both users with the room ID
+        transaction
+            .update(_collection.doc(currentUserId), {'triviaRoomId': roomId});
+        transaction.update(_collection.doc(currentUserPref.matchedUserId!),
+            {'triviaRoomId': roomId});
+      }
+    });
   }
 
   /// Finds a match for the given user and updates both documents in a transaction.

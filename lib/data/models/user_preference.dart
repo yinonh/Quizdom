@@ -12,6 +12,7 @@ class UserPreference with _$UserPreference {
     required int? categoryId,
     required String? difficulty,
     String? matchedUserId,
+    String? triviaRoomId,
     @TimestampConverter() required DateTime? createdAt,
     bool? ready,
   }) = _UserPreference;
@@ -20,7 +21,10 @@ class UserPreference with _$UserPreference {
         questionCount: null,
         categoryId: null,
         difficulty: null,
+        matchedUserId: null,
+        triviaRoomId: null,
         createdAt: null,
+        ready: null,
       );
 
   factory UserPreference.fromJson(Map<String, dynamic> json) =>

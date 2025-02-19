@@ -26,6 +26,12 @@ class DuelState with _$DuelState {
 }
 
 @riverpod
+Stream<Map<String, dynamic>> userPreference(
+    UserPreferenceRef ref, String userId) {
+  return UserPreferenceDataSource.watchUserPreference(userId);
+}
+
+@riverpod
 class DuelManager extends _$DuelManager {
   Timer? _matchTimer;
 
@@ -37,7 +43,6 @@ class DuelManager extends _$DuelManager {
     TriviaUser? matchedUser;
     final categories = await ref.read(triviaProvider.notifier).getCategories();
 
-    // Create the user preference document and try to find a match
     await UserPreferenceDataSource.createUserPreference(
       userId: currentUser.uid,
       preference: UserPreference.empty(),
@@ -53,7 +58,6 @@ class DuelManager extends _$DuelManager {
       matchedUser = await UserDataSource.getUserById(matchedUserId);
     }
 
-    // Set up periodic timer for match searching
     _matchTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
       final currentState = state;
       if (currentState is AsyncData<DuelState>) {
@@ -78,17 +82,18 @@ class DuelManager extends _$DuelManager {
       }
     });
 
-    // Create a provider for the matchedUserId stream
-    final matchedUserProvider = StreamProvider<String?>((ref) {
-      return UserPreferenceDataSource.watchMatchedUserId(currentUser.uid);
-    });
-
-    // Listen for changes in matchedUserId
-    ref.listen<AsyncValue<String?>>(matchedUserProvider, (previous, next) {
-      next.whenData((newMatchedUserId) async {
+    // Listen for changes in user preferences
+    ref.listen<AsyncValue<Map<String, dynamic>>>(
+        userPreferenceProvider(currentUser.uid), (previous, next) {
+      next.whenData((preferences) async {
         final currentData = state.value;
-        if (currentData != null &&
-            currentData.matchedUserId != newMatchedUserId) {
+        if (currentData == null) return;
+
+        final String? newMatchedUserId = preferences['matchedUserId'];
+        final String? triviaRoomId = preferences['triviaRoomId'];
+
+        // Handle matched user changes
+        if (currentData.matchedUserId != newMatchedUserId) {
           if (newMatchedUserId != null) {
             matchedUser = await UserDataSource.getUserById(newMatchedUserId);
             state = AsyncData(
@@ -104,6 +109,12 @@ class DuelManager extends _$DuelManager {
               ),
             );
           }
+        }
+
+        // Handle trivia room creation
+        if (triviaRoomId != null) {
+          await UserPreferenceDataSource.deleteUserPreference(currentUser.uid);
+          print("move to diffrent screen");
         }
       });
     });

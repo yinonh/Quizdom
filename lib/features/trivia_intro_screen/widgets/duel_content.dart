@@ -131,20 +131,21 @@ class DuelIntroContent extends ConsumerWidget {
                         // Room details
                         DetailRow(
                           icon: Icons.category,
-                          text: (currentUserPreference?.categoryId ?? "Any")
-                              .toString(),
+                          text:
+                              (currentUserPreference?.categoryId ?? Strings.any)
+                                  .toString(),
                           isLoading: isLoading,
                         ),
                         DetailRow(
                           icon: Icons.question_answer,
                           text:
-                              '${Strings.questions} ${currentUserPreference?.questionCount ?? "Any"}',
+                              '${Strings.questions} ${currentUserPreference?.questionCount ?? Strings.any}',
                           isLoading: isLoading,
                         ),
                         DetailRow(
                           icon: Icons.speed,
                           text:
-                              '${Strings.difficulty} ${currentUserPreference?.difficulty ?? "Any"}',
+                              '${Strings.difficulty} ${currentUserPreference?.difficulty ?? Strings.any}',
                           isLoading: isLoading,
                         ),
                         DetailRow(
@@ -155,7 +156,7 @@ class DuelIntroContent extends ConsumerWidget {
                         ),
                         DetailRow(
                           icon: Icons.monetization_on,
-                          text: '${Strings.price} 10 coins',
+                          text: '${Strings.price} 10 ${Strings.coins}',
                           iconColor: introState.currentUser.coins > 10
                               ? AppConstant.onPrimaryColor
                               : Colors.red,
