@@ -27,6 +27,7 @@ class UserPreferenceDataSource {
       return {
         'matchedUserId': data['matchedUserId'] as String?,
         'triviaRoomId': data['triviaRoomId'] as String?,
+        'ready': (data['ready'] ?? false) as bool
       };
     });
   }
@@ -48,9 +49,13 @@ class UserPreferenceDataSource {
   }
 
   static Future<void> clearMatch(String currentUserId) async {
-    await _collection
-        .doc(currentUserId)
-        .update({'matchedUserId': null, 'ready': null});
+    try {
+      await _collection
+          .doc(currentUserId)
+          .update({'matchedUserId': null, 'ready': null});
+    } catch (_) {
+      logger.e('other user data didnt deleted');
+    }
   }
 
   static Future<void> setUserReady(String currentUserId) async {

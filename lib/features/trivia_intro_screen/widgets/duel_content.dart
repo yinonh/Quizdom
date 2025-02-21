@@ -7,6 +7,7 @@ import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/duel_manager.dart';
 
 import 'detail_row.dart';
@@ -24,6 +25,12 @@ class DuelIntroContent extends ConsumerWidget {
       loading: () => Container(),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
+        if (introState.matchedRoom != null) {
+          // Use addPostFrameCallback to avoid building during build
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushReplacementNamed(QuizScreen.routeName);
+          });
+        }
         final isLoading = introState.matchedUserId == null ||
             introState.matchedUserId!.isEmpty;
         final currentUserId = introState.matchedUserId;
@@ -37,8 +44,6 @@ class DuelIntroContent extends ConsumerWidget {
                 painter: DiagonalSplitPainter(),
               ),
             ),
-
-            // Right user
             Positioned(
               top: calcHeight(70),
               right: calcWidth(60),
@@ -46,21 +51,39 @@ class DuelIntroContent extends ConsumerWidget {
                 radius: 60,
               ),
             ),
-
-            // Left user
             Positioned(
               bottom: calcHeight(70),
               left: calcWidth(60),
-              child: isLoading
-                  ? LoadingAvatar(
-                      radius: calcWidth(60),
+              child: !isLoading
+                  ? Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Progress indicator
+                        SizedBox(
+                          width: calcWidth(124),
+                          height: calcWidth(124),
+                          child: CircularProgressIndicator(
+                            value: introState.isReady
+                                ? 1
+                                : introState.matchProgress ??
+                                    0.0 / AppConstant.matchTimeout,
+                            color: introState.isReady
+                                ? Colors.green
+                                : AppConstant.primaryColor,
+                            strokeWidth: 7,
+                          ),
+                        ),
+                        // User avatar
+                        UserAvatar(
+                          radius: calcWidth(60),
+                          user: introState.matchedUser,
+                        ),
+                      ],
                     )
-                  : UserAvatar(
+                  : LoadingAvatar(
                       radius: calcWidth(60),
-                      user: introState.matchedUser,
                     ),
             ),
-
             Center(
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -180,7 +203,7 @@ class DuelIntroContent extends ConsumerWidget {
                             Expanded(
                               child: CustomBottomButton(
                                 text: Strings.ready,
-                                onTap: isLoading
+                                onTap: isLoading || introState.isReady
                                     ? null // Disable button when loading
                                     : () {
                                         duelNotifier.setReady();

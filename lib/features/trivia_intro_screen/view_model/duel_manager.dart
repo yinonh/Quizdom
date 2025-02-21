@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -22,6 +23,9 @@ class DuelState with _$DuelState {
     String? matchedUserId,
     TriviaUser? matchedUser,
     required TriviaCategories? categories,
+    String? matchedRoom,
+    @Default(0.0) double? matchProgress,
+    @Default(false) bool isReady, // Add this field
   }) = _DuelState;
 }
 
@@ -34,6 +38,7 @@ Stream<Map<String, dynamic>> userPreference(
 @riverpod
 class DuelManager extends _$DuelManager {
   Timer? _matchTimer;
+  Timer? _progressTimer;
 
   @override
   Future<DuelState> build() async {
@@ -54,6 +59,7 @@ class DuelManager extends _$DuelManager {
     );
 
     if (matchedUserId != null) {
+      _startProgressTimer();
       oldMatchedUsers = List.from(oldMatchedUsers)..add(matchedUserId);
       matchedUser = await UserDataSource.getUserById(matchedUserId);
     }
@@ -82,7 +88,7 @@ class DuelManager extends _$DuelManager {
       }
     });
 
-    // Listen for changes in user preferences
+    // Listen for changes in user preferences and matched user's state
     ref.listen<AsyncValue<Map<String, dynamic>>>(
         userPreferenceProvider(currentUser.uid), (previous, next) {
       next.whenData((preferences) async {
@@ -91,21 +97,27 @@ class DuelManager extends _$DuelManager {
 
         final String? newMatchedUserId = preferences['matchedUserId'];
         final String? triviaRoomId = preferences['triviaRoomId'];
+        final bool userReady = preferences['ready'] ?? false;
 
-        // Handle matched user changes
-        if (currentData.matchedUserId != newMatchedUserId) {
+        // Handle matched user changes and ready state
+        if (currentData.matchedUserId != newMatchedUserId ||
+            currentData.isReady != userReady) {
           if (newMatchedUserId != null) {
+            _startProgressTimer();
             matchedUser = await UserDataSource.getUserById(newMatchedUserId);
             state = AsyncData(
               currentData.copyWith(
                 matchedUserId: newMatchedUserId,
                 matchedUser: matchedUser,
+                isReady: userReady,
               ),
             );
           } else {
+            // Reset ready state when match is cleared
             state = AsyncData(
               currentData.copyWith(
                 matchedUserId: newMatchedUserId,
+                isReady: false,
               ),
             );
           }
@@ -113,8 +125,10 @@ class DuelManager extends _$DuelManager {
 
         // Handle trivia room creation
         if (triviaRoomId != null) {
+          state = AsyncData(
+            currentData.copyWith(matchedRoom: triviaRoomId),
+          );
           await UserPreferenceDataSource.deleteUserPreference(currentUser.uid);
-          print("move to diffrent screen");
         }
       });
     });
@@ -133,13 +147,41 @@ class DuelManager extends _$DuelManager {
     });
 
     return DuelState(
-      userPreferences: UserPreference.empty(),
-      oldMatchedUsers: oldMatchedUsers,
-      currentUser: currentUser,
-      matchedUserId: matchedUserId,
-      matchedUser: matchedUser,
-      categories: categories,
-    );
+        userPreferences: UserPreference.empty(),
+        oldMatchedUsers: oldMatchedUsers,
+        currentUser: currentUser,
+        matchedUserId: matchedUserId,
+        matchedUser: matchedUser,
+        categories: categories,
+        matchedRoom: null,
+        isReady: false);
+  }
+
+  void _startProgressTimer() {
+    _progressTimer?.cancel();
+
+    const duration = Duration(milliseconds: 100);
+    final totalSteps =
+        (AppConstant.matchTimeout * 1000) ~/ duration.inMilliseconds;
+    var currentStep = 0;
+
+    _progressTimer = Timer.periodic(duration, (timer) {
+      final currentState = state;
+      if (currentState is AsyncData<DuelState>) {
+        currentStep++;
+        final progress = currentStep / totalSteps;
+
+        if (progress >= 1.0) {
+          timer.cancel();
+          findNewMatch(); // Auto-find new match when time expires
+          return;
+        }
+
+        state = AsyncData(currentState.value.copyWith(
+          matchProgress: progress,
+        ));
+      }
+    });
   }
 
   Future<void> findNewMatch() async {
