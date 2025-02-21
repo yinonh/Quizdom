@@ -37,6 +37,7 @@ class TriviaRooms extends _$TriviaRooms {
       categoryName: categoryName,
       difficulty: difficulty,
       isPublic: isPublic,
+      userIds: [],
     );
     // TODO: Refresh rooms
   }

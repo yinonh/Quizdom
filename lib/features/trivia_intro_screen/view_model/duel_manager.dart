@@ -25,7 +25,8 @@ class DuelState with _$DuelState {
     required TriviaCategories? categories,
     String? matchedRoom,
     @Default(0.0) double? matchProgress,
-    @Default(false) bool isReady, // Add this field
+    @Default(false) bool isReady,
+    @Default(false) bool hasNavigated,
   }) = _DuelState;
 }
 
@@ -124,9 +125,11 @@ class DuelManager extends _$DuelManager {
         }
 
         // Handle trivia room creation
-        if (triviaRoomId != null) {
+        if (triviaRoomId != null && !currentData.hasNavigated) {
           state = AsyncData(
-            currentData.copyWith(matchedRoom: triviaRoomId),
+            currentData.copyWith(
+              matchedRoom: triviaRoomId,
+            ),
           );
           await UserPreferenceDataSource.deleteUserPreference(currentUser.uid);
         }
@@ -243,6 +246,12 @@ class DuelManager extends _$DuelManager {
           updatedPreference: newPreferences);
 
       state = AsyncData(currentData.copyWith(userPreferences: newPreferences));
+    });
+  }
+
+  void setIsNavigated() {
+    state.whenData((stateData) async {
+      state = AsyncData(stateData.copyWith(hasNavigated: true));
     });
   }
 

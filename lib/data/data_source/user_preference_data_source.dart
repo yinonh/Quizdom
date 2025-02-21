@@ -68,7 +68,6 @@ class UserPreferenceDataSource {
       if (!currentUserDoc.exists) return;
 
       final currentUserPref = UserPreference.fromJson(currentUserDoc.data()!);
-
       if (currentUserPref.matchedUserId == null) return;
 
       // Get matched user's document
@@ -83,28 +82,32 @@ class UserPreferenceDataSource {
 
       // If both users are ready, create trivia room
       if (matchedUserPref.ready == true) {
-        // Determine room settings based on both users' preferences
-        final questionCount = currentUserPref.questionCount ??
-            matchedUserPref.questionCount ??
-            10;
-        final categoryId =
-            currentUserPref.categoryId ?? matchedUserPref.categoryId ?? -1;
-        final difficulty = currentUserPref.difficulty ??
-            matchedUserPref.difficulty ??
-            "medium";
+        // Merge preferences according to the new logic
+        final (questionCount, categoryId, difficulty) =
+            _mergePreferences(currentUserPref, matchedUserPref);
+
+        // Get category name if categoryId is not null
+        String? categoryName;
+        if (categoryId != null) {
+          // You might want to implement a way to get the category name
+          // This is just a placeholder
+          categoryName = "Category Name";
+        }
 
         // Generate room ID
         final roomId = firestore.collection('triviaRooms').doc().id;
 
-        // Create the room
+        // Create the room with user IDs
+        List<String> userIds = [currentUserId, currentUserPref.matchedUserId!];
+
         await TriviaRoomDataSource.createRoom(
           roomId: roomId,
           questionCount: questionCount,
           categoryId: categoryId,
-          categoryName:
-              "Category Name", // You'll need to get this from somewhere
+          categoryName: categoryName,
           difficulty: difficulty,
           isPublic: false,
+          userIds: userIds,
         );
 
         // Update both users with the room ID
@@ -114,6 +117,36 @@ class UserPreferenceDataSource {
             {'triviaRoomId': roomId});
       }
     });
+  }
+
+// Helper function to merge preferences
+  static (int?, int?, String?) _mergePreferences(
+      UserPreference pref1, UserPreference pref2) {
+    // For question count: if either user specified a count, use that
+    int? questionCount;
+    if (pref1.questionCount != null && pref1.questionCount != -1) {
+      questionCount = pref1.questionCount;
+    } else if (pref2.questionCount != null && pref2.questionCount != -1) {
+      questionCount = pref2.questionCount;
+    }
+
+    // For category: if either user specified a category, use that
+    int? categoryId;
+    if (pref1.categoryId != null && pref1.categoryId != -1) {
+      categoryId = pref1.categoryId;
+    } else if (pref2.categoryId != null && pref2.categoryId != -1) {
+      categoryId = pref2.categoryId;
+    }
+
+    // For difficulty: if either user specified a difficulty, use that
+    String? difficulty;
+    if (pref1.difficulty != null && pref1.difficulty != "-1") {
+      difficulty = pref1.difficulty;
+    } else if (pref2.difficulty != null && pref2.difficulty != "-1") {
+      difficulty = pref2.difficulty;
+    }
+
+    return (questionCount, categoryId, difficulty);
   }
 
   /// Finds a match for the given user and updates both documents in a transaction.

@@ -6,12 +6,16 @@ class TriviaRoomDataSource {
   // Creates a new trivia room
   static Future<void> createRoom({
     required String roomId,
-    required int questionCount,
-    required int categoryId,
-    required String categoryName,
-    required String difficulty,
+    required int? questionCount,
+    required int? categoryId,
+    required String? categoryName,
+    required String? difficulty,
     required bool isPublic,
+    required List<String> userIds,
   }) async {
+    // Initialize scores array with same length as users array, filled with 0
+    List<int> userScores = List.filled(userIds.length, 0);
+
     await FirebaseFirestore.instance.collection('triviaRooms').doc(roomId).set({
       'questionCount': questionCount,
       'categoryId': categoryId,
@@ -19,12 +23,12 @@ class TriviaRoomDataSource {
       'difficulty': difficulty,
       'isPublic': isPublic,
       'createdAt': FieldValue.serverTimestamp(),
-      'users': [],
-      'topUsers': [],
+      'users': userIds,
+      'userScores': userScores, // Changed from topUsers
     });
   }
 
-  // Updates room details (e.g., updating user scores or other room details)
+// Updates room details (e.g., updating user scores or other room details)
   static Future<void> updateRoom({
     required String roomId,
     Map<String, dynamic>? updates,

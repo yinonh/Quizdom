@@ -16,16 +16,17 @@ class TriviaRoom with _$TriviaRoom {
     required bool? isPublic,
     @TimestampConverter() required DateTime? createdAt,
     @Default([]) List<String> users,
-    @Default([]) List<String> topUsers,
+    @Default([]) List<String> userScores,
   }) = _TriviaRoom;
 
   factory TriviaRoom.empty() => const TriviaRoom(
-      roomId: null,
-      questionCount: null,
-      categoryId: null,
-      difficulty: null,
-      isPublic: null,
-      createdAt: null);
+        roomId: null,
+        questionCount: null,
+        categoryId: null,
+        difficulty: null,
+        isPublic: null,
+        createdAt: null,
+      );
 
   factory TriviaRoom.fromJson(Map<String, dynamic> json) =>
       _$TriviaRoomFromJson(json);

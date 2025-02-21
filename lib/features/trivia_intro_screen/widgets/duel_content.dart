@@ -6,6 +6,7 @@ import 'package:trivia/core/common_widgets/loading_avatar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/quiz_screen.dart';
 import 'package:trivia/features/trivia_intro_screen/view_model/duel_manager.dart';
@@ -25,12 +26,15 @@ class DuelIntroContent extends ConsumerWidget {
       loading: () => Container(),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
-        if (introState.matchedRoom != null) {
-          // Use addPostFrameCallback to avoid building during build
+        if (introState.matchedRoom != null && !introState.hasNavigated) {
+          logger.i('Attempting navigation to QuizScreen');
+          duelNotifier.setIsNavigated();
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            logger.e('Executing navigation');
             Navigator.of(context).pushReplacementNamed(QuizScreen.routeName);
           });
         }
+
         final isLoading = introState.matchedUserId == null ||
             introState.matchedUserId!.isEmpty;
         final currentUserId = introState.matchedUserId;
