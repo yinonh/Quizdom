@@ -22,19 +22,22 @@ class DuelIntroContent extends ConsumerWidget {
     final duelStateAsync = ref.watch(duelManagerProvider);
     final duelNotifier = ref.read(duelManagerProvider.notifier);
 
+    ref.listen(duelManagerProvider, (previous, next) {
+      next.whenData((introState) {
+        if (introState.matchedRoom != null && !introState.hasNavigated) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(duelManagerProvider.notifier).setIsNavigated();
+            logger.i('Navigate to QuizScreen');
+            Navigator.of(context).pushReplacementNamed(QuizScreen.routeName);
+          });
+        }
+      });
+    });
+
     return duelStateAsync.when(
       loading: () => Container(),
       error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
-        if (introState.matchedRoom != null && !introState.hasNavigated) {
-          logger.i('Attempting navigation to QuizScreen');
-          duelNotifier.setIsNavigated();
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            logger.e('Executing navigation');
-            Navigator.of(context).pushReplacementNamed(QuizScreen.routeName);
-          });
-        }
-
         final isLoading = introState.matchedUserId == null ||
             introState.matchedUserId!.isEmpty;
         final currentUserId = introState.matchedUserId;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
@@ -20,11 +21,11 @@ class MultipleAnswerWidget extends ConsumerWidget {
   Color getColorForState(OptionState state) {
     switch (state) {
       case OptionState.unchosen:
-        return AppConstant.secondaryColor.withValues(alpha:0.4);
+        return AppConstant.secondaryColor.withValues(alpha: 0.4);
       case OptionState.correct:
-        return Colors.green.withValues(alpha:0.3);
+        return Colors.green.withValues(alpha: 0.3);
       case OptionState.wrong:
-        return Colors.red.withValues(alpha:0.2);
+        return Colors.red.withValues(alpha: 0.2);
     }
   }
 
@@ -72,44 +73,84 @@ class MultipleAnswerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final questionsState = ref.watch(quizScreenManagerProvider).asData!.value;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          question,
-          textAlign: TextAlign.justify,
-          style: const TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 25.0),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: options.length,
-          itemBuilder: (BuildContext context, int index) {
-            if (questionsState.selectedAnswerIndex == null) {
-              return optionWidget(index, OptionState.unchosen);
-            } else if (questionsState.selectedAnswerIndex ==
-                questionsState.correctAnswerIndex) {
-              return optionWidget(
-                  index,
-                  questionsState.correctAnswerIndex == index
-                      ? OptionState.correct
-                      : OptionState.unchosen);
-            } else {
-              return optionWidget(
-                  index,
-                  questionsState.selectedAnswerIndex == index
-                      ? OptionState.wrong
-                      : questionsState.correctAnswerIndex == index
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              constraints: const BoxConstraints(
+                minHeight: 120,
+                maxHeight: 200,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              margin: const EdgeInsets.only(bottom: 25.0),
+              padding: const EdgeInsets.all(16.0),
+              child: Stack(
+                children: [
+                  Text(
+                    "${Strings.question} ${questionsState.questionIndex + 1}/10",
+                    style: const TextStyle(color: Color(0xFF6E6E6E)),
+                  ),
+                  Center(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        question,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Using Column instead of ListView.builder for options
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(
+                options.length,
+                (index) {
+                  if (questionsState.selectedAnswerIndex == null) {
+                    return optionWidget(index, OptionState.unchosen);
+                  } else if (questionsState.selectedAnswerIndex ==
+                      questionsState.correctAnswerIndex) {
+                    return optionWidget(
+                      index,
+                      questionsState.correctAnswerIndex == index
                           ? OptionState.correct
-                          : OptionState.unchosen);
-            }
-          },
-        ),
-      ],
+                          : OptionState.unchosen,
+                    );
+                  } else {
+                    return optionWidget(
+                      index,
+                      questionsState.selectedAnswerIndex == index
+                          ? OptionState.wrong
+                          : questionsState.correctAnswerIndex == index
+                              ? OptionState.correct
+                              : OptionState.unchosen,
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ));
+      },
     );
   }
 }

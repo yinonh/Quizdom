@@ -17,9 +17,8 @@ class QuizScreen extends ConsumerWidget {
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
-        appBar: CustomAppBar(
-          title:
-              '${Strings.question} ${(questionsState.asData?.value.questionIndex ?? 0) + 1}',
+        appBar: const CustomAppBar(
+          title: 'Category Name',
         ),
         body: Container(
           height: double.infinity,
