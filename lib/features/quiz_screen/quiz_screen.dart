@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/general_functions.dart';
+import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
+import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
 
 class QuizScreen extends ConsumerWidget {
   static const routeName = Strings.quizRouteName;
+
   const QuizScreen({super.key});
 
   @override
@@ -17,8 +19,16 @@ class QuizScreen extends ConsumerWidget {
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
-        appBar: const CustomAppBar(
-          title: 'Category Name',
+        appBar: CustomAppBar(
+          title: questionsState.when(
+            data: (state) => cleanCategoryName(state.categoryName),
+            error: (error, _) {
+              return "";
+            },
+            loading: () {
+              return "";
+            },
+          ),
         ),
         body: Container(
           height: double.infinity,

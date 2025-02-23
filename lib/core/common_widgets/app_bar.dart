@@ -49,20 +49,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   : null),
           backgroundColor: Colors.transparent, // Set to transparent
           elevation: 0,
-          title: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                width: Navigator.canPop(context) ? 50 : 0,
-              ),
-            ],
+          title: FittedBox(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  width: Navigator.canPop(context) ? 50 : 0,
+                ),
+              ],
+            ),
           ),
         ),
       ],

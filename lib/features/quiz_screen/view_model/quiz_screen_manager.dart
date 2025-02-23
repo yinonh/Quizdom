@@ -19,6 +19,7 @@ class QuizState with _$QuizState {
     required int questionIndex,
     required List<String> shuffledOptions,
     required int correctAnswerIndex,
+    required String categoryName,
     int? selectedAnswerIndex,
   }) = _QuizState;
 }
@@ -53,6 +54,8 @@ class QuizScreenManager extends _$QuizScreenManager {
       shuffledOptions: initialShuffledData.options,
       correctAnswerIndex: initialShuffledData.correctIndex,
       selectedAnswerIndex: null,
+      categoryName:
+          ref.read(triviaProvider).generalTriviaRoom?.categoryName ?? "",
     );
   }
 
