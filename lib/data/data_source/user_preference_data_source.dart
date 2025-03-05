@@ -259,6 +259,52 @@ class UserPreferenceDataSource {
     await _collection.doc(userId).delete();
   }
 
+  static Future<void> cleanupUserPreference(String userId) async {
+    try {
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection('availablePlayers')
+          .doc(userId)
+          .get();
+
+      if (docSnapshot.exists) {
+        final data = docSnapshot.data();
+        if (data != null && data['matchedUserId'] != null) {
+          final matchedUserId = data['matchedUserId'] as String;
+          await UserPreferenceDataSource.removeMatchFromOther(
+              userId, matchedUserId);
+        }
+
+        UserPreferenceDataSource.deleteUserPreference(userId);
+
+        print(
+            "🧹 Cleaned up user preference for $userId during app lifecycle event");
+      }
+    } catch (e) {
+      print("❌ Error cleaning up user preference: $e");
+    }
+  }
+
+  static Future<void> recreateUserPreference(String userId) async {
+    try {
+      // Check if document already exists
+      final docSnapshot = await FirebaseFirestore.instance
+          .collection('availablePlayers')
+          .doc(userId)
+          .get();
+
+      if (!docSnapshot.exists) {
+        // Only recreate if it doesn't exist
+        await UserPreferenceDataSource.createUserPreference(
+          userId: userId,
+          preference: UserPreference.empty(),
+        );
+        logger.i("🔄 Recreated user preference for $userId after app resume");
+      }
+    } catch (e) {
+      logger.e("❌ Error recreating user preference: $e");
+    }
+  }
+
   static Future<Map<String, UserPreference>> getAvailableUsers() async {
     // Fetch the snapshot once
     final snapshot =

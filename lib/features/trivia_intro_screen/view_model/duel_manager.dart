@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/lifecycle/app_lifecycle_handler.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -33,6 +34,15 @@ class DuelState with _$DuelState {
 @riverpod
 Stream<Map<String, dynamic>> userPreference(
     UserPreferenceRef ref, String userId) {
+  // Initialize lifecycle handler
+  AppLifecycleHandler().initialize();
+  AppLifecycleHandler().registerUserId(userId);
+
+  // Cleanup when this provider is disposed
+  ref.onDispose(() {
+    AppLifecycleHandler().unregisterUserId(userId);
+  });
+
   return UserPreferenceDataSource.watchUserPreference(userId);
 }
 
