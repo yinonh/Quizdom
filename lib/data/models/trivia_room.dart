@@ -16,7 +16,8 @@ class TriviaRoom with _$TriviaRoom {
     required bool? isPublic,
     @TimestampConverter() required DateTime? createdAt,
     @Default([]) List<String> users,
-    @Default([]) List<String> userScores,
+    @Default([]) List<int> userScores,
+    @Default(null) Map<String, dynamic>? questionsData,
   }) = _TriviaRoom;
 
   factory TriviaRoom.empty() => const TriviaRoom(

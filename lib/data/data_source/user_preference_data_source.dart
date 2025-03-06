@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/user_preference.dart';
 
@@ -58,7 +59,7 @@ class UserPreferenceDataSource {
     }
   }
 
-  static Future<void> setUserReady(String currentUserId) async {
+  static Future<void> setUserReady(String currentUserId, String? token) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     return firestore.runTransaction((transaction) async {
@@ -100,6 +101,7 @@ class UserPreferenceDataSource {
         // Create the room with user IDs
         List<String> userIds = [currentUserId, currentUserPref.matchedUserId!];
 
+        // Create the room first without questions
         await TriviaRoomDataSource.createRoom(
           roomId: roomId,
           questionCount: questionCount,
@@ -109,6 +111,26 @@ class UserPreferenceDataSource {
           isPublic: false,
           userIds: userIds,
         );
+
+        // Only the user who initiated the room (current user) fetches the questions
+        if (currentUserId == userIds[0]) {
+          try {
+            // Fetch questions from the API
+            final questionsData =
+                await TriviaDataSource.fetchTriviaQuestions(categoryId, token);
+
+            // Update the trivia room with the questions data
+            await firestore.collection('triviaRooms').doc(roomId).update({
+              'questionsData': questionsData,
+            });
+          } catch (e) {
+            print('Error fetching trivia questions: $e');
+            // Handle error - maybe set an error state in the room
+            await firestore.collection('triviaRooms').doc(roomId).update({
+              'error': e.toString(),
+            });
+          }
+        }
 
         // Update both users with the room ID
         transaction

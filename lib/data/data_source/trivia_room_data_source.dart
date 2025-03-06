@@ -28,6 +28,28 @@ class TriviaRoomDataSource {
     });
   }
 
+  static Future<TriviaRoom?> getRoomById(String roomId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('triviaRooms')
+          .doc(roomId)
+          .get();
+
+      if (!doc.exists) {
+        return null;
+      }
+
+      final data = doc.data() as Map<String, dynamic>;
+      return TriviaRoom.fromJson({
+        ...data,
+        'roomId': doc.id,
+      });
+    } catch (e) {
+      print('Error retrieving trivia room: $e');
+      return null;
+    }
+  }
+
 // Updates room details (e.g., updating user scores or other room details)
   static Future<void> updateRoom({
     required String roomId,

@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/lifecycle/app_lifecycle_handler.dart';
+import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -13,6 +14,7 @@ import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
 part 'duel_manager.freezed.dart';
+
 part 'duel_manager.g.dart';
 
 @freezed
@@ -259,9 +261,17 @@ class DuelManager extends _$DuelManager {
     });
   }
 
-  void setIsNavigated() {
+  Future<void> setIsNavigated() async {
+    _matchTimer?.cancel();
+    _progressTimer?.cancel();
     state.whenData((stateData) async {
-      state = AsyncData(stateData.copyWith(hasNavigated: true));
+      TriviaRoomDataSource.getRoomById(stateData.matchedRoom ?? "")
+          .then((room) {
+        if (room != null) {
+          ref.read(triviaProvider.notifier).setTriviaRoom(room);
+        }
+        state = AsyncData(stateData.copyWith(hasNavigated: true));
+      });
     });
   }
 
@@ -282,6 +292,7 @@ class DuelManager extends _$DuelManager {
     final currentData = currentState.value;
     UserPreferenceDataSource.setUserReady(
       currentData.currentUser.uid,
+      ref.read(triviaProvider).token,
     );
   }
 }
