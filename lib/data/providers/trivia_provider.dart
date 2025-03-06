@@ -32,6 +32,7 @@ class Trivia extends _$Trivia {
   }
 
   get categoryId => state.triviaRoom?.categoryId;
+  get token => state.token;
 
   Future<void> setToken() async {
     final data = await TriviaDataSource.requestToken();
@@ -65,18 +66,23 @@ class Trivia extends _$Trivia {
   }
 
   void setGeneralTriviaRoom(GeneralTriviaRoom triviaRoom) {
-    state = state.copyWith(generalTriviaRoom: triviaRoom);
+    state = state.copyWith(generalTriviaRoom: triviaRoom, triviaRoom: null);
   }
 
   void setTriviaRoom(TriviaRoom triviaRoom) {
-    state = state.copyWith(triviaRoom: triviaRoom);
+    state = state.copyWith(triviaRoom: triviaRoom, generalTriviaRoom: null);
   }
 
   Future<List<Question>?> getTriviaQuestions() async {
-    final data = await TriviaDataSource.fetchTriviaQuestions(
-        state.generalTriviaRoom, state.token);
+    Map<String, dynamic>? data;
+    if (state.triviaRoom != null) {
+      data = state.triviaRoom?.questionsData;
+    } else {
+      data = await TriviaDataSource.fetchTriviaQuestions(
+          state.generalTriviaRoom?.categoryId, state.token);
+    }
 
-    final List<Question> questions = (data['results'] as List).map((result) {
+    final List<Question> questions = (data?['results'] as List).map((result) {
       final decodedResult = decodeFields(result);
       return Question.fromJson(decodedResult);
     }).toList();

@@ -25,8 +25,8 @@ class DuelIntroContent extends ConsumerWidget {
     ref.listen(duelManagerProvider, (previous, next) {
       next.whenData((introState) {
         if (introState.matchedRoom != null && !introState.hasNavigated) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(duelManagerProvider.notifier).setIsNavigated();
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            await ref.read(duelManagerProvider.notifier).setIsNavigated();
             logger.i('Navigate to QuizScreen');
             Navigator.of(context).pushReplacementNamed(QuizScreen.routeName);
           });
@@ -212,8 +212,8 @@ class DuelIntroContent extends ConsumerWidget {
                                 text: Strings.ready,
                                 onTap: isLoading || introState.isReady
                                     ? null // Disable button when loading
-                                    : () {
-                                        duelNotifier.setReady();
+                                    : () async {
+                                        await duelNotifier.setReady();
                                       },
                               ),
                             ),
