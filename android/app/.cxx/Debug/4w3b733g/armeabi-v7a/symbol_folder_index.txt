@@ -1,0 +1,1 @@
+D:\Projects\Flutter\trivia_app\build\app\intermediates\cxx\Debug\4w3b733g\obj\armeabi-v7a

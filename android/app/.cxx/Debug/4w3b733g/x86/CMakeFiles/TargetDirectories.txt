@@ -1,0 +1,2 @@
+D:/Projects/Flutter/trivia_app/android/app/.cxx/Debug/4w3b733g/x86/CMakeFiles/edit_cache.dir
+D:/Projects/Flutter/trivia_app/android/app/.cxx/Debug/4w3b733g/x86/CMakeFiles/rebuild_cache.dir
