@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -34,8 +35,7 @@ class DuelState with _$DuelState {
 }
 
 @riverpod
-Stream<Map<String, dynamic>> userPreference(
-    UserPreferenceRef ref, String userId) {
+Stream<Map<String, dynamic>> userPreference(Ref ref, String userId) {
   // Initialize lifecycle handler
   AppLifecycleHandler().initialize();
   AppLifecycleHandler().registerUserId(userId);

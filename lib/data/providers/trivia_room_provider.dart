@@ -48,7 +48,6 @@ class TriviaRooms extends _$TriviaRooms {
     if (room == null) {
       throw Exception("Room not found");
     }
-    // TODO: set the room
     ref.read(triviaProvider.notifier).setTriviaRoom(room);
   }
 

@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/utils/enums/game_mode.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
@@ -16,6 +17,7 @@ class TriviaState with _$TriviaState {
     required String? token,
     required GeneralTriviaRoom? generalTriviaRoom,
     required TriviaRoom? triviaRoom,
+    GameMode? currentGameMode,
     TriviaCategories? categories,
   }) = _TriviaState;
 }
@@ -66,20 +68,48 @@ class Trivia extends _$Trivia {
   }
 
   void setGeneralTriviaRoom(GeneralTriviaRoom triviaRoom) {
-    state = state.copyWith(generalTriviaRoom: triviaRoom, triviaRoom: null);
+    state = state.copyWith(
+        generalTriviaRoom: triviaRoom,
+        triviaRoom: null,
+        currentGameMode: GameMode.solo);
   }
 
   void setTriviaRoom(TriviaRoom triviaRoom) {
-    state = state.copyWith(triviaRoom: triviaRoom, generalTriviaRoom: null);
+    state = state.copyWith(
+        triviaRoom: triviaRoom,
+        generalTriviaRoom: null,
+        currentGameMode: GameMode.duel);
   }
 
   Future<List<Question>?> getTriviaQuestions() async {
     Map<String, dynamic>? data;
-    if (state.triviaRoom != null) {
-      data = state.triviaRoom?.questionsData;
-    } else {
+
+    if (state.currentGameMode == GameMode.solo) {
       data = await TriviaDataSource.fetchTriviaQuestions(
           state.generalTriviaRoom?.categoryId, state.token);
+    } else {
+      // If trivia room exists and has questions, use it.
+      if (state.triviaRoom != null && state.triviaRoom!.questionsData != null) {
+        data = state.triviaRoom!.questionsData;
+      } else {
+        // Instead of immediately calling the API,
+        // wait until the trivia room is updated with questionsData.
+        // This polling loop waits up to 10 seconds.
+        final stopwatch = Stopwatch()..start();
+        while (stopwatch.elapsed < const Duration(seconds: 10)) {
+          await Future.delayed(const Duration(seconds: 1));
+          if (state.triviaRoom != null &&
+              state.triviaRoom!.questionsData != null) {
+            data = state.triviaRoom!.questionsData;
+            break;
+          }
+        }
+
+        // If still no data, return an empty list or show an error.
+        if (data == null) {
+          throw Exception();
+        }
+      }
     }
 
     final List<Question> questions = (data?['results'] as List).map((result) {
