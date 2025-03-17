@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 class DailyLoginPopupContent extends StatelessWidget {
   final int streakDays; // Current streak days
@@ -41,7 +43,7 @@ class DailyLoginPopupContent extends StatelessWidget {
           children: [
             // Title
             const Text(
-              "Daily Login Rewards",
+              Strings.dailyLoginRewards,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -49,14 +51,14 @@ class DailyLoginPopupContent extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: calcHeight(10)),
             // Subtitle
             const Text(
-              "Claim your rewards by logging in daily!",
+              Strings.claimYourRewards,
               style: TextStyle(fontSize: 16, color: Colors.white70),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: calcHeight(20)),
             // Reward Days Display
             SingleChildScrollView(
               controller: scrollController, // Use custom scroll controller
@@ -70,7 +72,7 @@ class DailyLoginPopupContent extends StatelessWidget {
 
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 5),
-                    width: 90,
+                    width: calcWidth(90),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: isToday
@@ -84,6 +86,7 @@ class DailyLoginPopupContent extends StatelessWidget {
                           : null,
                     ),
                     child: Column(
+                      spacing: calcHeight(5),
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // Icon
@@ -92,20 +95,18 @@ class DailyLoginPopupContent extends StatelessWidget {
                           color: isClaimed ? Colors.white : Colors.black54,
                           size: 30,
                         ),
-                        const SizedBox(height: 5),
                         // Day Number
                         Text(
-                          "Day $day",
+                          "${Strings.day} $day",
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: isClaimed ? Colors.white : Colors.black54,
                           ),
                         ),
-                        const SizedBox(height: 5),
                         // Reward Amount
                         Text(
-                          "${rewards[index]} Coins",
+                          "${rewards[index]} ${Strings.coins}",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -119,24 +120,22 @@ class DailyLoginPopupContent extends StatelessWidget {
                 }),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: calcHeight(20)),
             LinearProgressIndicator(
               value: streakDays / rewards.length,
               color: AppConstant.goldColor,
               minHeight: 15,
               borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: calcHeight(10)),
             CustomButton(
-              text: "CLAIM",
+              text: Strings.claim,
               onTap: onClaim,
               color: AppConstant.secondaryColor,
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: calcHeight(10)),
             Text(
-              streakDays < 5
-                  ? "Keep login every day to get the rewards"
-                  : "You've claimed all rewards!",
+              streakDays < 5 ? Strings.keepLogin : Strings.youClaimedAll,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 14,

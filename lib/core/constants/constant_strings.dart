@@ -1,6 +1,7 @@
 class Strings {
   // Assets
   static const String loadingAnimation = "assets/loading_animation.json";
+  static const String trophyAnimation = "assets/trophy_animation.json";
   static const String noInternetAnimation = "assets/no_internet.json";
   static const String appBarDrop = "assets/drop.svg";
   static const String coinsIcon = "assets/icons/coins_icon.svg";
@@ -204,4 +205,20 @@ class Strings {
   static const String spinning = 'Spinning...';
   static const String spinNow = 'SPIN NOW!';
   static const String tenCoins = '(10 coins)';
+
+  // Trophy Dialog
+  static const String newText = 'New';
+  static const String trophyUnlocked = 'Trophy Unlocked';
+  static const String continueCapital = 'CONTINUE';
+  static const String keepUpUnlockMore =
+      'Keep up the good work to unlock more trophies!';
+
+  // Daily Dialog
+  static const String dailyLoginRewards = 'Daily Login Rewards';
+  static const String day = 'Day';
+  static const String claim = 'CLAIM';
+  static const String keepLogin = 'Keep login every day to get the rewards';
+  static const String youClaimedAll = "You've claimed all rewards!";
+  static const String claimYourRewards =
+      "Claim your rewards by logging in daily!";
 }

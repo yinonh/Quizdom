@@ -15,6 +15,8 @@ import 'features/results_screen/results_screen.dart';
 import 'features/trivia_intro_screen/intro_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -27,6 +29,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       title: 'Flutter Demo',
+      navigatorKey: navigatorKey,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppConstant.primaryColor,

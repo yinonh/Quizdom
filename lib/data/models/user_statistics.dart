@@ -17,6 +17,9 @@ class UserStatistics with _$UserStatistics {
     @Default(0) int gamesWon,
     @Default(0) int gamesLost,
     @Default(0) int totalScore,
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    @Default({})
+    Map<String, List<String>> displayedTrophies,
   }) = _UserStatistics;
 
   factory UserStatistics.fromJson(Map<String, dynamic> json) =>

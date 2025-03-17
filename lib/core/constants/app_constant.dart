@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/utils/enums/level_enum.dart';
 import 'package:trivia/core/utils/enums/trophy_type.dart';
+import 'package:trivia/data/models/user_statistics.dart';
 
 class AppConstant {
   static const Color primaryColor = Color(0xFF00AFFF);
@@ -143,5 +144,165 @@ class AppConstant {
       case TrophyType.points:
         return Icons.stars_rounded;
     }
+  }
+}
+
+// Create a Trophy Achievement model
+class TrophyAchievement {
+  final TrophyType type;
+  final Level level;
+  final int value;
+  final int threshold;
+
+  TrophyAchievement({
+    required this.type,
+    required this.level,
+    required this.value,
+    required this.threshold,
+  });
+
+  String get typeLabel {
+    switch (type) {
+      case TrophyType.login:
+        return 'Login Streak';
+      case TrophyType.games:
+        return 'Games Played';
+      case TrophyType.wins:
+        return 'Games Won';
+      case TrophyType.score:
+        return 'Total Score';
+      case TrophyType.points:
+        return 'Points';
+    }
+  }
+
+  Color get levelColor {
+    switch (level) {
+      case Level.bronze:
+        return AppConstant.bronzeColor;
+      case Level.silver:
+        return AppConstant.silverColor;
+      case Level.gold:
+        return AppConstant.goldColor;
+      case Level.platinum:
+        return AppConstant.platinumColor;
+      case Level.diamond:
+        return AppConstant.diamondColor;
+      case Level.ruby:
+        return AppConstant.rubyColor;
+      default:
+        return AppConstant.defaultColor;
+    }
+  }
+}
+
+// Trophy Achievement Service
+class TrophyAchievementService {
+  // Check for new achievements
+  static List<TrophyAchievement> checkNewAchievements(
+      UserStatistics oldStats, UserStatistics newStats) {
+    List<TrophyAchievement> newAchievements = [];
+
+    // Check login streak trophy
+    Level oldLoginLevel = AppConstant.getTrophyLevel(
+        AppConstant.loginStreakThresholds, oldStats.currentLoginStreak);
+    Level newLoginLevel = AppConstant.getTrophyLevel(
+        AppConstant.loginStreakThresholds, newStats.currentLoginStreak);
+    if (newLoginLevel.index > oldLoginLevel.index &&
+        !_hasTrophyBeenDisplayed(newStats, 'login', newLoginLevel)) {
+      newAchievements.add(
+        TrophyAchievement(
+          type: TrophyType.login,
+          level: newLoginLevel,
+          value: newStats.currentLoginStreak,
+          threshold: AppConstant.loginStreakThresholds[newLoginLevel]!,
+        ),
+      );
+    }
+
+    // Check games played trophy
+    Level oldGamesLevel = AppConstant.getTrophyLevel(
+        AppConstant.gamesPlayedThresholds, oldStats.totalGamesPlayed);
+    Level newGamesLevel = AppConstant.getTrophyLevel(
+        AppConstant.gamesPlayedThresholds, newStats.totalGamesPlayed);
+    if (newGamesLevel.index > oldGamesLevel.index &&
+        !_hasTrophyBeenDisplayed(newStats, 'games', newGamesLevel)) {
+      newAchievements.add(
+        TrophyAchievement(
+          type: TrophyType.games,
+          level: newGamesLevel,
+          value: newStats.totalGamesPlayed,
+          threshold: AppConstant.gamesPlayedThresholds[newGamesLevel]!,
+        ),
+      );
+    }
+
+    // Check games won trophy
+    Level oldWinsLevel = AppConstant.getTrophyLevel(
+        AppConstant.gamesWonThresholds, oldStats.gamesWon);
+    Level newWinsLevel = AppConstant.getTrophyLevel(
+        AppConstant.gamesWonThresholds, newStats.gamesWon);
+    if (newWinsLevel.index > oldWinsLevel.index &&
+        !_hasTrophyBeenDisplayed(newStats, 'wins', newWinsLevel)) {
+      newAchievements.add(
+        TrophyAchievement(
+          type: TrophyType.wins,
+          level: newWinsLevel,
+          value: newStats.gamesWon,
+          threshold: AppConstant.gamesWonThresholds[newWinsLevel]!,
+        ),
+      );
+    }
+
+    // Check total score trophy
+    Level oldScoreLevel = AppConstant.getTrophyLevel(
+        AppConstant.totalScoreThresholds, oldStats.totalScore);
+    Level newScoreLevel = AppConstant.getTrophyLevel(
+        AppConstant.totalScoreThresholds, newStats.totalScore);
+    if (newScoreLevel.index > oldScoreLevel.index &&
+        !_hasTrophyBeenDisplayed(newStats, 'score', newScoreLevel)) {
+      newAchievements.add(
+        TrophyAchievement(
+          type: TrophyType.score,
+          level: newScoreLevel,
+          value: newStats.totalScore,
+          threshold: AppConstant.totalScoreThresholds[newScoreLevel]!,
+        ),
+      );
+    }
+
+    return newAchievements;
+  }
+
+  // Helper to check if a trophy has been displayed
+  static bool _hasTrophyBeenDisplayed(
+      UserStatistics stats, String typeKey, Level level) {
+    if (!stats.displayedTrophies.containsKey(typeKey)) {
+      return false;
+    }
+    return stats.displayedTrophies[typeKey]!
+        .contains(level.toString().split('.').last);
+  }
+
+  // Update displayed trophies map
+  static Map<String, List<String>> updateDisplayedTrophies(
+      UserStatistics stats, List<TrophyAchievement> achievements) {
+    Map<String, List<String>> updatedTrophies =
+        Map.from(stats.displayedTrophies);
+
+    for (var achievement in achievements) {
+      String typeKey = achievement.type.toString().split('.').last;
+      String levelValue = achievement.level.toString().split('.').last;
+
+      if (!updatedTrophies.containsKey(typeKey)) {
+        updatedTrophies[typeKey] = [];
+      }
+
+      if (!updatedTrophies[typeKey]!.contains(levelValue)) {
+        updatedTrophies[typeKey] = [...updatedTrophies[typeKey]!, levelValue];
+      }
+    }
+
+    return updatedTrophies;
   }
 }

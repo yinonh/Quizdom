@@ -1,8 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/app.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/core/common_widgets/trophy_dialog.dart';
 
 part 'user_statistics_provider.freezed.dart';
 part 'user_statistics_provider.g.dart';
@@ -57,6 +62,7 @@ class Statistics extends _$Statistics {
     if (userId == "") return;
 
     // Get current statistics
+    final oldStats = state.userStatistics;
     final currentStats = state.userStatistics;
 
     // Calculate new avg answer time if provided
@@ -107,17 +113,66 @@ class Statistics extends _$Statistics {
     );
 
     try {
+      // Check for new achievements
+      final newAchievements = TrophyAchievementService.checkNewAchievements(
+        oldStats,
+        newStatistics,
+      );
+
+      // Update displayed trophies
+      Map<String, List<String>> updatedDisplayedTrophies =
+          TrophyAchievementService.updateDisplayedTrophies(
+              newStatistics, newAchievements);
+
+      // Create final statistics with updated displayed trophies
+      final finalStatistics = newStatistics.copyWith(
+        displayedTrophies: updatedDisplayedTrophies,
+      );
+
       // Update Firestore
       await UserStatisticsDataSource.updateUserStatistics(
         userId: userId,
-        updatedStatistics: newStatistics,
+        updatedStatistics: finalStatistics,
       );
 
       // Update local state
-      state = state.copyWith(userStatistics: newStatistics);
+      state = state.copyWith(userStatistics: finalStatistics);
+
+      // Show achievement popups if there are any
+      if (newAchievements.isNotEmpty) {
+        _showAchievementPopups(newAchievements);
+      }
     } catch (e) {
-      print('Error updating user statistics: $e');
+      logger.e('Error updating user statistics: $e');
       rethrow;
     }
+  }
+
+  // Method to show achievement popups one by one
+  void _showAchievementPopups(List<TrophyAchievement> achievements) {
+    if (achievements.isEmpty) return;
+
+    // Get the context using a navigator key
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    // Show the first achievement
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => TrophyAchievementDialog(
+        achievement: achievements.first,
+        onClose: () {
+          Navigator.of(context).pop();
+
+          // Show the next achievement after a short delay
+          if (achievements.length > 1) {
+            Future.delayed(const Duration(milliseconds: 500), () {
+              _showAchievementPopups(achievements.sublist(1));
+            });
+          }
+        },
+      ),
+    );
   }
 }
