@@ -9,6 +9,7 @@ import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/achievement_card.dart';
@@ -181,6 +182,7 @@ class ResultsScreen extends ConsumerWidget {
                             user: user,
                             radius: 15,
                           ),
+                          onTap: () => showProfileOverview(context, user),
                           title: Text(
                             user.name ?? "",
                             style: const TextStyle(fontWeight: FontWeight.bold),

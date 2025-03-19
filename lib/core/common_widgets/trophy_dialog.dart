@@ -29,6 +29,14 @@ class TrophyAchievementDialog extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            // Outer glow effect that matches trophy color
+            BoxShadow(
+              color: achievement.levelColor.withOpacity(0.5),
+              blurRadius: 20,
+              spreadRadius: 5,
+            ),
+          ],
         ),
         child: Column(
           spacing: calcHeight(10),

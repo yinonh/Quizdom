@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:trivia/data/models/trivia_user.dart';
+import 'package:trivia/features/profile_overview_screen/profile_overview_screen.dart';
+
 Map<String, dynamic> decodeFields(Map<String, dynamic> result) {
   return {
     'difficulty': utf8.decode(base64.decode(result['difficulty'])),
@@ -28,4 +33,17 @@ String formatNumber(int number) {
 // Function to clean up category names
 String cleanCategoryName(String name) {
   return name.replaceAll(RegExp(r'^(Entertainment: |Science: )'), '').trim();
+}
+
+void showProfileOverview(BuildContext context, TriviaUser user) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (_) {
+      return ProfileOverview(
+        user: user,
+      );
+    },
+  );
 }

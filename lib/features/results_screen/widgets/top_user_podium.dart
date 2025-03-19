@@ -27,86 +27,157 @@ class TopUsersPodium extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        PodiumBar(
-          title: Column(
-            children: [
-              UserAvatar(
-                user: secondUser,
-                radius: 30,
+        // Second place podium
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Podium bar
+            PodiumBar(
+              title: Column(
+                children: [
+                  UserAvatar(
+                    user: secondUser,
+                    radius: 30,
+                  ),
+                  Text(
+                    secondUser.name ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              Text(
-                secondUser.name ?? "",
-              )
-            ],
-          ),
-          width: calcWidth(110),
-          displayRankingNumberInsteadOfText: false,
-          hideRanking: false,
-          rankingText: secondScore.toString(),
-          backgroundColor: AppConstant.secondaryColor,
-          rankingTextStyle: const TextStyle(
-            fontSize: 50,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          height: calcHeight(250) / 1.5,
-          is2D: false,
+              width: calcWidth(110),
+              displayRankingNumberInsteadOfText: false,
+              hideRanking: true, // Hide the original ranking text
+              rankingText: "", // Empty string for the original ranking
+              backgroundColor: AppConstant.secondaryColor,
+              height: calcHeight(250) / 1.5,
+              rankingTextStyle: const TextStyle(),
+              is2D: false,
+            ),
+            // Score text positioned above the podium
+            Positioned(
+              bottom: 0,
+              child: SizedBox(
+                width: calcWidth(110),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    secondScore.toString(),
+                    style: const TextStyle(
+                      fontSize: 50,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(
           width: 3,
         ),
-        PodiumBar(
-          title: Column(
-            children: [
-              UserAvatar(
-                user: firstUser,
-                radius: 30,
+        // First place podium
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            PodiumBar(
+              title: Column(
+                children: [
+                  UserAvatar(
+                    user: firstUser,
+                    radius: 30,
+                  ),
+                  Text(
+                    firstUser.name ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              Text(
-                firstUser.name ?? "",
-              )
-            ],
-          ),
-          width: calcWidth(110),
-          displayRankingNumberInsteadOfText: false,
-          hideRanking: false,
-          rankingText: firstScore.toString(),
-          backgroundColor: AppConstant.secondaryColor,
-          rankingTextStyle: const TextStyle(
-            fontSize: 50,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          height: calcHeight(250),
-          is2D: false,
+              width: calcWidth(110),
+              displayRankingNumberInsteadOfText: false,
+              hideRanking: true,
+              rankingText: "",
+              backgroundColor: AppConstant.secondaryColor,
+              height: calcHeight(250),
+              rankingTextStyle: const TextStyle(),
+              is2D: false,
+            ),
+            Positioned(
+              bottom: 0,
+              child: SizedBox(
+                width: calcWidth(110),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    firstScore.toString(),
+                    style: const TextStyle(
+                      fontSize: 50,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(
           width: 3,
         ),
-        PodiumBar(
-          title: Column(
-            children: [
-              UserAvatar(
-                user: thirdUser,
-                radius: 30,
+        // Third place podium
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            PodiumBar(
+              title: Column(
+                children: [
+                  UserAvatar(
+                    user: thirdUser,
+                    radius: 30,
+                  ),
+                  Text(
+                    thirdUser.name ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-              Text(
-                thirdUser.name ?? "",
-              )
-            ],
-          ),
-          width: calcWidth(110),
-          displayRankingNumberInsteadOfText: false,
-          hideRanking: false,
-          rankingText: thirdScore.toString(),
-          backgroundColor: AppConstant.secondaryColor,
-          rankingTextStyle: const TextStyle(
-            fontSize: 50,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-          height: calcHeight(250) / 2.5,
-          is2D: false,
+              width: calcWidth(110),
+              displayRankingNumberInsteadOfText: false,
+              hideRanking: true,
+              rankingText: "",
+              backgroundColor: AppConstant.secondaryColor,
+              height: calcHeight(250) / 2.5,
+              is2D: false,
+              rankingTextStyle: const TextStyle(),
+            ),
+            Positioned(
+              bottom: 0,
+              child: SizedBox(
+                width: calcWidth(110),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    thirdScore.toString(),
+                    style: const TextStyle(
+                      fontSize: 50,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

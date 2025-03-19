@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/custom_clipper.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
+import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/profile_overview_screen.dart';
@@ -25,7 +26,7 @@ class UserAvatar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: user != null ? () => _showProfileOverview(context, user!) : null,
+      onTap: user != null ? () => showProfileOverview(context, user!) : null,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -80,19 +81,6 @@ class UserAvatar extends ConsumerWidget {
                     )
         ],
       ),
-    );
-  }
-
-  void _showProfileOverview(BuildContext context, TriviaUser user) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) {
-        return ProfileOverview(
-          user: user,
-        );
-      },
     );
   }
 }
