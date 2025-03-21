@@ -5,8 +5,8 @@ import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/quiz_screen/quiz_screen.dart';
-import 'package:trivia/features/trivia_intro_screen/view_model/intro_screen_manager.dart';
+import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
+import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dart';
 
 import 'detail_row.dart';
 
@@ -104,7 +104,7 @@ class SoloIntroContent extends ConsumerWidget {
                                   introNotifier.payCoins(-10);
                                   Navigator.pushReplacementNamed(
                                     context,
-                                    QuizScreen.routeName,
+                                    SoloQuizScreen.routeName,
                                   );
                                 },
                         ),

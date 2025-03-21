@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 
-enum OptionState { correct, wrong, unchosen }
+enum OptionState { correct, wrong, unChosen }
 
-class MultipleAnswerWidget extends ConsumerWidget {
+class MultipleAnswerWidget extends StatelessWidget {
   final String question;
   final List<String> options;
   final Function(int) onAnswerSelected;
+  final int questionIndex;
+  final int? selectedAnswerIndex;
+  final int correctAnswerIndex;
 
   const MultipleAnswerWidget({
     super.key,
     required this.question,
     required this.options,
     required this.onAnswerSelected,
+    required this.questionIndex,
+    required this.selectedAnswerIndex,
+    required this.correctAnswerIndex,
   });
 
   Color getColorForState(OptionState state) {
     switch (state) {
-      case OptionState.unchosen:
+      case OptionState.unChosen:
         return AppConstant.secondaryColor.withValues(alpha: 0.4);
       case OptionState.correct:
         return Colors.green.withValues(alpha: 0.3);
@@ -71,8 +75,7 @@ class MultipleAnswerWidget extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final questionsState = ref.watch(quizScreenManagerProvider).asData!.value;
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -101,7 +104,7 @@ class MultipleAnswerWidget extends ConsumerWidget {
               child: Stack(
                 children: [
                   Text(
-                    "${Strings.question} ${questionsState.questionIndex + 1}/10",
+                    "${Strings.question} ${questionIndex + 1}/10",
                     style: const TextStyle(color: Color(0xFF6E6E6E)),
                   ),
                   Center(
@@ -125,24 +128,23 @@ class MultipleAnswerWidget extends ConsumerWidget {
               children: List.generate(
                 options.length,
                 (index) {
-                  if (questionsState.selectedAnswerIndex == null) {
-                    return optionWidget(index, OptionState.unchosen);
-                  } else if (questionsState.selectedAnswerIndex ==
-                      questionsState.correctAnswerIndex) {
+                  if (selectedAnswerIndex == null) {
+                    return optionWidget(index, OptionState.unChosen);
+                  } else if (selectedAnswerIndex == correctAnswerIndex) {
                     return optionWidget(
                       index,
-                      questionsState.correctAnswerIndex == index
+                      correctAnswerIndex == index
                           ? OptionState.correct
-                          : OptionState.unchosen,
+                          : OptionState.unChosen,
                     );
                   } else {
                     return optionWidget(
                       index,
-                      questionsState.selectedAnswerIndex == index
+                      selectedAnswerIndex == index
                           ? OptionState.wrong
-                          : questionsState.correctAnswerIndex == index
+                          : correctAnswerIndex == index
                               ? OptionState.correct
-                              : OptionState.unchosen,
+                              : OptionState.unChosen,
                     );
                   }
                 },

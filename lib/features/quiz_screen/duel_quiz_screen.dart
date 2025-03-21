@@ -5,17 +5,17 @@ import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/features/quiz_screen/view_model/quiz_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
+import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_question_widget.dart';
 
-class QuizScreen extends ConsumerWidget {
-  static const routeName = Strings.quizRouteName;
+class DuelQuizScreen extends ConsumerWidget {
+  static const routeName = Strings.duelQuizRouteName;
 
-  const QuizScreen({super.key});
+  const DuelQuizScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questionsState = ref.watch(quizScreenManagerProvider);
+    final questionsState = ref.watch(duelQuizScreenManagerProvider);
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
@@ -41,7 +41,7 @@ class QuizScreen extends ConsumerWidget {
               topRight: Radius.circular(35.0),
             ),
           ),
-          child: QuestionWidget(),
+          child: DuelQuestionWidget(),
         ),
       ),
     );

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/features/quiz_screen/view_model/solo_quiz_screen_manager.dart';
+import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
 
-class QuestionWidget extends ConsumerWidget {
+class DuelQuestionWidget extends ConsumerWidget {
   bool _hasNavigatedToResults = false;
 
-  QuestionWidget({super.key});
+  DuelQuestionWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questionsState = ref.watch(soloQuizScreenManagerProvider);
+    final questionsState = ref.watch(duelQuizScreenManagerProvider);
     final questionsStateNotifier =
-        ref.read(soloQuizScreenManagerProvider.notifier);
+        ref.read(duelQuizScreenManagerProvider.notifier);
     return questionsState.when(
       data: (data) {
         WidgetsBinding.instance.addPostFrameCallback(

@@ -8,11 +8,12 @@ import 'data/providers/app_initialization_provider.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';
+import 'features/intro_screen/intro_screen.dart';
 import 'features/no_internet_screen/connectivity_wrapper.dart';
 import 'features/profile_screen/profile_screen.dart';
-import 'features/quiz_screen/quiz_screen.dart';
+import 'features/quiz_screen/duel_quiz_screen.dart';
+import 'features/quiz_screen/solo_quiz_screen.dart';
 import 'features/results_screen/results_screen.dart';
-import 'features/trivia_intro_screen/intro_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -68,8 +69,11 @@ class MyApp extends ConsumerWidget {
           case CategoriesScreen.routeName:
             page = const CategoriesScreen();
             break;
-          case QuizScreen.routeName:
-            page = const QuizScreen();
+          case SoloQuizScreen.routeName:
+            page = const SoloQuizScreen();
+            break;
+          case DuelQuizScreen.routeName:
+            page = const DuelQuizScreen();
             break;
           case ResultsScreen.routeName:
             page = const ResultsScreen();

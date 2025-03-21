@@ -5,7 +5,7 @@ import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/game_mode_provider.dart';
 import 'package:trivia/data/providers/general_trivia_room_provider.dart';
-import 'package:trivia/data/providers/trivia_provider.dart';
+import 'package:trivia/data/providers/solo_trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
 
@@ -24,11 +24,11 @@ class CategoriesState with _$CategoriesState {
 
 @riverpod
 class CategoriesScreenManager extends _$CategoriesScreenManager {
-  Trivia? _triviaProviderNotifier;
+  SoloTrivia? _triviaProviderNotifier;
   Auth? _userProviderNotifier;
 
-  Trivia? get triviaProviderNotifier {
-    return _triviaProviderNotifier ??= ref.read(triviaProvider.notifier);
+  SoloTrivia? get triviaProviderNotifier {
+    return _triviaProviderNotifier ??= ref.read(soloTriviaProvider.notifier);
   }
 
   Auth? get userProviderNotifier {

@@ -5,8 +5,8 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/trivia_intro_screen/view_model/duel_manager.dart';
-import 'package:trivia/features/trivia_intro_screen/view_model/filter_manager.dart';
+import 'package:trivia/features/intro_screen/view_model/duel_manager.dart';
+import 'package:trivia/features/intro_screen/view_model/filter_manager.dart';
 
 class RoomFilterDialog extends ConsumerStatefulWidget {
   const RoomFilterDialog({super.key});

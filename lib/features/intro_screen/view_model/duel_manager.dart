@@ -11,7 +11,7 @@ import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/models/user_preference.dart';
-import 'package:trivia/data/providers/trivia_provider.dart';
+import 'package:trivia/data/providers/duel_trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
 part 'duel_manager.freezed.dart';
@@ -59,7 +59,8 @@ class DuelManager extends _$DuelManager {
     List<String> oldMatchedUsers = [];
     String? matchedUserId;
     TriviaUser? matchedUser;
-    final categories = await ref.read(triviaProvider.notifier).getCategories();
+    final categories =
+        await ref.read(duelTriviaProvider.notifier).getCategories();
 
     await UserPreferenceDataSource.createUserPreference(
       userId: currentUser.uid,
@@ -268,7 +269,7 @@ class DuelManager extends _$DuelManager {
       TriviaRoomDataSource.getRoomById(stateData.matchedRoom ?? "")
           .then((room) {
         if (room != null) {
-          ref.read(triviaProvider.notifier).setTriviaRoom(room);
+          ref.read(duelTriviaProvider.notifier).setTriviaRoom(room);
         }
         state = AsyncData(stateData.copyWith(hasNavigated: true));
       });
@@ -292,7 +293,7 @@ class DuelManager extends _$DuelManager {
     final currentData = currentState.value;
     await UserPreferenceDataSource.setUserReady(
       currentData.currentUser.uid,
-      ref.read(triviaProvider).token,
+      ref.read(duelTriviaProvider).token,
     );
   }
 }

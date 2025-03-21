@@ -5,15 +5,15 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
-import 'package:trivia/data/providers/trivia_provider.dart';
+import 'package:trivia/data/providers/solo_trivia_provider.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
-part 'quiz_screen_manager.freezed.dart';
-part 'quiz_screen_manager.g.dart';
+part 'solo_quiz_screen_manager.freezed.dart';
+part 'solo_quiz_screen_manager.g.dart';
 
 @freezed
-class QuizState with _$QuizState {
-  const factory QuizState({
+class SoloQuizState with _$SoloQuizState {
+  const factory SoloQuizState({
     required List<Question> questions,
     required double timeLeft,
     required int questionIndex,
@@ -21,7 +21,7 @@ class QuizState with _$QuizState {
     required int correctAnswerIndex,
     required String categoryName,
     int? selectedAnswerIndex,
-  }) = _QuizState;
+  }) = _SoloQuizState;
 }
 
 class ShuffledData {
@@ -35,27 +35,26 @@ class ShuffledData {
 }
 
 @riverpod
-class QuizScreenManager extends _$QuizScreenManager {
+class SoloQuizScreenManager extends _$SoloQuizScreenManager {
   Timer? _timer;
 
   @override
-  Future<QuizState> build() async {
-    final triviaNotifier = ref.read(triviaProvider.notifier);
+  Future<SoloQuizState> build() async {
+    final triviaNotifier = ref.read(soloTriviaProvider.notifier);
     final response = await triviaNotifier.getTriviaQuestions();
     final initialShuffledData = _getShuffledOptions(response![0]);
     ref.onDispose(() {
       _timer?.cancel();
     });
 
-    return QuizState(
+    return SoloQuizState(
       questions: response,
       timeLeft: AppConstant.questionTime.toDouble(),
       questionIndex: 0,
       shuffledOptions: initialShuffledData.options,
       correctAnswerIndex: initialShuffledData.correctIndex,
       selectedAnswerIndex: null,
-      categoryName:
-          ref.read(triviaProvider).generalTriviaRoom?.categoryName ?? "",
+      categoryName: ref.read(soloTriviaProvider).triviaRoom?.categoryName ?? "",
     );
   }
 

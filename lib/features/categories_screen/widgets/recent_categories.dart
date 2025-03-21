@@ -5,7 +5,7 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/features/trivia_intro_screen/intro_screen.dart';
+import 'package:trivia/features/intro_screen/intro_screen.dart';
 
 class RecentCategories extends ConsumerWidget {
   final CategoriesState categoriesState;
