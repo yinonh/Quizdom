@@ -171,10 +171,8 @@ class UserPreferenceDataSource {
     return (questionCount, categoryId, difficulty);
   }
 
-  /// Finds a match for the given user and updates both documents in a transaction.
-  /// The [excludedIds] list contains IDs that should be excluded from matching.
   static Future<String?> findMatch(String userId,
-      {List<String>? excludedIds}) async {
+      {required List<String> excludedIds}) async {
     return FirebaseFirestore.instance.runTransaction((transaction) async {
       // Get current user's document
       DocumentReference currentRef = _collection.doc(userId);
@@ -197,81 +195,159 @@ class UserPreferenceDataSource {
       logger.i('✅ [findMatch] Current user preference: $currentUserPref');
 
       // Build query for potential matches
-      List<String> idsToExclude = [userId];
-      if (excludedIds != null) {
-        idsToExclude.addAll(excludedIds);
-      }
+      List<String> idsToExclude = [userId, ...excludedIds];
 
-      final excludeList =
-          idsToExclude.length > 10 ? idsToExclude.sublist(0, 10) : idsToExclude;
+      // If we have no more IDs to query (due to Firebase's limit of 10 values in whereNotIn)
+      if (idsToExclude.length > 10) {
+        logger.w('⚠️ [findMatch] Too many excluded IDs, using pagination.');
+        // Use a different approach when we have more than 10 excluded IDs
+        // Get all potential matches
+        QuerySnapshot allMatches =
+            await _collection.where('matchedUserId', isNull: true).get();
 
-      Query query = _collection
-          .where(FieldPath.documentId, whereNotIn: excludeList)
-          .where('matchedUserId', isNull: true);
+        // Filter out excluded IDs manually
+        List<DocumentSnapshot> filteredMatches = allMatches.docs
+            .where((doc) => !idsToExclude.contains(doc.id))
+            .toList();
 
-      QuerySnapshot potentialMatchesSnapshot = await query.get();
-      logger.i(
-          '📊 [findMatch] Total potential matches found: ${potentialMatchesSnapshot.docs.length}');
-
-      List<DocumentSnapshot> validMatches = [];
-      for (var doc in potentialMatchesSnapshot.docs) {
-        final userPref =
-            UserPreference.fromJson(doc.data()! as Map<String, dynamic>);
-        logger.i(
-            '🔍 Checking potential match: ${doc.id} - Preferences: $userPref');
-
-        // Evaluate matching conditions
-        bool categoryMatch = (currentUserPref.categoryId == null ||
-            currentUserPref.categoryId == -1 ||
-            userPref.categoryId == null ||
-            userPref.categoryId == -1 ||
-            currentUserPref.categoryId == userPref.categoryId);
-        bool questionCountMatch = (currentUserPref.questionCount == null ||
-            currentUserPref.questionCount == -1 ||
-            userPref.questionCount == null ||
-            userPref.questionCount == -1 ||
-            currentUserPref.questionCount == userPref.questionCount);
-        bool difficultyMatch = (currentUserPref.difficulty == null ||
-            currentUserPref.difficulty == "-1" ||
-            userPref.difficulty == null ||
-            userPref.difficulty == "-1" ||
-            currentUserPref.difficulty == userPref.difficulty);
-
-        if (categoryMatch && questionCountMatch && difficultyMatch) {
-          validMatches.add(doc);
+        if (filteredMatches.isEmpty) {
+          logger.w(
+              '⚠️ [findMatch] No suitable match found for user $userId after filtering.');
+          return null;
         }
+
+        // Continue with filtered matches
+        List<DocumentSnapshot> validMatches = [];
+        for (var doc in filteredMatches) {
+          // Rest of the validation logic...
+          final userPref =
+              UserPreference.fromJson(doc.data()! as Map<String, dynamic>);
+
+          // Evaluate matching conditions
+          bool categoryMatch = (currentUserPref.categoryId == null ||
+              currentUserPref.categoryId == -1 ||
+              userPref.categoryId == null ||
+              userPref.categoryId == -1 ||
+              currentUserPref.categoryId == userPref.categoryId);
+          bool questionCountMatch = (currentUserPref.questionCount == null ||
+              currentUserPref.questionCount == -1 ||
+              userPref.questionCount == null ||
+              userPref.questionCount == -1 ||
+              currentUserPref.questionCount == userPref.questionCount);
+          bool difficultyMatch = (currentUserPref.difficulty == null ||
+              currentUserPref.difficulty == "-1" ||
+              userPref.difficulty == null ||
+              userPref.difficulty == "-1" ||
+              currentUserPref.difficulty == userPref.difficulty);
+
+          if (categoryMatch && questionCountMatch && difficultyMatch) {
+            validMatches.add(doc);
+          }
+        }
+
+        if (validMatches.isEmpty) {
+          logger.w(
+              '⚠️ [findMatch] No suitable match found for user $userId after preference filtering.');
+          return null;
+        }
+
+        // Choose a random valid match
+        DocumentSnapshot selectedDoc =
+            validMatches[Random().nextInt(validMatches.length)];
+        String selectedMatchId = selectedDoc.id;
+
+        // Continue with transaction updates...
+        DocumentSnapshot selectedMatchSnapshot =
+            await transaction.get(_collection.doc(selectedMatchId));
+        UserPreference selectedMatchPref = UserPreference.fromJson(
+            selectedMatchSnapshot.data()! as Map<String, dynamic>);
+
+        if (selectedMatchPref.matchedUserId != null) {
+          logger.w(
+              '⚠️ [findMatch] Selected match $selectedMatchId is already matched.');
+          return null;
+        }
+
+        // Atomically update both documents
+        transaction.update(
+            currentRef, {'matchedUserId': selectedMatchId, "ready": null});
+        transaction.update(_collection.doc(selectedMatchId),
+            {'matchedUserId': userId, "ready": null});
+        logger
+            .i('🔄 [findMatch] Updated documents: $userId ↔️ $selectedMatchId');
+
+        return selectedMatchId;
+      } else {
+        // Original approach for 10 or fewer excluded IDs
+        Query query = _collection
+            .where(FieldPath.documentId, whereNotIn: idsToExclude)
+            .where('matchedUserId', isNull: true);
+
+        QuerySnapshot potentialMatchesSnapshot = await query.get();
+        logger.i(
+            '📊 [findMatch] Total potential matches found: ${potentialMatchesSnapshot.docs.length}');
+
+        List<DocumentSnapshot> validMatches = [];
+        for (var doc in potentialMatchesSnapshot.docs) {
+          final userPref =
+              UserPreference.fromJson(doc.data()! as Map<String, dynamic>);
+          logger.i(
+              '🔍 Checking potential match: ${doc.id} - Preferences: $userPref');
+
+          // Evaluate matching conditions
+          bool categoryMatch = (currentUserPref.categoryId == null ||
+              currentUserPref.categoryId == -1 ||
+              userPref.categoryId == null ||
+              userPref.categoryId == -1 ||
+              currentUserPref.categoryId == userPref.categoryId);
+          bool questionCountMatch = (currentUserPref.questionCount == null ||
+              currentUserPref.questionCount == -1 ||
+              userPref.questionCount == null ||
+              userPref.questionCount == -1 ||
+              currentUserPref.questionCount == userPref.questionCount);
+          bool difficultyMatch = (currentUserPref.difficulty == null ||
+              currentUserPref.difficulty == "-1" ||
+              userPref.difficulty == null ||
+              userPref.difficulty == "-1" ||
+              currentUserPref.difficulty == userPref.difficulty);
+
+          if (categoryMatch && questionCountMatch && difficultyMatch) {
+            validMatches.add(doc);
+          }
+        }
+
+        if (validMatches.isEmpty) {
+          logger.w('⚠️ [findMatch] No suitable match found for user $userId.');
+          return null;
+        }
+
+        // Choose a random valid match
+        DocumentSnapshot selectedDoc =
+            validMatches[Random().nextInt(validMatches.length)];
+        String selectedMatchId = selectedDoc.id;
+
+        // Re-check selected match's status within the transaction
+        DocumentSnapshot selectedMatchSnapshot =
+            await transaction.get(_collection.doc(selectedMatchId));
+        UserPreference selectedMatchPref = UserPreference.fromJson(
+            selectedMatchSnapshot.data()! as Map<String, dynamic>);
+
+        if (selectedMatchPref.matchedUserId != null) {
+          logger.w(
+              '⚠️ [findMatch] Selected match $selectedMatchId is already matched.');
+          return null;
+        }
+
+        // Atomically update both documents
+        transaction.update(
+            currentRef, {'matchedUserId': selectedMatchId, "ready": null});
+        transaction.update(_collection.doc(selectedMatchId),
+            {'matchedUserId': userId, "ready": null});
+        logger
+            .i('🔄 [findMatch] Updated documents: $userId ↔️ $selectedMatchId');
+
+        return selectedMatchId;
       }
-
-      if (validMatches.isEmpty) {
-        logger.w('⚠️ [findMatch] No suitable match found for user $userId.');
-        return null;
-      }
-
-      // Choose a random valid match
-      DocumentSnapshot selectedDoc =
-          validMatches[Random().nextInt(validMatches.length)];
-      String selectedMatchId = selectedDoc.id;
-
-      // Re-check selected match's status within the transaction
-      DocumentSnapshot selectedMatchSnapshot =
-          await transaction.get(_collection.doc(selectedMatchId));
-      UserPreference selectedMatchPref = UserPreference.fromJson(
-          selectedMatchSnapshot.data()! as Map<String, dynamic>);
-
-      if (selectedMatchPref.matchedUserId != null) {
-        logger.w(
-            '⚠️ [findMatch] Selected match $selectedMatchId is already matched.');
-        return null;
-      }
-
-      // Atomically update both documents
-      transaction.update(
-          currentRef, {'matchedUserId': selectedMatchId, "ready": null});
-      transaction.update(_collection.doc(selectedMatchId),
-          {'matchedUserId': userId, "ready": null});
-      logger.i('🔄 [findMatch] Updated documents: $userId ↔️ $selectedMatchId');
-
-      return selectedMatchId;
     });
   }
 

@@ -6,7 +6,8 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_question_widget.dart';
+import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
+import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
 
 class DuelQuizScreen extends ConsumerWidget {
   static const routeName = Strings.duelQuizRouteName;
@@ -16,18 +17,17 @@ class DuelQuizScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final questionsState = ref.watch(duelQuizScreenManagerProvider);
+    final questionsStateNotifier =
+        ref.read(duelQuizScreenManagerProvider.notifier);
+
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
         appBar: CustomAppBar(
           title: questionsState.when(
             data: (state) => cleanCategoryName(state.categoryName),
-            error: (error, _) {
-              return "";
-            },
-            loading: () {
-              return "";
-            },
+            error: (error, _) => "",
+            loading: () => "",
           ),
         ),
         body: Container(
@@ -41,7 +41,20 @@ class DuelQuizScreen extends ConsumerWidget {
               topRight: Radius.circular(35.0),
             ),
           ),
-          child: DuelQuestionWidget(),
+          child: questionsState.when(
+            data: (data) => QuestionWidget(
+              questions: data.questions,
+              questionIndex: data.questionIndex,
+              shuffledOptions: data.shuffledOptions,
+              selectedAnswerIndex: data.selectedAnswerIndex,
+              correctAnswerIndex: data.correctAnswerIndex,
+              timeLeft: data.timeLeft,
+              onAnswerSelected: questionsStateNotifier.selectAnswer,
+              startTimer: questionsStateNotifier.startTimer,
+            ),
+            error: (error, _) => Text(error.toString()),
+            loading: () => const ShimmerLoadingQuestionWidget(),
+          ),
         ),
       ),
     );

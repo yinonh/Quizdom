@@ -67,6 +67,7 @@ class DuelManager extends _$DuelManager {
       preference: UserPreference.empty(),
     );
 
+    // Ensure we're passing an empty list initially but with required parameter
     matchedUserId = await UserPreferenceDataSource.findMatch(
       currentUser.uid,
       excludedIds: oldMatchedUsers,
@@ -78,23 +79,40 @@ class DuelManager extends _$DuelManager {
       matchedUser = await UserDataSource.getUserById(matchedUserId);
     }
 
-    _matchTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    // Use a slightly longer timer to reduce race conditions
+    _matchTimer = Timer.periodic(const Duration(seconds: 7), (timer) async {
       final currentState = state;
       if (currentState is AsyncData<DuelState>) {
         if (currentState.value.matchedUserId == null) {
           print("🔄 Timer: No match found, trying to find match again...");
+
+          // Always use the latest state to get the current list of excluded users
           final newMatch = await UserPreferenceDataSource.findMatch(
             currentUser.uid,
-            excludedIds: currentState.value.oldMatchedUsers.cast<String>(),
+            excludedIds: currentState.value.oldMatchedUsers,
           );
+
           if (newMatch != null) {
+            print("✅ Found new match: $newMatch");
+
+            // Fetch the matched user data
+            final newMatchedUser = await UserDataSource.getUserById(newMatch);
+
+            // Reset match progress when finding a new match
+            _startProgressTimer();
+
+            // Update the excluded users list with the new match
             final updatedOldMatches =
                 List<String>.from(currentState.value.oldMatchedUsers)
                   ..add(newMatch);
+
+            // Update state with all the new information atomically
             state = AsyncData(
               currentState.value.copyWith(
                 matchedUserId: newMatch,
+                matchedUser: newMatchedUser,
                 oldMatchedUsers: updatedOldMatches,
+                matchProgress: 0.0,
               ),
             );
           }
@@ -113,28 +131,50 @@ class DuelManager extends _$DuelManager {
         final String? triviaRoomId = preferences['triviaRoomId'];
         final bool userReady = preferences['ready'] ?? false;
 
+        print(
+            "🔔 Preference update: matchedUserId=$newMatchedUserId, currentMatchedId=${currentData.matchedUserId}");
+
         // Handle matched user changes and ready state
-        if (currentData.matchedUserId != newMatchedUserId ||
-            currentData.isReady != userReady) {
+        if (currentData.matchedUserId != newMatchedUserId) {
           if (newMatchedUserId != null) {
             _startProgressTimer();
-            matchedUser = await UserDataSource.getUserById(newMatchedUserId);
+            final newMatchedUser =
+                await UserDataSource.getUserById(newMatchedUserId);
+
+            // Make sure we add this to our excluded list to prevent re-matching
+            final updatedOldMatches =
+                List<String>.from(currentData.oldMatchedUsers);
+            if (!updatedOldMatches.contains(newMatchedUserId)) {
+              updatedOldMatches.add(newMatchedUserId);
+            }
+
             state = AsyncData(
               currentData.copyWith(
                 matchedUserId: newMatchedUserId,
-                matchedUser: matchedUser,
+                matchedUser: newMatchedUser,
                 isReady: userReady,
+                oldMatchedUsers: updatedOldMatches,
+                matchProgress: 0.0,
               ),
             );
           } else {
             // Reset ready state when match is cleared
             state = AsyncData(
               currentData.copyWith(
-                matchedUserId: newMatchedUserId,
+                matchedUserId: null,
+                matchedUser: null,
                 isReady: false,
+                matchProgress: 0.0,
               ),
             );
           }
+        } else if (currentData.isReady != userReady) {
+          // Just update ready state if that's all that changed
+          state = AsyncData(
+            currentData.copyWith(
+              isReady: userReady,
+            ),
+          );
         }
 
         // Handle trivia room creation
@@ -152,6 +192,8 @@ class DuelManager extends _$DuelManager {
     // Cleanup
     ref.onDispose(() {
       _matchTimer?.cancel();
+      _progressTimer?.cancel();
+
       Future.microtask(() async {
         final currentData = state.value;
         if (currentData != null && currentData.matchedUserId != null) {
@@ -174,6 +216,7 @@ class DuelManager extends _$DuelManager {
   }
 
   void _startProgressTimer() {
+    // Cancel any existing timer first
     _progressTimer?.cancel();
 
     const duration = Duration(milliseconds: 100);
@@ -206,26 +249,43 @@ class DuelManager extends _$DuelManager {
     final data = currentState.value;
     final currentUserId = ref.read(authProvider).currentUser.uid;
 
+    print("🔄 Finding new match. Current matched ID: ${data.matchedUserId}");
+    print("🔄 Current excluded IDs: ${data.oldMatchedUsers}");
+
     if (data.matchedUserId != null) {
       await UserPreferenceDataSource.removeMatchFromOther(
           currentUserId, data.matchedUserId!);
       await UserPreferenceDataSource.clearMatch(currentUserId);
+
+      // Immediately update state to reflect the cleared match
+      state = AsyncData(data.copyWith(
+        matchedUserId: null,
+        matchedUser: null,
+      ));
     }
 
     final newMatch = await UserPreferenceDataSource.findMatch(
       currentUserId,
-      excludedIds: data.oldMatchedUsers.cast<String>(),
+      excludedIds: data.oldMatchedUsers,
     );
 
-    List<String> updatedOldMatches = List.from(data.oldMatchedUsers);
     if (newMatch != null) {
-      updatedOldMatches.add(newMatch);
-    }
+      print("✅ Found new match: $newMatch");
+      final newMatchedUser = await UserDataSource.getUserById(newMatch);
+      _startProgressTimer();
 
-    state = AsyncData(data.copyWith(
-      matchedUserId: newMatch,
-      oldMatchedUsers: updatedOldMatches,
-    ));
+      List<String> updatedOldMatches = List.from(data.oldMatchedUsers);
+      if (!updatedOldMatches.contains(newMatch)) {
+        updatedOldMatches.add(newMatch);
+      }
+
+      state = AsyncData(data.copyWith(
+        matchedUserId: newMatch,
+        matchedUser: newMatchedUser,
+        oldMatchedUsers: updatedOldMatches,
+        matchProgress: 0.0,
+      ));
+    }
   }
 
   Future<void> updateUserPreferences({
@@ -248,31 +308,41 @@ class DuelManager extends _$DuelManager {
           ? null
           : difficulty ?? currentData.userPreferences.difficulty,
     );
-    state.whenData((stateData) async {
-      if (stateData.matchedUserId != null) {
-        await UserPreferenceDataSource.removeMatchFromOther(
-            stateData.currentUser.uid, stateData.matchedUserId!);
-      }
 
-      UserPreferenceDataSource.updateUserPreference(
-          userId: ref.read(authProvider).currentUser.uid,
-          updatedPreference: newPreferences);
+    // First update the state with the new preferences
+    state = AsyncData(currentData.copyWith(userPreferences: newPreferences));
 
-      state = AsyncData(currentData.copyWith(userPreferences: newPreferences));
-    });
+    // Then perform the Firebase updates
+    if (currentData.matchedUserId != null) {
+      await UserPreferenceDataSource.removeMatchFromOther(
+          currentData.currentUser.uid, currentData.matchedUserId!);
+
+      // Update the state to reflect that there's no match
+      state = AsyncData(state.value!.copyWith(
+        matchedUserId: null,
+        matchedUser: null,
+      ));
+    }
+
+    await UserPreferenceDataSource.updateUserPreference(
+        userId: ref.read(authProvider).currentUser.uid,
+        updatedPreference: newPreferences);
   }
 
   Future<void> setIsNavigated() async {
     _matchTimer?.cancel();
     _progressTimer?.cancel();
     state.whenData((stateData) async {
-      TriviaRoomDataSource.getRoomById(stateData.matchedRoom ?? "")
-          .then((room) {
-        if (room != null) {
-          ref.read(duelTriviaProvider.notifier).setTriviaRoom(room);
-        }
+      if (stateData.matchedRoom != null) {
+        TriviaRoomDataSource.getRoomById(stateData.matchedRoom!).then((room) {
+          if (room != null) {
+            ref.read(duelTriviaProvider.notifier).setTriviaRoom(room);
+          }
+          state = AsyncData(stateData.copyWith(hasNavigated: true));
+        });
+      } else {
         state = AsyncData(stateData.copyWith(hasNavigated: true));
-      });
+      }
     });
   }
 
