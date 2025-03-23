@@ -115,6 +115,14 @@ class Strings {
   // Quiz Screen
   static const String question = 'Question';
 
+  // Top Players
+  static const String noPlayersFound = "No players found";
+  static const String viewAll = "View all";
+  static const String playersSmall = "players";
+  static const String showLess = "Show less";
+  static const String unknownPlayer = "Unknown Player";
+  static const String pts = "pts";
+
   // Result Screen
   static const String correctAnswers = 'Correct Answers';
   static const String wrongAnswers = 'Wrong Answers';

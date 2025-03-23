@@ -1,7 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/enums/game_mode.dart';
+import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/game_mode_provider.dart';
 import 'package:trivia/data/providers/general_trivia_room_provider.dart';
@@ -19,6 +21,7 @@ class CategoriesState with _$CategoriesState {
     required List<int> userRecentCategories,
     required bool showRowLogin,
     required int daysInRow,
+    required Map<TriviaUser, int> topUserScore,
   }) = _CategoriesState;
 }
 
@@ -40,11 +43,13 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     // Fetch necessary data
     final user = ref.watch(authProvider);
     final userStatistics = ref.read(statisticsProvider).userStatistics;
+    final topUsers = await UserStatisticsDataSource.getTopUsersByScore();
     return CategoriesState(
       triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
       userRecentCategories: user.currentUser.recentTriviaCategories,
       showRowLogin: user.loginNewDayInARow ?? false,
       daysInRow: userStatistics.currentLoginStreak,
+      topUserScore: topUsers,
     );
   }
 

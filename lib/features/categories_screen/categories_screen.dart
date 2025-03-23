@@ -14,6 +14,7 @@ import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
 import 'package:trivia/features/categories_screen/widgets/recent_categories.dart';
 import 'package:trivia/features/categories_screen/widgets/top_button.dart';
+import 'package:trivia/features/categories_screen/widgets/top_players.dart';
 import 'package:trivia/features/categories_screen/widgets/wheel_of_fortune_banner.dart';
 import 'package:trivia/features/intro_screen/intro_screen.dart';
 
@@ -115,7 +116,9 @@ class CategoriesScreen extends ConsumerWidget {
                           title: Strings.featuredCategories,
                         ),
                         const WheelOfFortuneBanner(),
-                        const InfoContainer(text: "Personal Rooms Information"),
+                        ExpandableHighScorePlayersList(
+                          topUsers: data.topUserScore,
+                        ),
                         const InfoContainer(text: "Personal Rooms Information"),
                       ],
                     ),

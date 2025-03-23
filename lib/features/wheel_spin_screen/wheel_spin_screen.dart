@@ -99,7 +99,8 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(
+                context, Strings.categoriesRouteName);
           },
         ),
       ),

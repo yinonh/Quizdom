@@ -12,7 +12,7 @@ class WheelOfFortuneBanner extends StatelessWidget {
     return Center(
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed(WheelSpinScreen.routeName);
+          Navigator.of(context).pushReplacementNamed(WheelSpinScreen.routeName);
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/data/data_source/user_data_source.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 
 class UserStatisticsDataSource {
@@ -33,5 +35,28 @@ class UserStatisticsDataSource {
     }
 
     return null;
+  }
+
+  static Future<Map<TriviaUser, int>> getTopUsersByScore() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('userStatistics')
+        .orderBy('totalScore', descending: true)
+        .limit(10)
+        .get();
+
+    final Map<String, int> topUsersMap = {};
+    for (var doc in querySnapshot.docs) {
+      final data = doc.data();
+      final totalScore = data['totalScore'] as int? ?? 0;
+      topUsersMap[doc.id] = totalScore;
+    }
+    Map<TriviaUser, int> topUsers = {};
+    for (String userId in topUsersMap.keys.toList()) {
+      final userForId = await UserDataSource.getUserById(userId);
+      if (userForId != null) {
+        topUsers[userForId] = topUsersMap[userId]!;
+      }
+    }
+    return topUsers;
   }
 }
