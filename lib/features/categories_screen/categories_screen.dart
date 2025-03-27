@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
@@ -7,6 +8,7 @@ import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/categories_screen/widgets/categories_screen_shimmer.dart';
 import 'package:trivia/features/categories_screen/widgets/daily_login-popup.dart';
@@ -116,8 +118,34 @@ class CategoriesScreen extends ConsumerWidget {
                           title: Strings.featuredCategories,
                         ),
                         const WheelOfFortuneBanner(),
-                        ExpandableHighScorePlayersList(
-                          topUsers: data.topUserScore,
+                        FutureBuilder<Map<TriviaUser, int>>(
+                          future: categoriesNotifier.getTopUsers(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
+                                  height: calcHeight(200),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ); // Show shimmer effect while loading
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            } else if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return Center(child: Text('No data available'));
+                            }
+
+                            return ExpandableHighScorePlayersList(
+                                topUsers: snapshot.data!);
+                          },
                         ),
                         const InfoContainer(text: "Personal Rooms Information"),
                       ],

@@ -11,6 +11,7 @@ import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/wheel_spin_screen/view_model/wheel_screen_manager.dart';
 import 'package:trivia/features/wheel_spin_screen/widgets/lose_dialog.dart';
 import 'package:trivia/features/wheel_spin_screen/widgets/win_dialog.dart';
@@ -99,8 +100,7 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pushReplacementNamed(
-                context, Strings.categoriesRouteName);
+            Navigator.pushReplacementNamed(context, CategoriesScreen.routeName);
           },
         ),
       ),

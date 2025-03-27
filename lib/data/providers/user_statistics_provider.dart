@@ -8,6 +8,7 @@ import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/core/common_widgets/trophy_dialog.dart';
+import 'package:trivia/features/profile_screen/profile_screen.dart';
 
 part 'user_statistics_provider.freezed.dart';
 part 'user_statistics_provider.g.dart';
@@ -163,7 +164,7 @@ class Statistics extends _$Statistics {
       builder: (context) => TrophyAchievementDialog(
         achievement: achievements.first,
         onClose: () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed(ProfileScreen.routeName);
 
           // Show the next achievement after a short delay
           if (achievements.length > 1) {

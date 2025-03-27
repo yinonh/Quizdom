@@ -218,9 +218,16 @@ class Strings {
   // Trophy Dialog
   static const String newText = 'New';
   static const String trophyUnlocked = 'Trophy Unlocked';
-  static const String continueCapital = 'CONTINUE';
+  static const String goToProfile = 'GO TO PROFILE';
   static const String keepUpUnlockMore =
       'Keep up the good work to unlock more trophies!';
+
+  // Resource Dialog
+  static const String yourTreasureChest = 'Your Treasure Chest!';
+  static const String energy = 'Energy';
+  static const String gold = 'Gold';
+  static const String tapViewDetails = 'Tap to view details';
+  static const String closeTreasureChest = 'Close Treasure Chest';
 
   // Daily Dialog
   static const String dailyLoginRewards = 'Daily Login Rewards';

@@ -21,7 +21,6 @@ class CategoriesState with _$CategoriesState {
     required List<int> userRecentCategories,
     required bool showRowLogin,
     required int daysInRow,
-    required Map<TriviaUser, int> topUserScore,
   }) = _CategoriesState;
 }
 
@@ -43,14 +42,16 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
     // Fetch necessary data
     final user = ref.watch(authProvider);
     final userStatistics = ref.read(statisticsProvider).userStatistics;
-    final topUsers = await UserStatisticsDataSource.getTopUsersByScore();
     return CategoriesState(
       triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
       userRecentCategories: user.currentUser.recentTriviaCategories,
       showRowLogin: user.loginNewDayInARow ?? false,
       daysInRow: userStatistics.currentLoginStreak,
-      topUserScore: topUsers,
     );
+  }
+
+  Future<Map<TriviaUser, int>> getTopUsers() async {
+    return await UserStatisticsDataSource.getTopUsersByScore();
   }
 
   void onClaim(int award) {
@@ -67,20 +68,6 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
 
   void setTriviaRoom() {
     ref.read(gameModeNotifierProvider.notifier).setMode(GameMode.duel);
-    // Listen to the stream and print rooms
-    // TriviaRoomDataSource.watchAvailableRooms().listen(
-    //   (rooms) {
-    //     print('Available Rooms:');
-    //     for (var room in rooms) {
-    //       print('Room ID: ${room.roomId}');
-    //       print('Users: ${room.users}');
-    //       print('-------------------');
-    //     }
-    //   },
-    //   onError: (error) {
-    //     print('Error watching rooms: $error');
-    //   },
-    // );
     ref.read(currentTriviaAchievementsProvider.notifier).resetAchievements();
   }
 

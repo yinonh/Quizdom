@@ -32,7 +32,7 @@ class TrophyAchievementDialog extends StatelessWidget {
           boxShadow: [
             // Outer glow effect that matches trophy color
             BoxShadow(
-              color: achievement.levelColor.withOpacity(0.5),
+              color: achievement.levelColor.withValues(alpha: 0.5),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -108,7 +108,7 @@ class TrophyAchievementDialog extends StatelessWidget {
             ),
 
             CustomButton(
-              text: Strings.continueCapital,
+              text: Strings.goToProfile,
               onTap: onClose,
               color: AppConstant.secondaryColor,
             ),

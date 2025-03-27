@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:trivia/core/common_widgets/user_resources_dialog.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/providers/user_provider.dart';
@@ -74,33 +75,41 @@ class _UserCoinsState extends ConsumerState<UserCoins>
       _startAnimation(currentCoins);
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SvgPicture.asset(
-          Strings.coinsIcon,
-          height: calcHeight(30),
-        ),
-        SizedBox(width: calcWidth(5)),
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            // Use the exact end value when animation completes
-            final displayValue =
-                _controller.isCompleted ? _latestValue! : _animation.value;
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => const UserResourcesDialog(),
+        );
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            Strings.coinsIcon,
+            height: calcHeight(30),
+          ),
+          SizedBox(width: calcWidth(5)),
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              // Use the exact end value when animation completes
+              final displayValue =
+                  _controller.isCompleted ? _latestValue! : _animation.value;
 
-            return Text(
-              displayValue.toString(),
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            );
-          },
-        ),
-      ],
+              return Text(
+                displayValue.toString(),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
