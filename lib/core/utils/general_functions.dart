@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/profile_overview_screen.dart';
@@ -41,7 +39,7 @@ void showProfileOverview(BuildContext context, TriviaUser user) {
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     builder: (_) {
-      return ProfileOverview(
+      return ProfileBottomSheet(
         user: user,
       );
     },

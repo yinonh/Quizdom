@@ -37,8 +37,4 @@ class IntroScreenManager extends _$IntroScreenManager {
   void payCoins(int amount) {
     ref.read(authProvider.notifier).updateCoins(amount);
   }
-
-  void setReady() {
-    // Implement ready logic before creating the trivia room.
-  }
 }

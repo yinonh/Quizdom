@@ -87,14 +87,6 @@ class UserPreferenceDataSource {
         final (questionCount, categoryId, difficulty) =
             _mergePreferences(currentUserPref, matchedUserPref);
 
-        // Get category name if categoryId is not null
-        String? categoryName;
-        if (categoryId != null) {
-          // You might want to implement a way to get the category name
-          // This is just a placeholder
-          categoryName = "Category Name";
-        }
-
         // Generate room ID
         final roomId = firestore.collection('triviaRooms').doc().id;
 
@@ -103,14 +95,13 @@ class UserPreferenceDataSource {
 
         // Create the room first without questions
         await TriviaRoomDataSource.createRoom(
-          roomId: roomId,
-          questionCount: questionCount,
-          categoryId: categoryId,
-          categoryName: categoryName,
-          difficulty: difficulty,
-          isPublic: false,
-          userIds: userIds,
-        );
+            roomId: roomId,
+            questionCount: questionCount,
+            categoryId: categoryId,
+            difficulty: difficulty,
+            isPublic: false,
+            userIds: userIds,
+            hostUserId: currentUserId);
 
         // Only the user who initiated the room (current user) fetches the questions
         if (currentUserId == userIds[0]) {

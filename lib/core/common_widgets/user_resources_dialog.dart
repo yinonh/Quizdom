@@ -169,8 +169,8 @@ class UserResourcesDialog extends ConsumerWidget {
               child: SvgPicture.asset(
                 icon,
                 height: calcHeight(35),
-                colorFilter: const ColorFilter.mode(
-                  AppConstant.primaryColor,
+                colorFilter: ColorFilter.mode(
+                  primaryColor,
                   BlendMode.srcIn,
                 ),
               ),

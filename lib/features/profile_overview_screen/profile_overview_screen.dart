@@ -9,163 +9,173 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/view_model/profile_overview_screen_manager.dart';
 
-class ProfileOverview extends ConsumerWidget {
+class ProfileBottomSheet extends ConsumerWidget {
   final TriviaUser user;
-  final VoidCallback? onClose;
 
-  const ProfileOverview({
+  const ProfileBottomSheet({
     required this.user,
-    this.onClose,
     super.key,
   });
+
+  // Method to show the bottom sheet
+  static Future<void> show(BuildContext context, TriviaUser user) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => ProfileBottomSheet(user: user),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.invalidate(userStatisticsProvider(user.uid));
-
     final userStatsAsync = ref.watch(userStatisticsProvider(user.uid));
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+    // Calculate the avatar size and its position
+    final avatarRadius = calcWidth(55);
+    final avatarPosition = avatarRadius;
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppConstant.primaryColor,
-              AppConstant.highlightColor,
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: calcHeight(20),
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: calcWidth(120),
-                    height: calcWidth(120),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppConstant.highlightColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  IgnorePointer(
-                    child: UserAvatar(
-                      user: user,
-                      radius: 55,
-                    ),
-                  ),
+      child: Stack(
+        alignment: Alignment.topCenter,
+        clipBehavior: Clip.none,
+        children: [
+          // Bottom sheet content
+          Container(
+            margin: EdgeInsets.only(top: avatarPosition),
+            padding: EdgeInsets.only(
+              top: avatarPosition +
+                  calcHeight(16), // Add padding to accommodate avatar
+              left: calcWidth(24),
+              right: calcWidth(24),
+              bottom: calcHeight(24),
+            ),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppConstant.primaryColor,
+                  AppConstant.highlightColor,
                 ],
               ),
-              userStatsAsync.when(
-                data: (stats) {
-                  if (stats == null) return const SizedBox.shrink();
-                  return Column(
-                    spacing: calcHeight(12),
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: calcHeight(20),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  userStatsAsync.when(
+                    data: (stats) {
+                      if (stats == null) return const SizedBox.shrink();
+                      return Column(
+                        spacing: calcHeight(12),
                         children: [
-                          Text(
-                            user.name ?? Strings.mysteryPlayer,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                user.name ?? Strings.mysteryPlayer,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              Text(
+                                '${formatNumber(stats.totalScore)} ${Strings.xp}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: AppConstant.goldColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '${formatNumber(stats.totalScore)} ${Strings.xp}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  color: AppConstant.goldColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          _buildStatSection(
+                            title: Strings.gameStats,
+                            icon: Icons.sports_esports,
+                            color: AppConstant.onPrimaryColor,
+                            stats: [
+                              _buildStatRow(
+                                icon: Icons.emoji_events,
+                                label: Strings.victories,
+                                value:
+                                    '${stats.gamesWon}/${stats.totalGamesPlayed}',
+                              ),
+                              _buildStatRow(
+                                icon: Icons.local_fire_department,
+                                label: Strings.winRate,
+                                value:
+                                    '${((stats.gamesWon / stats.totalGamesPlayed) * 100).toStringAsFixed(0)}%',
+                              ),
+                            ],
+                          ),
+                          _buildStatSection(
+                            title: Strings.performance,
+                            icon: Icons.insights,
+                            color: AppConstant.secondaryColor,
+                            stats: [
+                              _buildStatRow(
+                                icon: Icons.lightbulb,
+                                label: Strings.accuracy,
+                                value:
+                                    '${((stats.totalCorrectAnswers / (stats.totalCorrectAnswers + stats.totalWrongAnswers)) * 100).toStringAsFixed(0)}%',
+                              ),
+                              _buildStatRow(
+                                icon: Icons.speed,
+                                label: Strings.avgTime,
+                                value:
+                                    '${stats.avgAnswerTime.toStringAsFixed(1)}s',
+                              ),
+                            ],
                           ),
                         ],
-                      ),
-                      _buildStatSection(
-                        title: Strings.gameStats,
-                        icon: Icons.sports_esports,
-                        color: AppConstant.onPrimaryColor,
-                        stats: [
-                          _buildStatRow(
-                            icon: Icons.emoji_events,
-                            label: Strings.victories,
-                            value:
-                                '${stats.gamesWon}/${stats.totalGamesPlayed}',
-                          ),
-                          _buildStatRow(
-                            icon: Icons.local_fire_department,
-                            label: Strings.winRate,
-                            value:
-                                '${((stats.gamesWon / stats.totalGamesPlayed) * 100).toStringAsFixed(0)}%',
-                          ),
-                        ],
-                      ),
-                      _buildStatSection(
-                        title: Strings.performance,
-                        icon: Icons.insights,
-                        color: AppConstant.secondaryColor,
-                        stats: [
-                          _buildStatRow(
-                            icon: Icons.lightbulb,
-                            label: Strings.accuracy,
-                            value:
-                                '${((stats.totalCorrectAnswers / (stats.totalCorrectAnswers + stats.totalWrongAnswers)) * 100).toStringAsFixed(0)}%',
-                          ),
-                          _buildStatRow(
-                            icon: Icons.speed,
-                            label: Strings.avgTime,
-                            value: '${stats.avgAnswerTime.toStringAsFixed(1)}s',
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-                loading: () => _buildSkeletonLoader(),
-                error: (_, __) => const SizedBox.shrink(),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        onClose?.call();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppConstant.onPrimaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      icon: const Icon(Icons.close),
-                      label: const Text(Strings.close),
-                    ),
+                      );
+                    },
+                    loading: () => _buildSkeletonLoader(),
+                    error: (_, __) => const SizedBox.shrink(),
                   ),
+                  SizedBox(height: calcHeight(16)),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+
+          // User avatar positioned half above the sheet
+          Positioned(
+            top: 0,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: avatarRadius * 2,
+                  height: avatarRadius * 2,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppConstant.highlightColor,
+                  ),
+                ),
+                UserAvatar(
+                  user: user,
+                  radius: avatarRadius.toDouble(),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

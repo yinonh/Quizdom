@@ -117,9 +117,7 @@ class _ExpandableHighScorePlayersListState
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     itemCount: min(itemsToShow, sortedEntries.length),
-                    physics: isExpanded
-                        ? const AlwaysScrollableScrollPhysics()
-                        : const NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     separatorBuilder: (context, index) => Divider(
                       color: Colors.grey.shade200,
                       height: 1,
