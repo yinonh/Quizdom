@@ -9,7 +9,6 @@ part 'trivia_room.g.dart';
 @freezed
 class TriviaRoom with _$TriviaRoom {
   const factory TriviaRoom({
-    // Room Identification and Setup
     required String? roomId,
     String? hostUserId,
     required int? questionCount,
@@ -23,7 +22,7 @@ class TriviaRoom with _$TriviaRoom {
     required List<int>? userScores,
 
     // Game State Tracking
-    required GameStage currentStage,
+    @GameStageConverter() required GameStage currentStage,
     required int currentQuestionIndex,
     @TimestampConverter() DateTime? currentQuestionStartTime,
 

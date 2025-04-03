@@ -15,7 +15,6 @@ import 'package:trivia/data/providers/duel_trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
 part 'duel_manager.freezed.dart';
-
 part 'duel_manager.g.dart';
 
 @freezed
@@ -332,18 +331,20 @@ class DuelManager extends _$DuelManager {
   Future<void> setIsNavigated() async {
     _matchTimer?.cancel();
     _progressTimer?.cancel();
-    state.whenData((stateData) async {
-      if (stateData.matchedRoom != null) {
-        TriviaRoomDataSource.getRoomById(stateData.matchedRoom!).then((room) {
-          if (room != null) {
-            ref.read(duelTriviaProvider.notifier).setTriviaRoom(room);
-          }
-          state = AsyncData(stateData.copyWith(hasNavigated: true));
-        });
-      } else {
-        state = AsyncData(stateData.copyWith(hasNavigated: true));
-      }
-    });
+    state.whenData(
+      (stateData) async {
+        if (stateData.matchedRoom != null) {
+          await TriviaRoomDataSource.getRoomById(stateData.matchedRoom!).then(
+            (room) {
+              if (room != null) {
+                ref.read(duelTriviaProvider.notifier).setTriviaRoom(room);
+              }
+              state = AsyncData(stateData.copyWith(hasNavigated: true));
+            },
+          );
+        }
+      },
+    );
   }
 
   int preferencesNum() {

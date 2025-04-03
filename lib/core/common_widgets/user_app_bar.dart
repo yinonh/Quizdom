@@ -49,14 +49,14 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        const Positioned(
-          top: 50.0,
-          right: 5.0,
-          child: UserCoins(),
+        Positioned(
+          top: calcHeight(55),
+          right: calcWidth(15),
+          child: const UserCoins(),
         ),
         Positioned(
-          top: 35.0,
-          left: 10.0,
+          top: calcHeight(45),
+          left: calcWidth(10),
           child: prefix ??
               IconButton(
                 icon: const Icon(Icons.menu_rounded, color: Colors.white),
@@ -66,7 +66,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ),
         ),
         Positioned(
-          bottom: 6.0,
+          bottom: calcHeight(6.0),
           left: 0,
           right: 0,
           child: Center(

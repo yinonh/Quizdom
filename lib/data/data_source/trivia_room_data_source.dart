@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/data/models/trivia_room.dart';
 
 class TriviaRoomDataSource {
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final _roomsCollection = _firestore.collection('triviaRooms');
+
   // Creates a new trivia room
   static Future<void> createRoom({
     required String roomId,
@@ -38,18 +42,12 @@ class TriviaRoomDataSource {
     final roomData = triviaRoom.toJson();
     roomData['createdAt'] = FieldValue.serverTimestamp();
 
-    await FirebaseFirestore.instance
-        .collection('triviaRooms')
-        .doc(roomId)
-        .set(roomData);
+    await _roomsCollection.doc(roomId).set(roomData);
   }
 
   static Future<TriviaRoom?> getRoomById(String roomId) async {
     try {
-      final doc = await FirebaseFirestore.instance
-          .collection('triviaRooms')
-          .doc(roomId)
-          .get();
+      final doc = await _roomsCollection.doc(roomId).get();
 
       if (!doc.exists) {
         return null;
@@ -66,102 +64,142 @@ class TriviaRoomDataSource {
     }
   }
 
-// Updates room details (e.g., updating user scores or other room details)
-  static Future<void> updateRoom({
-    required String roomId,
-    Map<String, dynamic>? updates,
-  }) async {
-    if (updates != null) {
-      await FirebaseFirestore.instance
-          .collection('triviaRooms')
-          .doc(roomId)
-          .update(updates);
+  // Start game by updating the room status
+  static Future<void> startGame(String roomId) async {
+    await _roomsCollection.doc(roomId).update({
+      'currentStage': const GameStageConverter().toJson(GameStage.active),
+      'currentQuestionStartTime': FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Update timestamp if missing
+  static Future<void> updateQuestionStartTime(String roomId) async {
+    await _roomsCollection
+        .doc(roomId)
+        .update({'currentQuestionStartTime': FieldValue.serverTimestamp()});
+  }
+
+  // Store user's answer for a question
+  static Future<void> storeUserAnswer(
+      String roomId, String userId, int questionIndex, int answerIndex) async {
+    await _roomsCollection
+        .doc(roomId)
+        .update({'userAnswers.$userId.$questionIndex': answerIndex});
+  }
+
+  // Update user score when they answer correctly
+  static Future<void> updateUserScore(
+      String roomId, String userId, int questionIndex, double timeLeft) async {
+    final roomSnapshot = await _roomsCollection.doc(roomId).get();
+    if (!roomSnapshot.exists) return;
+
+    final roomData = roomSnapshot.data() as Map<String, dynamic>;
+    final List<dynamic> users = roomData['users'] ?? [];
+    final List<dynamic> scores = roomData['userScores'] ?? [];
+
+    // Find current user index
+    final userIndex = users.indexOf(userId);
+    if (userIndex == -1) return;
+
+    // Calculate points based on time left (more time = more points)
+    final points = (timeLeft * 10).round() + 100;
+
+    // Update score
+    if (userIndex < scores.length) {
+      scores[userIndex] = (scores[userIndex] as int) + points;
+      await _roomsCollection.doc(roomId).update({'userScores': scores});
     }
   }
 
-  static Stream<List<TriviaRoom>> watchAvailableRooms() {
-    return FirebaseFirestore.instance
-        .collection('triviaRooms')
-        .where('users', isLessThan: [
-          {}, {} // This checks for arrays with length less than 2
-        ])
-        .snapshots()
-        .map((snapshot) {
-          return snapshot.docs.map((doc) {
-            final data = doc.data();
-            return TriviaRoom.fromJson({
-              ...data,
-              'roomId': doc.id,
-            });
-          }).toList();
-        });
-  }
-
-  // Deletes a trivia room
-  static Future<void> deleteRoom(String roomId) async {
-    await FirebaseFirestore.instance
-        .collection('triviaRooms')
+  // Increment missed questions counter
+  static Future<void> updateMissedQuestions(
+      String roomId, String userId) async {
+    await _roomsCollection
         .doc(roomId)
-        .delete();
+        .update({'userMissedQuestions.$userId': FieldValue.increment(1)});
   }
 
-  // Allows a user to join a trivia room
-  static Future<void> joinRoom({
-    required String roomId,
-    required String userId,
-    String? userName,
-  }) async {
-    final roomRef =
-        FirebaseFirestore.instance.collection('triviaRooms').doc(roomId);
-
-    // Add the user to the room
-    await roomRef.update({
-      'users': FieldValue.arrayUnion([
-        {
-          'id': userId,
-          'name': userName,
-          'score': 0, // Initial score for the user
-        }
-      ]),
-    });
+  // Move to review stage
+  static Future<void> moveToReviewStage(String roomId) async {
+    await _roomsCollection.doc(roomId).update(
+      {
+        'currentStage':
+            const GameStageConverter().toJson(GameStage.questionReview),
+      },
+    );
   }
 
-  // Updates the scores of users in a trivia room
-  static Future<void> updateUserScore({
-    required String roomId,
-    required String userId,
-    required int newScore,
-  }) async {
-    final roomRef =
-        FirebaseFirestore.instance.collection('triviaRooms').doc(roomId);
+  // Move to next question or complete the game
+  static Future<void> moveToNextQuestion(
+      String roomId, int currentQuestionIndex, int totalQuestions) async {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      await _roomsCollection.doc(roomId).update({
+        'currentStage': const GameStageConverter().toJson(GameStage.active),
+        'currentQuestionIndex': currentQuestionIndex + 1,
+        'currentQuestionStartTime': FieldValue.serverTimestamp(),
+      });
+    } else {
+      await _roomsCollection.doc(roomId).update({
+        'currentStage': const GameStageConverter().toJson(GameStage.completed),
+      });
+    }
+  }
 
-    // Fetch the current room data
-    final snapshot = await roomRef.get();
-    if (!snapshot.exists) throw Exception("Room not found");
+  // Check if all users have answered the current question
+  static Future<bool> checkAllUsersAnswered(
+      String roomId, List<String> users, int questionIndex) async {
+    final roomSnapshot = await _roomsCollection.doc(roomId).get();
+    if (!roomSnapshot.exists) return false;
 
-    final data = snapshot.data() as Map<String, dynamic>;
-    final users = (data['users'] as List<dynamic>).cast<Map<String, dynamic>>();
+    final roomData = roomSnapshot.data() as Map<String, dynamic>;
+    final userAnswers = roomData['userAnswers'] as Map<String, dynamic>? ?? {};
 
-    // Update the user's score
-    final updatedUsers = users.map((user) {
-      if (user['id'] == userId) {
-        return {
-          ...user,
-          'score': newScore,
-        };
+    for (final userId in users) {
+      final hasAnswered = userAnswers.containsKey(userId) &&
+          (userAnswers[userId] as Map<String, dynamic>?)
+                  ?.containsKey(questionIndex.toString()) ==
+              true;
+
+      if (!hasAnswered) {
+        return false;
       }
-      return user;
-    }).toList();
+    }
 
-    // Update the top 10 users based on scores
-    final topUsers = updatedUsers.map((user) => user).toList()
-      ..sort((a, b) => (b['score'] as int).compareTo(a['score'] as int));
-    final top10 = topUsers.take(AppConstant.topUsersLength).toList();
+    return true;
+  }
 
-    // Update the database
-    await roomRef.update({
-      'users': updatedUsers,
-      'topUsers': top10,
+  // Get room updates as stream
+  static Stream<TriviaRoom?> getRoomStream(String roomId) {
+    return _roomsCollection.doc(roomId).snapshots().map((snapshot) {
+      if (!snapshot.exists) return null;
+
+      final roomData = snapshot.data() as Map<String, dynamic>;
+      return TriviaRoom.fromJson({
+        ...roomData,
+        'roomId': snapshot.id,
+      });
     });
+  }
+
+  // Parse user answers from Firestore document
+  static Map<String, Map<int, int>> parseUserAnswers(
+      Map<String, dynamic> roomData) {
+    final Map<String, Map<int, int>> userAnswers = {};
+    if (roomData['userAnswers'] != null) {
+      final firestoreUserAnswers =
+          roomData['userAnswers'] as Map<String, dynamic>;
+      firestoreUserAnswers.forEach((userId, answers) {
+        userAnswers[userId] = {};
+        if (answers is Map<String, dynamic>) {
+          answers.forEach((qIndexStr, answerVal) {
+            final qIndex = int.tryParse(qIndexStr);
+            if (qIndex != null && answerVal is int) {
+              userAnswers[userId]![qIndex] = answerVal;
+            }
+          });
+        }
+      });
+    }
+    return userAnswers;
   }
 }

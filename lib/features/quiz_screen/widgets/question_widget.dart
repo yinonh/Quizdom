@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/models/question.dart';
-import 'package:trivia/features/quiz_screen/widgets/multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
 
@@ -55,19 +54,9 @@ class QuestionWidget extends StatelessWidget {
     }
 
     startTimer();
-    final currentQuestion = questions[questionIndex];
 
     return Column(
       children: [
-        const Spacer(),
-        MultipleAnswerWidget(
-          question: currentQuestion.question!,
-          options: shuffledOptions,
-          onAnswerSelected: onAnswerSelected,
-          questionIndex: questionIndex,
-          selectedAnswerIndex: selectedAnswerIndex,
-          correctAnswerIndex: correctAnswerIndex,
-        ),
         const Spacer(),
         selectedAnswerIndex == null
             ? LinearProgressIndicator(
