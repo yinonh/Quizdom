@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/widgets/multiple_answer_widget.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 
 class DuelQuestionWidget extends ConsumerWidget {
@@ -37,7 +38,7 @@ class DuelQuestionWidget extends ConsumerWidget {
 
             // Question and Answers
             Expanded(
-              child: MultipleAnswerWidget(
+              child: DuelMultipleAnswerWidget(
                 question: currentQuestion.question!,
                 options: data.shuffledOptions,
                 onAnswerSelected: (index) {
@@ -137,14 +138,14 @@ class UserScoreBar extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Player ${index + 1}",
+                    "${Strings.players} ${index + 1}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
                   ),
                   Text(
-                    "$score pts",
+                    "$score ${Strings.pts}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,

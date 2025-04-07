@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 
-class MultipleAnswerWidget extends StatelessWidget {
+class DuelMultipleAnswerWidget extends StatelessWidget {
   final String question;
   final List<String> options;
   final Function(int) onAnswerSelected;
@@ -12,8 +12,8 @@ class MultipleAnswerWidget extends StatelessWidget {
   final GameStage gameStage;
   final List<String> users;
 
-  const MultipleAnswerWidget({
-    Key? key,
+  const DuelMultipleAnswerWidget({
+    super.key,
     required this.question,
     required this.options,
     required this.onAnswerSelected,
@@ -23,7 +23,7 @@ class MultipleAnswerWidget extends StatelessWidget {
     this.userAnswers = const {},
     required this.gameStage,
     required this.users,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -136,10 +136,10 @@ class MultipleAnswerWidget extends StatelessWidget {
 
     // During review stage, highlight correct and incorrect answers
     if (index == correctAnswerIndex) {
-      return Colors.green;
+      return Colors.green.withValues(alpha: 0.3);
     } else if (userAnswers.values
         .any((answers) => answers[questionIndex] == index)) {
-      return Colors.red.shade200; // Some user selected this incorrect answer
+      return Colors.red.withValues(alpha: 0.2);
     }
 
     return Colors.white;

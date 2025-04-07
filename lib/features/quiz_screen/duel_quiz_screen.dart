@@ -7,9 +7,9 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
-import 'package:trivia/features/quiz_screen/widgets/question_review.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_question_widget.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
 
 class DuelQuizScreen extends ConsumerWidget {

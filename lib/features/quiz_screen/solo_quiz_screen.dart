@@ -7,7 +7,7 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/features/quiz_screen/view_model/solo_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
-import 'package:trivia/features/quiz_screen/widgets/question_widget.dart';
+import 'package:trivia/features/quiz_screen/widgets/solo_widgets/solo_question_widget.dart';
 
 class SoloQuizScreen extends ConsumerWidget {
   static const routeName = Strings.soloQuizRouteName;
@@ -17,8 +17,6 @@ class SoloQuizScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final questionsState = ref.watch(soloQuizScreenManagerProvider);
-    final questionsStateNotifier =
-        ref.read(soloQuizScreenManagerProvider.notifier);
 
     return BaseScreen(
       child: Scaffold(
@@ -42,16 +40,7 @@ class SoloQuizScreen extends ConsumerWidget {
             ),
           ),
           child: questionsState.when(
-            data: (data) => QuestionWidget(
-              questions: data.questions,
-              questionIndex: data.questionIndex,
-              shuffledOptions: data.shuffledOptions,
-              selectedAnswerIndex: data.selectedAnswerIndex,
-              correctAnswerIndex: data.correctAnswerIndex,
-              timeLeft: data.timeLeft,
-              onAnswerSelected: questionsStateNotifier.selectAnswer,
-              startTimer: questionsStateNotifier.startTimer,
-            ),
+            data: (data) => SoloQuestionWidget(),
             error: (error, _) => Text(error.toString()),
             loading: () => const ShimmerLoadingQuestionWidget(),
           ),
