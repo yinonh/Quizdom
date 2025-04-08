@@ -5,8 +5,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
+import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/question.dart';
+import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
+import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/duel_trivia_provider.dart';
 
@@ -25,6 +28,7 @@ class DuelQuizState with _$DuelQuizState {
     @GameStageConverter() required GameStage gameStage,
     required List<int> userScores,
     required List<String> users,
+    required TriviaUser? opponent,
     int? selectedAnswerIndex,
     String? roomId,
     @Default({}) Map<String, Map<int, int>> userAnswers,
@@ -32,19 +36,11 @@ class DuelQuizState with _$DuelQuizState {
   }) = _DuelQuizState;
 }
 
-class ShuffledData {
-  final List<String> options;
-  final int correctIndex;
-
-  ShuffledData({
-    required this.options,
-    required this.correctIndex,
-  });
-}
-
 @riverpod
 class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   Timer? _timer;
+  Timer? _lastSeenTimer;
+  Timer? _checkPresenceTimer;
   StreamSubscription? _roomSubscription;
   String? _currentUserId;
   bool _isUpdatingTimestamp = false;
@@ -57,6 +53,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     final triviaNotifier = ref.read(duelTriviaProvider.notifier);
     final response = await triviaNotifier.getTriviaQuestions();
     final room = ref.read(duelTriviaProvider).triviaRoom;
+    final opponentID =
+        room?.users[0] == _currentUserId ? room?.users[1] : room?.users[0];
+    final opponent = await UserDataSource.getUserById(opponentID);
 
     if (room == null || room.roomId == null) {
       throw Exception("Room not initialized correctly");
@@ -65,10 +64,20 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     // Set up room subscription
     _setupRoomSubscription(room.roomId!);
 
+    // Start updating lastSeen
+    _startLastSeenUpdates(room.roomId!, room.currentStage);
+
+    // Start checking for user presence if host
+    if (_currentUserId == room.hostUserId) {
+      _startPresenceChecking(room.roomId!, room.users);
+    }
+
     final initialShuffledData = _getShuffledOptions(response![0]);
 
     ref.onDispose(() {
       _timer?.cancel();
+      _lastSeenTimer?.cancel();
+      _checkPresenceTimer?.cancel();
       _roomSubscription?.cancel();
     });
 
@@ -83,8 +92,70 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       gameStage: room.currentStage,
       userScores: room.userScores ?? [],
       users: room.users,
+      opponent: opponent,
       roomId: room.roomId,
       isHost: _currentUserId == room.hostUserId,
+    );
+  }
+
+  void _startLastSeenUpdates(String roomId, GameStage stage) {
+    // Update lastSeen immediately regardless of stage
+    if (_currentUserId != null) {
+      TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
+    }
+
+    // Set up timer to update lastSeen every 3 seconds ONLY if not in created stage
+    if (stage != GameStage.created) {
+      _lastSeenTimer = Timer.periodic(
+        const Duration(seconds: 3),
+        (_) {
+          if (_currentUserId != null) {
+            TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
+          }
+        },
+      );
+    }
+  }
+
+  void _startPresenceChecking(String roomId, List<String> users) {
+    // Only the host checks for user presence
+    if (_currentUserId == null || users.isEmpty) return;
+
+    _checkPresenceTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) async {
+        state.whenData((quizState) async {
+          // Only check during created stage or active stage
+          if (quizState.gameStage == GameStage.created ||
+              quizState.gameStage == GameStage.active) {
+            if (quizState.gameStage == GameStage.active) {
+              // During active game, check if any user is absent
+              final hasAbsentUser =
+                  await TriviaRoomDataSource.checkForAbsentUser(
+                      roomId, quizState.users);
+
+              if (hasAbsentUser) {
+                // If a user is absent, end the game
+                TriviaRoomDataSource.endGame(quizState.roomId ?? "");
+              }
+            } else if (quizState.gameStage == GameStage.created) {
+              // During created stage, check if both users are present
+              final allPresent = await TriviaRoomDataSource.checkUserPresence(
+                  roomId, quizState.users);
+
+              if (allPresent && quizState.isHost) {
+                // Both users are present, start a 5 second countdown, then start the game
+                Timer(const Duration(seconds: 5), () {
+                  startGame();
+                });
+
+                // Cancel this timer so we don't keep checking
+                _checkPresenceTimer?.cancel();
+              }
+            }
+          }
+        });
+      },
     );
   }
 
@@ -104,6 +175,23 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       if (updatedRoom == null) return;
 
       state.whenData((quizState) {
+        // If game stage changed from created to something else, start the lastSeen updates
+        if (quizState.gameStage == GameStage.created &&
+            updatedRoom.currentStage != GameStage.created) {
+          // Cancel any existing timer first
+          _lastSeenTimer?.cancel();
+
+          // Start regular lastSeen updates
+          _lastSeenTimer = Timer.periodic(
+            const Duration(seconds: 3),
+            (_) {
+              if (_currentUserId != null) {
+                TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
+              }
+            },
+          );
+        }
+
         // Calculate time left based on server timestamp
         double calculatedTimeLeft = updatedRoom.questionDuration.toDouble();
 

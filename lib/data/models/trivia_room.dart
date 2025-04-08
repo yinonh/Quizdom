@@ -6,6 +6,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 part 'trivia_room.freezed.dart';
 part 'trivia_room.g.dart';
 
+class MapDateConverter
+    implements JsonConverter<Map<String, DateTime>?, Map<String, dynamic>?> {
+  const MapDateConverter();
+
+  @override
+  Map<String, DateTime>? fromJson(Map<String, dynamic>? json) {
+    if (json == null) return null;
+    return json.map(
+      (key, value) => MapEntry(key, DateTime.parse(value as String)),
+    );
+  }
+
+  @override
+  Map<String, dynamic>? toJson(Map<String, DateTime>? object) {
+    if (object == null) return null;
+    return object.map(
+      (key, value) => MapEntry(key, value.toIso8601String()),
+    );
+  }
+}
+
 @freezed
 class TriviaRoom with _$TriviaRoom {
   const factory TriviaRoom({
@@ -20,6 +41,7 @@ class TriviaRoom with _$TriviaRoom {
     // Player Management
     @Default([]) List<String> users,
     required List<int>? userScores,
+    @MapDateConverter() Map<String, DateTime>? keepAlive,
 
     // Game State Tracking
     @GameStageConverter() required GameStage currentStage,

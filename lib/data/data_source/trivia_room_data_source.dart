@@ -145,6 +145,13 @@ class TriviaRoomDataSource {
     }
   }
 
+  // End the game
+  static Future<void> endGame(String roomId) async {
+    await _roomsCollection.doc(roomId).update({
+      'currentStage': const GameStageConverter().toJson(GameStage.completed),
+    });
+  }
+
   // Check if all users have answered the current question
   static Future<bool> checkAllUsersAnswered(
       String roomId, List<String> users, int questionIndex) async {
@@ -202,4 +209,106 @@ class TriviaRoomDataSource {
     }
     return userAnswers;
   }
+
+  static Future<void> updateLastSeen(String roomId, String userId) async {
+    await FirebaseFirestore.instance
+        .collection('triviaRooms')
+        .doc(roomId)
+        .update({
+      'lastSeen.$userId': FieldValue.serverTimestamp(),
+    });
+  }
+
+  static Future<void> setAutoStartTime(
+      String roomId, DateTime startTime) async {
+    await FirebaseFirestore.instance
+        .collection('triviaRooms')
+        .doc(roomId)
+        .update({
+      'autoStartTime': startTime,
+    });
+  }
+
+  static Future<Map<String, DateTime>> getUserLastSeen(String roomId) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('triviaRooms')
+        .doc(roomId)
+        .get();
+    if (!doc.exists) return {};
+
+    final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    final Map<String, dynamic> lastSeenData = data['lastSeen'] ?? {};
+
+    Map<String, DateTime> result = {};
+    lastSeenData.forEach((key, value) {
+      if (value is Timestamp) {
+        result[key] = value.toDate();
+      }
+    });
+
+    return result;
+  }
+
+  static Future<bool> checkUserPresence(
+      String roomId, List<String> users) async {
+    final lastSeenMap = await getUserLastSeen(roomId);
+    final now = DateTime.now();
+
+    // Check if all users have updated their lastSeen within the last 10 seconds
+    for (final user in users) {
+      if (!lastSeenMap.containsKey(user)) return false;
+
+      final lastUpdate = lastSeenMap[user]!;
+      if (now.difference(lastUpdate).inSeconds > 10) return false;
+    }
+
+    return true;
+  }
+
+  static Future<bool> checkForAbsentUser(
+      String roomId, List<String> users) async {
+    final lastSeenMap = await getUserLastSeen(roomId);
+    final now = DateTime.now();
+
+    // Check if any user hasn't updated in the last 10 seconds
+    for (final user in users) {
+      if (!lastSeenMap.containsKey(user)) continue;
+
+      final lastUpdate = lastSeenMap[user]!;
+      if (now.difference(lastUpdate).inSeconds > 10) {
+        return true; // Found an absent user
+      }
+    }
+
+    return false;
+  }
+
+// static Future<void> declareWinner(String roomId, String winnerUserId) async {
+//   // Get room data
+//   final roomDoc = await FirebaseFirestore.instance
+//       .collection('triviaRooms')
+//       .doc(roomId)
+//       .get();
+//   if (!roomDoc.exists) return;
+//
+//   final roomData = roomDoc.data() as Map<String, dynamic>;
+//   final List<dynamic> users = roomData['users'] ?? [];
+//   List<int> userScores = List<int>.from(roomData['userScores'] ?? []);
+//
+//   // Find the winner's index in the users list
+//   final winnerIndex = users.indexOf(winnerUserId);
+//   if (winnerIndex >= 0 && winnerIndex < userScores.length) {
+//     // Set maximum score for the winner
+//     userScores[winnerIndex] = 1000; // You can adjust this value as needed
+//
+//     // Update room with new scores and set to completed stage
+//     await FirebaseFirestore.instance
+//         .collection('triviaRooms')
+//         .doc(roomId)
+//         .update({
+//       'userScores': userScores,
+//       'currentStage': GameStage.completed.index,
+//     });
+//   }
+// }
 }

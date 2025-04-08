@@ -17,32 +17,22 @@ class DuelQuizScreen extends ConsumerWidget {
 
   const DuelQuizScreen({super.key});
 
-  // Add this widget to your DuelQuizScreen when gameStage is 'created'
-  Widget buildStartGameButton(
-      DuelQuizState state, BuildContext context, WidgetRef ref) {
-    if (!state.isHost || state.gameStage != GameStage.created) {
-      return state.isHost
-          ? const SizedBox()
-          : const Center(child: Text("Waiting for host to start the game..."));
-    }
-
+  Widget buildWaitingOrCountdown(DuelQuizState state) {
+    // If there's no auto-start timer
     return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppConstant.secondaryColor,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        ),
-        onPressed: () {
-          ref.read(duelQuizScreenManagerProvider.notifier).startGame();
-        },
-        child: const Text(
-          "Start Game",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 20),
+          Text(
+            state.isHost
+                ? "Waiting for all players to join..."
+                : "Waiting for host to start the game...",
+            style: const TextStyle(fontSize: 18),
+            textAlign: TextAlign.center,
           ),
-        ),
+        ],
       ),
     );
   }
@@ -118,9 +108,8 @@ class DuelQuizScreen extends ConsumerWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              // Show start game button when game is in created stage
               if (state.gameStage == GameStage.created) {
-                return buildStartGameButton(state, context, ref);
+                return buildWaitingOrCountdown(state);
               }
 
               // Show different widgets based on game stage

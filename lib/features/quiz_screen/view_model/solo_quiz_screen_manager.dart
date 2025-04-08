@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/models/question.dart';
+import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/solo_trivia_provider.dart';
@@ -22,16 +23,6 @@ class SoloQuizState with _$SoloQuizState {
     required String categoryName,
     int? selectedAnswerIndex,
   }) = _SoloQuizState;
-}
-
-class ShuffledData {
-  final List<String> options;
-  final int correctIndex;
-
-  ShuffledData({
-    required this.options,
-    required this.correctIndex,
-  });
 }
 
 @riverpod
