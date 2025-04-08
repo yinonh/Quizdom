@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/models/question.dart';
+import 'package:trivia/data/models/trivia_user.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 
 class QuestionReviewWidget extends StatelessWidget {
   final Question question;
@@ -9,6 +12,8 @@ class QuestionReviewWidget extends StatelessWidget {
   final int correctAnswerIndex;
   final List<int> userScores;
   final List<String> users;
+  final TriviaUser? currentUser;
+  final TriviaUser? opponent;
 
   const QuestionReviewWidget({
     super.key,
@@ -18,6 +23,8 @@ class QuestionReviewWidget extends StatelessWidget {
     required this.correctAnswerIndex,
     required this.userScores,
     required this.users,
+    required this.currentUser,
+    required this.opponent,
   });
 
   @override
@@ -131,52 +138,11 @@ class QuestionReviewWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: List.generate(
-                      users.length > 2 ? 2 : users.length, // Show max 2 users
-                      (index) {
-                        final score =
-                            index < userScores.length ? userScores[index] : 0;
-
-                        return Column(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: index == 0
-                                  ? Colors.blue.shade200
-                                  : Colors.orange.shade200,
-                              radius: 24,
-                              child: Text(
-                                users[index].substring(0, 1).toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: index == 0
-                                      ? Colors.blue.shade800
-                                      : Colors.orange.shade800,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Player ${index + 1}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "$score pts",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: AppConstant.secondaryColor,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                  UserScoreBar(
+                      users: users,
+                      userScores: userScores,
+                      opponent: opponent,
+                      currentUser: currentUser)
                 ],
               ),
             ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 
 class DuelQuestionWidget extends ConsumerWidget {
@@ -31,8 +31,13 @@ class DuelQuestionWidget extends ConsumerWidget {
 
         return Column(
           children: [
-            // User Scores
-            UserScoreBar(users: users, userScores: userScores),
+            // User Scores - now with user data
+            UserScoreBar(
+              users: users,
+              userScores: userScores,
+              opponent: data.opponent,
+              currentUser: data.currentUser,
+            ),
 
             const SizedBox(height: 10),
 
@@ -89,75 +94,6 @@ class DuelQuestionWidget extends ConsumerWidget {
       loading: () {
         return const ShimmerLoadingQuestionWidget();
       },
-    );
-  }
-}
-
-// New widget to show user scores in a horizontal bar
-class UserScoreBar extends StatelessWidget {
-  final List<String> users;
-  final List<int> userScores;
-
-  const UserScoreBar({
-    super.key,
-    required this.users,
-    required this.userScores,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            users.length > 2 ? 2 : users.length, // Show max 2 users
-            (index) {
-              final score = index < userScores.length ? userScores[index] : 0;
-
-              return Column(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: index == 0
-                        ? Colors.blue.shade200
-                        : Colors.orange.shade200,
-                    child: Text(
-                      users[index].substring(0, 1).toUpperCase(),
-                      style: TextStyle(
-                        color: index == 0
-                            ? Colors.blue.shade800
-                            : Colors.orange.shade800,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${Strings.players} ${index + 1}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Text(
-                    "$score ${Strings.pts}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: AppConstant.secondaryColor,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
     );
   }
 }

@@ -122,6 +122,8 @@ class DuelQuizScreen extends ConsumerWidget {
                   correctAnswerIndex: state.correctAnswerIndex,
                   userScores: state.userScores,
                   users: state.users,
+                  currentUser: state.currentUser,
+                  opponent: state.opponent,
                 );
               } else {
                 return DuelQuestionWidget(

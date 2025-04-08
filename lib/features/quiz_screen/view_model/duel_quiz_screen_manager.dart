@@ -12,6 +12,7 @@ import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/duel_trivia_provider.dart';
+import 'package:trivia/data/providers/user_provider.dart';
 
 part 'duel_quiz_screen_manager.freezed.dart';
 part 'duel_quiz_screen_manager.g.dart';
@@ -29,6 +30,7 @@ class DuelQuizState with _$DuelQuizState {
     required List<int> userScores,
     required List<String> users,
     required TriviaUser? opponent,
+    required TriviaUser? currentUser,
     int? selectedAnswerIndex,
     String? roomId,
     @Default({}) Map<String, Map<int, int>> userAnswers,
@@ -56,6 +58,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     final opponentID =
         room?.users[0] == _currentUserId ? room?.users[1] : room?.users[0];
     final opponent = await UserDataSource.getUserById(opponentID);
+    final currentUser = ref.read(authProvider).currentUser;
 
     if (room == null || room.roomId == null) {
       throw Exception("Room not initialized correctly");
@@ -93,6 +96,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       userScores: room.userScores ?? [],
       users: room.users,
       opponent: opponent,
+      currentUser: currentUser,
       roomId: room.roomId,
       isHost: _currentUserId == room.hostUserId,
     );
