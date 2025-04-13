@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 
 class QuestionReviewWidget extends StatelessWidget {

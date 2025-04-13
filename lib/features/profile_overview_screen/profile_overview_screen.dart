@@ -44,12 +44,10 @@ class ProfileBottomSheet extends ConsumerWidget {
         alignment: Alignment.topCenter,
         clipBehavior: Clip.none,
         children: [
-          // Bottom sheet content
           Container(
             margin: EdgeInsets.only(top: avatarPosition),
             padding: EdgeInsets.only(
-              top: avatarPosition +
-                  calcHeight(16), // Add padding to accommodate avatar
+              top: avatarPosition + calcHeight(16),
               left: calcWidth(24),
               right: calcWidth(24),
               bottom: calcHeight(24),

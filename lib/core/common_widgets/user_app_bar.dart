@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trivia/core/common_widgets/user_coins.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+
+import 'app_bar_resource.dart';
 
 class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
@@ -50,9 +51,9 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
         ),
         Positioned(
-          top: calcHeight(55),
-          right: calcWidth(15),
-          child: const UserCoins(),
+          top: calcHeight(50),
+          right: 0,
+          child: const AppBarResourceWidget(),
         ),
         Positioned(
           top: calcHeight(45),
