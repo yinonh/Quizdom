@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
@@ -18,12 +20,41 @@ class DuelQuizScreen extends ConsumerWidget {
   const DuelQuizScreen({super.key});
 
   Widget buildWaitingOrCountdown(DuelQuizState state) {
-    // If there's no auto-start timer
+    // Set the duration of your Lottie animation here.
+    const animationDuration = Duration(seconds: 5);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(),
+          FutureBuilder(
+            future: Future.delayed(animationDuration),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Container(
+                  padding: EdgeInsets.all(calcWidth(10)),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppConstant.primaryColor,
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                );
+              } else {
+                return SizedBox(
+                  height: calcHeight(250),
+                  width: calcWidth(250),
+                  child: Lottie.asset(
+                    Strings.countDownAnimation,
+                    repeat: false,
+                  ),
+                );
+              }
+            },
+          ),
           const SizedBox(height: 20),
           Text(
             state.isHost

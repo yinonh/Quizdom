@@ -1,8 +1,14 @@
 class Strings {
   // Assets
-  static const String loadingAnimation = "assets/loading_animation.json";
-  static const String trophyAnimation = "assets/trophy_animation.json";
-  static const String noInternetAnimation = "assets/no_internet.json";
+  static const String loadingAnimation =
+      "assets/animations/loading_animation.json";
+  static const String trophyAnimation =
+      "assets/animations/trophy_animation.json";
+  static const String noInternetAnimation =
+      "assets/animations/no_internet_animation.json";
+  static const String countDownAnimation =
+      "assets/animations/count_down_animation.json";
+
   static const String appBarDrop = "assets/drop.svg";
   static const String closeChestIcon = "assets/icons/close_chest_icon.svg";
   static const String openChestIcon = "assets/icons/open_chest_icon.svg";

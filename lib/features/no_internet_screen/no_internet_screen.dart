@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -11,13 +12,40 @@ class NoInternetScreen extends StatefulWidget {
   State<NoInternetScreen> createState() => _NoInternetScreenState();
 }
 
-class _NoInternetScreenState extends State<NoInternetScreen> {
+class _NoInternetScreenState extends State<NoInternetScreen>
+    with SingleTickerProviderStateMixin {
   bool _isLoading = false;
+  late final AnimationController _animationController;
+  // Set the delay duration between loops
+  final Duration delayDuration = const Duration(seconds: 5);
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this);
+    // Listen for when the animation completes, then introduce a delay before restarting
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Future.delayed(delayDuration, () {
+          if (mounted) {
+            _animationController.reset();
+            _animationController.forward();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _retryConnection() async {
     setState(() => _isLoading = true);
 
-    // Simulate a delay of 2 seconds
+    // Simulate a delay (e.g., trying to reconnect)
     await Future.delayed(const Duration(seconds: 7));
 
     if (!mounted) return;
@@ -57,16 +85,25 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                             .withValues(alpha: 0.3),
                       ),
                     ),
-                    Icon(
-                      Icons.wifi_off,
-                      size: calcWidth(100),
-                      color: Colors.white,
+                    Center(
+                      child: SizedBox(
+                        height: calcHeight(200),
+                        width: calcWidth(200),
+                        child: Lottie.asset(
+                          Strings.noInternetAnimation,
+                          controller: _animationController,
+                          onLoaded: (composition) {
+                            // Set the controller's duration to the animation duration and start playing.
+                            _animationController.duration =
+                                composition.duration;
+                            _animationController.forward();
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),
-
                 SizedBox(height: calcHeight(30)),
-
                 // Title text
                 const Text(
                   Strings.noInternet,
@@ -77,9 +114,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                     letterSpacing: 1.2,
                   ),
                 ),
-
                 SizedBox(height: calcHeight(16)),
-
                 // Subtitle text
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: calcWidth(40)),
@@ -93,14 +128,10 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: calcHeight(40)),
-
                 // Retry button with loading state
                 ElevatedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : _retryConnection, // Disable button when loading
+                  onPressed: _isLoading ? null : _retryConnection,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppConstant.onPrimaryColor,
                     foregroundColor: Colors.white,

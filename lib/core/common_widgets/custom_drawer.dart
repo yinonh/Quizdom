@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:trivia/core/common_widgets/user_coins.dart';
+import 'package:trivia/core/common_widgets/app_bar_resource.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/providers/user_provider.dart';
@@ -21,7 +21,7 @@ class CustomDrawer extends ConsumerWidget {
     required String title,
     required VoidCallback onTap,
     Color textColor = Colors.white,
-    Color tileColor = const Color(0xFF00AFFF),
+    Color tileColor = AppConstant.primaryColor,
   }) {
     return ListTile(
       leading: Icon(icon, color: textColor),
@@ -119,7 +119,8 @@ class CustomDrawerHeader extends StatelessWidget {
                 SizedBox(
                   width: calcWidth(20),
                 ),
-                const UserCoins(),
+                // const UserCoins(),
+                const AppBarResourceWidget(),
               ],
             ),
             const SizedBox(height: 8.0),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 
 class QuestionReviewWidget extends StatelessWidget {
@@ -31,136 +29,115 @@ class QuestionReviewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCorrect = selectedAnswerIndex == correctAnswerIndex;
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Question review header
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Question Review",
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppConstant.primaryColor,
-                  ),
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Top: Score bar
+            UserScoreBar(
+              users: users,
+              userScores: userScores,
+              opponent: opponent,
+              currentUser: currentUser,
             ),
-          ),
 
-          // Result icon
-          Icon(
-            isCorrect ? Icons.check_circle : Icons.cancel,
-            size: 80,
-            color: isCorrect ? Colors.green : Colors.red,
-          ),
-
-          const SizedBox(height: 16),
-
-          // Result text
-          Text(
-            isCorrect
-                ? "Correct!"
-                : selectedAnswerIndex == -1
-                    ? "Time's up!"
-                    : "Incorrect!",
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isCorrect ? Colors.green : Colors.red,
-                ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Question text
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              question.question!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Correct answer
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Correct Answer:",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  correctAnswer,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 32),
-
-          // Current standings
-          Card(
-            elevation: 4,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  const Text(
-                    "Current Standings",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+            // Middle: Icon + feedback + question + correct answer
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isCorrect ? Icons.check_circle : Icons.cancel,
+                      size: 70,
+                      color: isCorrect ? Colors.green : Colors.red,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  UserScoreBar(
-                      users: users,
-                      userScores: userScores,
-                      opponent: opponent,
-                      currentUser: currentUser)
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      isCorrect
+                          ? "Correct!"
+                          : selectedAnswerIndex == -1
+                              ? "Time's up!"
+                              : "Incorrect!",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: isCorrect ? Colors.green : Colors.red,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        question.question!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Correct Answer:",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Center(
+                            child: Text(
+                              correctAnswer,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          const Spacer(),
-
-          // Wait message
-          const Text(
-            "Next question in a moment...",
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey,
+            // Bottom: Timer
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                "Next question in 3s",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                  fontSize: 14,
+                ),
+              ),
             ),
-          ),
-
-          const SizedBox(height: 16),
-        ],
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }

@@ -128,37 +128,37 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     _checkPresenceTimer = Timer.periodic(
       const Duration(seconds: 5),
       (_) async {
-        state.whenData((quizState) async {
-          // Only check during created stage or active stage
-          if (quizState.gameStage == GameStage.created ||
-              quizState.gameStage == GameStage.active) {
-            if (quizState.gameStage == GameStage.active) {
-              // During active game, check if any user is absent
-              final hasAbsentUser =
-                  await TriviaRoomDataSource.checkForAbsentUser(
-                      roomId, quizState.users);
+        state.whenData(
+          (quizState) async {
+            // Only check during created stage or active stage
+            if (quizState.gameStage == GameStage.created ||
+                quizState.gameStage == GameStage.active) {
+              if (quizState.gameStage == GameStage.active) {
+                // During active game, check if any user is absent
+                final hasAbsentUser =
+                    await TriviaRoomDataSource.checkForAbsentUser(
+                        roomId, quizState.users);
 
-              if (hasAbsentUser) {
-                // If a user is absent, end the game
-                TriviaRoomDataSource.endGame(quizState.roomId ?? "");
-              }
-            } else if (quizState.gameStage == GameStage.created) {
-              // During created stage, check if both users are present
-              final allPresent = await TriviaRoomDataSource.checkUserPresence(
-                  roomId, quizState.users);
+                if (hasAbsentUser) {
+                  // If a user is absent, end the game
+                  TriviaRoomDataSource.endGame(quizState.roomId ?? "");
+                }
+              } else if (quizState.gameStage == GameStage.created) {
+                // During created stage, check if both users are present
+                final allPresent = await TriviaRoomDataSource.checkUserPresence(
+                    roomId, quizState.users);
 
-              if (allPresent && quizState.isHost) {
-                // Both users are present, start a 5 second countdown, then start the game
-                Timer(const Duration(seconds: 5), () {
+                if (allPresent && quizState.isHost) {
+                  // Both users are present, start a 5 second countdown, then start the game
                   startGame();
-                });
 
-                // Cancel this timer so we don't keep checking
-                _checkPresenceTimer?.cancel();
+                  // Cancel this timer so we don't keep checking
+                  _checkPresenceTimer?.cancel();
+                }
               }
             }
-          }
-        });
+          },
+        );
       },
     );
   }
