@@ -32,7 +32,8 @@ class Strings {
   static const String soloQuizRouteName = "/solo_quiz_screen";
   static const String duelQuizRouteName = "/duel_quiz_screen";
   static const String resultsRouteName = "/results_screen";
-  static const String triviaIntroScreen = "/triviaIntroScreen";
+  static const String triviaIntroRouteName = "/triviaIntroScreen";
+  static const String wheelSpinRouteName = "/wheel_spin_screen";
 
   // Common Strings
   static const String error = "Error:";

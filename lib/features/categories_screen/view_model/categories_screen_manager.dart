@@ -41,7 +41,7 @@ class CategoriesScreenManager extends _$CategoriesScreenManager {
   Future<CategoriesState> build() async {
     // Fetch necessary data
     final user = ref.watch(authProvider);
-    final userStatistics = ref.read(statisticsProvider).userStatistics;
+    final userStatistics = ref.watch(statisticsProvider).userStatistics;
     return CategoriesState(
       triviaRooms: ref.read(generalTriviaRoomsProvider).generalTriviaRooms,
       userRecentCategories: user.currentUser.recentTriviaCategories,

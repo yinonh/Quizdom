@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
@@ -52,7 +53,7 @@ class CategoriesScreen extends ConsumerWidget {
                           startDay: 1,
                           rewards: AppConstant.loginAwards,
                           onClaim: () {
-                            Navigator.pop(context);
+                            context.pop();
                           },
                         );
                       },
@@ -85,10 +86,7 @@ class CategoriesScreen extends ConsumerWidget {
                               color: AppConstant.secondaryColor,
                               onTap: () {
                                 categoriesNotifier.setTriviaRoom();
-                                Navigator.pushNamed(
-                                  context,
-                                  TriviaIntroScreen.routeName,
-                                );
+                                context.goNamed(TriviaIntroScreen.routeName);
                               },
                             ),
                             TopButton(
@@ -97,10 +95,7 @@ class CategoriesScreen extends ConsumerWidget {
                               color: AppConstant.onPrimaryColor,
                               onTap: () {
                                 categoriesNotifier.setGroupTriviaRoom();
-                                Navigator.pushNamed(
-                                  context,
-                                  TriviaIntroScreen.routeName,
-                                );
+                                context.goNamed(TriviaIntroScreen.routeName);
                               },
                             ),
                           ],

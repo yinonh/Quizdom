@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
@@ -100,7 +101,7 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, CategoriesScreen.routeName);
+            context.goNamed(CategoriesScreen.routeName);
           },
         ),
       ),

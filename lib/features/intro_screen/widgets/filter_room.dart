@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -65,7 +66,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.clear, color: Colors.white),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.pop(),
                       ),
                     ],
                   ),
@@ -169,7 +170,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
                             numOfQuestions: userPreference.questionCount,
                             difficulty: userPreference.difficulty,
                           );
-                          Navigator.pop(context);
+                          context.pop();
                         },
                       ),
                     ],

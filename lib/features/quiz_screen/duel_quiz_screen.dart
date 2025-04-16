@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
@@ -133,8 +134,7 @@ class DuelQuizScreen extends ConsumerWidget {
               if (state.gameStage == GameStage.completed) {
                 // Use post-frame callback to navigate after the build is complete
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Navigator.pushReplacementNamed(
-                      context, ResultsScreen.routeName);
+                  context.goNamed(ResultsScreen.routeName);
                 });
                 return const Center(child: CircularProgressIndicator());
               }
@@ -176,7 +176,7 @@ class DuelQuizScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     child: const Text("Go Back"),
                   ),
                 ],

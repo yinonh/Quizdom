@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
@@ -17,7 +18,7 @@ class ProfileAppbar extends StatelessWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          Navigator.pushReplacementNamed(context, CategoriesScreen.routeName);
+          context.goNamed(CategoriesScreen.routeName);
         },
       ),
       actions: [

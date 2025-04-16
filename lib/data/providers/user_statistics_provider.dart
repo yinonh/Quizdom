@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/app.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/core/common_widgets/trophy_dialog.dart';
-import 'package:trivia/features/profile_screen/profile_screen.dart';
+import 'package:trivia/router_provider.dart';
 
 part 'user_statistics_provider.freezed.dart';
 part 'user_statistics_provider.g.dart';
@@ -153,7 +154,7 @@ class Statistics extends _$Statistics {
   void _showAchievementPopups(List<TrophyAchievement> achievements) {
     if (achievements.isEmpty) return;
 
-    // Get the context using a navigator key
+    // Get the context using the navigator key - we kept the navigatorKey so this still works
     final context = navigatorKey.currentContext;
     if (context == null) return;
 
@@ -161,10 +162,11 @@ class Statistics extends _$Statistics {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => TrophyAchievementDialog(
+      builder: (dialogContext) => TrophyAchievementDialog(
         achievement: achievements.first,
         onClose: () {
-          Navigator.of(context).pushReplacementNamed(ProfileScreen.routeName);
+          // Use go_router navigation instead of Navigator
+          context.goNamed(AppRoutes.profileRouteName);
 
           // Show the next achievement after a short delay
           if (achievements.length > 1) {

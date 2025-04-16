@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
@@ -25,10 +26,10 @@ class AuthScreen extends ConsumerWidget {
 
     ref.listen<AuthState>(authScreenManagerProvider, (previous, next) {
       if (next.navigate && next.isNewUser) {
-        Navigator.pushReplacementNamed(context, AvatarScreen.routeName);
+        context.goNamed(AvatarScreen.routeName);
         authNotifier.resetNavigate();
       } else if (next.navigate) {
-        Navigator.pushReplacementNamed(context, CategoriesScreen.routeName);
+        context.goNamed(CategoriesScreen.routeName);
         authNotifier.resetNavigate();
       }
       if (next.firebaseErrorMessage != null) {

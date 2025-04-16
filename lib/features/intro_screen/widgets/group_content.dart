@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -114,7 +115,7 @@ class GroupIntroContent extends ConsumerWidget {
                       Expanded(
                         child: CustomBottomButton(
                           text: Strings.back,
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           isSecondary: true,
                         ),
                       ),
@@ -122,8 +123,7 @@ class GroupIntroContent extends ConsumerWidget {
                         child: CustomBottomButton(
                           text: Strings.ready,
                           onTap: () {
-                            Navigator.pushReplacementNamed(
-                                context, SoloQuizScreen.routeName);
+                            context.goNamed(SoloQuizScreen.routeName);
                           },
                         ),
                       ),

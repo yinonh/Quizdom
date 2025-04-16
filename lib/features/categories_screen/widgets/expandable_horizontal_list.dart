@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -84,7 +85,7 @@ class _ExpandableHorizontalListState
                   return GestureDetector(
                     onTap: () {
                       categoriesNotifier.setGeneralTriviaRoom(category.roomId!);
-                      Navigator.pushNamed(context, TriviaIntroScreen.routeName);
+                      context.goNamed(TriviaIntroScreen.routeName);
                     },
                     child: Container(
                       width: (MediaQuery.of(context).size.width * 0.9) / 2,

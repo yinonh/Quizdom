@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -80,7 +81,7 @@ class UserResourcesDialog extends ConsumerWidget {
                     primaryColor: AppConstant.onPrimaryColor,
                     secondaryColor: Colors.orangeAccent.shade100,
                     onTap: () {
-                      Navigator.pop(context);
+                      context.pop();
                       // Add navigation logic
                     },
                   ),
@@ -93,7 +94,7 @@ class UserResourcesDialog extends ConsumerWidget {
                     primaryColor: AppConstant.secondaryColor,
                     secondaryColor: Colors.tealAccent.shade100,
                     onTap: () {
-                      Navigator.pop(context);
+                      context.pop();
                       // Add navigation logic
                     },
                   ),
@@ -106,7 +107,7 @@ class UserResourcesDialog extends ConsumerWidget {
                     primaryColor: AppConstant.goldColor,
                     secondaryColor: AppConstant.goldColor,
                     onTap: () {
-                      Navigator.pop(context);
+                      context.pop();
                       // Add navigation logic
                     },
                   ),

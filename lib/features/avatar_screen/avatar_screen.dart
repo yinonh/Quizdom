@@ -2,6 +2,7 @@ import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
@@ -28,17 +29,18 @@ class AvatarScreen extends ConsumerWidget {
         (previous, next) {
       next.whenData((data) {
         if (data.navigate) {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
+          if (GoRouter.of(context).canPop()) {
+            context.pop();
           } else {
             if (context.mounted) {
-              Navigator.pushReplacement(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: const Duration(milliseconds: 700),
-                  pageBuilder: (_, __, ___) => const CategoriesScreen(),
-                ),
-              );
+              context.goNamed(CategoriesScreen.routeName);
+              // Navigator.pushReplacement(
+              //   context,
+              //   PageRouteBuilder(
+              //     transitionDuration: const Duration(milliseconds: 700),
+              //     pageBuilder: (_, __, ___) => const CategoriesScreen(),
+              //   ),
+              // );
             }
           }
         }

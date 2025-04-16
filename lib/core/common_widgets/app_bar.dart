@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -34,7 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           scrolledUnderElevation: 0,
           actions: actions ?? [],
           leading: leading ??
-              (Navigator.canPop(context)
+              (GoRouter.of(context).canPop()
                   ? IconButton(
                       icon: const Icon(
                         Icons.arrow_back_ios_new,
@@ -44,10 +45,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         if (onBack != null) {
                           onBack!();
                         }
-                        Navigator.pop(context);
+                        context.pop();
                       })
                   : null),
-          backgroundColor: Colors.transparent, // Set to transparent
+          backgroundColor: Colors.transparent,
+          // Set to transparent
           elevation: 0,
           title: FittedBox(
             alignment: Alignment.center,
@@ -61,7 +63,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
-                  width: Navigator.canPop(context) ? 50 : 0,
+                  width: GoRouter.of(context).canPop() ? 50 : 0,
                 ),
               ],
             ),

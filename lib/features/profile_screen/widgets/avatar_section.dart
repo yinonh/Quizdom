@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
@@ -24,7 +25,7 @@ class AvatarSection extends StatelessWidget {
           child: Center(
             child: GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, AvatarScreen.routeName);
+                context.goNamed(AvatarScreen.routeName);
               },
               child: const CurrentUserAvatar(
                 showProgress: true,

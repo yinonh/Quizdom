@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
@@ -35,7 +36,7 @@ class ResultsScreen extends ConsumerWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
             },
           ),
         ),

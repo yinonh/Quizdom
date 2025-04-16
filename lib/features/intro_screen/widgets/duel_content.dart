@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
@@ -30,8 +31,7 @@ class DuelIntroContent extends ConsumerWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             await ref.read(duelManagerProvider.notifier).setIsNavigated();
             logger.i('Navigate to QuizScreen');
-            Navigator.of(context)
-                .pushReplacementNamed(DuelQuizScreen.routeName);
+            context.goNamed(DuelQuizScreen.routeName);
           });
         }
       });
@@ -123,7 +123,7 @@ class DuelIntroContent extends ConsumerWidget {
                                 color: AppConstant.primaryColor,
                               ),
                               onPressed: () {
-                                Navigator.pop(context);
+                                context.pop();
                               },
                               tooltip: Strings.filterRooms,
                             ),

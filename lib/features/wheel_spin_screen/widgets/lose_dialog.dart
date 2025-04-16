@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -87,7 +88,7 @@ class LoseDialog extends StatelessWidget {
             ),
             SizedBox(height: calcHeight(24)),
             ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppConstant.onPrimaryColor,
                 foregroundColor: Colors.white,
