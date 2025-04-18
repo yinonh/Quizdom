@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
+import 'package:trivia/core/common_widgets/resource_floating_action_button.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -33,6 +34,7 @@ class CategoriesScreen extends ConsumerWidget {
         ref.read(categoriesScreenManagerProvider.notifier);
 
     return BaseScreen(
+      actionButton: const ResourceFloatingActionButton(),
       child: Scaffold(
         appBar: UserAppBar(),
         drawer: const CustomDrawer(),

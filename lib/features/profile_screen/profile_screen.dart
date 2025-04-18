@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/common_widgets/resource_floating_action_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -20,6 +21,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userStatistics = ref.read(profileScreenManagerProvider).statistics;
     return BaseScreen(
+      actionButton: const ResourceFloatingActionButton(),
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
         body: SingleChildScrollView(
