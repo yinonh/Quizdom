@@ -10,16 +10,17 @@ import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 class DuelQuestionWidget extends ConsumerWidget {
   final List<String> users;
   final List<int> userScores;
+  final String roomId;
 
-  const DuelQuestionWidget({
-    super.key,
-    required this.users,
-    required this.userScores,
-  });
+  const DuelQuestionWidget(
+      {super.key,
+      required this.users,
+      required this.userScores,
+      required this.roomId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questionsState = ref.watch(duelQuizScreenManagerProvider);
+    final questionsState = ref.watch(duelQuizScreenManagerProvider(roomId));
 
     return questionsState.when(
       data: (data) {
@@ -52,7 +53,7 @@ class DuelQuestionWidget extends ConsumerWidget {
                       data.gameStage == GameStage.active) {
                     // Ensure this is correct
                     ref
-                        .read(duelQuizScreenManagerProvider.notifier)
+                        .read(duelQuizScreenManagerProvider(roomId).notifier)
                         .selectAnswer(index);
                   }
                 },

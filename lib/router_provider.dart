@@ -103,10 +103,12 @@ final routerProvider = Provider<GoRouter>(
 
                 // Duel quiz route (nested under categories)
                 GoRoute(
-                  path: AppRoutes.duelQuizRouteName
-                      .substring(1), // Remove leading slash
+                  path: '${AppRoutes.duelQuizRouteName.substring(1)}/:roomId',
                   name: DuelQuizScreen.routeName,
-                  builder: (context, state) => const DuelQuizScreen(),
+                  builder: (context, state) {
+                    final roomId = state.pathParameters['roomId']!;
+                    return DuelQuizScreen(roomId: roomId);
+                  },
                 ),
 
                 // Result route (nested under categories)

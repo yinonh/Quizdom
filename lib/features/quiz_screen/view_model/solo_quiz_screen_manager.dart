@@ -6,8 +6,8 @@ import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
-import 'package:trivia/data/providers/solo_trivia_provider.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
 
 part 'solo_quiz_screen_manager.freezed.dart';
 part 'solo_quiz_screen_manager.g.dart';
@@ -31,8 +31,8 @@ class SoloQuizScreenManager extends _$SoloQuizScreenManager {
 
   @override
   Future<SoloQuizState> build() async {
-    final triviaNotifier = ref.read(soloTriviaProvider.notifier);
-    final response = await triviaNotifier.getTriviaQuestions();
+    final triviaNotifier = ref.read(triviaProvider.notifier);
+    final response = await triviaNotifier.getSoloTriviaQuestions();
     final initialShuffledData = _getShuffledOptions(response![0]);
     ref.onDispose(() {
       _timer?.cancel();
@@ -45,7 +45,7 @@ class SoloQuizScreenManager extends _$SoloQuizScreenManager {
       shuffledOptions: initialShuffledData.options,
       correctAnswerIndex: initialShuffledData.correctIndex,
       selectedAnswerIndex: null,
-      categoryName: ref.read(soloTriviaProvider).triviaRoom?.categoryName ?? "",
+      categoryName: ref.read(triviaProvider).triviaRoom?.categoryName ?? "",
     );
   }
 

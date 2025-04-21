@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
@@ -11,10 +12,11 @@ import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
-import 'package:trivia/data/providers/duel_trivia_provider.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
 part 'duel_quiz_screen_manager.freezed.dart';
+
 part 'duel_quiz_screen_manager.g.dart';
 
 @freezed
@@ -50,11 +52,11 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   String? getCurrentUserId() => _currentUserId;
 
   @override
-  Future<DuelQuizState> build() async {
+  Future<DuelQuizState> build(String roomId) async {
     _currentUserId = FirebaseAuth.instance.currentUser?.uid;
-    final triviaNotifier = ref.read(duelTriviaProvider.notifier);
-    final response = await triviaNotifier.getTriviaQuestions();
-    final room = ref.read(duelTriviaProvider).triviaRoom;
+    final triviaNotifier = ref.read(triviaProvider.notifier);
+    final room = await TriviaRoomDataSource.getRoomById(roomId);
+    final response = await triviaNotifier.getDuelTriviaQuestions(room);
     final opponentID =
         room?.users[0] == _currentUserId ? room?.users[1] : room?.users[0];
     final opponent = await UserDataSource.getUserById(opponentID);
@@ -71,9 +73,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     _startLastSeenUpdates(room.roomId!, room.currentStage);
 
     // Start checking for user presence if host
-    if (_currentUserId == room.hostUserId) {
-      _startPresenceChecking(room.roomId!, room.users);
-    }
+    // if (_currentUserId == room.hostUserId) {
+    _startPresenceChecking(room.roomId!, room.users);
+    // }
 
     final initialShuffledData = _getShuffledOptions(response![0]);
 
@@ -128,33 +130,37 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     _checkPresenceTimer = Timer.periodic(
       const Duration(seconds: 5),
       (_) async {
+        logger.i("Checking user presence at ${DateTime.now()}");
         state.whenData(
           (quizState) async {
-            // Only check during created stage or active stage
-            if (quizState.gameStage == GameStage.created ||
-                quizState.gameStage == GameStage.active) {
-              if (quizState.gameStage == GameStage.active) {
-                // During active game, check if any user is absent
-                final hasAbsentUser =
-                    await TriviaRoomDataSource.checkForAbsentUser(
-                        roomId, quizState.users);
+            logger.i("Current game stage: ${quizState.gameStage}");
 
-                if (hasAbsentUser) {
-                  // If a user is absent, end the game
-                  TriviaRoomDataSource.endGame(quizState.roomId ?? "");
-                }
-              } else if (quizState.gameStage == GameStage.created) {
-                // During created stage, check if both users are present
-                final allPresent = await TriviaRoomDataSource.checkUserPresence(
-                    roomId, quizState.users);
+            // Check for absent users during active game
+            if (quizState.gameStage == GameStage.active) {
+              logger.i("Checking for absent users...");
+              final hasAbsentUser =
+                  await TriviaRoomDataSource.checkForAbsentUser(
+                      roomId, quizState.users);
+              logger.e("Has absent user: $hasAbsentUser");
 
-                if (allPresent && quizState.isHost) {
-                  // Both users are present, start a 5 second countdown, then start the game
-                  startGame();
+              if (hasAbsentUser) {
+                logger.e("Ending game due to absent user");
+                TriviaRoomDataSource.endGame(quizState.roomId ?? "");
+              }
+            }
 
-                  // Cancel this timer so we don't keep checking
-                  _checkPresenceTimer?.cancel();
-                }
+            // Check if both users are present during created stage
+            if (quizState.gameStage == GameStage.created) {
+              print("Checking if all users are present...");
+              final allPresent = await TriviaRoomDataSource.checkUserPresence(
+                  roomId, quizState.users);
+              print("All users present: $allPresent");
+
+              if (allPresent && quizState.isHost) {
+                print("All users present, starting game");
+                startGame();
+                // DON'T cancel the timer here - we want to keep checking
+                // during the game for absent users
               }
             }
           },

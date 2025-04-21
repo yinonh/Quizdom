@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/data/data_source/general_trivia_room_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/providers/solo_trivia_provider.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
 
 part 'general_trivia_room_provider.freezed.dart';
 part 'general_trivia_room_provider.g.dart';
@@ -30,7 +30,7 @@ class GeneralTriviaRooms extends _$GeneralTriviaRooms {
     final rooms = await _fetchAllGeneralRooms();
     state =
         GeneralTriviaRoomsState(generalTriviaRooms: rooms, selectedRoom: null);
-    ref.read(soloTriviaProvider.notifier).setToken();
+    ref.read(triviaProvider.notifier).setToken();
   }
 
   /// Fetches all trivia rooms from the data source
@@ -58,7 +58,7 @@ class GeneralTriviaRooms extends _$GeneralTriviaRooms {
     if (room == null) {
       throw Exception("Room not found");
     }
-    ref.read(soloTriviaProvider.notifier).setTriviaRoom(room);
+    ref.read(triviaProvider.notifier).setTriviaRoom(room);
     state = state.copyWith(selectedRoom: room);
   }
 

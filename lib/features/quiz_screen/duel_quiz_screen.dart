@@ -16,9 +16,10 @@ import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_w
 import 'package:trivia/features/results_screen/results_screen.dart';
 
 class DuelQuizScreen extends ConsumerWidget {
-  static const routeName = Strings.duelQuizRouteName;
+  static const routeName = 'duel-quiz';
+  final String roomId;
 
-  const DuelQuizScreen({super.key});
+  const DuelQuizScreen({super.key, required this.roomId});
 
   Widget buildWaitingOrCountdown(DuelQuizState state) {
     // Set the duration of your Lottie animation here.
@@ -71,7 +72,7 @@ class DuelQuizScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questionsState = ref.watch(duelQuizScreenManagerProvider);
+    final questionsState = ref.watch(duelQuizScreenManagerProvider(roomId));
 
     return BaseScreen(
       child: Scaffold(
@@ -88,7 +89,7 @@ class DuelQuizScreen extends ConsumerWidget {
               data: (state) {
                 // Get current user index
                 final currentUserId = ref
-                    .read(duelQuizScreenManagerProvider.notifier)
+                    .read(duelQuizScreenManagerProvider(roomId).notifier)
                     .getCurrentUserId();
                 final userIndex = state.users.indexOf(currentUserId ?? "");
                 if (userIndex == -1 || state.userScores.isEmpty) {
@@ -160,6 +161,7 @@ class DuelQuizScreen extends ConsumerWidget {
                 return DuelQuestionWidget(
                   users: state.users,
                   userScores: state.userScores,
+                  roomId: roomId,
                 );
               }
             },

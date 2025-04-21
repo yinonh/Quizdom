@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -109,7 +110,10 @@ class TrophyAchievementDialog extends StatelessWidget {
 
             CustomButton(
               text: Strings.goToProfile,
-              onTap: onClose,
+              onTap: () {
+                onClose();
+                context.pop();
+              },
               color: AppConstant.secondaryColor,
             ),
 

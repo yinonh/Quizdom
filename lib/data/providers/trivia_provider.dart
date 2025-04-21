@@ -1,28 +1,30 @@
+// solo_trivia_provider.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
+import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/trivia_room.dart';
 
-part 'duel_trivia_provider.freezed.dart';
-part 'duel_trivia_provider.g.dart';
+part 'trivia_provider.freezed.dart';
+part 'trivia_provider.g.dart';
 
 @freezed
-class DuelTriviaState with _$DuelTriviaState {
-  const factory DuelTriviaState({
+class TriviaState with _$TriviaState {
+  const factory TriviaState({
     required String? token,
-    required TriviaRoom? triviaRoom,
+    required GeneralTriviaRoom? triviaRoom,
     TriviaCategories? categories,
-  }) = _DuelTriviaState;
+  }) = _SoloTriviaState;
 }
 
 @Riverpod(keepAlive: true)
-class DuelTrivia extends _$DuelTrivia {
+class Trivia extends _$Trivia {
   @override
-  DuelTriviaState build() {
-    return const DuelTriviaState(
+  TriviaState build() {
+    return const TriviaState(
       triviaRoom: null,
       token: null,
     );
@@ -57,16 +59,16 @@ class DuelTrivia extends _$DuelTrivia {
     return null;
   }
 
-  void setTriviaRoom(TriviaRoom triviaRoom) {
+  void setTriviaRoom(GeneralTriviaRoom triviaRoom) {
     state = state.copyWith(triviaRoom: triviaRoom);
   }
 
-  Future<List<Question>?> getTriviaQuestions() async {
+  Future<List<Question>?> getDuelTriviaQuestions(TriviaRoom? triviaRoom) async {
     Map<String, dynamic>? data;
 
     // If trivia room exists and has questions, use it.
-    if (state.triviaRoom != null && state.triviaRoom!.questionsData != null) {
-      data = state.triviaRoom!.questionsData;
+    if (triviaRoom != null && triviaRoom.questionsData != null) {
+      data = triviaRoom.questionsData;
     } else {
       // Instead of immediately calling the API,
       // wait until the trivia room is updated with questionsData.
@@ -74,9 +76,8 @@ class DuelTrivia extends _$DuelTrivia {
       final stopwatch = Stopwatch()..start();
       while (stopwatch.elapsed < const Duration(seconds: 10)) {
         await Future.delayed(const Duration(seconds: 1));
-        if (state.triviaRoom != null &&
-            state.triviaRoom!.questionsData != null) {
-          data = state.triviaRoom!.questionsData;
+        if (triviaRoom != null && triviaRoom.questionsData != null) {
+          data = triviaRoom.questionsData;
           break;
         }
       }
@@ -85,6 +86,19 @@ class DuelTrivia extends _$DuelTrivia {
       }
     }
     final List<Question> questions = (data?['results'] as List).map((result) {
+      final decodedResult = decodeFields(result);
+      return Question.fromJson(decodedResult);
+    }).toList();
+    return questions;
+  }
+
+  Future<List<Question>?> getSoloTriviaQuestions() async {
+    Map<String, dynamic>? data;
+
+    data = await TriviaDataSource.fetchTriviaQuestions(
+        state.triviaRoom?.categoryId, state.token);
+
+    final List<Question> questions = (data['results'] as List).map((result) {
       final decodedResult = decodeFields(result);
       return Question.fromJson(decodedResult);
     }).toList();

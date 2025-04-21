@@ -31,7 +31,11 @@ class DuelIntroContent extends ConsumerWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             await ref.read(duelManagerProvider.notifier).setIsNavigated();
             logger.i('Navigate to QuizScreen');
-            context.goNamed(DuelQuizScreen.routeName);
+            // Navigate with roomId parameter
+            context.goNamed(
+              DuelQuizScreen.routeName,
+              pathParameters: {'roomId': introState.matchedRoom!},
+            );
           });
         }
       });
