@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/solo_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/quiz_screen/widgets/solo_widgets/solo_multiple_answers.dart';
@@ -47,21 +48,21 @@ class SoloQuestionWidget extends ConsumerWidget {
             data.selectedAnswerIndex == null
                 ? LinearProgressIndicator(
                     value: data.timeLeft / data.questions.length,
-                    minHeight: 10,
+                    minHeight: calcHeight(10),
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: data.timeLeft / data.questions.length < 0.2
-                        ? Colors.red
+                        ? AppConstant.red
                         : data.timeLeft / data.questions.length < 0.5
-                            ? Colors.amber
+                            ? AppConstant.amber
                             : AppConstant.onPrimaryColor,
                   )
-                : const LinearProgressIndicator(
-                    minHeight: 10,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                : LinearProgressIndicator(
+                    minHeight: calcHeight(10),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: AppConstant.onPrimaryColor,
                   ),
-            const SizedBox(
-              height: 20,
+            SizedBox(
+              height: calcHeight(20),
             ),
           ],
         );

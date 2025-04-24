@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 class ShimmerLoadingQuestionWidget extends StatelessWidget {
   const ShimmerLoadingQuestionWidget({super.key});
@@ -7,26 +9,27 @@ class ShimmerLoadingQuestionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: AppConstant.shimmerBaseColor,
+      highlightColor: AppConstant.shimmerHighlightColor,
       child: Column(
         children: [
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: shimmerContainer(height: 20, width: double.infinity),
+            padding: EdgeInsets.symmetric(horizontal: calcWidth(16)),
+            child: shimmerContainer(
+                height: calcHeight(20), width: double.infinity),
           ),
-          const SizedBox(height: 20),
-          shimmerContainer(height: 50, width: double.infinity),
-          const SizedBox(height: 10),
-          shimmerContainer(height: 50, width: double.infinity),
-          const SizedBox(height: 10),
-          shimmerContainer(height: 50, width: double.infinity),
-          const SizedBox(height: 10),
-          shimmerContainer(height: 50, width: double.infinity),
+          SizedBox(height: calcHeight(20)),
+          shimmerContainer(height: calcHeight(50), width: double.infinity),
+          SizedBox(height: calcHeight(10)),
+          shimmerContainer(height: calcHeight(50), width: double.infinity),
+          SizedBox(height: calcHeight(10)),
+          shimmerContainer(height: calcHeight(50), width: double.infinity),
+          SizedBox(height: calcHeight(10)),
+          shimmerContainer(height: calcHeight(50), width: double.infinity),
           const Spacer(),
-          shimmerContainer(height: 10, width: double.infinity),
-          const SizedBox(height: 20),
+          shimmerContainer(height: calcHeight(10), width: double.infinity),
+          SizedBox(height: calcHeight(20)),
         ],
       ),
     );

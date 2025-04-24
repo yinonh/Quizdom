@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 class InfoContainer extends StatelessWidget {
   final String text;
@@ -13,8 +15,8 @@ class InfoContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: 100,
-        color: Colors.grey[200],
+        height: calcHeight(100),
+        color: AppConstant.lightGray,
         child: Center(child: Text(text)),
       ),
     );

@@ -102,7 +102,7 @@ class TriviaRoomDataSource {
     if (userIndex == -1) return;
 
     // Calculate points based on time left (more time = more points)
-    final points = (timeLeft * 10).round() + 100;
+    final points = (timeLeft * 10).round();
 
     // Update score
     if (userIndex < scores.length) {

@@ -16,9 +16,9 @@ class WheelOfFortuneBanner extends StatelessWidget {
           context.goNamed(WheelSpinScreen.routeName);
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 20,
+          padding: EdgeInsets.symmetric(
+            horizontal: calcWidth(16),
+            vertical: calcHeight(20),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),

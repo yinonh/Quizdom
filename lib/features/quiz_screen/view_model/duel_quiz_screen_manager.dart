@@ -141,7 +141,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
               final hasAbsentUser =
                   await TriviaRoomDataSource.checkForAbsentUser(
                       roomId, quizState.users);
-              logger.e("Has absent user: $hasAbsentUser");
+              logger.i("Has absent user: $hasAbsentUser");
 
               if (hasAbsentUser) {
                 logger.e("Ending game due to absent user");

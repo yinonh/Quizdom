@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
@@ -50,25 +53,25 @@ class QuestionReviewWidget extends StatelessWidget {
                   children: [
                     Icon(
                       isCorrect ? Icons.check_circle : Icons.cancel,
-                      size: 70,
-                      color: isCorrect ? Colors.green : Colors.red,
+                      size: calcHeight(70),
+                      color: isCorrect ? AppConstant.green : AppConstant.red,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: calcHeight(8)),
                     Text(
                       isCorrect
-                          ? "Correct!"
+                          ? Strings.correctExclamationMark
                           : selectedAnswerIndex == -1
-                              ? "Time's up!"
-                              : "Incorrect!",
+                              ? Strings.timesUp
+                              : Strings.incorrect,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: isCorrect ? Colors.green : Colors.red,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: calcHeight(20)),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: calcWidth(16)),
                       child: Text(
                         question.question!,
                         textAlign: TextAlign.center,
@@ -80,10 +83,10 @@ class QuestionReviewWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: calcWidth(16)),
                     Container(
                       width: double.infinity,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      margin: EdgeInsets.symmetric(horizontal: calcWidth(16)),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.green.shade50,
@@ -94,13 +97,13 @@ class QuestionReviewWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Correct Answer:",
+                            Strings.correctAnswer,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: AppConstant.green,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: calcHeight(8)),
                           Center(
                             child: Text(
                               correctAnswer,
@@ -121,21 +124,22 @@ class QuestionReviewWidget extends StatelessWidget {
 
             // Bottom: Timer
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              padding: EdgeInsets.symmetric(
+                  vertical: calcHeight(8), horizontal: calcWidth(19)),
               decoration: BoxDecoration(
-                color: Colors.blue.shade100,
+                color: AppConstant.lightBlue,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
-                "Next question in 3s",
+                Strings.nextQuestionIn3s,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: AppConstant.primaryColor,
                   fontSize: 14,
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: calcHeight(16)),
           ],
         ),
       ),

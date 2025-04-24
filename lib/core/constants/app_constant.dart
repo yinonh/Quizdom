@@ -4,6 +4,7 @@ import 'package:trivia/core/utils/enums/trophy_type.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 
 class AppConstant {
+  // App colors
   static const Color primaryColor = Color(0xFF00AFFF);
   static const Color secondaryColor = Color(0xFF82D3C8);
   static const Color onPrimaryColor = Color(0xFFFF9000);
@@ -19,6 +20,17 @@ class AppConstant {
   static const Color diamondColor = Color(0xFF00B4D8);
   static const Color rubyColor = Color(0xFFD81159);
   static const Color defaultColor = Color(0xFFD1D1D1);
+
+  // Elements Colors
+  static const Color lightGray = Color(0xFFD1D1D1);
+  static const Color gray = Color(0xFF9E9E9E);
+  static const Color green = Color(0xFF4CAF50);
+  static const Color red = Color(0xFFF44336);
+  static const Color amber = Colors.amber;
+  static const Color lightBlue = Color(0xFFBBDEFB);
+  static const Color shimmerBaseColor = Color(0xFFE0E0E0);
+  static const Color shimmerHighlightColor = Color(0xFFF5F5F5);
+  static const Color white = Color(0xFFFFFFFF);
 
   // Game Settings
   static const int questionTime = 10;
@@ -205,9 +217,9 @@ class TrophyAchievementService {
 
     // Check login streak trophy
     Level oldLoginLevel = AppConstant.getTrophyLevel(
-        AppConstant.loginStreakThresholds, oldStats.currentLoginStreak);
+        AppConstant.loginStreakThresholds, oldStats.longestLoginStreak);
     Level newLoginLevel = AppConstant.getTrophyLevel(
-        AppConstant.loginStreakThresholds, newStats.currentLoginStreak);
+        AppConstant.loginStreakThresholds, newStats.longestLoginStreak);
     if (newLoginLevel.index > oldLoginLevel.index &&
         !_hasTrophyBeenDisplayed(newStats, 'login', newLoginLevel)) {
       newAchievements.add(

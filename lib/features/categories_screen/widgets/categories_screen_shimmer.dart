@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
 class ShimmerLoadingScreen extends StatelessWidget {
@@ -8,8 +9,8 @@ class ShimmerLoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: AppConstant.shimmerBaseColor,
+      highlightColor: AppConstant.shimmerHighlightColor,
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
@@ -40,7 +41,7 @@ class DuelQuestionWidget extends ConsumerWidget {
               currentUser: data.currentUser,
             ),
 
-            const SizedBox(height: 10),
+            SizedBox(height: calcHeight(10)),
 
             // Question and Answers
             Expanded(
@@ -67,25 +68,25 @@ class DuelQuestionWidget extends ConsumerWidget {
             ),
 
             // Timer Bar
-            const SizedBox(height: 10),
+            SizedBox(height: calcHeight(10)),
             data.selectedAnswerIndex == null
                 ? LinearProgressIndicator(
                     value: data.timeLeft / AppConstant.questionTime,
-                    minHeight: 10,
+                    minHeight: calcHeight(10),
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: data.timeLeft / AppConstant.questionTime < 0.2
-                        ? Colors.red
+                        ? AppConstant.red
                         : data.timeLeft / AppConstant.questionTime < 0.5
-                            ? Colors.amber
+                            ? AppConstant.amber
                             : AppConstant.onPrimaryColor,
                   )
-                : const LinearProgressIndicator(
+                : LinearProgressIndicator(
                     value: 1.0,
-                    minHeight: 10,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    minHeight: calcHeight(10),
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: AppConstant.onPrimaryColor,
                   ),
-            const SizedBox(height: 20),
+            SizedBox(height: calcHeight(20)),
           ],
         );
       },

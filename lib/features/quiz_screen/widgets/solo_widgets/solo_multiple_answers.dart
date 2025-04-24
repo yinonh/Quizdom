@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/solo_quiz_screen_manager.dart';
 
-enum OptionState { correct, wrong, unchosen }
+enum OptionState { correct, wrong, unChosen }
 
 class SoloMultipleAnswerWidget extends ConsumerWidget {
   final String question;
@@ -24,7 +26,7 @@ class SoloMultipleAnswerWidget extends ConsumerWidget {
         return Colors.green.withValues(alpha: 0.3);
       case OptionState.wrong:
         return Colors.red.withValues(alpha: 0.2);
-      case OptionState.unchosen:
+      case OptionState.unChosen:
         return Colors.white;
     }
   }
@@ -45,14 +47,14 @@ class SoloMultipleAnswerWidget extends ConsumerWidget {
             children: [
               // Question container - styled like the duel mode
               Container(
-                padding: const EdgeInsets.all(16.0),
-                margin: const EdgeInsets.only(bottom: 16.0),
+                padding: EdgeInsets.all(calcHeight(16)),
+                margin: EdgeInsets.only(bottom: calcHeight(16)),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -62,10 +64,12 @@ class SoloMultipleAnswerWidget extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${Strings.question} ${questionsState.questionIndex + 1}/10",
-                      style: const TextStyle(color: Color(0xFF6E6E6E)),
+                      "${Strings.question} ${questionsState.questionIndex + 1}/${AppConstant.numberOfQuestions}",
+                      style: const TextStyle(
+                          color: AppConstant.highlightColor,
+                          fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: calcHeight(12)),
                     Text(
                       question,
                       style: const TextStyle(
@@ -84,7 +88,7 @@ class SoloMultipleAnswerWidget extends ConsumerWidget {
                   options.length,
                   (index) {
                     // Determine the option state
-                    OptionState optionState = OptionState.unchosen;
+                    OptionState optionState = OptionState.unChosen;
                     if (selectedAnswerIndex != null) {
                       if (index == correctAnswerIndex) {
                         optionState = OptionState.correct;
@@ -98,19 +102,19 @@ class SoloMultipleAnswerWidget extends ConsumerWidget {
                     final isAnswered = selectedAnswerIndex != null;
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: calcWidth(16), vertical: 8),
                       child: InkWell(
                         onTap:
                             isAnswered ? null : () => onAnswerSelected(index),
                         child: Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(calcHeight(16)),
                           decoration: BoxDecoration(
                             color: _getOptionColor(index, optionState),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isSelected
-                                  ? Colors.blue
+                                  ? AppConstant.primaryColor
                                   : Colors.grey.shade300,
                               width: isSelected ? 2 : 1,
                             ),
@@ -133,10 +137,10 @@ class SoloMultipleAnswerWidget extends ConsumerWidget {
                               ),
                               if (isAnswered && isCorrect)
                                 const Icon(Icons.check_circle,
-                                    color: Colors.green),
+                                    color: AppConstant.green),
                               if (isAnswered && isSelected && !isCorrect)
                                 const Icon(Icons.close_rounded,
-                                    color: Colors.red),
+                                    color: AppConstant.red),
                             ],
                           ),
                         ),

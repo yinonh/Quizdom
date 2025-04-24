@@ -12,7 +12,7 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/results_screen/view_model/result_screen_manager.dart';
+import 'package:trivia/features/results_screen/view_model/solo_result_manager/solo_result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/achievement_card.dart';
 import 'package:trivia/features/results_screen/widgets/top_user_podium.dart';
 
@@ -23,7 +23,7 @@ class ResultsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final resultState = ref.watch(resultScreenManagerProvider);
+    final resultState = ref.watch(soloResultScreenManagerProvider);
 
     return BaseScreen(
       child: Scaffold(
@@ -59,27 +59,27 @@ class ResultsScreen extends ConsumerWidget {
                           value:
                               data.userAchievements.correctAnswers.toString(),
                           icon: Icons.check_circle,
-                          iconColor: Colors.green,
+                          iconColor: AppConstant.green,
                         ),
                       if (data.userAchievements.wrongAnswers > 0)
                         AchievementCard(
                           title: Strings.wrongAnswers,
                           value: data.userAchievements.wrongAnswers.toString(),
                           icon: Icons.cancel,
-                          iconColor: Colors.red,
+                          iconColor: AppConstant.red,
                         ),
                       if (data.userAchievements.unanswered > 0)
                         AchievementCard(
                           title: Strings.didntAnswer,
                           value: data.userAchievements.unanswered.toString(),
                           icon: Icons.help_outline,
-                          iconColor: Colors.grey,
+                          iconColor: AppConstant.gray,
                         ),
                       AchievementCard(
                         title: Strings.averageTime,
                         value: data.avgTime.toStringAsFixed(2),
                         icon: Icons.timer,
-                        iconColor: Colors.blue,
+                        iconColor: AppConstant.primaryColor,
                       ),
                     ],
                     options: CarouselOptions(
@@ -92,8 +92,13 @@ class ResultsScreen extends ConsumerWidget {
                   ),
                   // const SizedBox(height: 20),
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                    margin: EdgeInsets.symmetric(horizontal: calcWidth(16)),
+                    padding: EdgeInsets.fromLTRB(
+                      calcWidth(16),
+                      0,
+                      calcWidth(16),
+                      calcHeight(10),
+                    ),
                     width: double.infinity,
                     child: Card(
                       color: AppConstant.onPrimaryColor,
@@ -118,9 +123,9 @@ class ResultsScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(Strings.topPlayers,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: calcWidth(10)),
+                    child: const Text(Strings.topPlayers,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
@@ -155,14 +160,15 @@ class ResultsScreen extends ConsumerWidget {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 trailing: Text(
-                                  "${score.toString()} pts",
-                                  style: const TextStyle(color: Colors.grey),
+                                  "${score.toString()} ${Strings.pts}",
+                                  style:
+                                      const TextStyle(color: AppConstant.gray),
                                 ),
                               ),
                             );
                           },
                         ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: calcHeight(20)),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -172,8 +178,8 @@ class ResultsScreen extends ConsumerWidget {
                       final score = restOfUsers[index].value;
 
                       return Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
+                        margin: EdgeInsets.symmetric(
+                            vertical: calcWidth(5), horizontal: calcHeight(10)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -189,8 +195,8 @@ class ResultsScreen extends ConsumerWidget {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           trailing: Text(
-                            "${score.toString()} pts",
-                            style: const TextStyle(color: Colors.grey),
+                            "${score.toString()} ${Strings.pts}",
+                            style: const TextStyle(color: AppConstant.gray),
                           ),
                         ),
                       );

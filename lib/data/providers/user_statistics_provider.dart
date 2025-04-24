@@ -151,12 +151,22 @@ class Statistics extends _$Statistics {
   }
 
   // Method to show achievement popups one by one
-  void _showAchievementPopups(List<TrophyAchievement> achievements) {
+  void _showAchievementPopups(List<TrophyAchievement> achievements,
+      {bool secTime = false}) {
     if (achievements.isEmpty) return;
 
-    // Get the context using the navigator key - we kept the navigatorKey so this still works
-    final context = navigatorKey.currentContext;
-    if (context == null) return;
+    final BuildContext? context =
+        AppNavigatorKeys.navigatorKey.currentContext ??
+            AppNavigatorKeys.shellNavigatorKey.currentContext;
+
+    if (context == null && !secTime) {
+      // Try again after a short delay
+      Future.delayed(const Duration(milliseconds: 100),
+          () => _showAchievementPopups(achievements));
+      return;
+    } else if (context == null) {
+      return;
+    }
 
     // Show the first achievement
     showDialog(

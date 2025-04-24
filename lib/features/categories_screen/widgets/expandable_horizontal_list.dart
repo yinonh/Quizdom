@@ -124,7 +124,7 @@ class _ExpandableHorizontalListState
                               child: SvgPicture.asset(
                                 AppConstant
                                         .categoryIcons[category.categoryId] ??
-                                    "assets/icons/all_icon.svg",
+                                    AppConstant.categoryIcons[-1]!,
                                 height: calcHeight(55),
                               )),
                           const SizedBox(width: 8.0),

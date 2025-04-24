@@ -66,7 +66,7 @@ class AvatarScreen extends ConsumerWidget {
                 child: Container(
                   height: double.infinity,
                   width: double.infinity,
-                  margin: const EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: calcHeight(60)),
                   padding: const EdgeInsets.all(16.0),
                   decoration: const BoxDecoration(
                     color: Colors.white,

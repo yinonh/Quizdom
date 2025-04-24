@@ -37,6 +37,7 @@ class Strings {
 
   // Common Strings
   static const String error = "Error:";
+  static const String loading = "Loading...:";
   static const String email = "Email";
   static const String password = "Password";
 
@@ -125,6 +126,8 @@ class Strings {
 
   // Quiz Screen
   static const String question = 'Question';
+  static const String waitingPlayersJoin = 'Waiting for all players to join...';
+  static const String score = 'Score:';
 
   // Top Players
   static const String noPlayersFound = "No players found";
@@ -141,6 +144,13 @@ class Strings {
   static const String averageTime = 'Average Time';
   static const String totalScore = 'Total Score';
   static const String topPlayers = 'Top Players';
+
+  // Question Review
+  static const String correctExclamationMark = 'Correct!';
+  static const String timesUp = 'Time\'s up!';
+  static const String incorrect = 'Incorrect!';
+  static const String correctAnswer = 'Correct Answer:';
+  static const String nextQuestionIn3s = 'Next question in 3s';
 
   // Auth Screen
   static const String createAccount = "Create Account";

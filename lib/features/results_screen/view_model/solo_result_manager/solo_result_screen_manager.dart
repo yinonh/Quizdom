@@ -11,23 +11,23 @@ import 'package:trivia/data/providers/general_trivia_room_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
 
-part 'result_screen_manager.freezed.dart';
-part 'result_screen_manager.g.dart';
+part 'solo_result_screen_manager.freezed.dart';
+part 'solo_result_screen_manager.g.dart';
 
 @freezed
-class ResultState with _$ResultState {
-  const factory ResultState({
+class SoloResultState with _$SoloResultState {
+  const factory SoloResultState({
     required TriviaAchievements userAchievements,
     required int totalScore,
     required double avgTime,
     required Map<TriviaUser, int> topUsers,
-  }) = _ResultState;
+  }) = _SoloResultState;
 }
 
 @riverpod
-class ResultScreenManager extends _$ResultScreenManager {
+class SoloResultScreenManager extends _$SoloResultScreenManager {
   @override
-  Future<ResultState> build() async {
+  Future<SoloResultState> build() async {
     // First get the achievements from current trivia session
     final userAchievements =
         ref.read(currentTriviaAchievementsProvider).currentAchievements;
@@ -57,7 +57,7 @@ class ResultScreenManager extends _$ResultScreenManager {
       }
     }
 
-    return ResultState(
+    return SoloResultState(
       userAchievements: userAchievements,
       totalScore: totalScore,
       avgTime: avgTime,

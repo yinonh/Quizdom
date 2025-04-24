@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/core/utils/size_config.dart';
 
 class DuelMultipleAnswerWidget extends StatelessWidget {
   final String question;
@@ -30,8 +33,13 @@ class DuelMultipleAnswerWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          "${Strings.question} ${questionIndex + 1}/${AppConstant.numberOfQuestions}",
+          style: const TextStyle(
+              color: AppConstant.highlightColor, fontWeight: FontWeight.bold),
+        ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(calcHeight(16)),
           child: Text(
             question,
             style: const TextStyle(
@@ -49,39 +57,9 @@ class DuelMultipleAnswerWidget extends StatelessWidget {
               final isCorrect = index == correctAnswerIndex;
               final isSelected = index == selectedAnswerIndex;
 
-              // Get user selections for this question during review
-              List<Widget> userIndicators = [];
-              if (isReview) {
-                for (int i = 0; i < users.length && i < 2; i++) {
-                  final userId = users[i];
-                  final userAnswer = userAnswers[userId]?[questionIndex];
-
-                  if (userAnswer == index) {
-                    userIndicators.add(
-                      CircleAvatar(
-                        radius: 12,
-                        backgroundColor: i == 0
-                            ? Colors.blue.shade200
-                            : Colors.orange.shade200,
-                        child: Text(
-                          (i + 1).toString(),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: i == 0
-                                ? Colors.blue.shade800
-                                : Colors.orange.shade800,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                }
-              }
-
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(
+                    horizontal: calcWidth(16), vertical: calcHeight(8)),
                 child: InkWell(
                   onTap: selectedAnswerIndex == null
                       ? () => onAnswerSelected(index)
@@ -92,7 +70,9 @@ class DuelMultipleAnswerWidget extends StatelessWidget {
                       color: _getOptionColor(index, isReview),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected ? Colors.blue : Colors.grey.shade300,
+                        color: isSelected
+                            ? AppConstant.primaryColor
+                            : AppConstant.lightGray,
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -111,12 +91,6 @@ class DuelMultipleAnswerWidget extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (isReview && isCorrect)
-                          const Icon(Icons.check_circle, color: Colors.white),
-                        if (userIndicators.isNotEmpty) ...[
-                          const SizedBox(width: 8),
-                          ...userIndicators,
-                        ],
                       ],
                     ),
                   ),

@@ -121,13 +121,14 @@ class CategoriesScreen extends ConsumerWidget {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
                               return Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
+                                baseColor: AppConstant.shimmerBaseColor,
+                                highlightColor:
+                                    AppConstant.shimmerHighlightColor,
                                 child: Container(
                                   height: calcHeight(200),
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: AppConstant.white,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
@@ -137,7 +138,7 @@ class CategoriesScreen extends ConsumerWidget {
                                   child: Text('Error: ${snapshot.error}'));
                             } else if (!snapshot.hasData ||
                                 snapshot.data!.isEmpty) {
-                              return Center(child: Text('No data available'));
+                              return const Center(child: Text(Strings.error));
                             }
 
                             return ExpandableHighScorePlayersList(

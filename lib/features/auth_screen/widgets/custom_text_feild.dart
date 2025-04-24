@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -27,24 +28,24 @@ class CustomTextField extends StatelessWidget {
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white),
-        prefixIcon: Icon(prefixIcon, color: Colors.white),
+        labelStyle: const TextStyle(color: AppConstant.white),
+        prefixIcon: Icon(prefixIcon, color: AppConstant.white),
         suffixIcon: suffixIcon,
         enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppConstant.white),
         ),
         focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
+          borderSide: BorderSide(color: AppConstant.white),
         ),
         errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red),
+          borderSide: BorderSide(color: AppConstant.red),
         ),
         focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red),
+          borderSide: BorderSide(color: AppConstant.red),
         ),
         errorText: errorText,
       ),
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: AppConstant.white),
       obscureText: obscureText,
     );
   }

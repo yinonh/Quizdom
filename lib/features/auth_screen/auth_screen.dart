@@ -68,8 +68,8 @@ class AuthScreen extends ConsumerWidget {
               width: double.infinity,
             ),
             Positioned(
-              left: 30,
-              top: 100,
+              left: calcWidth(30),
+              top: calcHeight(100),
               child: Text(
                 !authState.isLogin
                     ? Strings.createAccount
@@ -168,15 +168,15 @@ class AuthScreen extends ConsumerWidget {
             Positioned(
               left: 0,
               right: 0,
-              bottom: 10,
+              bottom: calcHeight(10),
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                    padding: EdgeInsets.symmetric(horizontal: calcWidth(13)),
                     child: GestureDetector(
                       onTap: authNotifier.submit,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        padding: EdgeInsets.symmetric(vertical: calcHeight(13)),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),

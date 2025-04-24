@@ -44,10 +44,11 @@ class EditAvatar extends ConsumerWidget {
                           : CachedNetworkImage(
                               imageUrl: state.currentImage!,
                               placeholder: (context, url) => Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
+                                baseColor: AppConstant.shimmerBaseColor,
+                                highlightColor:
+                                    AppConstant.shimmerHighlightColor,
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.grey[300]!,
+                                  backgroundColor: AppConstant.shimmerBaseColor,
                                   radius: calcWidth(70),
                                 ),
                               ),
@@ -61,24 +62,12 @@ class EditAvatar extends ConsumerWidget {
                         backgroundColor: AppConstant.softHighlightColor,
                         radius: calcWidth(70),
                       ),
-                    // state.showImage
-                    //     ? CircleAvatar(
-                    //         backgroundImage: state.selectedImage != null
-                    //             ? FileImage(state.selectedImage!)
-                    //                 as ImageProvider
-                    //             : NetworkImage(state.currentImage!),
-                    //         radius: calcWidth(70),
-                    //       )
-                    //     : FluttermojiCircleAvatar(
-                    //         backgroundColor: AppConstant.userAvatarBackground,
-                    //         radius: calcWidth(70),
-                    //       ),
                     if (state.showTrashIcon)
                       Container(
                         width: calcWidth(140),
                         height: calcWidth(140),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha:0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -90,8 +79,8 @@ class EditAvatar extends ConsumerWidget {
               Positioned(
                 bottom: 35,
                 child: IconButton(
-                  icon:
-                      Icon(Icons.delete, color: Colors.white.withValues(alpha:0.5)),
+                  icon: Icon(Icons.delete,
+                      color: Colors.white.withValues(alpha: 0.5)),
                   onPressed: () {
                     avatarNotifier.switchImage(null);
                     avatarNotifier.toggleShowTrashIcon(false);

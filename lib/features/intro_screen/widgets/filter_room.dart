@@ -96,7 +96,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
                           fontWeight: FontWeight.bold,
                         ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: calcHeight(16)),
                   _buildDropdown(
                     context: context,
                     value: filterState.categoryId,
@@ -113,7 +113,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
                       filterNotifier.updateFilters(categoryId: value);
                     },
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: calcHeight(16)),
                   _buildDropdown(
                     context: context,
                     value: filterState.questionCount,
@@ -132,7 +132,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
                       filterNotifier.updateFilters(questionCount: value);
                     },
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: calcHeight(16)),
                   _buildDropdown(
                     context: context,
                     value: filterState.difficulty,
@@ -151,7 +151,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
                       filterNotifier.updateFilters(difficulty: value);
                     },
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: calcHeight(24)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

@@ -15,8 +15,12 @@ import 'features/quiz_screen/solo_quiz_screen.dart';
 import 'features/results_screen/results_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
+class AppNavigatorKeys {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> shellNavigatorKey =
+      GlobalKey<NavigatorState>();
+}
 
 // Router provider
 final routerProvider = Provider<GoRouter>(
@@ -24,7 +28,7 @@ final routerProvider = Provider<GoRouter>(
     final authState = ref.watch(authStateChangesProvider);
 
     return GoRouter(
-      navigatorKey: navigatorKey,
+      navigatorKey: AppNavigatorKeys.navigatorKey,
       // Use your existing navigatorKey
       initialLocation: AppRoutes.categoriesRouteName,
       debugLogDiagnostics: true,
@@ -56,7 +60,7 @@ final routerProvider = Provider<GoRouter>(
 
         // Categories is our base route with nested routes
         ShellRoute(
-          navigatorKey: _shellNavigatorKey,
+          navigatorKey: AppNavigatorKeys.shellNavigatorKey,
           builder: (context, state, child) {
             return ConnectivityWrapper(child: child);
           },
@@ -113,8 +117,8 @@ final routerProvider = Provider<GoRouter>(
 
                 // Result route (nested under categories)
                 GoRoute(
-                  path: 'result',
-                  name: AppRoutes.resultsRouteName,
+                  path: ResultsScreen.routeName,
+                  name: ResultsScreen.routeName,
                   builder: (context, state) => const ResultsScreen(),
                 ),
               ],

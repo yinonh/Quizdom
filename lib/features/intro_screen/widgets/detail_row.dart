@@ -27,14 +27,13 @@ class DetailRow extends StatelessWidget {
           Icon(icon, color: iconColor ?? AppConstant.primaryColor),
           SizedBox(width: calcWidth(10)),
           Expanded(
-            // Ensures text wraps instead of overflowing
             child: isLoading
                 ? Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: AppConstant.shimmerBaseColor,
+                    highlightColor: AppConstant.shimmerHighlightColor,
                     child: Container(
-                      width: double.infinity, // Take all available width
-                      height: 20, // Match text height
+                      width: double.infinity,
+                      height: calcHeight(20),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(4),
@@ -43,9 +42,9 @@ class DetailRow extends StatelessWidget {
                   )
                 : Text(
                     text,
-                    maxLines: 2, // Allows wrapping to two lines
-                    overflow: TextOverflow.ellipsis, // Show "..." if needed
-                    softWrap: true, // Enable text wrapping
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
           ),

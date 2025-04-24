@@ -45,9 +45,9 @@ class _ExpandableHighScorePlayersListState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: calcWidth(10)),
+              child: const Text(
                 Strings.topPlayers,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -88,14 +88,14 @@ class _ExpandableHighScorePlayersListState
                     vertical: calcHeight(40),
                     horizontal: calcWidth(20),
                   ),
-                  child: const Column(
-                    children: [
+                  child: Column(
+                    spacing: calcHeight(16),
+                    children: const [
                       Icon(
                         Icons.group_off,
                         size: 48,
                         color: AppConstant.silverColor,
                       ),
-                      SizedBox(height: 16),
                       Text(
                         Strings.noPlayersFound,
                         style: TextStyle(
@@ -442,7 +442,7 @@ class _ExpandableHighScorePlayersListState
       case 1:
         return AppConstant.goldColor;
       case 2:
-        return const Color(0xFFC0C0C0); // Silver
+        return AppConstant.lightGray; // Silver
       case 3:
         return AppConstant.bronzeColor; // Bronze
       default:

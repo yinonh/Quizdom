@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/lifecycle/app_lifecycle_handler.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -81,7 +82,7 @@ class DuelManager extends _$DuelManager {
       final currentState = state;
       if (currentState is AsyncData<DuelState>) {
         if (currentState.value.matchedUserId == null) {
-          print("🔄 Timer: No match found, trying to find match again...");
+          logger.i("🔄 Timer: No match found, trying to find match again...");
 
           // Always use the latest state to get the current list of excluded users
           final newMatch = await UserPreferenceDataSource.findMatch(
@@ -90,7 +91,7 @@ class DuelManager extends _$DuelManager {
           );
 
           if (newMatch != null) {
-            print("✅ Found new match: $newMatch");
+            logger.i("✅ Found new match: $newMatch");
 
             // Fetch the matched user data
             final newMatchedUser = await UserDataSource.getUserById(newMatch);
@@ -128,7 +129,7 @@ class DuelManager extends _$DuelManager {
         final String? triviaRoomId = preferences['triviaRoomId'];
         final bool userReady = preferences['ready'] ?? false;
 
-        print(
+        logger.i(
             "🔔 Preference update: matchedUserId=$newMatchedUserId, currentMatchedId=${currentData.matchedUserId}");
 
         // Handle matched user changes and ready state
@@ -246,8 +247,8 @@ class DuelManager extends _$DuelManager {
     final data = currentState.value;
     final currentUserId = ref.read(authProvider).currentUser.uid;
 
-    print("🔄 Finding new match. Current matched ID: ${data.matchedUserId}");
-    print("🔄 Current excluded IDs: ${data.oldMatchedUsers}");
+    logger.i("🔄 Finding new match. Current matched ID: ${data.matchedUserId}");
+    logger.i("🔄 Current excluded IDs: ${data.oldMatchedUsers}");
 
     if (data.matchedUserId != null) {
       await UserPreferenceDataSource.removeMatchFromOther(
@@ -267,7 +268,7 @@ class DuelManager extends _$DuelManager {
     );
 
     if (newMatch != null) {
-      print("✅ Found new match: $newMatch");
+      logger.i("✅ Found new match: $newMatch");
       final newMatchedUser = await UserDataSource.getUserById(newMatch);
       _startProgressTimer();
 

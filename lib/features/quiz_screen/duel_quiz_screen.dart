@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -11,6 +10,7 @@ import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/waiting_or_countdown.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:trivia/features/results_screen/results_screen.dart';
@@ -20,55 +20,6 @@ class DuelQuizScreen extends ConsumerWidget {
   final String roomId;
 
   const DuelQuizScreen({super.key, required this.roomId});
-
-  Widget buildWaitingOrCountdown(DuelQuizState state) {
-    // Set the duration of your Lottie animation here.
-    const animationDuration = Duration(seconds: 5);
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder(
-            future: Future.delayed(animationDuration),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return Container(
-                  padding: EdgeInsets.all(calcWidth(10)),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppConstant.primaryColor,
-                  ),
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                );
-              } else {
-                return SizedBox(
-                  height: calcHeight(250),
-                  width: calcWidth(250),
-                  child: Lottie.asset(
-                    Strings.countDownAnimation,
-                    repeat: false,
-                  ),
-                );
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          Text(
-            state.isHost
-                ? "Waiting for all players to join..."
-                : "Waiting for host to start the game...",
-            style: const TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -80,8 +31,8 @@ class DuelQuizScreen extends ConsumerWidget {
         appBar: CustomAppBar(
           title: questionsState.when(
             data: (state) => cleanCategoryName(state.categoryName),
-            error: (error, _) => "Error",
-            loading: () => "Loading...",
+            error: (error, _) => Strings.error,
+            loading: () => Strings.loading,
           ),
           actions: [
             // Score indicator
@@ -100,10 +51,10 @@ class DuelQuizScreen extends ConsumerWidget {
                     ? state.userScores[userIndex]
                     : 0;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
+                  padding: EdgeInsets.only(right: calcWidth(16)),
                   child: Chip(
                     label: Text(
-                      "Score: $myScore",
+                      "${Strings.score} $myScore",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -141,7 +92,7 @@ class DuelQuizScreen extends ConsumerWidget {
               }
 
               if (state.gameStage == GameStage.created) {
-                return buildWaitingOrCountdown(state);
+                return const WaitingOrCountdown();
               }
 
               // Show different widgets based on game stage
@@ -169,17 +120,18 @@ class DuelQuizScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
+                  const Icon(Icons.error_outline,
+                      size: 48, color: AppConstant.red),
+                  SizedBox(height: calcHeight(16)),
                   Text(
-                    "Error: ${error.toString()}",
+                    "${Strings.error} ${error.toString()}",
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 16),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: calcHeight(24)),
                   ElevatedButton(
                     onPressed: () => context.pop(),
-                    child: const Text("Go Back"),
+                    child: const Text(Strings.back),
                   ),
                 ],
               ),

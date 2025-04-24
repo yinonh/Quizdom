@@ -89,7 +89,7 @@ class DuelIntroContent extends ConsumerWidget {
                                 : introState.matchProgress ??
                                     0.0 / AppConstant.matchTimeout,
                             color: introState.isReady
-                                ? Colors.green
+                                ? AppConstant.green
                                 : AppConstant.primaryColor,
                             strokeWidth: 7,
                           ),
@@ -117,7 +117,7 @@ class DuelIntroContent extends ConsumerWidget {
                   children: [
                     Positioned(
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
+                        padding: EdgeInsets.only(bottom: calcHeight(16)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
