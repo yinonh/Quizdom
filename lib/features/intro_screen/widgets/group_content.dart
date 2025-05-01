@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -16,9 +17,7 @@ class GroupIntroContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final introStateAsync = ref.watch(introScreenManagerProvider);
-    return introStateAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+    return introStateAsync.customWhen(
       data: (introState) => Stack(
         children: [
           // Dynamic gradient background

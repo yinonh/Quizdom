@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_room.dart';
 
 class TriviaRoomDataSource {
@@ -21,6 +22,9 @@ class TriviaRoomDataSource {
     // Initialize scores array with same length as users array, filled with 0
     List<int> userScores = List.filled(userIds.length, 0);
 
+    // Initialize empty map for userAchievements
+    Map<String, TriviaAchievements> userAchievements = {};
+
     final triviaRoom = TriviaRoom(
       roomId: roomId,
       hostUserId: hostUserId,
@@ -36,6 +40,7 @@ class TriviaRoomDataSource {
       currentQuestionStartTime: null,
       questionDuration: 10,
       userMissedQuestions: {},
+      userAchievements: userAchievements,
     );
 
     // Convert to JSON then set the createdAt field to use Firestore's server timestamp.
@@ -150,6 +155,34 @@ class TriviaRoomDataSource {
     await _roomsCollection.doc(roomId).update({
       'currentStage': const GameStageConverter().toJson(GameStage.completed),
     });
+  }
+
+  static Future<void> updateUserAchievements(
+    String roomId,
+    String userId,
+    TriviaAchievements achievements,
+  ) async {
+    try {
+      // First get the current userAchievements map
+      final roomDoc = await _roomsCollection.doc(roomId).get();
+      if (!roomDoc.exists) {
+        return;
+      }
+
+      final data = roomDoc.data() as Map<String, dynamic>;
+      Map<String, dynamic> userAchievements =
+          (data['userAchievements'] as Map<String, dynamic>?) ?? {};
+
+      // Update the achievements for this specific user
+      userAchievements[userId] = achievements.toJson();
+
+      // Save back to Firestore
+      await _roomsCollection.doc(roomId).update({
+        'userAchievements': userAchievements,
+      });
+    } catch (e) {
+      print('Error updating user achievements: $e');
+    }
   }
 
   // Check if all users have answered the current question

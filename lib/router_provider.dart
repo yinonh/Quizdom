@@ -12,7 +12,8 @@ import 'features/no_internet_screen/connectivity_wrapper.dart';
 import 'features/profile_screen/profile_screen.dart';
 import 'features/quiz_screen/duel_quiz_screen.dart';
 import 'features/quiz_screen/solo_quiz_screen.dart';
-import 'features/results_screen/results_screen.dart';
+import 'features/results_screen/duel_result_screen.dart';
+import 'features/results_screen/solo_results_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
 class AppNavigatorKeys {
@@ -117,9 +118,16 @@ final routerProvider = Provider<GoRouter>(
 
                 // Result route (nested under categories)
                 GoRoute(
-                  path: ResultsScreen.routeName,
-                  name: ResultsScreen.routeName,
-                  builder: (context, state) => const ResultsScreen(),
+                  path: SoloResultsScreen.routeName,
+                  name: SoloResultsScreen.routeName,
+                  builder: (context, state) => const SoloResultsScreen(),
+                ),
+                GoRoute(
+                  path: '${DuelResultsScreen.routeName}/:roomId',
+                  name: DuelResultsScreen.routeName,
+                  builder: (context, state) => DuelResultsScreen(
+                    roomId: state.pathParameters['roomId']!,
+                  ),
                 ),
               ],
             ),

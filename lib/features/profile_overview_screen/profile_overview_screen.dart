@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -71,7 +72,7 @@ class ProfileBottomSheet extends ConsumerWidget {
                 spacing: calcHeight(20),
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  userStatsAsync.when(
+                  userStatsAsync.customWhen(
                     data: (stats) {
                       if (stats == null) return const SizedBox.shrink();
                       return Column(
@@ -144,7 +145,6 @@ class ProfileBottomSheet extends ConsumerWidget {
                       );
                     },
                     loading: () => _buildSkeletonLoader(),
-                    error: (_, __) => const SizedBox.shrink(),
                   ),
                   SizedBox(height: calcHeight(16)),
                 ],

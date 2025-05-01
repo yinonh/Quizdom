@@ -17,11 +17,12 @@ class CurrentTriviaAchievements extends _$CurrentTriviaAchievements {
   @override
   CurrentAchievementsState build() {
     return const CurrentAchievementsState(
-        currentAchievements: TriviaAchievements(
-            correctAnswers: 0,
-            wrongAnswers: 0,
-            unanswered: 0,
-            sumResponseTime: 0));
+      currentAchievements: TriviaAchievements(
+          correctAnswers: 0,
+          wrongAnswers: 0,
+          unanswered: 0,
+          sumResponseTime: 0),
+    );
   }
 
   void resetAchievements() async {

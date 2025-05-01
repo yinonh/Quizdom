@@ -31,7 +31,8 @@ class Strings {
   static const String profileRouteName = "/profile";
   static const String soloQuizRouteName = "/solo_quiz_screen";
   static const String duelQuizRouteName = "/duel_quiz_screen";
-  static const String resultsRouteName = "/results_screen";
+  static const String soloResultsRouteName = "/results_screen";
+  static const String duelResultsRouteName = "/duel_results";
   static const String triviaIntroRouteName = "/triviaIntroScreen";
   static const String wheelSpinRouteName = "/wheel_spin_screen";
 
@@ -258,4 +259,19 @@ class Strings {
   static const String youClaimedAll = "You've claimed all rewards!";
   static const String claimYourRewards =
       "Claim your rewards by logging in daily!";
+
+  // Duel Result
+  static const String duelResults = "Duel Results";
+  static const String itsDraw = "It's a Draw!";
+  static const String youWin = "You Win!";
+  static const String youLost = "You Lost!";
+  static const String you = "You";
+  static const String opponent = "Opponent";
+  static const String vs = "VS";
+  static const String statisticsNotAvailable = "Statistics are not available";
+  static const String performanceStatistics = "Performance Statistics";
+  static const String avgResponseTime = "Avg. Response Time";
+  static const String finalScore = "Final Score";
+  static const String playAgain = "Play Again";
+  static const String returnHome = "Return to Home";
 }

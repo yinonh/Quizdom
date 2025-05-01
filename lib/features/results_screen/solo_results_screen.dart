@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -13,13 +13,13 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/results_screen/view_model/solo_result_manager/solo_result_screen_manager.dart';
-import 'package:trivia/features/results_screen/widgets/achievement_card.dart';
-import 'package:trivia/features/results_screen/widgets/top_user_podium.dart';
+import 'package:trivia/features/results_screen/widgets/solo_widets/achievement_card.dart';
+import 'package:trivia/features/results_screen/widgets/solo_widets/top_user_podium.dart';
 
-class ResultsScreen extends ConsumerWidget {
-  static const routeName = Strings.resultsRouteName;
+class SoloResultsScreen extends ConsumerWidget {
+  static const routeName = Strings.soloResultsRouteName;
 
-  const ResultsScreen({super.key});
+  const SoloResultsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +41,7 @@ class ResultsScreen extends ConsumerWidget {
           ),
         ),
         body: CustomBackground(
-          child: resultState.when(
+          child: resultState.customWhen(
             data: (data) {
               final sortedUsers = data.topUsers.entries.toList()
                 ..sort((a, b) => b.value.compareTo(a.value));
@@ -205,8 +205,6 @@ class ResultsScreen extends ConsumerWidget {
                 ],
               );
             },
-            error: (_, __) => const SizedBox(),
-            loading: () => const Center(child: CustomProgressIndicator()),
           ),
         ),
       ),

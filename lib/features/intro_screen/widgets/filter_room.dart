@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
@@ -36,9 +37,7 @@ class _RoomFilterDialogState extends ConsumerState<RoomFilterDialog> {
     final filterNotifier = ref.read(filterManagerProvider.notifier);
     final introNotifier = ref.read(duelManagerProvider.notifier);
 
-    return introStateAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+    return introStateAsync.customWhen(
       data: (introState) {
         return Dialog(
           shape: RoundedRectangleBorder(

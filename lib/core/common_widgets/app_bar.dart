@@ -3,17 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
   final Widget? leading;
   final List<Widget>? actions;
   final void Function()? onBack;
 
   const CustomAppBar(
-      {required this.title,
-      this.leading,
-      this.actions,
-      this.onBack,
-      super.key});
+      {this.title, this.leading, this.actions, this.onBack, super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -56,12 +52,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
+                if (title != null)
+                  Text(
+                    title!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 SizedBox(
                   width: GoRouter.of(context).canPop() ? 50 : 0,
                 ),

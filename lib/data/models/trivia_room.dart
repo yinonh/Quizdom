@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/timestamp_converter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/data/models/trivia_achievements.dart';
 
 part 'trivia_room.freezed.dart';
 part 'trivia_room.g.dart';
@@ -54,25 +55,26 @@ class TriviaRoom with _$TriviaRoom {
     // Additional Game Metadata
     required int questionDuration, // in seconds
     Map<String, int>? userMissedQuestions,
+    Map<String, TriviaAchievements>? userAchievements,
   }) = _TriviaRoom;
 
   const TriviaRoom._();
 
   factory TriviaRoom.empty() => const TriviaRoom(
-        roomId: null,
-        hostUserId: null,
-        questionCount: null,
-        categoryId: null,
-        difficulty: null,
-        isPublic: null,
-        createdAt: null,
-        userScores: null,
-        currentStage: GameStage.created,
-        currentQuestionIndex: 0,
-        currentQuestionStartTime: null,
-        questionDuration: 10,
-        userMissedQuestions: null,
-      );
+      roomId: null,
+      hostUserId: null,
+      questionCount: null,
+      categoryId: null,
+      difficulty: null,
+      isPublic: null,
+      createdAt: null,
+      userScores: null,
+      currentStage: GameStage.created,
+      currentQuestionIndex: 0,
+      currentQuestionStartTime: null,
+      questionDuration: 10,
+      userMissedQuestions: null,
+      userAchievements: {});
 
   factory TriviaRoom.fromJson(Map<String, dynamic> json) =>
       _$TriviaRoomFromJson(json);

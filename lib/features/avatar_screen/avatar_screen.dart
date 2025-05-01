@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
-import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
@@ -54,7 +54,7 @@ class AvatarScreen extends ConsumerWidget {
           title: Strings.setImage,
           onBack: avatarNotifier.revertChanges,
         ),
-        body: avatarState.when(
+        body: avatarState.customWhen(
           data: (state) => Stack(
             children: [
               GestureDetector(
@@ -157,9 +157,6 @@ class AvatarScreen extends ConsumerWidget {
               ),
             ],
           ),
-          loading: () => const Center(child: CustomProgressIndicator()),
-          error: (error, stack) =>
-              Center(child: Text('${Strings.error} $error')),
         ),
       ),
     );

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/solo_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/quiz_screen/widgets/solo_widgets/solo_multiple_answers.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/features/results_screen/results_screen.dart';
+import 'package:trivia/features/results_screen/solo_results_screen.dart';
 
 class SoloQuestionWidget extends ConsumerWidget {
   bool _hasNavigatedToResults = false;
@@ -18,14 +19,14 @@ class SoloQuestionWidget extends ConsumerWidget {
     final questionsState = ref.watch(soloQuizScreenManagerProvider);
     final questionsStateNotifier =
         ref.read(soloQuizScreenManagerProvider.notifier);
-    return questionsState.when(
+    return questionsState.customWhen(
       data: (data) {
         WidgetsBinding.instance.addPostFrameCallback(
           (_) {
             if (!_hasNavigatedToResults &&
                 data.questions.length == data.questionIndex) {
               _hasNavigatedToResults = true;
-              context.goNamed(ResultsScreen.routeName);
+              context.goNamed(SoloResultsScreen.routeName);
             }
           },
         );
@@ -66,9 +67,6 @@ class SoloQuestionWidget extends ConsumerWidget {
             ),
           ],
         );
-      },
-      error: (error, _) {
-        return Text(error.toString());
       },
       loading: () {
         return const ShimmerLoadingQuestionWidget();

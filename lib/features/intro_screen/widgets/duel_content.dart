@@ -5,6 +5,7 @@ import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/common_widgets/loading_avatar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -41,7 +42,7 @@ class DuelIntroContent extends ConsumerWidget {
       });
     });
 
-    return duelStateAsync.when(
+    return duelStateAsync.customWhen(
       loading: () => const Stack(
         children: [
           // Background with gradient
@@ -50,7 +51,6 @@ class DuelIntroContent extends ConsumerWidget {
           ),
         ],
       ),
-      error: (error, stack) => Center(child: Text('Error: $error')),
       data: (introState) {
         final isLoading = introState.matchedUserId == null ||
             introState.matchedUserId!.isEmpty;

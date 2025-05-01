@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
@@ -39,9 +40,8 @@ class SoloQuizScreen extends ConsumerWidget {
               topRight: Radius.circular(35.0),
             ),
           ),
-          child: questionsState.when(
+          child: questionsState.customWhen(
             data: (data) => SoloQuestionWidget(),
-            error: (error, _) => Text(error.toString()),
             loading: () => const ShimmerLoadingQuestionWidget(),
           ),
         ),

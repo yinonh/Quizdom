@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_circle_avatar.dart';
@@ -19,7 +19,7 @@ class EditAvatar extends ConsumerWidget {
     final avatarNotifier = ref.read(avatarScreenManagerProvider.notifier);
 
     return Center(
-      child: avatarState.when(
+      child: avatarState.customWhen(
         data: (state) => Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.bottomCenter,
@@ -138,8 +138,6 @@ class EditAvatar extends ConsumerWidget {
             ),
           ],
         ),
-        loading: () => const CustomProgressIndicator(),
-        error: (error, stack) => Text('${Strings.error} $error'),
       ),
     );
   }

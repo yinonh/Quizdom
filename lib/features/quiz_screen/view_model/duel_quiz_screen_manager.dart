@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
@@ -124,7 +125,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   }
 
   void _startPresenceChecking(String roomId, List<String> users) {
-    // Only the host checks for user presence
     if (_currentUserId == null || users.isEmpty) return;
 
     _checkPresenceTimer = Timer.periodic(
@@ -136,7 +136,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
             logger.i("Current game stage: ${quizState.gameStage}");
 
             // Check for absent users during active game
-            if (quizState.gameStage == GameStage.active) {
+            if (quizState.gameStage == GameStage.active ||
+                quizState.gameStage == GameStage.created) {
               logger.i("Checking for absent users...");
               final hasAbsentUser =
                   await TriviaRoomDataSource.checkForAbsentUser(
@@ -150,17 +151,14 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
             }
 
             // Check if both users are present during created stage
-            if (quizState.gameStage == GameStage.created) {
-              print("Checking if all users are present...");
+            if (quizState.gameStage == GameStage.created && quizState.isHost) {
               final allPresent = await TriviaRoomDataSource.checkUserPresence(
                   roomId, quizState.users);
-              print("All users present: $allPresent");
+              logger.i("All users present: $allPresent");
 
-              if (allPresent && quizState.isHost) {
-                print("All users present, starting game");
+              if (allPresent) {
+                logger.i("All users present, starting game");
                 startGame();
-                // DON'T cancel the timer here - we want to keep checking
-                // during the game for absent users
               }
             }
           },
@@ -271,6 +269,21 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           ),
         );
 
+        // If game is just completed, save achievements to Firestore
+        if (updatedRoom.currentStage == GameStage.completed &&
+            _currentUserId != null) {
+          // Get current achievements from the provider
+          final achievements =
+              ref.read(currentTriviaAchievementsProvider).currentAchievements;
+
+          // Update achievements in Firestore
+          TriviaRoomDataSource.updateUserAchievements(
+            roomId,
+            _currentUserId!,
+            achievements,
+          );
+        }
+
         // Manage timer based on game stage
         _manageTimerBasedOnGameStage(updatedRoom.currentStage);
       });
@@ -322,7 +335,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                 .read(currentTriviaAchievementsProvider.notifier)
                 .updateAchievements(
                     field: AchievementField.correctAnswers,
-                    sumResponseTime: quizState.timeLeft);
+                    sumResponseTime:
+                        AppConstant.questionTime - quizState.timeLeft);
 
             // Update user score in Firestore
             await TriviaRoomDataSource.updateUserScore(quizState.roomId!,

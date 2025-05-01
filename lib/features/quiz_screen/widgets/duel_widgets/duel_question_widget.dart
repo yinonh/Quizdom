@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -23,7 +24,7 @@ class DuelQuestionWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final questionsState = ref.watch(duelQuizScreenManagerProvider(roomId));
 
-    return questionsState.when(
+    return questionsState.customWhen(
       data: (data) {
         if (data.questions.length <= data.questionIndex) {
           return const Center(child: CircularProgressIndicator());
@@ -89,9 +90,6 @@ class DuelQuestionWidget extends ConsumerWidget {
             SizedBox(height: calcHeight(20)),
           ],
         );
-      },
-      error: (error, _) {
-        return Text(error.toString());
       },
       loading: () {
         return const ShimmerLoadingQuestionWidget();

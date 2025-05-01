@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
@@ -13,7 +13,7 @@ import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/waiting_or_countdown.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
-import 'package:trivia/features/results_screen/results_screen.dart';
+import 'package:trivia/features/results_screen/duel_result_screen.dart';
 
 class DuelQuizScreen extends ConsumerWidget {
   static const routeName = 'duel-quiz';
@@ -29,14 +29,9 @@ class DuelQuizScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
         appBar: CustomAppBar(
-          title: questionsState.when(
-            data: (state) => cleanCategoryName(state.categoryName),
-            error: (error, _) => Strings.error,
-            loading: () => Strings.loading,
-          ),
           actions: [
             // Score indicator
-            questionsState.when(
+            questionsState.customWhen(
               data: (state) {
                 // Get current user index
                 final currentUserId = ref
@@ -64,8 +59,6 @@ class DuelQuizScreen extends ConsumerWidget {
                   ),
                 );
               },
-              error: (_, __) => const SizedBox(),
-              loading: () => const SizedBox(),
             ),
           ],
         ),
@@ -80,13 +73,22 @@ class DuelQuizScreen extends ConsumerWidget {
               topRight: Radius.circular(35.0),
             ),
           ),
-          child: questionsState.when(
+          child: questionsState.customWhen(
             data: (state) {
               // If game is completed, navigate to results
               if (state.gameStage == GameStage.completed) {
                 // Use post-frame callback to navigate after the build is complete
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.goNamed(ResultsScreen.routeName);
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  // Show loading indicator for 3 seconds
+                  await Future.delayed(const Duration(seconds: 3));
+
+                  // Navigate only if the widget is still mounted
+                  if (context.mounted) {
+                    context.goNamed(
+                      DuelResultsScreen.routeName,
+                      pathParameters: {'roomId': state.roomId!},
+                    );
+                  }
                 });
                 return const Center(child: CircularProgressIndicator());
               }
