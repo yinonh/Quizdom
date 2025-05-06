@@ -15,6 +15,7 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/results_screen/view_model/solo_result_manager/solo_result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/solo_widets/achievement_card.dart';
 import 'package:trivia/features/results_screen/widgets/solo_widets/top_user_podium.dart';
+import 'package:trivia/features/results_screen/widgets/total_score.dart';
 
 class SoloResultsScreen extends ConsumerWidget {
   static const routeName = Strings.soloResultsRouteName;
@@ -91,37 +92,9 @@ class SoloResultsScreen extends ConsumerWidget {
                     ),
                   ),
                   // const SizedBox(height: 20),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: calcWidth(16)),
-                    padding: EdgeInsets.fromLTRB(
-                      calcWidth(16),
-                      0,
-                      calcWidth(16),
-                      calcHeight(10),
-                    ),
-                    width: double.infinity,
-                    child: Card(
-                      color: AppConstant.onPrimaryColor,
-                      child: Column(
-                        spacing: calcHeight(10),
-                        children: [
-                          const Text(
-                            Strings.totalScore,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                          Text(
-                            data.totalScore.toString(),
-                            style: const TextStyle(
-                                fontSize: 36,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: calcHeight(15)),
+                    child: TotalScore(score: data.totalScore),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: calcWidth(10)),

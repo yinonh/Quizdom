@@ -97,9 +97,9 @@ class PlayerStatsComparison extends StatelessWidget {
             SizedBox(height: calcHeight(16)),
             StatComparisonBar(
               label: Strings.avgResponseTime,
-              leftValue: 10 - currentAvgResponseTime,
+              leftValue: currentAvgResponseTime,
               // Inverse because lower is better
-              rightValue: 10 - opponentAvgResponseTime,
+              rightValue: opponentAvgResponseTime,
               // Inverse because lower is better
               leftLabel: '${currentAvgResponseTime.toStringAsFixed(1)}s',
               rightLabel: '${opponentAvgResponseTime.toStringAsFixed(1)}s',
@@ -117,15 +117,17 @@ class PlayerStatsComparison extends StatelessWidget {
   }
 
   double _calculateAccuracy(TriviaAchievements achievements) {
-    final totalAttempted =
-        achievements.correctAnswers + achievements.wrongAnswers;
+    final totalAttempted = achievements.correctAnswers +
+        achievements.wrongAnswers +
+        achievements.unanswered;
     if (totalAttempted == 0) return 0;
     return achievements.correctAnswers / totalAttempted * 100;
   }
 
   double _calculateAverageResponseTime(TriviaAchievements achievements) {
-    final answeredQuestions =
-        achievements.correctAnswers + achievements.wrongAnswers;
+    final answeredQuestions = achievements.correctAnswers +
+        achievements.wrongAnswers +
+        achievements.unanswered;
     if (answeredQuestions == 0) return 0;
     return achievements.sumResponseTime / answeredQuestions;
   }

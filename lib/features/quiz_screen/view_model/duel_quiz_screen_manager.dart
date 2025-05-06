@@ -354,7 +354,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                 .read(currentTriviaAchievementsProvider.notifier)
                 .updateAchievements(
                     field: AchievementField.wrongAnswers,
-                    sumResponseTime: quizState.timeLeft);
+                    sumResponseTime:
+                        AppConstant.questionTime - quizState.timeLeft);
           }
 
           // Store user's answer in Firestore
