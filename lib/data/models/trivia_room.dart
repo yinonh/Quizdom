@@ -41,7 +41,7 @@ class TriviaRoom with _$TriviaRoom {
 
     // Player Management
     @Default([]) List<String> users,
-    required List<int>? userScores,
+    required Map<String, int>? userScores,
     @MapDateConverter() Map<String, DateTime>? keepAlive,
 
     // Game State Tracking
@@ -68,7 +68,7 @@ class TriviaRoom with _$TriviaRoom {
       difficulty: null,
       isPublic: null,
       createdAt: null,
-      userScores: null,
+      userScores: {},
       currentStage: GameStage.created,
       currentQuestionIndex: 0,
       currentQuestionStartTime: null,

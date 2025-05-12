@@ -6,7 +6,8 @@ enum GameStage {
   preparing, // Players ready, about to start
   active, // Game in progress
   questionReview, // Between questions, showing results
-  completed // Game fully finished
+  completed, // Game fully finished
+  canceled // game canceled due to player action
 }
 
 class GameStageConverter implements JsonConverter<GameStage, String> {

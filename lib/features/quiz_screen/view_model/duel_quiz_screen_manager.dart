@@ -12,6 +12,7 @@ import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
+import 'package:trivia/data/providers/app_lifecycle_provider.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
@@ -30,7 +31,7 @@ class DuelQuizState with _$DuelQuizState {
     required int correctAnswerIndex,
     required String categoryName,
     @GameStageConverter() required GameStage gameStage,
-    required List<int> userScores,
+    required Map<String, int> userScores,
     required List<String> users,
     required TriviaUser? opponent,
     required TriviaUser? currentUser,
@@ -49,6 +50,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   StreamSubscription? _roomSubscription;
   String? _currentUserId;
   bool _isUpdatingTimestamp = false;
+  bool _streamsActive = false;
 
   String? getCurrentUserId() => _currentUserId;
 
@@ -67,24 +69,19 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       throw Exception("Room not initialized correctly");
     }
 
-    // Set up room subscription
-    _setupRoomSubscription(room.roomId!);
+    // Listen to app lifecycle changes
+    _setupAppLifecycleListener(room.roomId!);
 
-    // Start updating lastSeen
-    _startLastSeenUpdates(room.roomId!, room.currentStage);
-
-    // Start checking for user presence if host
-    // if (_currentUserId == room.hostUserId) {
-    _startPresenceChecking(room.roomId!, room.users);
-    // }
+    // Initial state setup based on current app lifecycle
+    final isActive = ref.read(isAppActiveProvider);
+    if (isActive) {
+      _activateStreams(room.roomId!, room.currentStage, room.users);
+    }
 
     final initialShuffledData = _getShuffledOptions(response![0]);
 
     ref.onDispose(() {
-      _timer?.cancel();
-      _lastSeenTimer?.cancel();
-      _checkPresenceTimer?.cancel();
-      _roomSubscription?.cancel();
+      _deactivateStreams();
     });
 
     return DuelQuizState(
@@ -96,13 +93,71 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       selectedAnswerIndex: null,
       categoryName: room.categoryId.toString(),
       gameStage: room.currentStage,
-      userScores: room.userScores ?? [],
+      userScores: room.userScores ?? {},
       users: room.users,
       opponent: opponent,
       currentUser: currentUser,
       roomId: room.roomId,
       isHost: _currentUserId == room.hostUserId,
     );
+  }
+
+  void _setupAppLifecycleListener(String roomId) {
+    // Watch app lifecycle status changes
+    ref.listen(isAppActiveProvider, (previous, current) {
+      state.whenData((quizState) {
+        if (current) {
+          // App is in foreground
+          logger.i("App is now active, activating streams");
+          _activateStreams(roomId, quizState.gameStage, quizState.users);
+        } else {
+          // App is in background
+          logger.i("App is now inactive, deactivating streams");
+          _deactivateStreams();
+        }
+      });
+    });
+  }
+
+  void _activateStreams(String roomId, GameStage stage, List<String> users) {
+    if (_streamsActive) return;
+    _streamsActive = true;
+
+    logger.i("Activating all streams and timers");
+
+    // Set up Firebase room stream
+    _setupRoomSubscription(roomId);
+
+    // Set up lastSeen updates
+    _startLastSeenUpdates(roomId, stage);
+
+    // Set up presence checking
+    _startPresenceChecking(roomId, users);
+
+    // Immediately update lastSeen to show user is active
+    if (_currentUserId != null) {
+      TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
+    }
+  }
+
+  void _deactivateStreams() {
+    if (!_streamsActive) return;
+    _streamsActive = false;
+
+    logger.i("Deactivating all streams and timers");
+
+    // Cancel all timers and subscriptions
+    _timer?.cancel();
+    _timer = null;
+
+    _lastSeenTimer?.cancel();
+    _lastSeenTimer = null;
+
+    _checkPresenceTimer?.cancel();
+    _checkPresenceTimer = null;
+
+    _roomSubscription?.cancel();
+    _roomSubscription = null;
   }
 
   void _startLastSeenUpdates(String roomId, GameStage stage) {
@@ -113,6 +168,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
     // Set up timer to update lastSeen every 3 seconds ONLY if not in created stage
     if (stage != GameStage.created) {
+      _lastSeenTimer?.cancel();
       _lastSeenTimer = Timer.periodic(
         const Duration(seconds: 3),
         (_) {
@@ -127,6 +183,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   void _startPresenceChecking(String roomId, List<String> users) {
     if (_currentUserId == null || users.isEmpty) return;
 
+    _checkPresenceTimer?.cancel();
     _checkPresenceTimer = Timer.periodic(
       const Duration(seconds: 5),
       (_) async {
@@ -139,14 +196,15 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
             if (quizState.gameStage == GameStage.active ||
                 quizState.gameStage == GameStage.created) {
               logger.i("Checking for absent users...");
-              final hasAbsentUser =
+              final absentUserId =
                   await TriviaRoomDataSource.checkForAbsentUser(
                       roomId, quizState.users);
-              logger.i("Has absent user: $hasAbsentUser");
+              logger.i("Absent user: $absentUserId");
 
-              if (hasAbsentUser) {
-                logger.e("Ending game due to absent user");
-                TriviaRoomDataSource.endGame(quizState.roomId ?? "");
+              if (absentUserId != null) {
+                logger.e("Ending game due to absent user: $absentUserId");
+                TriviaRoomDataSource.endGame(
+                    quizState.roomId ?? "", absentUserId);
               }
             }
 
@@ -178,6 +236,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   }
 
   void _setupRoomSubscription(String roomId) {
+    _roomSubscription?.cancel();
     _roomSubscription =
         TriviaRoomDataSource.getRoomStream(roomId).listen((updatedRoom) {
       if (updatedRoom == null) return;

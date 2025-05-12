@@ -9,11 +9,12 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
+import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/waiting_or_countdown.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:trivia/features/results_screen/duel_result_screen.dart';
+import 'package:trivia/features/results_screen/game_canceled.dart';
 
 class DuelQuizScreen extends ConsumerWidget {
   static const routeName = 'duel-quiz';
@@ -33,18 +34,7 @@ class DuelQuizScreen extends ConsumerWidget {
             // Score indicator
             questionsState.customWhen(
               data: (state) {
-                // Get current user index
-                final currentUserId = ref
-                    .read(duelQuizScreenManagerProvider(roomId).notifier)
-                    .getCurrentUserId();
-                final userIndex = state.users.indexOf(currentUserId ?? "");
-                if (userIndex == -1 || state.userScores.isEmpty) {
-                  return const SizedBox();
-                }
-
-                final myScore = userIndex < state.userScores.length
-                    ? state.userScores[userIndex]
-                    : 0;
+                final myScore = state.userScores[state.currentUser?.uid] ?? 0;
                 return Padding(
                   padding: EdgeInsets.only(right: calcWidth(16)),
                   child: Chip(
@@ -87,6 +77,27 @@ class DuelQuizScreen extends ConsumerWidget {
                     context.goNamed(
                       DuelResultsScreen.routeName,
                       pathParameters: {'roomId': state.roomId!},
+                    );
+                  }
+                });
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              // Handle canceled game state
+              if (state.gameStage == GameStage.canceled) {
+                WidgetsBinding.instance.addPostFrameCallback((_) async {
+                  // Show loading indicator for 3 seconds
+                  await Future.delayed(const Duration(seconds: 3));
+                  // Navigate only if the widget is still mounted
+                  if (context.mounted) {
+                    context.goNamed(
+                      GameCanceledScreen.routeName,
+                      extra: {
+                        'users': state.users,
+                        'userScores': state.userScores,
+                        'currentUserId': state.currentUser?.uid ?? '',
+                        'opponentId': state.opponent?.uid ?? '',
+                      },
                     );
                   }
                 });

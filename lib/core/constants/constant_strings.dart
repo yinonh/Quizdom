@@ -13,7 +13,6 @@ class Strings {
   static const String closeChestIcon = "assets/icons/close_chest_icon.svg";
   static const String openChestIcon = "assets/icons/open_chest_icon.svg";
   static const String energyIcon = "assets/icons/energy_icon.svg";
-  static const String goldIcon = "assets/icons/gold_icon.svg";
   static const String coinsIcon = "assets/icons/coins_icon.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
   static const String wheelOfFortune = "assets/wheel_of_fortune.svg";

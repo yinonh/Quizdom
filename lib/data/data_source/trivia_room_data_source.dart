@@ -20,7 +20,7 @@ class TriviaRoomDataSource {
     required String hostUserId,
   }) async {
     // Initialize scores array with same length as users array, filled with 0
-    List<int> userScores = List.filled(userIds.length, 0);
+    Map<String, int> userScores = {userIds[0]: 0, userIds[1]: 0};
 
     // Initialize empty map for userAchievements
     Map<String, TriviaAchievements> userAchievements = {};
@@ -99,21 +99,14 @@ class TriviaRoomDataSource {
     if (!roomSnapshot.exists) return;
 
     final roomData = roomSnapshot.data() as Map<String, dynamic>;
-    final List<dynamic> users = roomData['users'] ?? [];
-    final List<dynamic> scores = roomData['userScores'] ?? [];
-
-    // Find current user index
-    final userIndex = users.indexOf(userId);
-    if (userIndex == -1) return;
+    final Map<String, dynamic> scores = roomData['userScores'] ?? [];
 
     // Calculate points based on time left (more time = more points)
     final points = (timeLeft * 10).round();
 
     // Update score
-    if (userIndex < scores.length) {
-      scores[userIndex] = (scores[userIndex] as int) + points;
-      await _roomsCollection.doc(roomId).update({'userScores': scores});
-    }
+    scores[userId] = (scores[userId] as int) + points;
+    await _roomsCollection.doc(roomId).update({'userScores': scores});
   }
 
   // Increment missed questions counter
@@ -151,9 +144,22 @@ class TriviaRoomDataSource {
   }
 
   // End the game
-  static Future<void> endGame(String roomId) async {
+  static Future<void> endGame(String roomId, String absentUserId) async {
+    final roomDoc = await _roomsCollection.doc(roomId).get();
+    if (!roomDoc.exists) {
+      return;
+    }
+
+    final roomData = roomDoc.data() as Map<String, dynamic>;
+    final userScores = Map<String, int>.from(roomData['userScores'] ?? []);
+
+    // Find the index of the absent user and set their score to -1
+    userScores[absentUserId] = -1;
+
+    // Update the room document with the new scores and game stage
     await _roomsCollection.doc(roomId).update({
-      'currentStage': const GameStageConverter().toJson(GameStage.completed),
+      'currentStage': const GameStageConverter().toJson(GameStage.canceled),
+      'userScores': userScores,
     });
   }
 
@@ -298,50 +304,21 @@ class TriviaRoomDataSource {
     return true;
   }
 
-  static Future<bool> checkForAbsentUser(
+  static Future<String?> checkForAbsentUser(
       String roomId, List<String> users) async {
     final lastSeenMap = await getUserLastSeen(roomId);
     final now = DateTime.now();
 
-    // Check if any user hasn't updated in the last 10 seconds
+    // Check if any user hasn't updated in the last 6 seconds
     for (final user in users) {
       if (!lastSeenMap.containsKey(user)) continue;
 
       final lastUpdate = lastSeenMap[user]!;
-      if (now.difference(lastUpdate).inSeconds > 10) {
-        return true; // Found an absent user
+      if (now.difference(lastUpdate).inSeconds > 6) {
+        return user; // Found an absent user
       }
     }
 
-    return false;
+    return null;
   }
-
-// static Future<void> declareWinner(String roomId, String winnerUserId) async {
-//   // Get room data
-//   final roomDoc = await FirebaseFirestore.instance
-//       .collection('triviaRooms')
-//       .doc(roomId)
-//       .get();
-//   if (!roomDoc.exists) return;
-//
-//   final roomData = roomDoc.data() as Map<String, dynamic>;
-//   final List<dynamic> users = roomData['users'] ?? [];
-//   List<int> userScores = List<int>.from(roomData['userScores'] ?? []);
-//
-//   // Find the winner's index in the users list
-//   final winnerIndex = users.indexOf(winnerUserId);
-//   if (winnerIndex >= 0 && winnerIndex < userScores.length) {
-//     // Set maximum score for the winner
-//     userScores[winnerIndex] = 1000; // You can adjust this value as needed
-//
-//     // Update room with new scores and set to completed stage
-//     await FirebaseFirestore.instance
-//         .collection('triviaRooms')
-//         .doc(roomId)
-//         .update({
-//       'userScores': userScores,
-//       'currentStage': GameStage.completed.index,
-//     });
-//   }
-// }
 }

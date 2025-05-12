@@ -68,8 +68,8 @@ class DuelIntroContent extends ConsumerWidget {
             Positioned(
               top: calcHeight(70),
               right: calcWidth(60),
-              child: const CurrentUserAvatar(
-                radius: 60,
+              child: CurrentUserAvatar(
+                radius: calcWidth(60),
               ),
             ),
             Positioned(

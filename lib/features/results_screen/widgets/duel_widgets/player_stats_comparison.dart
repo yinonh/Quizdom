@@ -5,7 +5,6 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/duel_widgets/stat_comparison_bar.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/widgets.dart';
 
 class PlayerStatsComparison extends StatelessWidget {
   final DuelResultState resultsState;
@@ -44,8 +43,6 @@ class PlayerStatsComparison extends StatelessWidget {
         _calculateAverageResponseTime(currentAchievements);
     final opponentAvgResponseTime =
         _calculateAverageResponseTime(opponentAchievements);
-
-    final currentScore = getUserScore(resultsState.room, currentUserId);
 
     return Card(
       elevation: 4,
@@ -109,7 +106,8 @@ class PlayerStatsComparison extends StatelessWidget {
               icon: Icons.timer_outlined,
             ),
             SizedBox(height: calcHeight(16)),
-            _buildStatsSummary(context, currentAchievements, currentScore),
+            _buildStatsSummary(context, currentAchievements,
+                resultsState.room.userScores![currentUserId]!),
           ],
         ),
       ),

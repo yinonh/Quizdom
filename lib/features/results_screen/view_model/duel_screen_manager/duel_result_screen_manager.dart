@@ -55,11 +55,11 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
       // Determine winner
       String? winnerId;
       if (room.users.length >= 2 && (room.userScores?.length ?? 0) >= 2) {
-        final scores = Map.fromIterables(room.users, room.userScores ?? []);
-
         // Check if there's a winner
-        if (scores[room.users[0]] != scores[room.users[1]]) {
-          winnerId = scores[room.users[0]]! > scores[room.users[1]]!
+        if (room.userScores?[room.users[0]] !=
+            room.userScores?[room.users[1]]) {
+          winnerId = room.userScores![room.users[0]]! >
+                  room.userScores![room.users[1]]!
               ? room.users[0]
               : room.users[1];
         }

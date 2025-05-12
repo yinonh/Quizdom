@@ -7,7 +7,7 @@ import 'package:trivia/data/models/trivia_user.dart';
 
 class UserScoreBar extends StatelessWidget {
   final List<String> users;
-  final List<int> userScores;
+  final Map<String, int> userScores;
   final TriviaUser? opponent;
   final TriviaUser? currentUser;
 
@@ -21,15 +21,10 @@ class UserScoreBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> adjustedScores = userScores;
-
-    // Check if current user is second in list and adjust score order
-    if (currentUser != null &&
-        users.length >= 2 &&
-        users[0] != currentUser!.uid &&
-        users[1] == currentUser!.uid) {
-      adjustedScores = userScores.reversed.toList();
-    }
+    List<int> adjustedScores = [
+      userScores[currentUser?.uid] ?? 0,
+      userScores[opponent?.uid] ?? 0
+    ];
 
     return Padding(
       padding: const EdgeInsets.all(12.0),

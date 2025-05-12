@@ -4,7 +4,6 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/duel_widgets/player_avatar.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/widgets.dart';
 
 class WinnerAnnouncement extends StatelessWidget {
   final DuelResultState resultsState;
@@ -87,8 +86,9 @@ class WinnerAnnouncement extends StatelessWidget {
                         user: resultsState.currentUser,
                         displayName:
                             resultsState.currentUser?.name ?? Strings.you,
-                        score: getUserScore(
-                            resultsState.room, resultsState.currentUserId),
+                        score: resultsState
+                                .room.userScores![resultsState.currentUserId] ??
+                            0,
                         isWinner: isWinner || isDraw,
                         color: AppConstant.primaryColor,
                       ),
@@ -114,8 +114,9 @@ class WinnerAnnouncement extends StatelessWidget {
                         user: resultsState.opponentUser,
                         displayName:
                             resultsState.opponentUser?.name ?? Strings.opponent,
-                        score: getUserScore(resultsState.room,
-                            resultsState.opponentUser?.uid ?? ""),
+                        score: resultsState.room
+                                .userScores![resultsState.opponentUser?.uid] ??
+                            0,
                         isWinner: !isWinner || isDraw,
                         color: AppConstant.highlightColor,
                       ),

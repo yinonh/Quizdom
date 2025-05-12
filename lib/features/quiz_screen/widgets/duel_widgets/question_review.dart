@@ -11,7 +11,7 @@ class QuestionReviewWidget extends StatelessWidget {
   final String correctAnswer;
   final int? selectedAnswerIndex;
   final int correctAnswerIndex;
-  final List<int> userScores;
+  final Map<String, int> userScores;
   final List<String> users;
   final TriviaUser? currentUser;
   final TriviaUser? opponent;

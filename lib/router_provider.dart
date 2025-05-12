@@ -13,6 +13,7 @@ import 'features/profile_screen/profile_screen.dart';
 import 'features/quiz_screen/duel_quiz_screen.dart';
 import 'features/quiz_screen/solo_quiz_screen.dart';
 import 'features/results_screen/duel_result_screen.dart';
+import 'features/results_screen/game_canceled.dart';
 import 'features/results_screen/solo_results_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
@@ -128,6 +129,19 @@ final routerProvider = Provider<GoRouter>(
                   builder: (context, state) => DuelResultsScreen(
                     roomId: state.pathParameters['roomId']!,
                   ),
+                ),
+                GoRoute(
+                  path: '/game-canceled',
+                  name: GameCanceledScreen.routeName,
+                  builder: (context, state) {
+                    final extra = state.extra! as Map<String, dynamic>;
+                    return GameCanceledScreen(
+                      users: extra['users'],
+                      userScores: extra['userScores'],
+                      currentUserId: extra['currentUserId'],
+                      opponentId: extra['opponentId'],
+                    );
+                  },
                 ),
               ],
             ),

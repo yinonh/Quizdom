@@ -11,7 +11,7 @@ import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 
 class DuelQuestionWidget extends ConsumerWidget {
   final List<String> users;
-  final List<int> userScores;
+  final Map<String, int> userScores;
   final String roomId;
 
   const DuelQuestionWidget(

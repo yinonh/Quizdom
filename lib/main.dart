@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
+    name: "app",
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
@@ -45,4 +47,16 @@ void main() async {
       child: MyApp(),
     ),
   );
+
+  // runApp(
+  //   ProviderScope(
+  //     child: DevicePreview(
+  //       enabled: true,
+  //       tools: const [
+  //         ...DevicePreview.defaultTools,
+  //       ],
+  //       builder: (context) => const MyApp(),
+  //     ),
+  //   ),
+  // );
 }

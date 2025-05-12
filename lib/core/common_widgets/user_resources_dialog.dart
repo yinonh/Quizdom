@@ -98,19 +98,6 @@ class UserResourcesDialog extends ConsumerWidget {
                       // Add navigation logic
                     },
                   ),
-                  SizedBox(height: calcHeight(10)),
-                  _buildResourceCard(
-                    context: context,
-                    icon: Strings.goldIcon,
-                    label: Strings.gold,
-                    value: currentUser.coins.toString(),
-                    primaryColor: AppConstant.goldColor,
-                    secondaryColor: AppConstant.goldColor,
-                    onTap: () {
-                      context.pop();
-                      // Add navigation logic
-                    },
-                  ),
                   SizedBox(height: calcHeight(20)),
                 ],
               ),
