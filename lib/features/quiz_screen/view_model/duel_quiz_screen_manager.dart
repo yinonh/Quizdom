@@ -73,7 +73,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     _setupAppLifecycleListener(room.roomId!);
 
     // Initial state setup based on current app lifecycle
-    final isActive = ref.read(isAppActiveProvider);
+    final isActive =
+        ref.read(appLifecycleNotifierProvider) == AppLifecycleStatus.resumed;
     if (isActive) {
       _activateStreams(room.roomId!, room.currentStage, room.users);
     }
@@ -104,9 +105,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
   void _setupAppLifecycleListener(String roomId) {
     // Watch app lifecycle status changes
-    ref.listen(isAppActiveProvider, (previous, current) {
+    ref.listen(appLifecycleNotifierProvider, (previous, current) {
       state.whenData((quizState) {
-        if (current) {
+        if (current == AppLifecycleStatus.resumed) {
           // App is in foreground
           logger.i("App is now active, activating streams");
           _activateStreams(roomId, quizState.gameStage, quizState.users);

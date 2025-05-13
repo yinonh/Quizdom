@@ -46,11 +46,4 @@ class AppLifecycleNotifier extends _$AppLifecycleNotifier
         break;
     }
   }
-
-  bool get isAppActive => state == AppLifecycleStatus.resumed;
-
-  bool get isAppInBackground =>
-      state == AppLifecycleStatus.paused ||
-      state == AppLifecycleStatus.inactive ||
-      state == AppLifecycleStatus.detached;
 }

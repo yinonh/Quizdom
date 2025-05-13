@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
+import 'package:trivia/features/results_screen/view_model/game_canceled_manager/game_canceled_screen_manager.dart';
 
-class GameCanceledScreen extends StatelessWidget {
-  static const routeName = 'game-canceled';
+class GameCanceledScreen extends ConsumerWidget {
+  static const routeName = Strings.gameCancelRouteName;
 
   final List users;
   final Map<String, int> userScores;
@@ -23,13 +26,14 @@ class GameCanceledScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final opponentLeft = userScores[opponentId] == -1;
+    ref.read(gameCanceledScreenManagerProvider(opponentLeft));
 
     return BaseScreen(
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
-        appBar: const CustomAppBar(title: 'Game Canceled'),
+        appBar: const CustomAppBar(title: Strings.gameCanceled),
         body: Center(
           child: Container(
             padding: const EdgeInsets.all(20),
@@ -52,8 +56,8 @@ class GameCanceledScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 Text(
                   opponentLeft
-                      ? 'Your opponent left the game'
-                      : 'You left the game',
+                      ? Strings.yourOpponentLeftGame
+                      : Strings.youLeftGame,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -61,23 +65,23 @@ class GameCanceledScreen extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: calcHeight(16)),
                 Text(
                   opponentLeft
-                      ? 'You win automatically!'
-                      : 'You lose automatically.',
+                      ? Strings.youWinAutomatically
+                      : Strings.youLoseAutomatically,
                   style: const TextStyle(fontSize: 18),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: calcHeight(32)),
                 ElevatedButton(
                   onPressed: () {
                     context.goNamed(CategoriesScreen.routeName);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: calcWidth(32), vertical: calcHeight(16)),
                   ),
-                  child: const Text('Return to Home'),
+                  child: const Text(Strings.returnHome),
                 ),
               ],
             ),

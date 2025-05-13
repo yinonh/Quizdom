@@ -34,12 +34,14 @@ class Strings {
   static const String duelResultsRouteName = "/duel_results";
   static const String triviaIntroRouteName = "/triviaIntroScreen";
   static const String wheelSpinRouteName = "/wheel_spin_screen";
+  static const String gameCancelRouteName = "/game_canceled";
 
   // Common Strings
   static const String error = "Error:";
   static const String loading = "Loading...:";
   static const String email = "Email";
   static const String password = "Password";
+  static const String returnHome = "Return to Home";
 
   // Custom Drawer
   static const String home = "Home";
@@ -272,5 +274,11 @@ class Strings {
   static const String avgResponseTime = "Avg. Response Time";
   static const String finalScore = "Final Score";
   static const String playAgain = "Play Again";
-  static const String returnHome = "Return to Home";
+
+  // Game Cancel
+  static const String gameCanceled = "Game Canceled";
+  static const String yourOpponentLeftGame = "Your opponent left the game";
+  static const String youLeftGame = "You left the game";
+  static const String youWinAutomatically = "You win automatically!";
+  static const String youLoseAutomatically = "You lose automatically.";
 }

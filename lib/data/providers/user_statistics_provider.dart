@@ -171,7 +171,7 @@ class Statistics extends _$Statistics {
     // Show the first achievement
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (dialogContext) => TrophyAchievementDialog(
         achievement: achievements.first,
         onClose: () {

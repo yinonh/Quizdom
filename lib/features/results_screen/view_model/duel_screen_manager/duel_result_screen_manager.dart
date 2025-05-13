@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
@@ -85,9 +86,6 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
             );
       }
 
-      // Add XP to user
-      addXpToUser();
-
       return DuelResultState(
         room: room,
         currentUserId: currentUserId,
@@ -104,7 +102,7 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
   double calculateAverageResponseTime(TriviaAchievements achievements) {
     final answeredQuestions =
         achievements.correctAnswers + achievements.wrongAnswers;
-    if (answeredQuestions == 0) return 0;
+    if (answeredQuestions == 0) return AppConstant.questionTime.toDouble();
     return achievements.sumResponseTime / answeredQuestions;
   }
 
@@ -114,10 +112,6 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
         achievements.correctAnswers + achievements.wrongAnswers;
     if (totalAttempted == 0) return 0;
     return achievements.correctAnswers / totalAttempted * 100;
-  }
-
-  void addXpToUser() {
-    ref.read(authProvider.notifier).addXp(10.0); // More XP for duel mode
   }
 
   void playAgain(String roomId, String opponentId) {
