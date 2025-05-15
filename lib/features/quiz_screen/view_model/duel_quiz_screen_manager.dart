@@ -12,7 +12,7 @@ import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/data/providers/app_lifecycle_provider.dart';
+import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';

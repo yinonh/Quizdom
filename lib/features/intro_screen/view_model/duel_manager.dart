@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/lifecycle/app_lifecycle_handler.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/models/user_preference.dart';
+import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
@@ -35,13 +35,19 @@ class DuelState with _$DuelState {
 
 @riverpod
 Stream<Map<String, dynamic>> userPreference(Ref ref, String userId) {
-  // Initialize lifecycle handler
-  AppLifecycleHandler().initialize();
-  AppLifecycleHandler().registerUserId(userId);
-
-  // Cleanup when this provider is disposed
-  ref.onDispose(() {
-    AppLifecycleHandler().unregisterUserId(userId);
+  // Set up a listener to handle lifecycle changes
+  ref.listen(appLifecycleNotifierProvider, (previous, current) {
+    if (current == AppLifecycleStatus.paused ||
+        current == AppLifecycleStatus.detached) {
+      // Cleanup when app goes to background or is closed
+      UserPreferenceDataSource.cleanupUserPreference(userId);
+    } else if (current == AppLifecycleStatus.resumed && previous != null) {
+      // Only recreate if we're coming back from a background state
+      if (previous == AppLifecycleStatus.paused ||
+          previous == AppLifecycleStatus.detached) {
+        UserPreferenceDataSource.recreateUserPreference(userId);
+      }
+    }
   });
 
   return UserPreferenceDataSource.watchUserPreference(userId);

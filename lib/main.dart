@@ -1,4 +1,3 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,51 +11,45 @@ import 'app.dart';
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // Initialize Firebase first
   await Firebase.initializeApp(
     name: "app",
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Set preferred orientations
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
+  // Configure and activate Firebase App Check
   try {
-    if (!kDebugMode) {
-      await FirebaseAppCheck.instance.activate(
-        androidProvider: AndroidProvider.playIntegrity,
-        appleProvider: AppleProvider.appAttest,
-        webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
-      );
-    } else {
+    if (kDebugMode) {
+      // Debug mode - use debug providers and enable debug logging
       await FirebaseAppCheck.instance.activate(
         androidProvider: AndroidProvider.debug,
-        appleProvider: AppleProvider.debug,
       );
+      print('Firebase App Check activated in DEBUG mode');
+    } else {
+      // Production mode
+      await FirebaseAppCheck.instance.activate(
+        androidProvider: AndroidProvider.playIntegrity,
+      );
+      print('Firebase App Check activated in PRODUCTION mode');
     }
-    print('Firebase App Check activated successfully');
   } catch (e) {
     print('Failed to activate Firebase App Check: $e');
   }
 
+  // Remove splash screen after initialization
   FlutterNativeSplash.remove();
 
+  // Run the app
   runApp(
     const ProviderScope(
       child: MyApp(),
     ),
   );
-
-  // runApp(
-  //   ProviderScope(
-  //     child: DevicePreview(
-  //       enabled: true,
-  //       tools: const [
-  //         ...DevicePreview.defaultTools,
-  //       ],
-  //       builder: (context) => const MyApp(),
-  //     ),
-  //   ),
-  // );
 }
