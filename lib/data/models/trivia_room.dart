@@ -42,7 +42,6 @@ class TriviaRoom with _$TriviaRoom {
     // Player Management
     @Default([]) List<String> users,
     required Map<String, int>? userScores,
-    @MapDateConverter() Map<String, DateTime>? keepAlive,
 
     // Game State Tracking
     @GameStageConverter() required GameStage currentStage,

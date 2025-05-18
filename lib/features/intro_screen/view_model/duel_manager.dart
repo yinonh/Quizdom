@@ -30,7 +30,20 @@ class DuelState with _$DuelState {
     @Default(0.0) double? matchProgress,
     @Default(false) bool isReady,
     @Default(false) bool hasNavigated,
+    @Default(false) bool isMatchedWithBot,
   }) = _DuelState;
+}
+
+// Create a bot user helper method
+TriviaUser _createBotUser() {
+  return const TriviaUser(
+    uid: "-1",
+    name: "Trivia Bot",
+    imageUrl: null,
+    recentTriviaCategories: [],
+    userXp: 100.0,
+    coins: 0,
+  );
 }
 
 @riverpod
@@ -57,6 +70,7 @@ Stream<Map<String, dynamic>> userPreference(Ref ref, String userId) {
 class DuelManager extends _$DuelManager {
   Timer? _matchTimer;
   Timer? _progressTimer;
+  Timer? _botMatchTimer; // Add timer for bot matching
 
   @override
   Future<DuelState> build() async {
@@ -81,13 +95,17 @@ class DuelManager extends _$DuelManager {
       _startProgressTimer();
       oldMatchedUsers = List.from(oldMatchedUsers)..add(matchedUserId);
       matchedUser = await UserDataSource.getUserById(matchedUserId);
+    } else {
+      // If no match found initially, start the bot match timer
+      _startBotMatchTimer();
     }
 
     // Use a slightly longer timer to reduce race conditions
     _matchTimer = Timer.periodic(const Duration(seconds: 7), (timer) async {
       final currentState = state;
       if (currentState is AsyncData<DuelState>) {
-        if (currentState.value.matchedUserId == null) {
+        if (currentState.value.matchedUserId == null &&
+            !currentState.value.isMatchedWithBot) {
           logger.i("🔄 Timer: No match found, trying to find match again...");
 
           // Always use the latest state to get the current list of excluded users
@@ -98,6 +116,7 @@ class DuelManager extends _$DuelManager {
 
           if (newMatch != null) {
             logger.i("✅ Found new match: $newMatch");
+            _cancelBotMatchTimer(); // Cancel bot timer since we found a real match
 
             // Fetch the matched user data
             final newMatchedUser = await UserDataSource.getUserById(newMatch);
@@ -117,6 +136,7 @@ class DuelManager extends _$DuelManager {
                 matchedUser: newMatchedUser,
                 oldMatchedUsers: updatedOldMatches,
                 matchProgress: 0.0,
+                isMatchedWithBot: false,
               ),
             );
           }
@@ -141,26 +161,44 @@ class DuelManager extends _$DuelManager {
         // Handle matched user changes and ready state
         if (currentData.matchedUserId != newMatchedUserId) {
           if (newMatchedUserId != null) {
+            _cancelBotMatchTimer(); // Cancel bot timer since we found a real match
             _startProgressTimer();
-            final newMatchedUser =
-                await UserDataSource.getUserById(newMatchedUserId);
 
-            // Make sure we add this to our excluded list to prevent re-matching
-            final updatedOldMatches =
-                List<String>.from(currentData.oldMatchedUsers);
-            if (!updatedOldMatches.contains(newMatchedUserId)) {
-              updatedOldMatches.add(newMatchedUserId);
+            // Check if it's a bot match
+            if (newMatchedUserId == "-1") {
+              // It's a bot match
+              state = AsyncData(
+                currentData.copyWith(
+                  matchedUserId: newMatchedUserId,
+                  matchedUser: _createBotUser(),
+                  isReady: userReady,
+                  matchProgress: 0.0,
+                  isMatchedWithBot: true,
+                ),
+              );
+            } else {
+              // It's a real user match
+              final newMatchedUser =
+                  await UserDataSource.getUserById(newMatchedUserId);
+
+              // Make sure we add this to our excluded list to prevent re-matching
+              final updatedOldMatches =
+                  List<String>.from(currentData.oldMatchedUsers);
+              if (!updatedOldMatches.contains(newMatchedUserId)) {
+                updatedOldMatches.add(newMatchedUserId);
+              }
+
+              state = AsyncData(
+                currentData.copyWith(
+                  matchedUserId: newMatchedUserId,
+                  matchedUser: newMatchedUser,
+                  isReady: userReady,
+                  oldMatchedUsers: updatedOldMatches,
+                  matchProgress: 0.0,
+                  isMatchedWithBot: false,
+                ),
+              );
             }
-
-            state = AsyncData(
-              currentData.copyWith(
-                matchedUserId: newMatchedUserId,
-                matchedUser: newMatchedUser,
-                isReady: userReady,
-                oldMatchedUsers: updatedOldMatches,
-                matchProgress: 0.0,
-              ),
-            );
           } else {
             // Reset ready state when match is cleared
             state = AsyncData(
@@ -169,8 +207,11 @@ class DuelManager extends _$DuelManager {
                 matchedUser: null,
                 isReady: false,
                 matchProgress: 0.0,
+                isMatchedWithBot: false,
               ),
             );
+            // Start bot match timer again since match was cleared
+            _startBotMatchTimer();
           }
         } else if (currentData.isReady != userReady) {
           // Just update ready state if that's all that changed
@@ -197,12 +238,16 @@ class DuelManager extends _$DuelManager {
     ref.onDispose(() {
       _matchTimer?.cancel();
       _progressTimer?.cancel();
+      _botMatchTimer?.cancel();
 
       Future.microtask(() async {
         final currentData = state.value;
         if (currentData != null && currentData.matchedUserId != null) {
-          await UserPreferenceDataSource.removeMatchFromOther(
-              currentUser.uid, currentData.matchedUserId!);
+          // Only try to remove match from other if it's not a bot
+          if (currentData.matchedUserId != "-1") {
+            await UserPreferenceDataSource.removeMatchFromOther(
+                currentUser.uid, currentData.matchedUserId!);
+          }
         }
         await UserPreferenceDataSource.deleteUserPreference(currentUser.uid);
       });
@@ -216,7 +261,58 @@ class DuelManager extends _$DuelManager {
         matchedUser: matchedUser,
         categories: categories,
         matchedRoom: null,
-        isReady: false);
+        isReady: false,
+        isMatchedWithBot: false);
+  }
+
+  void _startBotMatchTimer() {
+    _botMatchTimer?.cancel();
+
+    _botMatchTimer = Timer(const Duration(seconds: 10), () {
+      final currentState = state;
+      if (currentState is AsyncData<DuelState>) {
+        // Only match with bot if not already matched
+        if (currentState.value.matchedUserId == null) {
+          logger.i("⏱️ Bot match timer expired - matching with bot");
+          _matchWithBot();
+        }
+      }
+    });
+
+    logger.i("⏱️ Started bot match timer (10 seconds)");
+  }
+
+  void _cancelBotMatchTimer() {
+    _botMatchTimer?.cancel();
+    logger.i("⏱️ Cancelled bot match timer");
+  }
+
+  Future<void> _matchWithBot() async {
+    final currentState = state;
+    if (currentState is! AsyncData<DuelState>) return;
+    final data = currentState.value;
+    final currentUserId = ref.read(authProvider).currentUser.uid;
+
+    // Create a bot user
+    final botUser = _createBotUser();
+
+    // Update the user preference to include the bot match
+    await UserPreferenceDataSource.updateUserPreference(
+      userId: currentUserId,
+      updatedPreference: data.userPreferences.copyWith(matchedUserId: "-1"),
+    );
+
+    _startProgressTimer();
+
+    // Update the state to reflect bot match
+    state = AsyncData(data.copyWith(
+      matchedUserId: "-1",
+      matchedUser: botUser,
+      matchProgress: 0.0,
+      isMatchedWithBot: true,
+    ));
+
+    logger.i("🤖 User matched with bot");
   }
 
   void _startProgressTimer() {
@@ -236,7 +332,10 @@ class DuelManager extends _$DuelManager {
 
         if (progress >= 1.0) {
           timer.cancel();
-          findNewMatch(); // Auto-find new match when time expires
+          // Don't find new match if we're matched with a bot
+          if (!currentState.value.isMatchedWithBot) {
+            findNewMatch(); // Auto-find new match when time expires
+          }
           return;
         }
 
@@ -257,14 +356,18 @@ class DuelManager extends _$DuelManager {
     logger.i("🔄 Current excluded IDs: ${data.oldMatchedUsers}");
 
     if (data.matchedUserId != null) {
-      await UserPreferenceDataSource.removeMatchFromOther(
-          currentUserId, data.matchedUserId!);
+      // Only try to remove match from other if it's not a bot
+      if (data.matchedUserId != "-1") {
+        await UserPreferenceDataSource.removeMatchFromOther(
+            currentUserId, data.matchedUserId!);
+      }
       await UserPreferenceDataSource.clearMatch(currentUserId);
 
       // Immediately update state to reflect the cleared match
       state = AsyncData(data.copyWith(
         matchedUserId: null,
         matchedUser: null,
+        isMatchedWithBot: false,
       ));
     }
 
@@ -288,7 +391,11 @@ class DuelManager extends _$DuelManager {
         matchedUser: newMatchedUser,
         oldMatchedUsers: updatedOldMatches,
         matchProgress: 0.0,
+        isMatchedWithBot: false,
       ));
+    } else {
+      // Start bot match timer if no real match found
+      _startBotMatchTimer();
     }
   }
 
@@ -318,14 +425,21 @@ class DuelManager extends _$DuelManager {
 
     // Then perform the Firebase updates
     if (currentData.matchedUserId != null) {
-      await UserPreferenceDataSource.removeMatchFromOther(
-          currentData.currentUser.uid, currentData.matchedUserId!);
+      // Only try to remove match from other if it's not a bot
+      if (currentData.matchedUserId != "-1") {
+        await UserPreferenceDataSource.removeMatchFromOther(
+            currentData.currentUser.uid, currentData.matchedUserId!);
+      }
 
       // Update the state to reflect that there's no match
       state = AsyncData(state.value!.copyWith(
         matchedUserId: null,
         matchedUser: null,
+        isMatchedWithBot: false,
       ));
+
+      // Start bot match timer again
+      _startBotMatchTimer();
     }
 
     await UserPreferenceDataSource.updateUserPreference(
@@ -336,6 +450,7 @@ class DuelManager extends _$DuelManager {
   Future<void> setIsNavigated() async {
     _matchTimer?.cancel();
     _progressTimer?.cancel();
+    _botMatchTimer?.cancel();
     state.whenData(
       (stateData) async {
         if (stateData.matchedRoom != null) {
@@ -360,9 +475,17 @@ class DuelManager extends _$DuelManager {
     final currentState = state;
     if (currentState is! AsyncData<DuelState>) return;
     final currentData = currentState.value;
-    await UserPreferenceDataSource.setUserReady(
-      currentData.currentUser.uid,
-      ref.read(triviaProvider).token,
-    );
+
+    // Special case for bot matches
+    if (currentData.isMatchedWithBot) {
+      await UserPreferenceDataSource.handleBotReady(currentData.currentUser.uid,
+          ref.read(triviaProvider).token ?? "", currentData.userPreferences);
+    } else {
+      // Regular user match handling
+      await UserPreferenceDataSource.setUserReady(
+        currentData.currentUser.uid,
+        ref.read(triviaProvider).token,
+      );
+    }
   }
 }

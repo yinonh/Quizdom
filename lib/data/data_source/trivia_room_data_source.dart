@@ -9,6 +9,9 @@ class TriviaRoomDataSource {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final _roomsCollection = _firestore.collection('triviaRooms');
 
+  // BOT_USER_ID constant
+  static const String BOT_USER_ID = "-1";
+
   // Creates a new trivia room
   static Future<void> createRoom({
     required String roomId,
@@ -191,7 +194,7 @@ class TriviaRoomDataSource {
     }
   }
 
-  // Check if all users have answered the current question
+  // Check if all users have answered the current question - modified to handle bot users
   static Future<bool> checkAllUsersAnswered(
       String roomId, List<String> users, int questionIndex) async {
     final roomSnapshot = await _roomsCollection.doc(roomId).get();
@@ -249,6 +252,7 @@ class TriviaRoomDataSource {
     return userAnswers;
   }
 
+  // Update lastSeen to make it more efficient with bots
   static Future<void> updateLastSeen(String roomId, String userId) async {
     await FirebaseFirestore.instance
         .collection('triviaRooms')
@@ -288,8 +292,41 @@ class TriviaRoomDataSource {
     return result;
   }
 
+  // Check for absent user - modified to ignore bots
+  static Future<String?> checkForAbsentUser(
+      String roomId, List<String> users) async {
+    final lastSeenMap = await getUserLastSeen(roomId);
+    final now = DateTime.now();
+
+    // Check if any user hasn't updated in the last 6 seconds
+    for (final user in users) {
+      // Skip checking for BOT_USER_ID, bots are always "present"
+      if (user == BOT_USER_ID) continue;
+
+      if (!lastSeenMap.containsKey(user)) continue;
+
+      final lastUpdate = lastSeenMap[user]!;
+      if (now.difference(lastUpdate).inSeconds > 6) {
+        return user; // Found an absent user
+      }
+    }
+
+    return null;
+  }
+
   static Future<bool> checkUserPresence(
       String roomId, List<String> users) async {
+    // First check if we have any bot users
+    if (users.contains(BOT_USER_ID)) {
+      // Remove BOT_USER_ID from the check list - bots are always "present"
+      final realUsers = users.where((user) => user != BOT_USER_ID).toList();
+      if (realUsers.isEmpty)
+        return true; // If all users are bots, everyone is present
+
+      // Continue checking only real users
+      users = realUsers;
+    }
+
     final lastSeenMap = await getUserLastSeen(roomId);
     final now = DateTime.now();
 
@@ -302,23 +339,5 @@ class TriviaRoomDataSource {
     }
 
     return true;
-  }
-
-  static Future<String?> checkForAbsentUser(
-      String roomId, List<String> users) async {
-    final lastSeenMap = await getUserLastSeen(roomId);
-    final now = DateTime.now();
-
-    // Check if any user hasn't updated in the last 6 seconds
-    for (final user in users) {
-      if (!lastSeenMap.containsKey(user)) continue;
-
-      final lastUpdate = lastSeenMap[user]!;
-      if (now.difference(lastUpdate).inSeconds > 6) {
-        return user; // Found an absent user
-      }
-    }
-
-    return null;
   }
 }

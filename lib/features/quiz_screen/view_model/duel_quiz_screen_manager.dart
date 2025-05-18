@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
@@ -12,14 +13,16 @@ import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
-part 'duel_quiz_screen_manager.freezed.dart';
+import 'duel_bot_manager.dart';
 
+part 'duel_quiz_screen_manager.freezed.dart';
 part 'duel_quiz_screen_manager.g.dart';
+
+// Add this constant at the top of the file
 
 @freezed
 class DuelQuizState with _$DuelQuizState {
@@ -39,6 +42,7 @@ class DuelQuizState with _$DuelQuizState {
     String? roomId,
     @Default({}) Map<String, Map<int, int>> userAnswers,
     @Default(false) bool isHost,
+    @Default(false) bool isOpponentBot,
   }) = _DuelQuizState;
 }
 
@@ -52,6 +56,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   bool _isUpdatingTimestamp = false;
   bool _streamsActive = false;
 
+  // Instance of BotManager to handle bot-related functionality
+  final BotManager _botManager = BotManager();
+
   String? getCurrentUserId() => _currentUserId;
 
   @override
@@ -60,9 +67,22 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     final triviaNotifier = ref.read(triviaProvider.notifier);
     final room = await TriviaRoomDataSource.getRoomById(roomId);
     final response = await triviaNotifier.getDuelTriviaQuestions(room);
+
     final opponentID =
         room?.users[0] == _currentUserId ? room?.users[1] : room?.users[0];
-    final opponent = await UserDataSource.getUserById(opponentID);
+
+    final isOpponentBot = opponentID == AppConstant.botUserId;
+
+    // Handle opponent data
+    TriviaUser? opponent;
+    if (isOpponentBot) {
+      // Create a bot user using BotManager
+      opponent = _botManager.createBotUser();
+    } else {
+      // Get real user data
+      opponent = await UserDataSource.getUserById(opponentID);
+    }
+
     final currentUser = ref.read(authProvider).currentUser;
 
     if (room == null || room.roomId == null) {
@@ -72,17 +92,13 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     // Listen to app lifecycle changes
     _setupAppLifecycleListener(room.roomId!);
 
-    // Initial state setup based on current app lifecycle
-    final isActive =
-        ref.read(appLifecycleNotifierProvider) == AppLifecycleStatus.resumed;
-    if (isActive) {
-      _activateStreams(room.roomId!, room.currentStage, room.users);
-    }
+    _activateStreams(room.roomId!, room.currentStage, room.users);
 
     final initialShuffledData = _getShuffledOptions(response![0]);
 
     ref.onDispose(() {
       _deactivateStreams();
+      _botManager.dispose();
     });
 
     return DuelQuizState(
@@ -100,24 +116,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       currentUser: currentUser,
       roomId: room.roomId,
       isHost: _currentUserId == room.hostUserId,
+      isOpponentBot: isOpponentBot,
     );
-  }
-
-  void _setupAppLifecycleListener(String roomId) {
-    // Watch app lifecycle status changes
-    ref.listen(appLifecycleNotifierProvider, (previous, current) {
-      state.whenData((quizState) {
-        if (current == AppLifecycleStatus.resumed) {
-          // App is in foreground
-          logger.i("App is now active, activating streams");
-          _activateStreams(roomId, quizState.gameStage, quizState.users);
-        } else {
-          // App is in background
-          logger.i("App is now inactive, deactivating streams");
-          _deactivateStreams();
-        }
-      });
-    });
   }
 
   void _activateStreams(String roomId, GameStage stage, List<String> users) {
@@ -139,101 +139,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     if (_currentUserId != null) {
       TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
     }
-  }
-
-  void _deactivateStreams() {
-    if (!_streamsActive) return;
-    _streamsActive = false;
-
-    logger.i("Deactivating all streams and timers");
-
-    // Cancel all timers and subscriptions
-    _timer?.cancel();
-    _timer = null;
-
-    _lastSeenTimer?.cancel();
-    _lastSeenTimer = null;
-
-    _checkPresenceTimer?.cancel();
-    _checkPresenceTimer = null;
-
-    _roomSubscription?.cancel();
-    _roomSubscription = null;
-  }
-
-  void _startLastSeenUpdates(String roomId, GameStage stage) {
-    // Update lastSeen immediately regardless of stage
-    if (_currentUserId != null) {
-      TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
-    }
-
-    // Set up timer to update lastSeen every 3 seconds ONLY if not in created stage
-    if (stage != GameStage.created) {
-      _lastSeenTimer?.cancel();
-      _lastSeenTimer = Timer.periodic(
-        const Duration(seconds: 3),
-        (_) {
-          if (_currentUserId != null) {
-            TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
-          }
-        },
-      );
-    }
-  }
-
-  void _startPresenceChecking(String roomId, List<String> users) {
-    if (_currentUserId == null || users.isEmpty) return;
-
-    _checkPresenceTimer?.cancel();
-    _checkPresenceTimer = Timer.periodic(
-      const Duration(seconds: 5),
-      (_) async {
-        logger.i("Checking user presence at ${DateTime.now()}");
-        state.whenData(
-          (quizState) async {
-            logger.i("Current game stage: ${quizState.gameStage}");
-
-            // Check for absent users during active game
-            if (quizState.gameStage == GameStage.active ||
-                quizState.gameStage == GameStage.created) {
-              logger.i("Checking for absent users...");
-              final absentUserId =
-                  await TriviaRoomDataSource.checkForAbsentUser(
-                      roomId, quizState.users);
-              logger.i("Absent user: $absentUserId");
-
-              if (absentUserId != null) {
-                logger.e("Ending game due to absent user: $absentUserId");
-                TriviaRoomDataSource.endGame(
-                    quizState.roomId ?? "", absentUserId);
-              }
-            }
-
-            // Check if both users are present during created stage
-            if (quizState.gameStage == GameStage.created && quizState.isHost) {
-              final allPresent = await TriviaRoomDataSource.checkUserPresence(
-                  roomId, quizState.users);
-              logger.i("All users present: $allPresent");
-
-              if (allPresent) {
-                logger.i("All users present, starting game");
-                startGame();
-              }
-            }
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> startGame() async {
-    state.whenData((quizState) async {
-      if (quizState.isHost &&
-          quizState.roomId != null &&
-          quizState.gameStage == GameStage.created) {
-        await TriviaRoomDataSource.startGame(quizState.roomId!);
-      }
-    });
   }
 
   void _setupRoomSubscription(String roomId) {
@@ -342,12 +247,165 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
             _currentUserId!,
             achievements,
           );
+          TriviaRoomDataSource.updateUserAchievements(
+            roomId,
+            AppConstant.botUserId,
+            _botManager.achievements,
+          );
         }
 
         // Manage timer based on game stage
         _manageTimerBasedOnGameStage(updatedRoom.currentStage);
       });
     });
+  }
+
+  void _deactivateStreams() {
+    if (!_streamsActive) return;
+    _streamsActive = false;
+
+    logger.i("Deactivating all streams and timers");
+
+    // Cancel all timers and subscriptions
+    _timer?.cancel();
+    _timer = null;
+
+    _lastSeenTimer?.cancel();
+    _lastSeenTimer = null;
+
+    _checkPresenceTimer?.cancel();
+    _checkPresenceTimer = null;
+
+    _roomSubscription?.cancel();
+    _roomSubscription = null;
+  }
+
+  void _setupAppLifecycleListener(String roomId) {
+    // Watch app lifecycle status changes
+    ref.listen(appLifecycleNotifierProvider, (previous, current) {
+      state.whenData((quizState) {
+        if (current == AppLifecycleStatus.resumed) {
+          // App is in foreground
+          logger.i("App is now active, activating streams");
+          _activateStreams(roomId, quizState.gameStage, quizState.users);
+        } else {
+          // App is in background
+          logger.i("App is now inactive, deactivating streams");
+          _deactivateStreams();
+        }
+      });
+    });
+  }
+
+  Future<void> startGame() async {
+    state.whenData((quizState) async {
+      if (quizState.isHost &&
+          quizState.roomId != null &&
+          quizState.gameStage == GameStage.created) {
+        // Bot-specific logic - update last seen timestamp
+        if (quizState.isOpponentBot) {
+          await _botManager.updateBotLastSeen(quizState.roomId!);
+        }
+
+        await TriviaRoomDataSource.startGame(quizState.roomId!);
+      }
+    });
+  }
+
+  // Method to set bot accuracy (can be called from outside if needed)
+  void setBotAccuracy(double accuracy) {
+    _botManager.setBotAccuracy(accuracy);
+  }
+
+  void _startLastSeenUpdates(String roomId, GameStage stage) {
+    // Update lastSeen immediately regardless of stage
+    if (_currentUserId != null) {
+      TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
+    }
+
+    // Set up timer to update lastSeen every 3 seconds
+    _lastSeenTimer?.cancel();
+    _lastSeenTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) {
+        if (_currentUserId != null) {
+          TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
+        }
+      },
+    );
+  }
+
+  void _startPresenceChecking(String roomId, List<String> users) {
+    if (_currentUserId == null || users.isEmpty) return;
+
+    _checkPresenceTimer?.cancel();
+    _checkPresenceTimer = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) async {
+        logger.i("Checking user presence at ${DateTime.now()}");
+        state.whenData(
+          (quizState) async {
+            logger.i("Current game stage: ${quizState.gameStage}");
+
+            // Check for absent users during active game
+            if (quizState.gameStage == GameStage.active ||
+                quizState.gameStage == GameStage.created) {
+              logger.i("Checking for absent users...");
+
+              // Skip absence checks for bot users
+              if (quizState.isOpponentBot) {
+                // For bot opponents, we only check if the human player is absent
+                final realUserIds = quizState.users
+                    .where((uid) => uid != AppConstant.botUserId)
+                    .toList();
+                final absentUserId =
+                    await TriviaRoomDataSource.checkForAbsentUser(
+                        roomId, realUserIds);
+                logger.i("Absent user: $absentUserId");
+
+                if (absentUserId != null) {
+                  logger.e("Ending game due to absent user: $absentUserId");
+                  TriviaRoomDataSource.endGame(
+                      quizState.roomId ?? "", absentUserId);
+                }
+              } else {
+                // Regular absence check for human players
+                final absentUserId =
+                    await TriviaRoomDataSource.checkForAbsentUser(
+                        roomId, quizState.users);
+                logger.i("Absent user: $absentUserId");
+
+                if (absentUserId != null) {
+                  logger.e("Ending game due to absent user: $absentUserId");
+                  TriviaRoomDataSource.endGame(
+                      quizState.roomId ?? "", absentUserId);
+                }
+              }
+            }
+
+            // Check if both users are present during created stage
+            if (quizState.gameStage == GameStage.created && quizState.isHost) {
+              // When playing against bot, we don't need to wait for presence
+              if (quizState.isOpponentBot) {
+                // For bot games, we can start immediately
+                logger.i("Bot opponent, can start game immediately");
+                startGame();
+              } else {
+                // For human opponents, check if all users are present
+                final allPresent = await TriviaRoomDataSource.checkUserPresence(
+                    roomId, quizState.users);
+                logger.i("All users present: $allPresent");
+
+                if (allPresent) {
+                  logger.i("All users present, starting game");
+                  startGame();
+                }
+              }
+            }
+          },
+        );
+      },
+    );
   }
 
   void _manageTimerBasedOnGameStage(GameStage stage) {
@@ -389,7 +447,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           state =
               AsyncValue.data(quizState.copyWith(selectedAnswerIndex: index));
 
-          // Record achievements locally
           if (quizState.correctAnswerIndex == index) {
             ref
                 .read(currentTriviaAchievementsProvider.notifier)
@@ -397,18 +454,10 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                     field: AchievementField.correctAnswers,
                     sumResponseTime:
                         AppConstant.questionTime - quizState.timeLeft);
-
-            // Update user score in Firestore
-            await TriviaRoomDataSource.updateUserScore(quizState.roomId!,
-                _currentUserId!, quizState.questionIndex, quizState.timeLeft);
           } else if (index == -1) {
             ref
                 .read(currentTriviaAchievementsProvider.notifier)
                 .updateAchievements(field: AchievementField.unanswered);
-
-            // Update missed questions in Firestore
-            await TriviaRoomDataSource.updateMissedQuestions(
-                quizState.roomId!, _currentUserId!);
           } else {
             ref
                 .read(currentTriviaAchievementsProvider.notifier)
@@ -421,6 +470,27 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           // Store user's answer in Firestore
           await TriviaRoomDataSource.storeUserAnswer(quizState.roomId!,
               _currentUserId!, quizState.questionIndex, index);
+
+          // Bot-specific logic - handle bot answer when playing against bot
+          if (quizState.isOpponentBot) {
+            await _botManager.handleBotAnswer(
+              roomId: quizState.roomId!,
+              questionIndex: quizState.questionIndex,
+              correctAnswerIndex: quizState.correctAnswerIndex,
+              shuffledOptions: quizState.shuffledOptions,
+              timeLeft: quizState.timeLeft,
+            );
+          }
+
+          // Update score if answer is correct
+          if (quizState.correctAnswerIndex == index) {
+            await TriviaRoomDataSource.updateUserScore(quizState.roomId!,
+                _currentUserId!, quizState.questionIndex, quizState.timeLeft);
+          } else if (index == -1) {
+            // Update missed questions in Firestore
+            await TriviaRoomDataSource.updateMissedQuestions(
+                quizState.roomId!, _currentUserId!);
+          }
 
           await _checkAllUsersAnswered(quizState);
         }

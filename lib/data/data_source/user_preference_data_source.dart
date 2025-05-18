@@ -420,4 +420,70 @@ class UserPreferenceDataSource {
       SetOptions(merge: true),
     );
   }
+
+  static Future<void> handleBotReady(
+      String userId, String token, UserPreference userPreferences) async {
+    // Update user preference to show ready
+    await UserPreferenceDataSource.updateUserPreference(
+      userId: userId,
+      updatedPreference: userPreferences.copyWith(
+        ready: true,
+      ),
+    );
+
+    // Merge preferences according to the logic
+    final (questionCount, categoryId, difficulty) = _mergePreferences(
+      userPreferences,
+      UserPreference.empty(), // Bot has no preferences
+    );
+
+    // Generate room ID
+    final roomId =
+        FirebaseFirestore.instance.collection('triviaRooms').doc().id;
+
+    // Create the room with user and bot IDs
+    List<String> userIds = [userId, "-1"];
+
+    // Create the room
+    await TriviaRoomDataSource.createRoom(
+      roomId: roomId,
+      questionCount: questionCount,
+      categoryId: categoryId,
+      difficulty: difficulty,
+      isPublic: false,
+      userIds: userIds,
+      hostUserId: userId, // User is always the host in bot matches
+    );
+
+    try {
+      // Fetch questions from the API
+      final questionsData =
+          await TriviaDataSource.fetchTriviaQuestions(categoryId, token);
+
+      // Update the trivia room with the questions data
+      await FirebaseFirestore.instance
+          .collection('triviaRooms')
+          .doc(roomId)
+          .update({
+        'questionsData': questionsData,
+      });
+    } catch (e) {
+      logger.e('Error fetching trivia questions: $e');
+      // Handle error
+      await FirebaseFirestore.instance
+          .collection('triviaRooms')
+          .doc(roomId)
+          .update({
+        'error': e.toString(),
+      });
+    }
+
+    // Update user preference with room ID
+    await UserPreferenceDataSource.updateUserPreference(
+      userId: userId,
+      updatedPreference: userPreferences.copyWith(
+        triviaRoomId: roomId,
+      ),
+    );
+  }
 }

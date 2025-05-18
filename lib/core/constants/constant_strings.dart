@@ -16,6 +16,7 @@ class Strings {
   static const String coinsIcon = "assets/icons/coins_icon.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
   static const String wheelOfFortune = "assets/wheel_of_fortune.svg";
+  static const String botAvatar = "assets/bot_avatar.svg";
 
   // Shared Preferences
   static const String originalUserImagePathKey = "original_user_image_path";
