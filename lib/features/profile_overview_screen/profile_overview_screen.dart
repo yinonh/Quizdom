@@ -169,6 +169,7 @@ class ProfileBottomSheet extends ConsumerWidget {
                 UserAvatar(
                   user: user,
                   radius: avatarRadius.toDouble(),
+                  disabled: true,
                 ),
               ],
             ),

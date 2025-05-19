@@ -12,6 +12,7 @@ import 'package:trivia/data/models/trivia_room.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
+import 'package:trivia/features/quiz_screen/view_model/duel_bot_manager.dart';
 
 part 'duel_result_screen_manager.freezed.dart';
 part 'duel_result_screen_manager.g.dart';
@@ -49,9 +50,14 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
 
       // Get user profiles
       final currentUser = await UserDataSource.getUserById(currentUserId);
-      final opponentUser = opponentId.isNotEmpty
-          ? await UserDataSource.getUserById(opponentId)
-          : null;
+      TriviaUser? opponentUser;
+      if (opponentId == AppConstant.botUserId) {
+        opponentUser = BotManager.createBotUser();
+      } else {
+        opponentUser = opponentId.isNotEmpty
+            ? await UserDataSource.getUserById(opponentId)
+            : null;
+      }
 
       // Determine winner
       String? winnerId;

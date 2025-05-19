@@ -49,9 +49,14 @@ class DuelResultsScreen extends ConsumerWidget {
                       SizedBox(height: calcHeight(24)),
                       WinnerAnnouncement(resultsState: resultsState),
                       SizedBox(height: calcHeight(48)),
-                      TotalScore(
-                          score: calculateTotalScore(resultsState.room
-                              .userAchievements![resultsState.currentUserId]!)),
+                      if (resultsState.room.userAchievements != null &&
+                          resultsState.room.userAchievements![
+                                  resultsState.currentUserId] !=
+                              null)
+                        TotalScore(
+                            score: calculateTotalScore(
+                                resultsState.room.userAchievements![
+                                    resultsState.currentUserId]!)),
                       SizedBox(height: calcHeight(24)),
                       PlayerStatsComparison(resultsState: resultsState),
                       SizedBox(height: calcHeight(32)),

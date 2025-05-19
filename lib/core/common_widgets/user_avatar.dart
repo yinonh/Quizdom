@@ -15,18 +15,24 @@ class UserAvatar extends ConsumerWidget {
   final double radius;
   final bool showProgress;
   final TriviaUser? user;
+  final bool disabled;
 
   const UserAvatar({
     required this.user,
     this.radius = 42,
     this.showProgress = false,
+    this.disabled = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: user != null ? () => showProfileOverview(context, user!) : null,
+      onTap: disabled
+          ? null
+          : user != null
+              ? () => showProfileOverview(context, user!)
+              : null,
       child: Stack(
         alignment: Alignment.center,
         children: [

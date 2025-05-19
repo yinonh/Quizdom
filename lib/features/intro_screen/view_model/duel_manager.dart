@@ -13,6 +13,7 @@ import 'package:trivia/data/models/user_preference.dart';
 import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/features/quiz_screen/view_model/duel_bot_manager.dart';
 
 part 'duel_manager.freezed.dart';
 part 'duel_manager.g.dart';
@@ -32,18 +33,6 @@ class DuelState with _$DuelState {
     @Default(false) bool hasNavigated,
     @Default(false) bool isMatchedWithBot,
   }) = _DuelState;
-}
-
-// Create a bot user helper method
-TriviaUser _createBotUser() {
-  return const TriviaUser(
-    uid: "-1",
-    name: "Trivia Bot",
-    imageUrl: null,
-    recentTriviaCategories: [],
-    userXp: 100.0,
-    coins: 0,
-  );
 }
 
 @riverpod
@@ -170,7 +159,7 @@ class DuelManager extends _$DuelManager {
               state = AsyncData(
                 currentData.copyWith(
                   matchedUserId: newMatchedUserId,
-                  matchedUser: _createBotUser(),
+                  matchedUser: BotManager.createBotUser(),
                   isReady: userReady,
                   matchProgress: 0.0,
                   isMatchedWithBot: true,
@@ -294,7 +283,7 @@ class DuelManager extends _$DuelManager {
     final currentUserId = ref.read(authProvider).currentUser.uid;
 
     // Create a bot user
-    final botUser = _createBotUser();
+    final botUser = BotManager.createBotUser();
 
     // Update the user preference to include the bot match
     await UserPreferenceDataSource.updateUserPreference(

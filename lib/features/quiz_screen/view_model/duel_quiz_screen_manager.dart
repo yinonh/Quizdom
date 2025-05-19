@@ -16,13 +16,10 @@ import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
-
-import 'duel_bot_manager.dart';
+import 'package:trivia/features/quiz_screen/view_model/duel_bot_manager.dart';
 
 part 'duel_quiz_screen_manager.freezed.dart';
 part 'duel_quiz_screen_manager.g.dart';
-
-// Add this constant at the top of the file
 
 @freezed
 class DuelQuizState with _$DuelQuizState {
@@ -77,7 +74,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     TriviaUser? opponent;
     if (isOpponentBot) {
       // Create a bot user using BotManager
-      opponent = _botManager.createBotUser();
+      opponent = BotManager.createBotUser();
     } else {
       // Get real user data
       opponent = await UserDataSource.getUserById(opponentID);

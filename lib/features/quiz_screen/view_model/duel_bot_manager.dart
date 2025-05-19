@@ -132,12 +132,12 @@ class BotManager {
   }
 
   // Create bot user
-  TriviaUser createBotUser() {
+  static TriviaUser createBotUser() {
     return const TriviaUser(
       uid: AppConstant.botUserId,
       name: "Bot Player",
-      userXp: 1000.0,
-      recentTriviaCategories: [9, 10, 11],
+      userXp: 0.0,
+      recentTriviaCategories: [],
       imageUrl: Strings.botAvatar,
     );
   }
