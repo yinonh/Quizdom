@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
@@ -12,7 +13,6 @@ import 'package:trivia/data/models/trivia_room.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
-import 'package:trivia/features/quiz_screen/view_model/duel_bot_manager.dart';
 
 part 'duel_result_screen_manager.freezed.dart';
 part 'duel_result_screen_manager.g.dart';
@@ -52,7 +52,7 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
       final currentUser = await UserDataSource.getUserById(currentUserId);
       TriviaUser? opponentUser;
       if (opponentId == AppConstant.botUserId) {
-        opponentUser = BotManager.createBotUser();
+        opponentUser = BotService.currentBot?.user;
       } else {
         opponentUser = opponentId.isNotEmpty
             ? await UserDataSource.getUserById(opponentId)

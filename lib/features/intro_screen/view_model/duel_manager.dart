@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
@@ -159,7 +160,7 @@ class DuelManager extends _$DuelManager {
               state = AsyncData(
                 currentData.copyWith(
                   matchedUserId: newMatchedUserId,
-                  matchedUser: BotManager.createBotUser(),
+                  matchedUser: BotService.currentBot?.user,
                   isReady: userReady,
                   matchProgress: 0.0,
                   isMatchedWithBot: true,
@@ -233,7 +234,7 @@ class DuelManager extends _$DuelManager {
         final currentData = state.value;
         if (currentData != null && currentData.matchedUserId != null) {
           // Only try to remove match from other if it's not a bot
-          if (currentData.matchedUserId != "-1") {
+          if (currentData.matchedUserId != AppConstant.botUserId) {
             await UserPreferenceDataSource.removeMatchFromOther(
                 currentUser.uid, currentData.matchedUserId!);
           }
@@ -295,7 +296,7 @@ class DuelManager extends _$DuelManager {
 
     // Update the state to reflect bot match
     state = AsyncData(data.copyWith(
-      matchedUserId: "-1",
+      matchedUserId: botUser.uid,
       matchedUser: botUser,
       matchProgress: 0.0,
       isMatchedWithBot: true,
@@ -321,10 +322,7 @@ class DuelManager extends _$DuelManager {
 
         if (progress >= 1.0) {
           timer.cancel();
-          // Don't find new match if we're matched with a bot
-          if (!currentState.value.isMatchedWithBot) {
-            findNewMatch(); // Auto-find new match when time expires
-          }
+          findNewMatch();
           return;
         }
 
@@ -346,7 +344,7 @@ class DuelManager extends _$DuelManager {
 
     if (data.matchedUserId != null) {
       // Only try to remove match from other if it's not a bot
-      if (data.matchedUserId != "-1") {
+      if (data.matchedUserId != AppConstant.botUserId) {
         await UserPreferenceDataSource.removeMatchFromOther(
             currentUserId, data.matchedUserId!);
       }
@@ -415,7 +413,7 @@ class DuelManager extends _$DuelManager {
     // Then perform the Firebase updates
     if (currentData.matchedUserId != null) {
       // Only try to remove match from other if it's not a bot
-      if (currentData.matchedUserId != "-1") {
+      if (currentData.matchedUserId != AppConstant.botUserId) {
         await UserPreferenceDataSource.removeMatchFromOther(
             currentData.currentUser.uid, currentData.matchedUserId!);
       }

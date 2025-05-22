@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
@@ -10,24 +10,12 @@ import 'package:trivia/data/models/trivia_user.dart';
 // Create a separate class for bot-related functionality
 class BotManager {
   final Random _random = Random();
-  double _botAccuracy = 0.6;
-  Timer? _botAnswerTimer;
   TriviaAchievements _botAchievements = const TriviaAchievements(
     correctAnswers: 0,
     wrongAnswers: 0,
     unanswered: 0,
     sumResponseTime: 0.0,
   );
-
-  // Method to set bot accuracy
-  void setBotAccuracy(double accuracy) {
-    if (accuracy >= 0 && accuracy <= 1) {
-      _botAccuracy = accuracy;
-    }
-  }
-
-  // Get bot accuracy
-  double get botAccuracy => _botAccuracy;
 
   // Get current bot achievements
   TriviaAchievements get achievements => _botAchievements;
@@ -40,12 +28,6 @@ class BotManager {
       unanswered: 0,
       sumResponseTime: 0.0,
     );
-  }
-
-  // Clean up resources
-  void dispose() {
-    _botAnswerTimer?.cancel();
-    _botAnswerTimer = null;
   }
 
   // Update bot achievements based on answer
@@ -86,10 +68,11 @@ class BotManager {
     required double timeLeft,
   }) async {
     // Calculate a random response time between 1.5 and 6 seconds for the bot
-    final botResponseTime = 1.5 + _random.nextDouble() * 4.5;
+    final botResponseTime = 1 + _random.nextDouble() * 8;
 
     // Determine if bot gets the answer right (based on accuracy)
-    final botGetsItRight = _random.nextDouble() < _botAccuracy;
+    final botGetsItRight =
+        _random.nextDouble() < (BotService.currentBot?.accuracy ?? 0.6);
 
     // Choose the bot's answer
     int botAnswerIndex;
@@ -133,13 +116,9 @@ class BotManager {
 
   // Create bot user
   static TriviaUser createBotUser() {
-    return const TriviaUser(
-      uid: AppConstant.botUserId,
-      name: "Bot Player",
-      userXp: 0.0,
-      recentTriviaCategories: [],
-      imageUrl: Strings.botAvatar,
-    );
+    final botService = BotService();
+    final randomBot = botService.createAndSetRandomBot();
+    return randomBot.user;
   }
 
   // Update bot's last seen timestamp

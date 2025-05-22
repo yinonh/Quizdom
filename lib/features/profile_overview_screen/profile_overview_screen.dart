@@ -30,7 +30,6 @@ class ProfileBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.invalidate(userStatisticsProvider(user.uid));
     final userStatsAsync = ref.watch(userStatisticsProvider(user.uid));
 
     // Calculate the avatar size and its position

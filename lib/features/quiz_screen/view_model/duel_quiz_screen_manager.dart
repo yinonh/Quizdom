@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
@@ -74,7 +75,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     TriviaUser? opponent;
     if (isOpponentBot) {
       // Create a bot user using BotManager
-      opponent = BotManager.createBotUser();
+      opponent = BotService.currentBot?.user;
     } else {
       // Get real user data
       opponent = await UserDataSource.getUserById(opponentID);
@@ -95,7 +96,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
     ref.onDispose(() {
       _deactivateStreams();
-      _botManager.dispose();
     });
 
     return DuelQuizState(
@@ -307,11 +307,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
         await TriviaRoomDataSource.startGame(quizState.roomId!);
       }
     });
-  }
-
-  // Method to set bot accuracy (can be called from outside if needed)
-  void setBotAccuracy(double accuracy) {
-    _botManager.setBotAccuracy(accuracy);
   }
 
   void _startLastSeenUpdates(String roomId, GameStage stage) {
