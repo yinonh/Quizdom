@@ -8,6 +8,8 @@ class Strings {
       "assets/animations/no_internet_animation.json";
   static const String countDownAnimation =
       "assets/animations/count_down_animation.json";
+  static const String underConstructionAnimation =
+      "assets/animations/under_construction.json";
 
   static const String appBarDrop = "assets/drop.svg";
   static const String closeChestIcon = "assets/icons/close_chest_icon.svg";
@@ -16,7 +18,12 @@ class Strings {
   static const String coinsIcon = "assets/icons/coins_icon.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
   static const String wheelOfFortune = "assets/wheel_of_fortune.svg";
-  static const String botAvatar = "assets/bot_avatar.svg";
+  static const String botAvatar1 = "assets/bots_avatars/bot_avatar_1.svg";
+  static const String botAvatar2 = "assets/bots_avatars/bot_avatar_2.svg";
+  static const String botAvatar3 = "assets/bots_avatars/bot_avatar_3.svg";
+  static const String botAvatar4 = "assets/bots_avatars/bot_avatar_4.svg";
+  static const String botAvatar5 = "assets/bots_avatars/bot_avatar_5.svg";
+  static const String botAvatar6 = "assets/bots_avatars/bot_avatar_6.svg";
 
   // Shared Preferences
   static const String originalUserImagePathKey = "original_user_image_path";
@@ -282,4 +289,10 @@ class Strings {
   static const String youLeftGame = "You left the game";
   static const String youWinAutomatically = "You win automatically!";
   static const String youLoseAutomatically = "You lose automatically.";
+
+  // Under Construction
+  static const String gotIt = "Got It";
+  static const String thisFeatureComingSoon =
+      "This feature is coming soon!\nStay tuned for updates.";
+  static const String underConstruction = "Under Construction";
 }

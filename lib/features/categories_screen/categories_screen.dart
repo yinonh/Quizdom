@@ -7,6 +7,7 @@ import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/common_widgets/resource_floating_action_button.dart';
+import 'package:trivia/core/common_widgets/under_construction_dialog.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -80,7 +81,7 @@ class CategoriesScreen extends ConsumerWidget {
                               label: Strings.createQuiz,
                               color: AppConstant.highlightColor,
                               onTap: () {
-                                // Handle create quiz tap
+                                UnderConstructionDialog.show(context);
                               },
                             ),
                             TopButton(
@@ -97,8 +98,9 @@ class CategoriesScreen extends ConsumerWidget {
                               label: Strings.multiplayer,
                               color: AppConstant.onPrimaryColor,
                               onTap: () {
-                                categoriesNotifier.setGroupTriviaRoom();
-                                context.goNamed(TriviaIntroScreen.routeName);
+                                UnderConstructionDialog.show(context);
+                                // categoriesNotifier.setGroupTriviaRoom();
+                                // context.goNamed(TriviaIntroScreen.routeName);
                               },
                             ),
                           ],

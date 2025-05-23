@@ -92,17 +92,6 @@ class WinnerAnnouncement extends StatelessWidget {
                         isWinner: isWinner || isDraw,
                         color: AppConstant.primaryColor,
                       ),
-                      SizedBox(height: calcHeight(12)),
-                      Text(
-                        resultsState.currentUser?.name ?? Strings.you,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
                     ],
                   ),
                 ),
@@ -119,17 +108,6 @@ class WinnerAnnouncement extends StatelessWidget {
                             0,
                         isWinner: !isWinner || isDraw,
                         color: AppConstant.highlightColor,
-                      ),
-                      SizedBox(height: calcHeight(12)),
-                      Text(
-                        resultsState.opponentUser?.name ?? Strings.opponent,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

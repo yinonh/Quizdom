@@ -89,6 +89,7 @@ flutter:
     - assets/attributeicons/
     - assets/icons/
     - assets/animations/
+    - assets/bots_avatars/
 
 flutter_native_splash:
   background_image: "assets/splash_icon.png"

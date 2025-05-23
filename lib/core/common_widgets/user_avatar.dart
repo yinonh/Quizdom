@@ -46,14 +46,14 @@ class UserAvatar extends ConsumerWidget {
                 color: AppConstant.onPrimaryColor,
               ),
             ),
-          user != null && user?.uid == "-1"
+          user != null && user?.uid == AppConstant.botUserId
               ? ClipPath(
                   clipper: HalfCircleClipper(),
                   child: CircleAvatar(
                     radius: calcWidth(radius),
                     backgroundColor: AppConstant.softHighlightColor,
                     child: SvgPicture.asset(
-                      user?.imageUrl ?? Strings.botAvatar,
+                      user?.imageUrl ?? Strings.botAvatar1,
                     ),
                   ),
                 )

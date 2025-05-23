@@ -7,7 +7,12 @@ import 'package:trivia/data/providers/user_provider.dart';
 import 'user_resources_dialog.dart';
 
 class AppBarResourceWidget extends ConsumerStatefulWidget {
-  const AppBarResourceWidget({super.key});
+  final bool isVertical;
+
+  const AppBarResourceWidget({
+    super.key,
+    this.isVertical = false,
+  });
 
   @override
   ConsumerState<AppBarResourceWidget> createState() =>
@@ -44,6 +49,7 @@ class _AppBarResourceWidgetState extends ConsumerState<AppBarResourceWidget>
     );
 
     // Initialize animations with current values
+    // Safely read initial coins, providing a default of 0 if currentUser or coins is null
     final initialCoins = ref.read(authProvider).currentUser.coins;
     _latestCoinsValue = initialCoins;
     _coinsAnimation = IntTween(
@@ -55,7 +61,7 @@ class _AppBarResourceWidgetState extends ConsumerState<AppBarResourceWidget>
     ));
 
     // For energy, assuming you have current and max values
-    // Replace this with actual energy values from your provider
+    // Replace this with actual energy values from your provider if different
     const initialEnergy = 8;
     const maxEnergy = 8;
     _latestEnergyValue = initialEnergy;
@@ -76,8 +82,8 @@ class _AppBarResourceWidgetState extends ConsumerState<AppBarResourceWidget>
     super.dispose();
   }
 
+  // Starts the coins animation from the current value to the new end value
   void _startCoinsAnimation(int end) {
-    // Stop any ongoing animation
     _coinsController.stop();
     final begin = _latestCoinsValue ?? end;
     _latestCoinsValue = end;
@@ -90,12 +96,11 @@ class _AppBarResourceWidgetState extends ConsumerState<AppBarResourceWidget>
         curve: const Interval(0.0, 1.0, curve: Curves.easeInOutQuad),
       ));
     });
-    // Reset and start the animation
     _coinsController.forward(from: 0.0);
   }
 
+  // Starts the energy animation from the current value to the new end value
   void _startEnergyAnimation(int end, int maxEnergy) {
-    // Stop any ongoing animation
     _energyController.stop();
     final begin = _latestEnergyValue ?? end;
     _latestEnergyValue = end;
@@ -109,7 +114,6 @@ class _AppBarResourceWidgetState extends ConsumerState<AppBarResourceWidget>
         curve: const Interval(0.0, 1.0, curve: Curves.easeInOutQuad),
       ));
     });
-    // Reset and start the animation
     _energyController.forward(from: 0.0);
   }
 
@@ -118,50 +122,58 @@ class _AppBarResourceWidgetState extends ConsumerState<AppBarResourceWidget>
     final currentUser = ref.watch(authProvider).currentUser;
     final currentCoins = currentUser.coins;
 
-    // Start animation if coins value changed
+    // Trigger coins animation if value has changed
     if (_latestCoinsValue != currentCoins) {
       _startCoinsAnimation(currentCoins);
     }
 
-    // For energy, replace with your actual energy data
-    // This is just an example assuming energy is 8/8
+    // Example energy values; replace with your actual energy data
     const currentEnergy = 8;
     const maxEnergy = 8;
 
-    // Start animation if energy values changed
+    // Trigger energy animation if values have changed
     if (_latestEnergyValue != currentEnergy ||
         _latestMaxEnergyValue != maxEnergy) {
       _startEnergyAnimation(currentEnergy, maxEnergy);
     }
 
     return GestureDetector(
-      onTap: () => UserResourcesDialog.show(context),
+      onTap: () =>
+          UserResourcesDialog.show(context), // Tapping opens the dialog
       child: Container(
-        height: kToolbarHeight - 16,
-        padding: EdgeInsets.symmetric(horizontal: calcWidth(8)),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Coins section with animation
-            _buildAnimatedCoins(),
-
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: calcHeight(8)),
-              child: VerticalDivider(
-                color: Colors.white.withValues(alpha: 0.3),
-                thickness: 1,
-                width: calcWidth(15),
+        height: widget.isVertical ? null : kToolbarHeight - 16,
+        padding: widget.isVertical
+            ? EdgeInsets.symmetric(vertical: calcHeight(8))
+            : EdgeInsets.symmetric(horizontal: calcWidth(8)),
+        child: widget.isVertical
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildAnimatedCoins(),
+                  SizedBox(height: calcHeight(10)),
+                  _buildAnimatedEnergy(),
+                ],
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildAnimatedCoins(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: calcHeight(8)),
+                    child: VerticalDivider(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      thickness: 1,
+                      width: calcWidth(15),
+                    ),
+                  ),
+                  _buildAnimatedEnergy(),
+                ],
               ),
-            ),
-
-            // Energy section with animation
-            _buildAnimatedEnergy(),
-          ],
-        ),
       ),
     );
   }
 
+  // Builds the animated coins display (icon and text horizontally aligned)
   Widget _buildAnimatedCoins() {
     return Row(
       mainAxisSize: MainAxisSize.min,
