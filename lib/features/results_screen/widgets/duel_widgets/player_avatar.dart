@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 
@@ -26,6 +27,7 @@ class PlayerAvatar extends StatelessWidget {
       children: [
         Stack(
           alignment: Alignment.center,
+          clipBehavior: Clip.none, // Allow children to render outside bounds
           children: [
             // Winner ring
             if (isWinner)
@@ -58,9 +60,9 @@ class PlayerAvatar extends StatelessWidget {
               radius: 55,
             ),
 
-            // Score badge
+            // Score badge - Positioned with a negative bottom value
             Positioned(
-              bottom: 0,
+              bottom: -calcHeight(25), // Adjust this negative value as needed
               child: Container(
                 padding: EdgeInsets.symmetric(
                     horizontal: calcWidth(16), vertical: calcHeight(6)),
@@ -98,6 +100,16 @@ class PlayerAvatar extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        SizedBox(height: calcHeight(25)),
+        Text(
+          user?.name ?? Strings.opponent,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

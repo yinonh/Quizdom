@@ -106,6 +106,7 @@ class CustomDrawerHeader extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 GestureDetector(
                   child: const CurrentUserAvatar(
@@ -116,11 +117,7 @@ class CustomDrawerHeader extends StatelessWidget {
                     context.goNamed(AvatarScreen.routeName);
                   },
                 ),
-                SizedBox(
-                  width: calcWidth(20),
-                ),
-                // const UserCoins(),
-                const AppBarResourceWidget(),
+                const AppBarResourceWidget(isVertical: true),
               ],
             ),
             const SizedBox(height: 8.0),

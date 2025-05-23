@@ -119,9 +119,4 @@ class DuelResultScreenManager extends _$DuelResultScreenManager {
     if (totalAttempted == 0) return 0;
     return achievements.correctAnswers / totalAttempted * 100;
   }
-
-  void playAgain(String roomId, String opponentId) {
-    // Implementation for play again logic
-    // You might want to create a new room with same settings
-  }
 }

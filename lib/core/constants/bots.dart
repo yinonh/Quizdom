@@ -21,8 +21,12 @@ class BotService {
 
   // Available bot avatars
   final List<String> _botAvatars = [
-    Strings.botAvatar,
-    // Add more avatar URLs as needed
+    Strings.botAvatar1,
+    Strings.botAvatar2,
+    Strings.botAvatar3,
+    Strings.botAvatar4,
+    Strings.botAvatar5,
+    Strings.botAvatar6,
   ];
 
   /// Set a new bot as the current bot
@@ -42,7 +46,7 @@ class BotService {
       name: name ?? _generateRandomBotName(),
       userXp: _random.nextDouble() * 2000,
       recentTriviaCategories: [],
-      imageUrl: imageUrl ?? _botAvatars.first,
+      imageUrl: imageUrl ?? _botAvatars[_random.nextInt(_botAvatars.length)],
     );
 
     // Create and return the bot
