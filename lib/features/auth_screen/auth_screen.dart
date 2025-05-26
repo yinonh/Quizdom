@@ -24,37 +24,40 @@ class AuthScreen extends ConsumerWidget {
     final authState = ref.watch(authScreenManagerProvider);
     final authNotifier = ref.read(authScreenManagerProvider.notifier);
 
-    ref.listen<AuthState>(authScreenManagerProvider, (previous, next) {
-      if (next.navigate && next.isNewUser) {
-        context.goNamed(AvatarScreen.routeName);
-        authNotifier.resetNavigate();
-      } else if (next.navigate) {
-        context.goNamed(CategoriesScreen.routeName);
-        authNotifier.resetNavigate();
-      }
-      if (next.firebaseErrorMessage != null) {
-        final message = next.firebaseErrorMessage!;
-        authNotifier.deleteFirebaseMessage();
-        showTopSnackBar(
-          Overlay.of(context),
-          CustomSnackBar.info(
-            message: message,
-            backgroundColor: AppConstant.onPrimaryColor,
-            icon: Icon(
-              Icons.warning_rounded,
-              color: Colors.black.withValues(alpha: 0.2),
-              size: 120,
+    ref.listen<AuthState>(
+      authScreenManagerProvider,
+      (previous, next) {
+        if (next.navigate && !next.isLogin) {
+          context.goNamed(AvatarScreen.routeName);
+          authNotifier.resetNavigate();
+        } else if (next.navigate) {
+          context.goNamed(CategoriesScreen.routeName);
+          authNotifier.resetNavigate();
+        }
+        if (next.firebaseErrorMessage != null) {
+          final message = next.firebaseErrorMessage!;
+          authNotifier.deleteFirebaseMessage();
+          showTopSnackBar(
+            Overlay.of(context),
+            CustomSnackBar.info(
+              message: message,
+              backgroundColor: AppConstant.onPrimaryColor,
+              icon: Icon(
+                Icons.warning_rounded,
+                color: Colors.black.withValues(alpha: 0.2),
+                size: 120,
+              ),
             ),
-          ),
-          snackBarPosition: SnackBarPosition.bottom,
-          padding: EdgeInsets.symmetric(
-            horizontal: calcWidth(20),
-            vertical: calcHeight(80),
-          ),
-          displayDuration: const Duration(seconds: 1, milliseconds: 500),
-        );
-      }
-    });
+            snackBarPosition: SnackBarPosition.bottom,
+            padding: EdgeInsets.symmetric(
+              horizontal: calcWidth(20),
+              vertical: calcHeight(80),
+            ),
+            displayDuration: const Duration(seconds: 1, milliseconds: 500),
+          );
+        }
+      },
+    );
 
     return BaseScreen(
       child: Scaffold(

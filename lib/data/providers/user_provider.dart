@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
+import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 
 part 'user_provider.freezed.dart';
@@ -76,18 +77,28 @@ class Auth extends _$Auth {
 
   Future<void> initializeUser() async {
     final userId = FirebaseAuth.instance.currentUser?.uid ?? "";
-    if (userId != "") {
+    if (userId == "") return;
+
+    try {
+      // First, try to get existing user
       final currentUser = await UserDataSource.getUserById(userId);
+
+      if (currentUser == null) {
+        // User doesn't exist in Firestore, create with defaults
+        final firebaseUser = FirebaseAuth.instance.currentUser!;
+        await _createDefaultUser(firebaseUser);
+        return;
+      }
 
       final updatedUser = TriviaUser(
           uid: userId,
-          name: currentUser?.name,
-          email: currentUser?.email,
-          imageUrl: currentUser?.imageUrl,
-          lastLogin: currentUser?.lastLogin,
-          recentTriviaCategories: currentUser?.recentTriviaCategories ?? [],
-          userXp: currentUser?.userXp ?? 0,
-          coins: currentUser?.coins ?? 0);
+          name: currentUser.name,
+          email: currentUser.email,
+          imageUrl: currentUser.imageUrl,
+          lastLogin: currentUser.lastLogin,
+          recentTriviaCategories: currentUser.recentTriviaCategories ?? [],
+          userXp: currentUser.userXp ?? 0,
+          coins: currentUser.coins ?? 100);
 
       if (updatedUser.lastLogin?.isYesterday ?? false) {
         state =
@@ -102,6 +113,46 @@ class Auth extends _$Auth {
 
       await UserDataSource.updateUser(
           userId: userId, lastLogin: DateTime.now());
+    } catch (e) {
+      // If anything fails, create default user
+      final firebaseUser = FirebaseAuth.instance.currentUser;
+      if (firebaseUser != null) {
+        await _createDefaultUser(firebaseUser);
+      }
+    }
+  }
+
+  Future<void> _createDefaultUser(User firebaseUser) async {
+    try {
+      // Create user with default values
+      final defaultName = firebaseUser.displayName ??
+          firebaseUser.email?.split('@')[0] ??
+          'User${firebaseUser.uid.substring(0, 4)}';
+
+      await saveUser(firebaseUser.uid, defaultName, firebaseUser.email ?? '');
+
+      // Create user statistics
+      await UserStatisticsDataSource.createUserStatistics(firebaseUser.uid);
+
+      // Update local state
+      final updatedUser = TriviaUser(
+        uid: firebaseUser.uid,
+        name: defaultName,
+        email: firebaseUser.email ?? '',
+        imageUrl: firebaseUser.photoURL,
+        lastLogin: DateTime.now(),
+        recentTriviaCategories: [],
+        userXp: 0.0,
+        coins: 100,
+      );
+
+      state = state.copyWith(
+          firebaseUser: firebaseUser,
+          currentUser: updatedUser,
+          loginNewDayInARow: null);
+    } catch (e) {
+      print('Error creating default user: $e');
+      rethrow;
     }
   }
 
@@ -234,6 +285,19 @@ class Auth extends _$Auth {
     if (user == null || user.uid == "") {
       throw AssertionError('User UID cannot be null after sign-in.');
     }
+
+    // Handle new Google user
+    if (userCredential.additionalUserInfo?.isNewUser == true) {
+      final defaultName = user.displayName ??
+          user.email?.split('@')[0] ??
+          'User${user.uid.substring(0, 4)}';
+
+      await saveUser(user.uid, defaultName, user.email ?? '');
+      await UserStatisticsDataSource.createUserStatistics(user.uid);
+    }
+
+    // Update state with Firebase user
+    state = state.copyWith(firebaseUser: user);
 
     return userCredential.additionalUserInfo;
   }

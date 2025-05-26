@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
 
@@ -26,28 +27,47 @@ class AppInitialization extends _$AppInitialization {
         }
       },
       loading: () async {},
-      error: (error, stack) async => throw error,
+      error: (error, stack) async {
+        // Log the error but don't throw it to prevent app crashes
+        print('Auth state error: $error');
+        // You might want to show a user-friendly error message here
+      },
     );
   }
 
   Future<void> _initializeAppData() async {
     try {
-      // Initialize in correct order
+      // Initialize general trivia rooms first (doesn't depend on user)
       await ref
           .read(generalTriviaRoomsProvider.notifier)
           .initializeGeneralTriviaRoom();
 
-      // Wait for user initialization to complete before proceeding
+      // Initialize user data - this now handles missing users gracefully
       await ref.read(authProvider.notifier).initializeUser();
 
-      // After user is initialized, proceed with statistics and achievements
-      await Future.wait([
-        ref.read(statisticsProvider.notifier).initializeUserStatistics(),
-        Future(() => ref.read(currentTriviaAchievementsProvider)),
-      ]);
+      // Only proceed with user-dependent initialization if user exists
+      final currentUser = ref.read(authProvider).currentUser;
+      if (currentUser.uid.isNotEmpty) {
+        await Future.wait([
+          ref.read(statisticsProvider.notifier).initializeUserStatistics(),
+          Future(() => ref.read(currentTriviaAchievementsProvider)),
+        ]);
+      }
     } catch (e) {
-      // Handle any initialization errors
-      throw Exception('Failed to initialize app data: $e');
+      // Log the error for debugging
+      logger.i('Failed to initialize app data: $e');
+
+      // Try to recover by re-initializing user with defaults
+      try {
+        final firebaseUser = FirebaseAuth.instance.currentUser;
+        if (firebaseUser != null) {
+          await ref.read(authProvider.notifier).initializeUser();
+        }
+      } catch (recoveryError) {
+        logger.i('Recovery initialization also failed: $recoveryError');
+        // At this point, you might want to show an error screen or retry mechanism
+        rethrow;
+      }
     }
   }
 }

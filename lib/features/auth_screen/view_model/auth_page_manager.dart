@@ -155,14 +155,26 @@ class AuthScreenManager extends _$AuthScreenManager {
   }
 
   Future<void> signInWithGoogle() async {
+    ref.read(loadingProvider.notifier).state = true;
+
     try {
       final additionalUserInfo =
           await ref.read(authProvider.notifier).signInWithGoogle();
-      state = state.copyWith(
-          navigate: true, isNewUser: additionalUserInfo?.isNewUser ?? true);
+
+      // Check if this is a new user or existing user
+      final isNewUser = additionalUserInfo?.isNewUser ?? false;
+
+      // For new Google users, we want to show the avatar screen
+      // For existing users, go directly to categories
+      state = state.copyWith(navigate: true, isNewUser: isNewUser);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+    } catch (e) {
+      state = state.copyWith(
+          firebaseErrorMessage: 'An error occurred during Google sign-in');
+    } finally {
+      ref.read(loadingProvider.notifier).state = false;
     }
   }
 }
