@@ -9,6 +9,7 @@ import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -18,7 +19,7 @@ import 'package:trivia/features/results_screen/widgets/solo_widets/top_user_podi
 import 'package:trivia/features/results_screen/widgets/total_score.dart';
 
 class SoloResultsScreen extends ConsumerWidget {
-  static const routeName = Strings.soloResultsRouteName;
+  static const routeName = AppRoutes.soloResultsRouteName;
 
   const SoloResultsScreen({super.key});
 

@@ -31,19 +31,6 @@ class Strings {
   // Hero Tag
   static const String userAvatarTag = "userAvatar";
 
-  // Route Names
-  static const String authRouteName = "/auth";
-  static const String avatarRouteName = "/avatar";
-  static const String categoriesRouteName = "/categories_screen";
-  static const String profileRouteName = "/profile";
-  static const String soloQuizRouteName = "/solo_quiz_screen";
-  static const String duelQuizRouteName = "/duel_quiz_screen";
-  static const String soloResultsRouteName = "/results_screen";
-  static const String duelResultsRouteName = "/duel_results";
-  static const String triviaIntroRouteName = "/triviaIntroScreen";
-  static const String wheelSpinRouteName = "/wheel_spin_screen";
-  static const String gameCancelRouteName = "/game_canceled";
-
   // Common Strings
   static const String error = "Error:";
   static const String loading = "Loading...:";

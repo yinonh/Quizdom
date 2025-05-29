@@ -5,7 +5,9 @@ class AppRoutes {
   static const String profileRouteName = "/profile";
   static const String soloQuizRouteName = "/solo_quiz_screen";
   static const String duelQuizRouteName = "/duel_quiz_screen";
-  static const String resultsRouteName = "/results_screen";
+  static const String soloResultsRouteName = "/results_screen";
+  static const String duelResultsRouteName = "/duel_results";
   static const String triviaIntroRouteName = "/triviaIntroScreen";
   static const String wheelSpinRouteName = "/wheel_spin_screen";
+  static const String gameCancelRouteName = "/game_canceled";
 }

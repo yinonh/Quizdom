@@ -8,6 +8,7 @@ import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/router_provider.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';
@@ -67,7 +68,7 @@ class AuthScreenManager extends _$AuthScreenManager {
       confirmPasswordErrorMessage: '',
       firebaseErrorMessage: null,
       navigate: false,
-      isNewUser: !state.isLogin,
+      isNewUser: state.isLogin,
       formKey: GlobalKey<FormState>(),
     );
   }
@@ -137,6 +138,8 @@ class AuthScreenManager extends _$AuthScreenManager {
         await ref
             .read(authProvider.notifier)
             .signIn(state.email, state.password);
+        // For login, clear any existing new user flag
+        ref.read(newUserRegistrationProvider.notifier).clearNewUser();
         state = state.copyWith(navigate: true, isNewUser: false);
       } else {
         final userCredential = await ref
@@ -144,6 +147,9 @@ class AuthScreenManager extends _$AuthScreenManager {
             .createUser(state.email, state.password);
         final newUserUid = userCredential.user!.uid;
         await UserStatisticsDataSource.createUserStatistics(newUserUid);
+
+        // Set the new user flag in the global provider
+        ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
         state = state.copyWith(navigate: true, isNewUser: true);
       }
     } on FirebaseAuthException catch (e) {
@@ -154,6 +160,7 @@ class AuthScreenManager extends _$AuthScreenManager {
     }
   }
 
+// Updated signInWithGoogle method
   Future<void> signInWithGoogle() async {
     ref.read(loadingProvider.notifier).state = true;
 
@@ -164,8 +171,14 @@ class AuthScreenManager extends _$AuthScreenManager {
       // Check if this is a new user or existing user
       final isNewUser = additionalUserInfo?.isNewUser ?? false;
 
-      // For new Google users, we want to show the avatar screen
-      // For existing users, go directly to categories
+      if (isNewUser) {
+        // Set the new user flag in the global provider
+        ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
+      } else {
+        // Clear any existing new user flag
+        ref.read(newUserRegistrationProvider.notifier).clearNewUser();
+      }
+
       state = state.copyWith(navigate: true, isNewUser: isNewUser);
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(

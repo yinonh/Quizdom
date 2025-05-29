@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/core/utils/fluttermoji/fluttermoji_assets/fluttermojimodel.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 
 class UserDataSource {
@@ -44,6 +45,7 @@ class UserDataSource {
       'name': name,
       'lastLogin': now,
       'recentTriviaCategories': [],
+      'fluttermojiOptions': defaultFluttermojiOptions,
       'trophies': [],
       'userXp': 0.0,
       'coins': 100,

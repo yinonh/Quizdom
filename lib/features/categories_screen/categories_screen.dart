@@ -10,6 +10,7 @@ import 'package:trivia/core/common_widgets/resource_floating_action_button.dart'
 import 'package:trivia/core/common_widgets/under_construction_dialog.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
@@ -25,7 +26,7 @@ import 'package:trivia/features/categories_screen/widgets/wheel_of_fortune_banne
 import 'package:trivia/features/intro_screen/intro_screen.dart';
 
 class CategoriesScreen extends ConsumerWidget {
-  static const routeName = Strings.categoriesRouteName;
+  static const routeName = AppRoutes.categoriesRouteName;
 
   const CategoriesScreen({super.key});
 

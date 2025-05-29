@@ -8,6 +8,7 @@ import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -16,7 +17,7 @@ import 'package:trivia/features/avatar_screen/widgets/edit_avatar.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 
 class AvatarScreen extends ConsumerWidget {
-  static const routeName = Strings.avatarRouteName;
+  static const routeName = AppRoutes.avatarRouteName;
 
   const AvatarScreen({super.key});
 

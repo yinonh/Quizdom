@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/results_screen/view_model/game_canceled_manager/game_canceled_screen_manager.dart';
 
 class GameCanceledScreen extends ConsumerWidget {
-  static const routeName = Strings.gameCancelRouteName;
+  static const routeName = AppRoutes.gameCancelRouteName;
 
   final List users;
   final Map<String, int> userScores;

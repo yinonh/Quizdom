@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
@@ -12,7 +12,7 @@ import 'package:trivia/features/results_screen/widgets/duel_widgets/winner_annou
 import 'package:trivia/features/results_screen/widgets/total_score.dart';
 
 class DuelResultsScreen extends ConsumerWidget {
-  static const String routeName = Strings.duelResultsRouteName;
+  static const String routeName = AppRoutes.duelResultsRouteName;
   final String roomId;
 
   const DuelResultsScreen({

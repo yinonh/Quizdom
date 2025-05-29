@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'core/constants/app_routes.dart';
 import 'data/providers/app_initialization_provider.dart';
@@ -8,7 +9,6 @@ import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';
 import 'features/intro_screen/intro_screen.dart';
-import 'features/no_internet_screen/connectivity_wrapper.dart';
 import 'features/profile_screen/profile_screen.dart';
 import 'features/quiz_screen/duel_quiz_screen.dart';
 import 'features/quiz_screen/solo_quiz_screen.dart';
@@ -17,6 +17,24 @@ import 'features/results_screen/game_canceled.dart';
 import 'features/results_screen/solo_results_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
+part 'router_provider.g.dart';
+
+@riverpod
+class NewUserRegistration extends _$NewUserRegistration {
+  @override
+  bool build() {
+    return false;
+  }
+
+  void setNewUser(bool isNewUser) {
+    state = isNewUser;
+  }
+
+  void clearNewUser() {
+    state = false;
+  }
+}
+
 class AppNavigatorKeys {
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -24,29 +42,40 @@ class AppNavigatorKeys {
       GlobalKey<NavigatorState>();
 }
 
-// Router provider
+// Updated Router provider
 final routerProvider = Provider<GoRouter>(
   (ref) {
     final authState = ref.watch(authStateChangesProvider);
+    final isNewUser = ref.watch(newUserRegistrationProvider);
 
     return GoRouter(
       navigatorKey: AppNavigatorKeys.navigatorKey,
-      // Use your existing navigatorKey
       initialLocation: AppRoutes.categoriesRouteName,
       debugLogDiagnostics: true,
       redirect: (context, state) {
-        // Check if the user is authenticated
         final isAuthenticated = authState.value != null;
         final isLoggingIn = state.matchedLocation == AppRoutes.authRouteName;
+        final isOnAvatarScreen = state.matchedLocation ==
+            '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
 
         // If not authenticated and not on the auth page, redirect to auth
         if (!isAuthenticated && !isLoggingIn) {
           return AppRoutes.authRouteName;
         }
 
-        // If authenticated and on the auth page, redirect to categories
+        // If authenticated and on the auth page
         if (isAuthenticated && isLoggingIn) {
+          // If it's a new user, redirect to avatar screen
+          if (isNewUser) {
+            return '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
+          }
+          // Otherwise redirect to categories
           return AppRoutes.categoriesRouteName;
+        }
+
+        // If authenticated, new user, and not on avatar screen, redirect to avatar
+        if (isAuthenticated && isNewUser && !isOnAvatarScreen) {
+          return '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
         }
 
         // No redirect needed
@@ -64,7 +93,7 @@ final routerProvider = Provider<GoRouter>(
         ShellRoute(
           navigatorKey: AppNavigatorKeys.shellNavigatorKey,
           builder: (context, state, child) {
-            return ConnectivityWrapper(child: child);
+            return child;
           },
           routes: [
             GoRoute(
@@ -80,7 +109,7 @@ final routerProvider = Provider<GoRouter>(
                 ),
                 // Avatar route (nested under categories)
                 GoRoute(
-                  path: 'avatar',
+                  path: AppRoutes.avatarRouteName,
                   name: AvatarScreen.routeName,
                   builder: (context, state) => const AvatarScreen(),
                 ),

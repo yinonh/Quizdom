@@ -2,20 +2,18 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
 import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
-import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/features/categories_screen/categories_screen.dart';
 
 class AuthScreen extends ConsumerWidget {
-  static const String routeName = Strings.authRouteName;
+  static const String routeName = AppRoutes.authRouteName;
 
   const AuthScreen({super.key});
 
@@ -27,11 +25,13 @@ class AuthScreen extends ConsumerWidget {
     ref.listen<AuthState>(
       authScreenManagerProvider,
       (previous, next) {
-        if (next.navigate && !next.isLogin) {
-          context.goNamed(AvatarScreen.routeName);
+        if (next.navigate && next.isNewUser) {
+          // The router will handle the navigation automatically
+          // Just reset the navigate flag
           authNotifier.resetNavigate();
         } else if (next.navigate) {
-          context.goNamed(CategoriesScreen.routeName);
+          // The router will handle the navigation automatically
+          // Just reset the navigate flag
           authNotifier.resetNavigate();
         }
         if (next.firebaseErrorMessage != null) {

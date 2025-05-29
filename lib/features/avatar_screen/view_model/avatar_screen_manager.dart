@@ -12,6 +12,7 @@ import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/router_provider.dart';
 
 part 'avatar_screen_manager.freezed.dart';
 part 'avatar_screen_manager.g.dart';
@@ -112,6 +113,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
         await ref.read(authProvider.notifier).setImage(file);
       }
+      ref.read(newUserRegistrationProvider.notifier).clearNewUser();
       state = AsyncValue.data(data.copyWith(navigate: true));
       ref.read(loadingProvider.notifier).state = false;
     });
@@ -131,6 +133,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     await ref.read(authProvider.notifier).setAvatar();
     state.whenData(
       (data) {
+        ref.read(newUserRegistrationProvider.notifier).clearNewUser();
         state = AsyncValue.data(data.copyWith(navigate: true));
       },
     );
