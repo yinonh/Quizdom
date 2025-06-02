@@ -142,11 +142,8 @@ class DuelIntroContent extends ConsumerWidget {
                                   color: AppConstant.primaryColor,
                                 ),
                                 onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        const RoomFilterDialog(),
-                                  );
+                                  // Changed from showDialog to the new screen navigation
+                                  RoomFilterScreen.show(context);
                                 },
                                 tooltip: Strings.filterRooms,
                               ),

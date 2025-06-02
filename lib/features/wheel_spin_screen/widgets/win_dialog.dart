@@ -1,11 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
-class WinDialog extends StatelessWidget {
-  const WinDialog({required this.coins, super.key});
+class WinDialogScreen extends StatelessWidget {
+  static const routeName = AppRoutes.winDialog;
+
+  final int coins;
+
+  const WinDialogScreen({
+    super.key,
+    required this.coins,
+  });
+
+  /// Navigate to the Win Dialog screen
+  static void show(BuildContext context, int coins) {
+    context.pushNamed(routeName, extra: {'coins': coins});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.5),
+        child: Center(
+          child: WinDialogContent(coins: coins),
+        ),
+      ),
+    );
+  }
+}
+
+class WinDialogContent extends StatelessWidget {
+  const WinDialogContent({required this.coins, super.key});
 
   final int coins;
 

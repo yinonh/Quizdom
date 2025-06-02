@@ -41,6 +41,7 @@ class DuelQuizState with _$DuelQuizState {
     @Default({}) Map<String, Map<int, int>> userAnswers,
     @Default(false) bool isHost,
     @Default(false) bool isOpponentBot,
+    @Default(false) bool hasUserPaidCoins,
   }) = _DuelQuizState;
 }
 
@@ -304,6 +305,13 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           await _botManager.updateBotLastSeen(quizState.roomId!);
         }
 
+        if (!quizState.hasUserPaidCoins) {
+          payCoins(-10);
+
+          // Update state to mark that user has paid
+          state = AsyncValue.data(quizState.copyWith(hasUserPaidCoins: true));
+        }
+
         await TriviaRoomDataSource.startGame(quizState.roomId!);
       }
     });
@@ -525,5 +533,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     options.shuffle();
     final shuffledCorrectIndex = options.indexOf(question.correctAnswer!);
     return ShuffledData(options: options, correctIndex: shuffledCorrectIndex);
+  }
+
+  void payCoins(int amount) {
+    ref.read(authProvider.notifier).updateCoins(amount);
   }
 }

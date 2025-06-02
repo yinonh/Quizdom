@@ -16,7 +16,6 @@ import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/categories_screen/widgets/categories_screen_shimmer.dart';
-import 'package:trivia/features/categories_screen/widgets/daily_login-popup.dart';
 import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
 import 'package:trivia/features/categories_screen/widgets/info_container.dart';
 import 'package:trivia/features/categories_screen/widgets/recent_categories.dart';
@@ -49,20 +48,20 @@ class CategoriesScreen extends ConsumerWidget {
                   if (data.showRowLogin) {
                     categoriesNotifier.onClaim(AppConstant.loginAwards[
                         data.daysInRow % AppConstant.loginAwards.length]);
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return DailyLoginPopupContent(
-                          streakDays:
+
+                    // Use router navigation instead of showDialog
+                    context.go(
+                        '${AppRoutes.categoriesRouteName}${AppRoutes.dailyLoginRouteName}',
+                        extra: {
+                          'streakDays':
                               data.daysInRow % AppConstant.loginAwards.length,
-                          startDay: 1,
-                          rewards: AppConstant.loginAwards,
-                          onClaim: () {
+                          'startDay': 1,
+                          'rewards': AppConstant.loginAwards,
+                          'onClaim': () {
+                            // This will be called when the user claims the reward
                             context.pop();
                           },
-                        );
-                      },
-                    );
+                        });
                   }
                 });
                 return SingleChildScrollView(

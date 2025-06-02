@@ -10,4 +10,8 @@ class AppRoutes {
   static const String triviaIntroRouteName = "/triviaIntroScreen";
   static const String wheelSpinRouteName = "/wheel_spin_screen";
   static const String gameCancelRouteName = "/game_canceled";
+  static const String dailyLoginRouteName = '/daily-login';
+  static const String winDialog = '/win-dialog';
+  static const String loseDialog = '/lose-dialog';
+  static const String filterDialog = '/filter-dialog';
 }

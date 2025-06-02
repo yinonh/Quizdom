@@ -10,6 +10,7 @@ import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
@@ -20,7 +21,7 @@ import 'package:trivia/features/wheel_spin_screen/widgets/win_dialog.dart';
 class WheelSpinScreen extends ConsumerStatefulWidget {
   const WheelSpinScreen({super.key});
 
-  static const routeName = '/wheel-spin';
+  static const routeName = AppRoutes.wheelSpinRouteName;
 
   @override
   _WheelSpinScreenState createState() => _WheelSpinScreenState();
@@ -77,17 +78,11 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
   }
 
   void _showWinDialog(int coins) {
-    showDialog(
-      context: context,
-      builder: (context) => WinDialog(coins: coins),
-    );
+    WinDialogScreen.show(context, coins);
   }
 
   void _showBetterLuckDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => const LoseDialog(),
-    );
+    LoseDialogScreen.show(context);
   }
 
   @override

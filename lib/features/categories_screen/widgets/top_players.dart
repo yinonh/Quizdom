@@ -107,33 +107,30 @@ class _ExpandableHighScorePlayersListState
                   ),
                 )
               else
-                AnimatedContainer(
+                // Replace AnimatedContainer with AnimatedSize for dynamic height
+                AnimatedSize(
                   duration: const Duration(milliseconds: 300),
-                  height: isExpanded
-                      ? min(sortedEntries.length * calcHeight(80),
-                          calcHeight(400))
-                      : min(3 * calcHeight(80), calcHeight(240)),
-                  child: ListView.separated(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemCount: min(itemsToShow, sortedEntries.length),
-                    physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (context, index) => Divider(
-                      color: Colors.grey.shade200,
-                      height: 1,
-                    ),
-                    itemBuilder: (context, index) {
-                      final user = sortedEntries[index].key;
-                      final score = sortedEntries[index].value;
-                      final rank = index + 1;
-
-                      return _buildPlayerRow(
-                        context: context,
-                        rank: rank,
-                        user: user,
-                        score: score,
-                      );
-                    },
+                  curve: Curves.easeInOut,
+                  child: Column(
+                    children: [
+                      // Generate the list items directly instead of using ListView
+                      for (int index = 0;
+                          index < min(itemsToShow, sortedEntries.length);
+                          index++) ...[
+                        _buildPlayerRow(
+                          context: context,
+                          rank: index + 1,
+                          user: sortedEntries[index].key,
+                          score: sortedEntries[index].value,
+                        ),
+                        // Add divider between items (except for the last item)
+                        if (index < min(itemsToShow, sortedEntries.length) - 1)
+                          Divider(
+                            color: Colors.grey.shade200,
+                            height: 1,
+                          ),
+                      ],
+                    ],
                   ),
                 ),
 

@@ -1,11 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
-class LoseDialog extends StatelessWidget {
-  const LoseDialog({super.key});
+class LoseDialogScreen extends StatelessWidget {
+  static const routeName = AppRoutes.loseDialog;
+
+  const LoseDialogScreen({super.key});
+
+  /// Navigate to the Lose Dialog screen
+  static void show(BuildContext context) {
+    context.pushNamed(routeName);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.5),
+        child: const Center(
+          child: LoseDialogContent(),
+        ),
+      ),
+    );
+  }
+}
+
+class LoseDialogContent extends StatelessWidget {
+  const LoseDialogContent({super.key});
 
   @override
   Widget build(BuildContext context) {

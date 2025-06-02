@@ -1,8 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
+
+class DailyLoginScreen extends StatelessWidget {
+  static const routeName = AppRoutes.dailyLoginRouteName;
+
+  final int streakDays;
+  final int startDay;
+  final List<int> rewards;
+  final VoidCallback onClaim;
+
+  const DailyLoginScreen({
+    super.key,
+    required this.streakDays,
+    required this.startDay,
+    required this.rewards,
+    required this.onClaim,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Center(
+        child: DailyLoginPopupContent(
+          streakDays: streakDays,
+          startDay: startDay,
+          rewards: rewards,
+          onClaim: () {
+            onClaim();
+          },
+        ),
+      ),
+    );
+  }
+}
 
 class DailyLoginPopupContent extends StatelessWidget {
   final int streakDays; // Current streak days

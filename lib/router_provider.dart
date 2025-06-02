@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/features/wheel_spin_screen/widgets/lose_dialog.dart';
+import 'package:trivia/features/wheel_spin_screen/widgets/win_dialog.dart';
 
 import 'core/constants/app_routes.dart';
 import 'data/providers/app_initialization_provider.dart';
 import 'features/auth_screen/auth_screen.dart';
 import 'features/avatar_screen/avatar_screen.dart';
 import 'features/categories_screen/categories_screen.dart';
+import 'features/categories_screen/widgets/daily_login-popup.dart';
 import 'features/intro_screen/intro_screen.dart';
+import 'features/intro_screen/widgets/filter_room.dart';
 import 'features/profile_screen/profile_screen.dart';
 import 'features/quiz_screen/duel_quiz_screen.dart';
 import 'features/quiz_screen/solo_quiz_screen.dart';
@@ -18,6 +21,31 @@ import 'features/results_screen/solo_results_screen.dart';
 import 'features/wheel_spin_screen/wheel_spin_screen.dart';
 
 part 'router_provider.g.dart';
+
+CustomTransitionPage<T> createDialogRoute<T>({
+  required LocalKey? key,
+  required Widget child,
+  Duration transitionDuration = const Duration(milliseconds: 300),
+  Duration reverseTransitionDuration = const Duration(milliseconds: 300),
+  bool barrierDismissible = true,
+  Color barrierColor = Colors.black54,
+}) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+    transitionDuration: transitionDuration,
+    reverseTransitionDuration: reverseTransitionDuration,
+    opaque: false, // Makes the route transparent
+    barrierDismissible: barrierDismissible,
+    barrierColor: barrierColor,
+  );
+}
 
 @riverpod
 class NewUserRegistration extends _$NewUserRegistration {
@@ -101,6 +129,24 @@ final routerProvider = Provider<GoRouter>(
               name: CategoriesScreen.routeName,
               builder: (context, state) => const CategoriesScreen(),
               routes: [
+                // Daily Login Popup route (nested under categories)
+                GoRoute(
+                  path: DailyLoginScreen.routeName,
+                  name: DailyLoginScreen.routeName,
+                  pageBuilder: (context, state) {
+                    final extra = state.extra! as Map<String, dynamic>;
+                    return createDialogRoute(
+                      key: state.pageKey,
+                      child: DailyLoginScreen(
+                        streakDays: extra['streakDays'],
+                        startDay: extra['startDay'],
+                        rewards: extra['rewards'],
+                        onClaim: extra['onClaim'],
+                      ),
+                    );
+                  },
+                ),
+
                 // Intro route (nested under categories)
                 GoRoute(
                   path: AppRoutes.triviaIntroRouteName,
@@ -123,18 +169,53 @@ final routerProvider = Provider<GoRouter>(
 
                 // Wheel spin route (nested under categories)
                 GoRoute(
-                  path: 'wheel-spin',
+                  path: WheelSpinScreen.routeName,
                   name: WheelSpinScreen.routeName,
                   builder: (context, state) => const WheelSpinScreen(),
+                  routes: [
+                    // Win dialog from the wheel
+                    GoRoute(
+                      path: WinDialogScreen.routeName,
+                      name: WinDialogScreen.routeName,
+                      pageBuilder: (context, state) {
+                        final extra = state.extra! as Map<String, dynamic>;
+                        return createDialogRoute(
+                          key: state.pageKey,
+                          child: WinDialogScreen(coins: extra['coins']),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: LoseDialogScreen.routeName,
+                      name: LoseDialogScreen.routeName,
+                      pageBuilder: (context, state) {
+                        return createDialogRoute(
+                          key: state.pageKey,
+                          child: const LoseDialogScreen(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
 
                 // Solo quiz route (nested under categories)
                 GoRoute(
-                  path: AppRoutes.soloQuizRouteName
-                      .substring(1), // Remove leading slash
-                  name: SoloQuizScreen.routeName,
-                  builder: (context, state) => const SoloQuizScreen(),
-                ),
+                    path: AppRoutes.soloQuizRouteName
+                        .substring(1), // Remove leading slash
+                    name: SoloQuizScreen.routeName,
+                    builder: (context, state) => const SoloQuizScreen(),
+                    routes: [
+                      GoRoute(
+                        path: RoomFilterScreen.routeName,
+                        name: RoomFilterScreen.routeName,
+                        pageBuilder: (context, state) {
+                          return createDialogRoute(
+                            key: state.pageKey,
+                            child: const RoomFilterScreen(),
+                          );
+                        },
+                      ),
+                    ]),
 
                 // Duel quiz route (nested under categories)
                 GoRoute(

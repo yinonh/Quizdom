@@ -5,6 +5,7 @@ import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
@@ -17,7 +18,7 @@ import 'package:trivia/features/results_screen/duel_result_screen.dart';
 import 'package:trivia/features/results_screen/game_canceled.dart';
 
 class DuelQuizScreen extends ConsumerWidget {
-  static const routeName = 'duel-quiz';
+  static const routeName = AppRoutes.duelQuizRouteName;
   final String roomId;
 
   const DuelQuizScreen({super.key, required this.roomId});

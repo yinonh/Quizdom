@@ -17,7 +17,7 @@ class UserState with _$UserState {
   const factory UserState({
     required User? firebaseUser,
     required TriviaUser currentUser,
-    required bool imageLoading,
+    @Default(false) bool imageLoading,
     bool? loginNewDayInARow,
   }) = _UserState;
 }
@@ -26,226 +26,182 @@ class UserState with _$UserState {
 class Auth extends _$Auth {
   @override
   UserState build() {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
     return UserState(
-      firebaseUser: FirebaseAuth.instance.currentUser,
-      currentUser: TriviaUser(
-        uid: FirebaseAuth.instance.currentUser?.uid ?? "",
-        lastLogin: DateTime.now(),
-        recentTriviaCategories: [],
-        userXp: 0.0,
-        coins: 100,
-      ),
+      firebaseUser: firebaseUser,
+      currentUser: firebaseUser != null
+          ? TriviaUser.fromFirebaseUser(firebaseUser)
+          : TriviaUser.createDefault(uid: "", name: "Guest"),
       imageLoading: false,
     );
   }
 
+  // Handle daily login rewards
   void onClaim(int award) async {
-    updateCoins(award);
+    await updateCoins(award);
     state = state.copyWith(loginNewDayInARow: false);
   }
 
-  void updateCoins(int amount) async {
-    await UserDataSource.updateUser(
-        userId: state.currentUser.uid, coins: state.currentUser.coins + amount);
-    state = state.copyWith(
-        currentUser: state.currentUser
-            .copyWith(coins: state.currentUser.coins + amount));
-  }
+  // Update coins and sync with Firestore
+  Future<void> updateCoins(int amount) async {
+    final newCoins = state.currentUser.coins + amount;
+    final updatedUser = state.currentUser.withUpdatedCoins(newCoins);
 
-  TriviaUser updateCurrentUser({
-    String? uid,
-    String? name,
-    String? email,
-    String? imageUrl,
-    DateTime? lastLogin,
-    List<int>? recentTriviaCategories,
-    double? userXp,
-    int? coins,
-  }) {
-    return state.currentUser.copyWith(
-      uid: uid ?? state.currentUser.uid,
-      name: name ?? state.currentUser.name,
-      email: email ?? state.currentUser.email,
-      imageUrl: imageUrl ?? state.currentUser.imageUrl,
-      lastLogin: lastLogin ?? state.currentUser.lastLogin,
-      recentTriviaCategories:
-          recentTriviaCategories ?? state.currentUser.recentTriviaCategories,
-      userXp: userXp ?? state.currentUser.userXp,
-      coins: coins ?? state.currentUser.coins,
-    );
-  }
+    // Update local state first for immediate UI feedback
+    state = state.copyWith(currentUser: updatedUser);
 
-  Future<void> initializeUser() async {
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? "";
-    if (userId == "") return;
-
+    // Then sync with Firestore
     try {
-      // First, try to get existing user
-      final currentUser = await UserDataSource.getUserById(userId);
-
-      if (currentUser == null) {
-        // User doesn't exist in Firestore, create with defaults
-        final firebaseUser = FirebaseAuth.instance.currentUser!;
-        await _createDefaultUser(firebaseUser);
-        return;
-      }
-
-      final updatedUser = TriviaUser(
-          uid: userId,
-          name: currentUser.name,
-          email: currentUser.email,
-          imageUrl: currentUser.imageUrl,
-          lastLogin: currentUser.lastLogin,
-          recentTriviaCategories: currentUser.recentTriviaCategories ?? [],
-          userXp: currentUser.userXp ?? 0,
-          coins: currentUser.coins ?? 100);
-
-      if (updatedUser.lastLogin?.isYesterday ?? false) {
-        state =
-            state.copyWith(currentUser: updatedUser, loginNewDayInARow: true);
-      } else if (updatedUser.lastLogin?.isOlderThanYesterday ?? true) {
-        state =
-            state.copyWith(currentUser: updatedUser, loginNewDayInARow: false);
-      } else {
-        state =
-            state.copyWith(currentUser: updatedUser, loginNewDayInARow: null);
-      }
-
-      await UserDataSource.updateUser(
-          userId: userId, lastLogin: DateTime.now());
+      await UserDataSource.updateCoins(updatedUser.uid, newCoins);
     } catch (e) {
-      // If anything fails, create default user
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      if (firebaseUser != null) {
-        await _createDefaultUser(firebaseUser);
-      }
+      // Revert local state if Firestore update fails
+      state = state.copyWith(
+          currentUser: state.currentUser
+              .withUpdatedCoins(state.currentUser.coins - amount));
+      rethrow;
     }
   }
 
-  Future<void> _createDefaultUser(User firebaseUser) async {
-    try {
-      // Create user with default values
-      final defaultName = firebaseUser.displayName ??
-          firebaseUser.email?.split('@')[0] ??
-          'User${firebaseUser.uid.substring(0, 4)}';
+  // Initialize user from Firestore or create new one
+  Future<void> initializeUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
 
-      await saveUser(firebaseUser.uid, defaultName, firebaseUser.email ?? '');
+    try {
+      // Try to get existing user from Firestore
+      final existingUser = await UserDataSource.getUserById(firebaseUser.uid);
+
+      if (existingUser == null) {
+        // Create new user
+        await _createNewUser(firebaseUser);
+        return;
+      }
+
+      // Update login status based on last login
+      bool? loginNewDayInARow;
+      if (existingUser.lastLogin?.isYesterday ?? false) {
+        loginNewDayInARow = true;
+      } else if (existingUser.lastLogin?.isOlderThanYesterday ?? true) {
+        loginNewDayInARow = false;
+      }
+
+      // Update state with existing user
+      state = state.copyWith(
+        firebaseUser: firebaseUser,
+        currentUser: existingUser,
+        loginNewDayInARow: loginNewDayInARow,
+      );
+
+      // Update last login in Firestore
+      await UserDataSource.updateLastLogin(firebaseUser.uid, DateTime.now());
+    } catch (e) {
+      print('Error initializing user: $e');
+      // Fallback: create new user
+      await _createNewUser(firebaseUser);
+    }
+  }
+
+  // Create new user with default values
+  Future<void> _createNewUser(User firebaseUser) async {
+    try {
+      final newUser = TriviaUser.fromFirebaseUser(firebaseUser);
+
+      // Save to Firestore
+      await UserDataSource.saveUser(newUser);
 
       // Create user statistics
       await UserStatisticsDataSource.createUserStatistics(firebaseUser.uid);
 
       // Update local state
-      final updatedUser = TriviaUser(
-        uid: firebaseUser.uid,
-        name: defaultName,
-        email: firebaseUser.email ?? '',
-        imageUrl: firebaseUser.photoURL,
-        lastLogin: DateTime.now(),
-        recentTriviaCategories: [],
-        userXp: 0.0,
-        coins: 100,
-      );
-
       state = state.copyWith(
-          firebaseUser: firebaseUser,
-          currentUser: updatedUser,
-          loginNewDayInARow: null);
+        firebaseUser: firebaseUser,
+        currentUser: newUser,
+        loginNewDayInARow: null,
+      );
     } catch (e) {
-      print('Error creating default user: $e');
+      print('Error creating new user: $e');
       rethrow;
     }
   }
 
-  Future<void> saveUser(String uid, String name, String email) async {
-    await UserDataSource.saveUser(uid, name);
-    state = state.copyWith(
-      currentUser: updateCurrentUser(uid: uid, name: name, email: email),
-    );
-  }
-
+  // Update user details
   Future<void> updateUserDetails({
     required String uid,
     required String name,
   }) async {
-    UserDataSource.updateUser(userId: uid, name: name);
-    final updatedUser = updateCurrentUser(
-      uid: uid,
-      name: name,
-    );
-    state = state.copyWith(currentUser: updatedUser);
-  }
+    final updatedUser = state.currentUser.copyWith(name: name);
 
-  void addXp(double xp) async {
-    final updatedUser =
-        updateCurrentUser(userXp: state.currentUser.userXp + xp);
+    // Update local state
     state = state.copyWith(currentUser: updatedUser);
 
-    await UserDataSource.updateUser(
-        userId: state.currentUser.uid, userXp: updatedUser.userXp);
+    // Update Firestore
+    await UserDataSource.updateName(uid, name);
   }
 
+  // Add XP to user
+  Future<void> addXp(double xp) async {
+    final updatedUser = state.currentUser.withAddedXp(xp);
+
+    // Update local state
+    state = state.copyWith(currentUser: updatedUser);
+
+    // Update Firestore
+    await UserDataSource.updateXp(updatedUser.uid, updatedUser.userXp);
+  }
+
+  // Handle image upload
   Future<void> setImage(File? image) async {
+    if (image == null) return;
+
     state = state.copyWith(imageLoading: true);
 
-    if (image != null) {
+    try {
       final imageUrl =
           await UserDataSource.updateUserImage(state.currentUser.uid, image);
 
-      // Check if an image already exists in Firestore, if yes, delete it
+      // Delete existing avatar if present
       await UserDataSource.deleteUserAvatar(state.currentUser.uid);
 
-      final updatedUser = updateCurrentUser(imageUrl: imageUrl);
+      final updatedUser = state.currentUser.copyWith(imageUrl: imageUrl);
       state = state.copyWith(currentUser: updatedUser, imageLoading: false);
+    } catch (e) {
+      state = state.copyWith(imageLoading: false);
+      rethrow;
     }
   }
 
-  void addTriviaCategory(int categoryId) async {
-    List<int> recentCategories =
-        List.from(state.currentUser.recentTriviaCategories);
-    recentCategories.remove(categoryId);
-    recentCategories.insert(0, categoryId);
+  // Add trivia category to recent list
+  Future<void> addTriviaCategory(int categoryId) async {
+    final updatedUser = state.currentUser.withUpdatedCategories(categoryId);
 
-    if (recentCategories.length > 4) {
-      recentCategories.removeLast();
-    }
-
-    final updatedUser =
-        state.currentUser.copyWith(recentTriviaCategories: recentCategories);
+    // Update local state
     state = state.copyWith(currentUser: updatedUser);
 
-    await UserDataSource.updateUser(
-        userId: state.currentUser.uid,
-        recentTriviaCategories: recentCategories);
+    // Update Firestore
+    await UserDataSource.updateRecentCategories(
+      updatedUser.uid,
+      updatedUser.recentTriviaCategories,
+    );
   }
 
-  Future<void> clearUser() async {
-    if (state.currentUser.uid != "") {
-      await UserDataSource.clearUser(state.currentUser.uid);
-
-      final updatedUser = updateCurrentUser(uid: null, name: null, email: null);
-      state = state.copyWith(currentUser: updatedUser);
-    }
-  }
-
+  // Set avatar (remove image)
   Future<void> setAvatar() async {
     final userId = state.currentUser.uid;
+    if (userId.isEmpty) return;
 
-    if (userId != "") {
-      await UserDataSource.deleteUserImageIfExists(userId);
+    await UserDataSource.deleteUserImageIfExists(userId);
 
-      // Update the local state with the new avatar and remove the image
-      final updatedUser = state.currentUser.copyWith(imageUrl: null);
-      state = state.copyWith(currentUser: updatedUser);
-    }
+    final updatedUser = state.currentUser.copyWith(imageUrl: null);
+    state = state.copyWith(currentUser: updatedUser);
   }
 
+  // Authentication methods
   Future<UserCredential> signIn(String email, String password) async {
-    final userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+    return await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    return userCredential;
   }
 
   Future<UserCredential> createUser(String email, String password) async {
@@ -254,11 +210,13 @@ class Auth extends _$Auth {
       email: email,
       password: password,
     );
+
     final user = userCredential.user;
     if (user != null) {
-      await saveUser(
-          user.uid, user.email?.split('@')[0] ?? '', user.email ?? '');
+      final newUser = TriviaUser.fromFirebaseUser(user);
+      await UserDataSource.saveUser(newUser);
     }
+
     return userCredential;
   }
 
@@ -279,26 +237,21 @@ class Auth extends _$Auth {
 
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
-
     final user = userCredential.user;
 
-    if (user == null || user.uid == "") {
+    if (user == null || user.uid.isEmpty) {
       throw AssertionError('User UID cannot be null after sign-in.');
     }
 
     // Handle new Google user
     if (userCredential.additionalUserInfo?.isNewUser == true) {
-      final defaultName = user.displayName ??
-          user.email?.split('@')[0] ??
-          'User${user.uid.substring(0, 4)}';
-
-      await saveUser(user.uid, defaultName, user.email ?? '');
+      final newUser = TriviaUser.fromFirebaseUser(user);
+      await UserDataSource.saveUser(newUser);
       await UserStatisticsDataSource.createUserStatistics(user.uid);
     }
 
     // Update state with Firebase user
     state = state.copyWith(firebaseUser: user);
-
     return userCredential.additionalUserInfo;
   }
 
@@ -306,11 +259,8 @@ class Auth extends _$Auth {
     if (state.firebaseUser?.providerData.isEmpty ?? true) {
       return false;
     }
-    for (var userInfo in state.firebaseUser!.providerData) {
-      if (userInfo.providerId == 'google.com') {
-        return true;
-      }
-    }
-    return false;
+
+    return state.firebaseUser!.providerData
+        .any((userInfo) => userInfo.providerId == 'google.com');
   }
 }
