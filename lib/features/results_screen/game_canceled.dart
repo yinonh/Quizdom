@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/results_screen/view_model/game_canceled_manager/game_canceled_screen_manager.dart';
@@ -76,7 +76,7 @@ class GameCanceledScreen extends ConsumerWidget {
                 SizedBox(height: calcHeight(32)),
                 ElevatedButton(
                   onPressed: () {
-                    context.goNamed(CategoriesScreen.routeName);
+                    goRoute(CategoriesScreen.routeName);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(

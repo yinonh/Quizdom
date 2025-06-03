@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -41,7 +42,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         if (onBack != null) {
                           onBack!();
                         }
-                        context.pop();
+                        pop();
                       })
                   : null),
           backgroundColor: Colors.transparent,

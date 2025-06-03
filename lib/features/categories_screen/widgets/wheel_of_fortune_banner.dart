@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/wheel_spin_screen/wheel_spin_screen.dart';
 
@@ -13,7 +13,7 @@ class WheelOfFortuneBanner extends StatelessWidget {
     return Center(
       child: GestureDetector(
         onTap: () {
-          context.goNamed(WheelSpinScreen.routeName);
+          goRoute(WheelSpinScreen.routeName);
         },
         child: Padding(
           padding: EdgeInsets.symmetric(

@@ -1,12 +1,11 @@
-// room_filter_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/intro_screen/view_model/duel_manager.dart';
@@ -19,7 +18,7 @@ class RoomFilterScreen extends ConsumerStatefulWidget {
 
   /// Navigate to the Room Filter screen
   static void show(BuildContext context) {
-    context.pushNamed(routeName);
+    goRoute(routeName);
   }
 
   @override
@@ -90,7 +89,7 @@ class RoomFilterContent extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.clear, color: Colors.white),
-                      onPressed: () => context.pop(),
+                      onPressed: () => pop(),
                     ),
                   ],
                 ),
@@ -193,7 +192,7 @@ class RoomFilterContent extends ConsumerWidget {
                           numOfQuestions: userPreference.questionCount,
                           difficulty: userPreference.difficulty,
                         );
-                        context.pop();
+                        pop();
                       },
                     ),
                   ],

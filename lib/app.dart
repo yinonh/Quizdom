@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/router_provider.dart';
 import 'core/common_widgets/custom_progress_indicator.dart';
 import 'core/constants/app_constant.dart';
+import 'core/navigation/router.dart';
 import 'core/utils/size_config.dart';
 import 'data/providers/app_initialization_provider.dart';
 

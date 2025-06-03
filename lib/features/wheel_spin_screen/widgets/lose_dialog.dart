@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
 class LoseDialogScreen extends StatelessWidget {
@@ -12,7 +12,7 @@ class LoseDialogScreen extends StatelessWidget {
 
   /// Navigate to the Lose Dialog screen
   static void show(BuildContext context) {
-    context.pushNamed(routeName);
+    goRoute(routeName);
   }
 
   @override
@@ -113,7 +113,7 @@ class LoseDialogContent extends StatelessWidget {
             ),
             SizedBox(height: calcHeight(24)),
             ElevatedButton(
-              onPressed: () => context.pop(),
+              onPressed: () => pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppConstant.onPrimaryColor,
                 foregroundColor: Colors.white,

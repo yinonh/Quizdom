@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
 class TrophyAchievementDialog extends StatelessWidget {
@@ -112,7 +112,7 @@ class TrophyAchievementDialog extends StatelessWidget {
               text: Strings.goToProfile,
               onTap: () {
                 onClose();
-                context.pop();
+                pop();
               },
               color: AppConstant.secondaryColor,
             ),

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 
@@ -113,7 +113,7 @@ class _DefaultErrorWidgetState extends State<DefaultErrorWidget> {
   }
 
   void _retryOperation() async {
-    context.goNamed(CategoriesScreen.routeName);
+    goRoute(CategoriesScreen.routeName);
   }
 
   @override

@@ -12,6 +12,7 @@ import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
@@ -59,7 +60,7 @@ class CategoriesScreen extends ConsumerWidget {
                           'rewards': AppConstant.loginAwards,
                           'onClaim': () {
                             // This will be called when the user claims the reward
-                            context.pop();
+                            pop();
                           },
                         });
                   }
@@ -90,7 +91,7 @@ class CategoriesScreen extends ConsumerWidget {
                               color: AppConstant.secondaryColor,
                               onTap: () {
                                 categoriesNotifier.setTriviaRoom();
-                                context.goNamed(TriviaIntroScreen.routeName);
+                                goRoute(TriviaIntroScreen.routeName);
                               },
                             ),
                             TopButton(

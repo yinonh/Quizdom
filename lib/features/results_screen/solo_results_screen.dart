@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
@@ -11,6 +10,7 @@ import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/results_screen/view_model/solo_result_manager/solo_result_screen_manager.dart';
@@ -38,7 +38,7 @@ class SoloResultsScreen extends ConsumerWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              context.pop();
+              pop();
             },
           ),
         ),

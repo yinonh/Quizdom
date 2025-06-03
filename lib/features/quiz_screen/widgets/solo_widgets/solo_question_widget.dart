@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/solo_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
@@ -26,7 +26,7 @@ class SoloQuestionWidget extends ConsumerWidget {
             if (!_hasNavigatedToResults &&
                 data.questions.length == data.questionIndex) {
               _hasNavigatedToResults = true;
-              context.goNamed(SoloResultsScreen.routeName);
+              goRoute(SoloResultsScreen.routeName);
             }
           },
         );

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
 import 'package:trivia/features/intro_screen/intro_screen.dart';
@@ -38,7 +38,7 @@ class RecentCategories extends ConsumerWidget {
                 ref
                     .read(categoriesScreenManagerProvider.notifier)
                     .setGeneralTriviaRoom("room_$categoryIndex");
-                context.goNamed(TriviaIntroScreen.routeName);
+                goRoute(TriviaIntroScreen.routeName);
               },
               child: Container(
                 decoration: BoxDecoration(

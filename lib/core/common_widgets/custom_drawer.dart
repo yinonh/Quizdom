@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trivia/core/common_widgets/app_bar_resource.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
@@ -51,23 +51,23 @@ class CustomDrawer extends ConsumerWidget {
             icon: Icons.home,
             title: Strings.home,
             onTap: () {
-              context.pop();
-              context.goNamed(CategoriesScreen.routeName);
+              pop();
+              goRoute(CategoriesScreen.routeName);
             },
           ),
           drawerOption(
             icon: Icons.account_circle_rounded,
             title: Strings.profile,
             onTap: () {
-              context.pop();
-              context.goNamed(ProfileScreen.routeName);
+              pop();
+              goRoute(ProfileScreen.routeName);
             },
           ),
           drawerOption(
             icon: Icons.info,
             title: Strings.about,
             onTap: () {
-              context.pop();
+              pop();
             },
           ),
           drawerOption(
@@ -77,7 +77,7 @@ class CustomDrawer extends ConsumerWidget {
               await FirebaseAuth.instance.signOut();
               await GoogleSignIn().signOut();
               if (context.mounted) {
-                context.goNamed(AuthScreen.routeName);
+                goRoute(AuthScreen.routeName);
               }
             },
           ),
@@ -114,7 +114,7 @@ class CustomDrawerHeader extends StatelessWidget {
                   ),
                   onTap: () {
                     Scaffold.of(context).closeDrawer();
-                    context.goNamed(AvatarScreen.routeName);
+                    goRoute(AvatarScreen.routeName);
                   },
                 ),
                 const AppBarResourceWidget(isVertical: true),

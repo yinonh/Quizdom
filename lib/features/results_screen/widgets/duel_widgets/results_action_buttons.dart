@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
@@ -23,7 +23,7 @@ class ResultsActionButtons extends ConsumerWidget {
       child: OutlinedButton.icon(
         onPressed: () {
           // Return to home screen
-          context.goNamed(CategoriesScreen.routeName);
+          goRoute(CategoriesScreen.routeName);
         },
         style: OutlinedButton.styleFrom(
           side: const BorderSide(

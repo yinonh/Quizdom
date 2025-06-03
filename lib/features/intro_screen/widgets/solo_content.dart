@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
 import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dart';
@@ -91,7 +91,7 @@ class SoloIntroContent extends ConsumerWidget {
                       Expanded(
                         child: CustomBottomButton(
                           text: Strings.back,
-                          onTap: () => context.pop(),
+                          onTap: () => pop(),
                           isSecondary: true,
                         ),
                       ),
@@ -102,7 +102,7 @@ class SoloIntroContent extends ConsumerWidget {
                               ? null
                               : () {
                                   introNotifier.payCoins(-10);
-                                  context.goNamed(SoloQuizScreen.routeName);
+                                  goRoute(SoloQuizScreen.routeName);
                                 },
                         ),
                       ),

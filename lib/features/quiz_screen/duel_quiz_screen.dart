@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
@@ -75,7 +75,7 @@ class DuelQuizScreen extends ConsumerWidget {
 
                   // Navigate only if the widget is still mounted
                   if (context.mounted) {
-                    context.goNamed(
+                    goRoute(
                       DuelResultsScreen.routeName,
                       pathParameters: {'roomId': state.roomId!},
                     );
@@ -91,7 +91,7 @@ class DuelQuizScreen extends ConsumerWidget {
                   await Future.delayed(const Duration(seconds: 3));
                   // Navigate only if the widget is still mounted
                   if (context.mounted) {
-                    context.goNamed(
+                    goRoute(
                       GameCanceledScreen.routeName,
                       extra: {
                         'users': state.users,
@@ -144,7 +144,7 @@ class DuelQuizScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: calcHeight(24)),
                   ElevatedButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () => pop(),
                     child: const Text(Strings.back),
                   ),
                 ],

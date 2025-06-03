@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 
 class WinDialogScreen extends StatelessWidget {
@@ -17,7 +17,7 @@ class WinDialogScreen extends StatelessWidget {
 
   /// Navigate to the Win Dialog screen
   static void show(BuildContext context, int coins) {
-    context.pushNamed(routeName, extra: {'coins': coins});
+    goRoute(routeName, extra: {'coins': coins});
   }
 
   @override
@@ -119,7 +119,7 @@ class WinDialogContent extends StatelessWidget {
             ),
             SizedBox(height: calcHeight(24)),
             ElevatedButton(
-              onPressed: () => context.pop(),
+              onPressed: () => pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppConstant.onPrimaryColor,
                 foregroundColor: Colors.white,

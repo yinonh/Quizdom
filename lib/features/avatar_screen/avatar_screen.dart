@@ -10,6 +10,7 @@ import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/view_model/avatar_screen_manager.dart';
@@ -31,17 +32,10 @@ class AvatarScreen extends ConsumerWidget {
       next.whenData((data) {
         if (data.navigate) {
           if (GoRouter.of(context).canPop()) {
-            context.pop();
+            pop();
           } else {
             if (context.mounted) {
-              context.goNamed(CategoriesScreen.routeName);
-              // Navigator.pushReplacement(
-              //   context,
-              //   PageRouteBuilder(
-              //     transitionDuration: const Duration(milliseconds: 700),
-              //     pageBuilder: (_, __, ___) => const CategoriesScreen(),
-              //   ),
-              // );
+              goRoute(CategoriesScreen.routeName);
             }
           }
         }

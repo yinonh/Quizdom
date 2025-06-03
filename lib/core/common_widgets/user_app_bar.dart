@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 
@@ -75,7 +75,8 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
             child: GestureDetector(
               onTap: isEditable
                   ? () {
-                      context.goNamed(AvatarScreen.routeName);
+                      goRoute(AvatarScreen.routeName);
+                      // context.goNamed(AvatarScreen.routeName);
                       // Navigator.push(
                       //   context,
                       //   PageRouteBuilder(
