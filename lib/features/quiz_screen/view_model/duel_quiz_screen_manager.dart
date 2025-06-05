@@ -1,16 +1,15 @@
 import 'dart:async';
 
-import 'package:collection/collection.dart'; // For manual == and hashCode if not using freezed generated ones
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:freezed_annotation/freezed_annotation.dart'; // Added for @freezed
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/core/network/server.dart';
-import 'package:trivia/core/utils/enums/game_stage.dart'; // For GameStage and GameStageConverter
-import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Added import
-import 'package:trivia/core/utils/timestamp_converter.dart'; // For TimestampConverter
+import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/core/utils/enums/selected_emoji.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/question.dart';
@@ -21,7 +20,6 @@ import 'package:trivia/data/providers/current_trivia_achievements_provider.dart'
 import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/features/quiz_screen/view_model/duel_bot_manager.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // For Timestamp
 
 part 'duel_quiz_screen_manager.freezed.dart';
 part 'duel_quiz_screen_manager.g.dart';
@@ -52,7 +50,6 @@ class DuelQuizState with _$DuelQuizState {
   factory DuelQuizState.fromJson(Map<String, dynamic> json) =>
       _$DuelQuizStateFromJson(json);
 }
-
 
 @riverpod
 class DuelQuizScreenManager extends _$DuelQuizScreenManager {
@@ -107,7 +104,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       questionIndex: room.currentQuestionIndex,
       shuffledOptions: initialShuffledData.options,
       correctAnswerIndex: initialShuffledData.correctIndex,
-      // selectedAnswerIndex: null, // No need to specify if nullable and not required
       categoryName: room.categoryId.toString(),
       gameStage: room.currentStage,
       userScores: room.userScores ?? {},
@@ -117,8 +113,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       roomId: room.roomId,
       isHost: _currentUserId == room.hostUserId,
       isOpponentBot: isOpponentBot,
-      // userAnswers: const {}, // Default is handled by @Default
-      // hasUserPaidCoins: false, // Default is handled by @Default
       userEmojis: room.userEmojis ?? {},
     );
   }
@@ -212,7 +206,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
             correctAnswerIndex:
                 shuffledData?.correctIndex ?? quizState.correctAnswerIndex,
             selectedAnswerIndex: selectedAnswerIndex,
-            userAnswers: userAnswers, // This already comes from parsed data
+            userAnswers: userAnswers,
+            // This already comes from parsed data
             userEmojis: updatedRoom.userEmojis ?? quizState.userEmojis,
           ),
         );

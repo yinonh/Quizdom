@@ -22,14 +22,7 @@ extension SelectedEmojiExtension on SelectedEmoji {
   // Helper for JSON serialization if storing by name
   static SelectedEmoji fromName(String name) {
     return SelectedEmoji.values.firstWhere((e) => e.name == name,
-        orElse: () => SelectedEmoji.happy); // Default to happy if name not found
+        orElse: () =>
+            SelectedEmoji.happy); // Default to happy if name not found
   }
-
-  // Helper for JSON serialization if storing by index (less robust)
-  // static SelectedEmoji fromIndex(int index) {
-  //   if (index >= 0 && index < SelectedEmoji.values.length) {
-  //     return SelectedEmoji.values[index];
-  //   }
-  //   return SelectedEmoji.happy; // Default
-  // }
 }

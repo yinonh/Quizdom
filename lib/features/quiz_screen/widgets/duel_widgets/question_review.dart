@@ -43,6 +43,9 @@ class QuestionReviewWidget extends StatelessWidget {
               userScores: userScores,
               opponent: opponent,
               currentUser: currentUser,
+              userEmojis: {},
+              onCurrentUserAvatarTap: (String userId) {},
+              currentUserId: '',
             ),
 
             // Middle: Icon + feedback + question + correct answer

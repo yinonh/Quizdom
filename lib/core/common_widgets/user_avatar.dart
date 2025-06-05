@@ -17,7 +17,7 @@ class UserAvatar extends ConsumerWidget {
   final bool showProgress;
   final TriviaUser? user;
   final bool disabled;
-  final SelectedEmoji? emoji; // Changed from emojiId
+  final SelectedEmoji? emoji;
   final bool showEmojiBadge;
   final VoidCallback? onTapOverride;
 
@@ -26,20 +26,17 @@ class UserAvatar extends ConsumerWidget {
     this.radius = 42,
     this.showProgress = false,
     this.disabled = false,
-    this.emoji, // Changed from emojiId
+    this.emoji,
     this.showEmojiBadge = false,
     this.onTapOverride,
     super.key,
   });
 
-  // static const List<String> _emojis = ['😀', '😅', '😂', '😈']; // Removed
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: onTapOverride != null
-          ? onTapOverride
-          : (disabled
+      onTap: onTapOverride ??
+          (disabled
               ? null
               : (user != null
                   ? () => showProfileOverview(context, user!)
@@ -109,17 +106,11 @@ class UserAvatar extends ConsumerWidget {
                         ),
           if (showEmojiBadge && emoji != null)
             Positioned(
-              bottom: radius * 0.05, // Adjust for slight offset from the very bottom
-              child: Container(
-                padding: EdgeInsets.all(calcWidth(2.0)), // Updated padding
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  emoji!.character, // Use character from SelectedEmoji
-                  style: TextStyle(fontSize: radius * 0.5), // Scale with avatar radius
-                ),
+              bottom: 0,
+              right: 0,
+              child: Text(
+                emoji!.character,
+                style: TextStyle(fontSize: radius * 0.5),
               ),
             ),
         ],
