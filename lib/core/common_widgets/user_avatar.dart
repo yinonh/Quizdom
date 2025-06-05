@@ -19,6 +19,7 @@ class UserAvatar extends ConsumerWidget {
   final bool disabled;
   final SelectedEmoji? emoji; // Changed from emojiId
   final bool showEmojiBadge;
+  final VoidCallback? onTapOverride;
 
   const UserAvatar({
     required this.user,
@@ -27,6 +28,7 @@ class UserAvatar extends ConsumerWidget {
     this.disabled = false,
     this.emoji, // Changed from emojiId
     this.showEmojiBadge = false,
+    this.onTapOverride,
     super.key,
   });
 
@@ -35,11 +37,13 @@ class UserAvatar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: disabled
-          ? null
-          : user != null
-              ? () => showProfileOverview(context, user!)
-              : null,
+      onTap: onTapOverride != null
+          ? onTapOverride
+          : (disabled
+              ? null
+              : (user != null
+                  ? () => showProfileOverview(context, user!)
+                  : null)),
       child: Stack(
         alignment: Alignment.center,
         children: [

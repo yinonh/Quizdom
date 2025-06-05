@@ -14,12 +14,14 @@ class CurrentUserAvatar extends ConsumerWidget {
   final bool showProgress;
   final SelectedEmoji? emoji;
   final bool showEmojiBadge;
+  final VoidCallback? onTapOverride;
 
   const CurrentUserAvatar({
     this.radius = 42,
     this.showProgress = false,
     this.emoji,
     this.showEmojiBadge = false,
+    this.onTapOverride,
     super.key,
   });
 
@@ -51,6 +53,7 @@ class CurrentUserAvatar extends ConsumerWidget {
       disabled: false, // CurrentUserAvatar is generally not disabled for profile view by default
       emoji: emoji,
       showEmojiBadge: showEmojiBadge,
+      onTapOverride: onTapOverride, // Pass it here
     );
   }
 }

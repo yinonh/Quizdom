@@ -68,23 +68,22 @@ class UserScoreBar extends StatelessWidget {
               avatarWidget = CurrentUserAvatar(
                 emoji: selectedEmoji,
                 showEmojiBadge: showBadge,
+                onTapOverride: isCurrentUserWidget && currentUserId != null
+                    ? () => onCurrentUserAvatarTap(currentUserId!)
+                    : null,
               );
             } else {
               avatarWidget = UserAvatar(
                 user: opponent, // Opponent data
                 emoji: selectedEmoji,
                 showEmojiBadge: showBadge,
+                onTapOverride: null, // Opponent avatar does not use override for emoji bubble
               );
             }
 
             return Column(
               children: [
-                isCurrentUserWidget && currentUserId != null
-                    ? GestureDetector(
-                        onTap: () => onCurrentUserAvatarTap(currentUserId!),
-                        child: avatarWidget,
-                      )
-                    : avatarWidget,
+                avatarWidget, // GestureDetector is now handled by onTapOverride
                 const SizedBox(height: 4),
                 Text(
                   userForAvatar?.name ?? "${Strings.players} ${index + 1}",
