@@ -8,17 +8,34 @@ import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
+import 'package:trivia/data/models/trivia_user.dart'; // For TriviaUser
+import 'package:trivia/core/utils/enums/selected_emoji.dart'; // For SelectedEmoji (indirectly)
+import 'package:cloud_firestore/cloud_firestore.dart'; // For Timestamp (indirectly)
+
 
 class DuelQuestionWidget extends ConsumerWidget {
-  final List<String> users;
+  final List<String> usersList; // Renamed from users
   final Map<String, int> userScores;
   final String roomId;
+  final Map<String, Map<String, dynamic>> userEmojis;
+  final Function(String userId) onCurrentUserAvatarTap;
+  final String? currentUserId;
+  // opponentId can be derived if needed, or passed if convenient
+  final TriviaUser? currentUser; // Already passed to UserScoreBar
+  final TriviaUser? opponentUser; // Already passed to UserScoreBar
 
-  const DuelQuestionWidget(
-      {super.key,
-      required this.users,
-      required this.userScores,
-      required this.roomId});
+
+  const DuelQuestionWidget({
+    super.key,
+    required this.usersList,
+    required this.userScores,
+    required this.roomId,
+    required this.userEmojis,
+    required this.onCurrentUserAvatarTap,
+    required this.currentUserId,
+    this.currentUser, // Keep as they are passed to UserScoreBar
+    this.opponentUser, // Keep as they are passed to UserScoreBar
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,10 +53,13 @@ class DuelQuestionWidget extends ConsumerWidget {
           children: [
             // User Scores - now with user data
             UserScoreBar(
-              users: users,
+              users: usersList, // Pass usersList
               userScores: userScores,
-              opponent: data.opponent,
-              currentUser: data.currentUser,
+              opponent: opponentUser ?? data.opponent, // Use passed opponentUser or from state
+              currentUser: currentUser ?? data.currentUser, // Use passed currentUser or from state
+              userEmojis: userEmojis, // Pass down
+              onCurrentUserAvatarTap: onCurrentUserAvatarTap, // Pass down
+              currentUserId: currentUserId, // Pass down
             ),
 
             SizedBox(height: calcHeight(10)),
@@ -64,7 +84,7 @@ class DuelQuestionWidget extends ConsumerWidget {
                 correctAnswerIndex: data.correctAnswerIndex,
                 userAnswers: data.userAnswers,
                 gameStage: data.gameStage,
-                users: users,
+                users: usersList, // Pass usersList
               ),
             ),
 
