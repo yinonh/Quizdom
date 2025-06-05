@@ -142,8 +142,9 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                       users: state.users,
                       currentUser: state.currentUser,
                       opponent: state.opponent,
-                      // userEmojis: state.userEmojis, // Removed as QuestionReviewWidget does not accept it
-                      // Not implementing tap-to-show-bubble for review screen for now
+                      userEmojis: state.userEmojis,
+                      onCurrentUserAvatarTap: handleAvatarTap,
+                      currentUserId: state.currentUser?.uid,
                     );
                   } else {
                     return DuelQuestionWidget(
