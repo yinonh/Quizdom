@@ -109,13 +109,13 @@ class CustomDrawerHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 GestureDetector(
-                  child: const CurrentUserAvatar(
+                  child: CurrentUserAvatar(
                     showProgress: true,
+                    onTapOverride: () {
+                      Scaffold.of(context).closeDrawer();
+                      context.goNamed(AvatarScreen.routeName);
+                    },
                   ),
-                  onTap: () {
-                    Scaffold.of(context).closeDrawer();
-                    context.goNamed(AvatarScreen.routeName);
-                  },
                 ),
                 const AppBarResourceWidget(isVertical: true),
               ],

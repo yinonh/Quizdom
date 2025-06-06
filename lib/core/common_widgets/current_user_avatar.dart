@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart'; // Import UserAvatar
 import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Import SelectedEmoji
+import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/providers/user_provider.dart';
 
 class CurrentUserAvatar extends ConsumerWidget {
   final double radius;
@@ -42,8 +42,7 @@ class CurrentUserAvatar extends ConsumerWidget {
       user: userState.currentUser,
       radius: radius,
       showProgress: showProgress,
-      disabled:
-          false, // CurrentUserAvatar is generally not disabled for profile view by default
+      disabled: false,
       emoji: emoji,
       showEmojiBadge: showEmojiBadge,
       onTapOverride: onTapOverride,

@@ -85,11 +85,15 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       // );
                     }
                   : null,
-              child: const Hero(
+              child: Hero(
                 transitionOnUserGestures: true,
                 tag: Strings.userAvatarTag,
                 child: CurrentUserAvatar(
                   showProgress: true,
+                  onTapOverride: () {
+                    Scaffold.of(context).closeDrawer();
+                    context.goNamed(AvatarScreen.routeName);
+                  },
                 ),
               ),
             ),
