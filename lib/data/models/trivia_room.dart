@@ -1,32 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/timestamp_converter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 
 part 'trivia_room.freezed.dart';
 part 'trivia_room.g.dart';
-
-class MapDateConverter
-    implements JsonConverter<Map<String, DateTime>?, Map<String, dynamic>?> {
-  const MapDateConverter();
-
-  @override
-  Map<String, DateTime>? fromJson(Map<String, dynamic>? json) {
-    if (json == null) return null;
-    return json.map(
-      (key, value) => MapEntry(key, DateTime.parse(value as String)),
-    );
-  }
-
-  @override
-  Map<String, dynamic>? toJson(Map<String, DateTime>? object) {
-    if (object == null) return null;
-    return object.map(
-      (key, value) => MapEntry(key, value.toIso8601String()),
-    );
-  }
-}
 
 @freezed
 class TriviaRoom with _$TriviaRoom {
@@ -52,28 +31,33 @@ class TriviaRoom with _$TriviaRoom {
     @Default(null) Map<String, dynamic>? questionsData,
 
     // Additional Game Metadata
-    required int questionDuration, // in seconds
+    required int questionDuration,
     Map<String, int>? userMissedQuestions,
     Map<String, TriviaAchievements>? userAchievements,
+    Map<String, Map<String, dynamic>>? userEmojis,
   }) = _TriviaRoom;
 
   const TriviaRoom._();
 
   factory TriviaRoom.empty() => const TriviaRoom(
-      roomId: null,
-      hostUserId: null,
-      questionCount: null,
-      categoryId: null,
-      difficulty: null,
-      isPublic: null,
-      createdAt: null,
-      userScores: {},
-      currentStage: GameStage.created,
-      currentQuestionIndex: 0,
-      currentQuestionStartTime: null,
-      questionDuration: 10,
-      userMissedQuestions: null,
-      userAchievements: {});
+        roomId: null,
+        hostUserId: null,
+        questionCount: null,
+        categoryId: null,
+        difficulty: null,
+        isPublic: null,
+        createdAt: null,
+        users: [],
+        userScores: {},
+        currentStage: GameStage.created,
+        currentQuestionIndex: 0,
+        currentQuestionStartTime: null,
+        questionsData: null,
+        questionDuration: 10,
+        userMissedQuestions: {},
+        userAchievements: {},
+        userEmojis: {},
+      );
 
   factory TriviaRoom.fromJson(Map<String, dynamic> json) =>
       _$TriviaRoomFromJson(json);

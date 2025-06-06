@@ -10,29 +10,37 @@ import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
+import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Added import
 
 class UserAvatar extends ConsumerWidget {
   final double radius;
   final bool showProgress;
   final TriviaUser? user;
   final bool disabled;
+  final SelectedEmoji? emoji;
+  final bool showEmojiBadge;
+  final VoidCallback? onTapOverride;
 
   const UserAvatar({
     required this.user,
     this.radius = 42,
     this.showProgress = false,
     this.disabled = false,
+    this.emoji,
+    this.showEmojiBadge = false,
+    this.onTapOverride,
     super.key,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
-      onTap: disabled
-          ? null
-          : user != null
-              ? () => showProfileOverview(context, user!)
-              : null,
+      onTap: onTapOverride ??
+          (disabled
+              ? null
+              : (user != null
+                  ? () => showProfileOverview(context, user!)
+                  : null)),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -95,7 +103,16 @@ class UserAvatar extends ConsumerWidget {
                             color: Colors.white.withValues(alpha: 0.7),
                             size: calcWidth(radius * 1.5),
                           ),
-                        )
+                        ),
+          if (showEmojiBadge && emoji != null)
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Text(
+                emoji!.character,
+                style: TextStyle(fontSize: radius * 0.5),
+              ),
+            ),
         ],
       ),
     );

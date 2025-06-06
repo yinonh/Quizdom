@@ -8,17 +8,29 @@ import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
+import 'package:trivia/data/models/trivia_user.dart'; // For TriviaUser
 
 class DuelQuestionWidget extends ConsumerWidget {
-  final List<String> users;
+  final List<String> usersList;
   final Map<String, int> userScores;
   final String roomId;
+  final Map<String, Map<String, dynamic>> userEmojis;
+  final Function(String userId) onCurrentUserAvatarTap;
+  final String? currentUserId;
+  final TriviaUser? currentUser;
+  final TriviaUser? opponentUser;
 
-  const DuelQuestionWidget(
-      {super.key,
-      required this.users,
-      required this.userScores,
-      required this.roomId});
+  const DuelQuestionWidget({
+    super.key,
+    required this.usersList,
+    required this.userScores,
+    required this.roomId,
+    required this.userEmojis,
+    required this.onCurrentUserAvatarTap,
+    required this.currentUserId,
+    this.currentUser,
+    this.opponentUser,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,12 +46,14 @@ class DuelQuestionWidget extends ConsumerWidget {
 
         return Column(
           children: [
-            // User Scores - now with user data
             UserScoreBar(
-              users: users,
+              users: usersList,
               userScores: userScores,
-              opponent: data.opponent,
-              currentUser: data.currentUser,
+              opponent: opponentUser ?? data.opponent,
+              currentUser: currentUser ?? data.currentUser,
+              userEmojis: userEmojis,
+              onCurrentUserAvatarTap: onCurrentUserAvatarTap,
+              currentUserId: currentUserId,
             ),
 
             SizedBox(height: calcHeight(10)),
@@ -50,7 +64,6 @@ class DuelQuestionWidget extends ConsumerWidget {
                 question: currentQuestion.question!,
                 options: data.shuffledOptions,
                 onAnswerSelected: (index) {
-                  // Only allow selection if not already selected and game is active
                   if (data.selectedAnswerIndex == null &&
                       data.gameStage == GameStage.active) {
                     // Ensure this is correct
@@ -64,7 +77,7 @@ class DuelQuestionWidget extends ConsumerWidget {
                 correctAnswerIndex: data.correctAnswerIndex,
                 userAnswers: data.userAnswers,
                 gameStage: data.gameStage,
-                users: users,
+                users: usersList, // Pass usersList
               ),
             ),
 

@@ -15,6 +15,9 @@ class QuestionReviewWidget extends StatelessWidget {
   final List<String> users;
   final TriviaUser? currentUser;
   final TriviaUser? opponent;
+  final Map<String, Map<String, dynamic>>? userEmojis;
+  final Function(String userId)? onCurrentUserAvatarTap;
+  final String? currentUserId;
 
   const QuestionReviewWidget({
     super.key,
@@ -26,6 +29,9 @@ class QuestionReviewWidget extends StatelessWidget {
     required this.users,
     required this.currentUser,
     required this.opponent,
+    this.userEmojis,
+    this.onCurrentUserAvatarTap,
+    this.currentUserId,
   });
 
   @override
@@ -43,6 +49,11 @@ class QuestionReviewWidget extends StatelessWidget {
               userScores: userScores,
               opponent: opponent,
               currentUser: currentUser,
+              userEmojis:
+                  userEmojis ?? const {}, // Pass down, ensuring non-null
+              onCurrentUserAvatarTap: onCurrentUserAvatarTap ??
+                  (_) {}, // Pass down, ensuring non-null
+              currentUserId: currentUserId, // Pass down
             ),
 
             // Middle: Icon + feedback + question + correct answer

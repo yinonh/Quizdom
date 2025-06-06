@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Added import
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_room.dart';
 
@@ -27,6 +28,7 @@ class TriviaRoomDataSource {
 
     // Initialize empty map for userAchievements
     Map<String, TriviaAchievements> userAchievements = {};
+    Map<String, Map<String, dynamic>> userEmojis = {};
 
     final triviaRoom = TriviaRoom(
       roomId: roomId,
@@ -44,6 +46,7 @@ class TriviaRoomDataSource {
       questionDuration: 10,
       userMissedQuestions: {},
       userAchievements: userAchievements,
+      userEmojis: userEmojis,
     );
 
     // Convert to JSON then set the createdAt field to use Firestore's server timestamp.
@@ -312,6 +315,23 @@ class TriviaRoomDataSource {
     }
 
     return null;
+  }
+
+  // Update user emoji
+  static Future<void> updateUserEmoji(String roomId, String userId,
+      SelectedEmoji emoji, Timestamp timestamp) async {
+    try {
+      final userEmojiData = {
+        'emoji': emoji.name, // Store enum name
+        'timestamp': timestamp,
+      };
+      await _roomsCollection
+          .doc(roomId)
+          .update({'userEmojis.$userId': userEmojiData});
+    } catch (e) {
+      print('Error updating user emoji: $e');
+      // Optionally, rethrow the error or handle it as needed
+    }
   }
 
   static Future<bool> checkUserPresence(

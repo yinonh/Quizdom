@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,6 +9,7 @@ import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
+import 'package:trivia/core/utils/enums/selected_emoji.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/question.dart';
@@ -34,15 +36,19 @@ class DuelQuizState with _$DuelQuizState {
     @GameStageConverter() required GameStage gameStage,
     required Map<String, int> userScores,
     required List<String> users,
-    required TriviaUser? opponent,
-    required TriviaUser? currentUser,
+    TriviaUser? opponent,
+    TriviaUser? currentUser,
     int? selectedAnswerIndex,
     String? roomId,
     @Default({}) Map<String, Map<int, int>> userAnswers,
     @Default(false) bool isHost,
     @Default(false) bool isOpponentBot,
     @Default(false) bool hasUserPaidCoins,
+    @Default({}) Map<String, Map<String, dynamic>> userEmojis,
   }) = _DuelQuizState;
+
+  factory DuelQuizState.fromJson(Map<String, dynamic> json) =>
+      _$DuelQuizStateFromJson(json);
 }
 
 @riverpod
@@ -55,7 +61,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   bool _isUpdatingTimestamp = false;
   bool _streamsActive = false;
 
-  // Instance of BotManager to handle bot-related functionality
   final BotManager _botManager = BotManager();
 
   String? getCurrentUserId() => _currentUserId;
@@ -72,13 +77,10 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
     final isOpponentBot = opponentID == AppConstant.botUserId;
 
-    // Handle opponent data
     TriviaUser? opponent;
     if (isOpponentBot) {
-      // Create a bot user using BotManager
       opponent = BotService.currentBot?.user;
     } else {
-      // Get real user data
       opponent = await UserDataSource.getUserById(opponentID);
     }
 
@@ -88,11 +90,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       throw Exception("Room not initialized correctly");
     }
 
-    // Listen to app lifecycle changes
     _setupAppLifecycleListener(room.roomId!);
-
     _activateStreams(room.roomId!, room.currentStage, room.users);
-
     final initialShuffledData = _getShuffledOptions(response![0]);
 
     ref.onDispose(() {
@@ -105,7 +104,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       questionIndex: room.currentQuestionIndex,
       shuffledOptions: initialShuffledData.options,
       correctAnswerIndex: initialShuffledData.correctIndex,
-      selectedAnswerIndex: null,
       categoryName: room.categoryId.toString(),
       gameStage: room.currentStage,
       userScores: room.userScores ?? {},
@@ -115,25 +113,17 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       roomId: room.roomId,
       isHost: _currentUserId == room.hostUserId,
       isOpponentBot: isOpponentBot,
+      userEmojis: room.userEmojis ?? {},
     );
   }
 
   void _activateStreams(String roomId, GameStage stage, List<String> users) {
     if (_streamsActive) return;
     _streamsActive = true;
-
     logger.i("Activating all streams and timers");
-
-    // Set up Firebase room stream
     _setupRoomSubscription(roomId);
-
-    // Set up lastSeen updates
     _startLastSeenUpdates(roomId, stage);
-
-    // Set up presence checking
     _startPresenceChecking(roomId, users);
-
-    // Immediately update lastSeen to show user is active
     if (_currentUserId != null) {
       TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
     }
@@ -146,13 +136,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       if (updatedRoom == null) return;
 
       state.whenData((quizState) {
-        // If game stage changed from created to something else, start the lastSeen updates
         if (quizState.gameStage == GameStage.created &&
             updatedRoom.currentStage != GameStage.created) {
-          // Cancel any existing timer first
           _lastSeenTimer?.cancel();
-
-          // Start regular lastSeen updates
           _lastSeenTimer = Timer.periodic(
             const Duration(seconds: 3),
             (_) {
@@ -163,9 +149,7 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           );
         }
 
-        // Calculate time left based on server timestamp
         double calculatedTimeLeft = updatedRoom.questionDuration.toDouble();
-
         if (updatedRoom.currentStage == GameStage.active) {
           if (updatedRoom.currentQuestionStartTime != null) {
             final now = DateTime.now();
@@ -175,7 +159,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                 (updatedRoom.questionDuration - elapsedSeconds).toDouble();
             if (calculatedTimeLeft < 0) calculatedTimeLeft = 0;
           } else {
-            // If somehow the timestamp wasn't set, update it now
             if (quizState.isHost &&
                 !_isUpdatingTimestamp &&
                 updatedRoom.currentStage == GameStage.active) {
@@ -189,11 +172,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           }
         }
 
-        // Get the room snapshot from Firestore (assuming we have it from stream)
         final roomDoc = updatedRoom.toJson();
         final userAnswers = TriviaRoomDataSource.parseUserAnswers(roomDoc);
 
-        // If question index changed, get new shuffled options
         ShuffledData? shuffledData;
         if (updatedRoom.currentQuestionIndex != quizState.questionIndex) {
           if (updatedRoom.currentQuestionIndex < quizState.questions.length) {
@@ -202,7 +183,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
           }
         }
 
-        // Determine selected answer index from user answers
         int? selectedAnswerIndex = quizState.selectedAnswerIndex;
         if (_currentUserId != null &&
             userAnswers.containsKey(_currentUserId) &&
@@ -212,11 +192,9 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
               userAnswers[_currentUserId]![updatedRoom.currentQuestionIndex];
         } else if (updatedRoom.currentQuestionIndex !=
             quizState.questionIndex) {
-          // Reset selected answer when moving to new question
           selectedAnswerIndex = null;
         }
 
-        // Update state with new room data
         state = AsyncValue.data(
           quizState.copyWith(
             questionIndex: updatedRoom.currentQuestionIndex,
@@ -229,30 +207,20 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                 shuffledData?.correctIndex ?? quizState.correctAnswerIndex,
             selectedAnswerIndex: selectedAnswerIndex,
             userAnswers: userAnswers,
+            // This already comes from parsed data
+            userEmojis: updatedRoom.userEmojis ?? quizState.userEmojis,
           ),
         );
 
-        // If game is just completed, save achievements to Firestore
         if (updatedRoom.currentStage == GameStage.completed &&
             _currentUserId != null) {
-          // Get current achievements from the provider
           final achievements =
               ref.read(currentTriviaAchievementsProvider).currentAchievements;
-
-          // Update achievements in Firestore
           TriviaRoomDataSource.updateUserAchievements(
-            roomId,
-            _currentUserId!,
-            achievements,
-          );
+              roomId, _currentUserId!, achievements);
           TriviaRoomDataSource.updateUserAchievements(
-            roomId,
-            AppConstant.botUserId,
-            _botManager.achievements,
-          );
+              roomId, AppConstant.botUserId, _botManager.achievements);
         }
-
-        // Manage timer based on game stage
         _manageTimerBasedOnGameStage(updatedRoom.currentStage);
       });
     });
@@ -261,33 +229,24 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   void _deactivateStreams() {
     if (!_streamsActive) return;
     _streamsActive = false;
-
     logger.i("Deactivating all streams and timers");
-
-    // Cancel all timers and subscriptions
     _timer?.cancel();
     _timer = null;
-
     _lastSeenTimer?.cancel();
     _lastSeenTimer = null;
-
     _checkPresenceTimer?.cancel();
     _checkPresenceTimer = null;
-
     _roomSubscription?.cancel();
     _roomSubscription = null;
   }
 
   void _setupAppLifecycleListener(String roomId) {
-    // Watch app lifecycle status changes
     ref.listen(appLifecycleNotifierProvider, (previous, current) {
       state.whenData((quizState) {
         if (current == AppLifecycleStatus.resumed) {
-          // App is in foreground
           logger.i("App is now active, activating streams");
           _activateStreams(roomId, quizState.gameStage, quizState.users);
         } else {
-          // App is in background
           logger.i("App is now inactive, deactivating streams");
           _deactivateStreams();
         }
@@ -300,30 +259,22 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
       if (quizState.isHost &&
           quizState.roomId != null &&
           quizState.gameStage == GameStage.created) {
-        // Bot-specific logic - update last seen timestamp
         if (quizState.isOpponentBot) {
           await _botManager.updateBotLastSeen(quizState.roomId!);
         }
-
         if (!quizState.hasUserPaidCoins) {
           payCoins(-10);
-
-          // Update state to mark that user has paid
           state = AsyncValue.data(quizState.copyWith(hasUserPaidCoins: true));
         }
-
         await TriviaRoomDataSource.startGame(quizState.roomId!);
       }
     });
   }
 
   void _startLastSeenUpdates(String roomId, GameStage stage) {
-    // Update lastSeen immediately regardless of stage
     if (_currentUserId != null) {
       TriviaRoomDataSource.updateLastSeen(roomId, _currentUserId!);
     }
-
-    // Set up timer to update lastSeen every 3 seconds
     _lastSeenTimer?.cancel();
     _lastSeenTimer = Timer.periodic(
       const Duration(seconds: 3),
@@ -337,7 +288,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
   void _startPresenceChecking(String roomId, List<String> users) {
     if (_currentUserId == null || users.isEmpty) return;
-
     _checkPresenceTimer?.cancel();
     _checkPresenceTimer = Timer.periodic(
       const Duration(seconds: 5),
@@ -346,15 +296,10 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
         state.whenData(
           (quizState) async {
             logger.i("Current game stage: ${quizState.gameStage}");
-
-            // Check for absent users during active game
             if (quizState.gameStage == GameStage.active ||
                 quizState.gameStage == GameStage.created) {
               logger.i("Checking for absent users...");
-
-              // Skip absence checks for bot users
               if (quizState.isOpponentBot) {
-                // For bot opponents, we only check if the human player is absent
                 final realUserIds = quizState.users
                     .where((uid) => uid != AppConstant.botUserId)
                     .toList();
@@ -362,19 +307,16 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                     await TriviaRoomDataSource.checkForAbsentUser(
                         roomId, realUserIds);
                 logger.i("Absent user: $absentUserId");
-
                 if (absentUserId != null) {
                   logger.e("Ending game due to absent user: $absentUserId");
                   TriviaRoomDataSource.endGame(
                       quizState.roomId ?? "", absentUserId);
                 }
               } else {
-                // Regular absence check for human players
                 final absentUserId =
                     await TriviaRoomDataSource.checkForAbsentUser(
                         roomId, quizState.users);
                 logger.i("Absent user: $absentUserId");
-
                 if (absentUserId != null) {
                   logger.e("Ending game due to absent user: $absentUserId");
                   TriviaRoomDataSource.endGame(
@@ -382,20 +324,14 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                 }
               }
             }
-
-            // Check if both users are present during created stage
             if (quizState.gameStage == GameStage.created && quizState.isHost) {
-              // When playing against bot, we don't need to wait for presence
               if (quizState.isOpponentBot) {
-                // For bot games, we can start immediately
                 logger.i("Bot opponent, can start game immediately");
                 startGame();
               } else {
-                // For human opponents, check if all users are present
                 final allPresent = await TriviaRoomDataSource.checkUserPresence(
                     roomId, quizState.users);
                 logger.i("All users present: $allPresent");
-
                 if (allPresent) {
                   logger.i("All users present, starting game");
                   startGame();
@@ -409,11 +345,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
   }
 
   void _manageTimerBasedOnGameStage(GameStage stage) {
-    // Cancel existing timer
     _timer?.cancel();
-
     if (stage == GameStage.active) {
-      // Start question timer
       _timer = Timer.periodic(
         const Duration(milliseconds: 40),
         (timer) {
@@ -434,7 +367,6 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
     }
   }
 
-  // Update user's answer in Firestore
   void selectAnswer(int index) {
     state.whenData(
       (quizState) async {
@@ -442,11 +374,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
             quizState.roomId != null &&
             _currentUserId != null &&
             quizState.gameStage == GameStage.active) {
-          // Only allow during active stage
-          // First update local state
           state =
               AsyncValue.data(quizState.copyWith(selectedAnswerIndex: index));
-
           if (quizState.correctAnswerIndex == index) {
             ref
                 .read(currentTriviaAchievementsProvider.notifier)
@@ -466,12 +395,8 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
                     sumResponseTime:
                         AppConstant.questionTime - quizState.timeLeft);
           }
-
-          // Store user's answer in Firestore
           await TriviaRoomDataSource.storeUserAnswer(quizState.roomId!,
               _currentUserId!, quizState.questionIndex, index);
-
-          // Bot-specific logic - handle bot answer when playing against bot
           if (quizState.isOpponentBot) {
             await _botManager.handleBotAnswer(
               roomId: quizState.roomId!,
@@ -481,17 +406,13 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
               timeLeft: quizState.timeLeft,
             );
           }
-
-          // Update score if answer is correct
           if (quizState.correctAnswerIndex == index) {
             await TriviaRoomDataSource.updateUserScore(quizState.roomId!,
                 _currentUserId!, quizState.questionIndex, quizState.timeLeft);
           } else if (index == -1) {
-            // Update missed questions in Firestore
             await TriviaRoomDataSource.updateMissedQuestions(
                 quizState.roomId!, _currentUserId!);
           }
-
           await _checkAllUsersAnswered(quizState);
         }
       },
@@ -500,25 +421,16 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
   Future<void> _checkAllUsersAnswered(DuelQuizState quizState) async {
     if (quizState.roomId == null) return;
-
-    // Check if all users have answered
     final allUsersAnswered = await TriviaRoomDataSource.checkAllUsersAnswered(
         quizState.roomId!, quizState.users, quizState.questionIndex);
-
     if (allUsersAnswered) {
-      // Move to review stage
       await TriviaRoomDataSource.moveToReviewStage(quizState.roomId!);
-
-      // Schedule next question after 3 seconds
       Timer(
         const Duration(seconds: 3),
         () async {
-          // Get latest room data
           final updatedRoom =
               await TriviaRoomDataSource.getRoomById(quizState.roomId!);
           if (updatedRoom == null) return;
-
-          // Only proceed if we're still in the review stage
           if (updatedRoom.currentStage == GameStage.questionReview) {
             await TriviaRoomDataSource.moveToNextQuestion(quizState.roomId!,
                 quizState.questionIndex, quizState.questions.length);
@@ -537,5 +449,27 @@ class DuelQuizScreenManager extends _$DuelQuizScreenManager {
 
   void payCoins(int amount) {
     ref.read(authProvider.notifier).updateCoins(amount);
+  }
+
+  Future<void> updateUserEmoji(SelectedEmoji emoji) async {
+    final String? currentRoomId = state.value?.roomId;
+    final String? currentUserId = _currentUserId;
+
+    if (currentRoomId == null || currentUserId == null) {
+      logger.e('Error: roomId or userId is null. Cannot update user emoji.');
+      return;
+    }
+
+    try {
+      final now = Timestamp.now();
+      await TriviaRoomDataSource.updateUserEmoji(
+        currentRoomId,
+        currentUserId,
+        emoji, // Pass SelectedEmoji directly
+        now,
+      );
+    } catch (e) {
+      logger.e('Error updating user emoji in Firestore: $e');
+    }
   }
 }

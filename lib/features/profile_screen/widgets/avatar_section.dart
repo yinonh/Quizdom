@@ -27,9 +27,13 @@ class AvatarSection extends StatelessWidget {
               onTap: () {
                 goRoute(AvatarScreen.routeName);
               },
-              child: const CurrentUserAvatar(
+              child: CurrentUserAvatar(
                 showProgress: true,
                 radius: 70,
+                onTapOverride: () {
+                  Scaffold.of(context).closeDrawer();
+                  context.goNamed(AvatarScreen.routeName);
+                },
               ),
             ),
           ),
