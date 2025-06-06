@@ -14,7 +14,7 @@ import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_w
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/waiting_or_countdown.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_widgets/emoji_bubble.dart';
+import 'package:trivia/core/common_widgets/emoji_bubble.dart';
 import 'package:trivia/features/results_screen/duel_result_screen.dart';
 import 'package:trivia/features/results_screen/game_canceled.dart';
 
@@ -195,7 +195,7 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                     questionsState.value?.currentUser?.uid ==
                         _showEmojiBubbleForUserId)
                   Positioned(
-                    top: calcHeight(20),
+                    top: calcHeight(40),
                     left: 0,
                     right: 0,
                     child: Align(

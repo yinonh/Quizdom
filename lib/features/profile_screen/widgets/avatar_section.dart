@@ -32,7 +32,7 @@ class AvatarSection extends StatelessWidget {
                 radius: 70,
                 onTapOverride: () {
                   Scaffold.of(context).closeDrawer();
-                  context.goNamed(AvatarScreen.routeName);
+                  goRoute(AvatarScreen.routeName);
                 },
               ),
             ),

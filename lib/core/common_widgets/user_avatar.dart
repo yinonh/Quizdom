@@ -19,6 +19,7 @@ class UserAvatar extends ConsumerWidget {
   final bool disabled;
   final SelectedEmoji? emoji;
   final bool showEmojiBadge;
+  final bool isEmojiSideRight;
   final VoidCallback? onTapOverride;
 
   const UserAvatar({
@@ -28,6 +29,7 @@ class UserAvatar extends ConsumerWidget {
     this.disabled = false,
     this.emoji,
     this.showEmojiBadge = false,
+    this.isEmojiSideRight = false,
     this.onTapOverride,
     super.key,
   });
@@ -107,7 +109,8 @@ class UserAvatar extends ConsumerWidget {
           if (showEmojiBadge && emoji != null)
             Positioned(
               bottom: 0,
-              right: 0,
+              left: isEmojiSideRight ? null : 0,
+              right: isEmojiSideRight ? 0 : null,
               child: Text(
                 emoji!.character,
                 style: TextStyle(fontSize: radius * 0.5),

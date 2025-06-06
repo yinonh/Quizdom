@@ -76,14 +76,6 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
               onTap: isEditable
                   ? () {
                       goRoute(AvatarScreen.routeName);
-                      // context.goNamed(AvatarScreen.routeName);
-                      // Navigator.push(
-                      //   context,
-                      //   PageRouteBuilder(
-                      //     transitionDuration: const Duration(milliseconds: 700),
-                      //     pageBuilder: (_, __, ___) => const AvatarScreen(),
-                      //   ),
-                      // );
                     }
                   : null,
               child: Hero(
@@ -93,7 +85,7 @@ class UserAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   showProgress: true,
                   onTapOverride: () {
                     Scaffold.of(context).closeDrawer();
-                    context.goNamed(AvatarScreen.routeName);
+                    goRoute(AvatarScreen.routeName);
                   },
                 ),
               ),

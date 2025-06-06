@@ -45,6 +45,7 @@ class CurrentUserAvatar extends ConsumerWidget {
       disabled: false,
       emoji: emoji,
       showEmojiBadge: showEmojiBadge,
+      isEmojiSideRight: true,
       onTapOverride: onTapOverride,
     );
   }

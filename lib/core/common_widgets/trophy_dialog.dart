@@ -139,7 +139,7 @@ class TrophyAchievementDialog extends StatelessWidget {
               right: 0,
               child: GestureDetector(
                 onTap: () {
-                  context.pop();
+                  pop();
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),
