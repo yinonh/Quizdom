@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/common_widgets/user_avatar.dart'; // Import UserAvatar
-import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Import SelectedEmoji
+import 'package:trivia/core/common_widgets/user_avatar.dart';
+import 'package:trivia/core/utils/enums/selected_emoji.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
@@ -11,6 +11,7 @@ class CurrentUserAvatar extends ConsumerWidget {
   final bool showProgress;
   final SelectedEmoji? emoji;
   final bool showEmojiBadge;
+  final bool addEmojiFeatureOn;
   final VoidCallback? onTapOverride;
 
   const CurrentUserAvatar({
@@ -18,6 +19,7 @@ class CurrentUserAvatar extends ConsumerWidget {
     this.showProgress = false,
     this.emoji,
     this.showEmojiBadge = false,
+    this.addEmojiFeatureOn = false,
     this.onTapOverride,
     super.key,
   });
@@ -34,6 +36,50 @@ class CurrentUserAvatar extends ConsumerWidget {
           backgroundColor: Colors.grey[300]!,
           radius: calcWidth(radius),
         ),
+      );
+    }
+
+    // If addEmojiFeatureOn is true, wrap with Stack to show + icon
+    if (addEmojiFeatureOn) {
+      return Stack(
+        alignment: Alignment.center,
+        children: [
+          UserAvatar(
+            user: userState.currentUser,
+            radius: radius,
+            showProgress: showProgress,
+            disabled: false,
+            emoji: emoji,
+            showEmojiBadge: showEmojiBadge,
+            isEmojiSideRight: true,
+            onTapOverride: onTapOverride,
+          ),
+          if (!showEmojiBadge || emoji == null)
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: onTapOverride,
+                child: Container(
+                  width: radius * 0.6,
+                  height: radius * 0.6,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: radius * 0.3,
+                  ),
+                ),
+              ),
+            )
+        ],
       );
     }
 

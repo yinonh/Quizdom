@@ -83,6 +83,7 @@ class UserScoreBar extends StatelessWidget {
               if (isCurrentUserWidget) {
                 avatarWidget = CurrentUserAvatar(
                   emoji: selectedEmoji,
+                  addEmojiFeatureOn: true,
                   showEmojiBadge: showBadge,
                   onTapOverride: isCurrentUserWidget && currentUserId != null
                       ? () => onCurrentUserAvatarTap(currentUserId!)
@@ -93,7 +94,7 @@ class UserScoreBar extends StatelessWidget {
                   user: opponent, // Opponent data
                   emoji: selectedEmoji,
                   showEmojiBadge: showBadge,
-                  onTapOverride: null,
+                  onTapOverride: () {},
                 );
               }
 

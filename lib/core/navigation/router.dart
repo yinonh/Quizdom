@@ -95,7 +95,7 @@ final routerProvider = Provider<GoRouter>(
                 ),
 
                 CustomRouteByName(
-                  'profile',
+                  ProfileScreen.routeName,
                   name: ProfileScreen.routeName,
                   builder: (context, state) => const ProfileScreen(),
                 ),
