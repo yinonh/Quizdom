@@ -104,26 +104,31 @@ class ProfileBottomSheet extends ConsumerWidget {
                           ),
                           _buildStatSection(
                             title: Strings.gameStats,
-                            icon: Icons.sports_esports,
+                            icon: Icons.sports_esports_rounded,
                             color: AppConstant.onPrimaryColor,
                             stats: [
                               _buildStatRow(
-                                icon: Icons.emoji_events,
+                                icon: Icons.emoji_events_rounded,
                                 label: Strings.victories,
                                 value:
-                                    '${stats.gamesWon}/${stats.totalGamesPlayed}',
+                                    '${stats.gamesWon}/${stats.gamesPlayedAgainstPlayers}',
                               ),
                               _buildStatRow(
-                                icon: Icons.local_fire_department,
+                                icon: Icons.local_fire_department_rounded,
                                 label: Strings.winRate,
                                 value:
-                                    '${((stats.gamesWon / stats.totalGamesPlayed) * 100).toStringAsFixed(0)}%',
+                                    '${((stats.gamesWon / stats.gamesPlayedAgainstPlayers) * 100).toStringAsFixed(0)}%',
+                              ),
+                              _buildStatRow(
+                                icon: Icons.games_rounded,
+                                label: Strings.gamesPlayed,
+                                value: '${stats.totalGamesPlayed}',
                               ),
                             ],
                           ),
                           _buildStatSection(
                             title: Strings.performance,
-                            icon: Icons.insights,
+                            icon: Icons.insights_rounded,
                             color: AppConstant.secondaryColor,
                             stats: [
                               _buildStatRow(
@@ -133,7 +138,7 @@ class ProfileBottomSheet extends ConsumerWidget {
                                     '${((stats.totalCorrectAnswers / (stats.totalCorrectAnswers + stats.totalWrongAnswers)) * 100).toStringAsFixed(0)}%',
                               ),
                               _buildStatRow(
-                                icon: Icons.speed,
+                                icon: Icons.speed_rounded,
                                 label: Strings.avgTime,
                                 value:
                                     '${stats.avgAnswerTime.toStringAsFixed(1)}s',
