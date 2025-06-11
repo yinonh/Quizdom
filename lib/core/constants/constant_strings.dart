@@ -16,6 +16,9 @@ class Strings {
   static const String openChestIcon = "assets/icons/open_chest_icon.svg";
   static const String energyIcon = "assets/icons/energy_icon.svg";
   static const String coinsIcon = "assets/icons/coins_icon.svg";
+  static const String singleCoinsIcon = "assets/icons/coin_single_icon.svg";
+  static const String coinsTossIcon = "assets/icons/coin_toss_icon.svg";
+  static const String coinsHeapIcon = "assets/icons/coins_heap_icon.svg";
   static const String authBackground = "assets/blob-scene-haikei.svg";
   static const String wheelOfFortune = "assets/wheel_of_fortune.svg";
   static const String botAvatar1 = "assets/bots_avatars/bot_avatar_1.svg";

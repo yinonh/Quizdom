@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
@@ -124,12 +125,21 @@ class DailyLoginPopupContent extends StatelessWidget {
                       spacing: calcHeight(5),
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Icon
-                        Icon(
-                          Icons.attach_money,
-                          color: isClaimed ? Colors.white : Colors.black54,
-                          size: 30,
-                        ),
+                        day > 1
+                            ? day >= 5
+                                ?
+                                // Icon
+                                SvgPicture.asset(
+                                    Strings.coinsHeapIcon,
+                                    height: 45,
+                                  )
+                                : SvgPicture.asset(
+                                    Strings.coinsTossIcon,
+                                    height: 45,
+                                  )
+                            : const SizedBox(
+                                height: 45,
+                              ),
                         // Day Number
                         Text(
                           "${Strings.day} $day",

@@ -6,11 +6,12 @@ import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/custom_clipper.dart';
+import 'package:trivia/core/utils/enums/selected_emoji.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Added import
+import 'package:trivia/data/providers/user_provider.dart'; // Added import
 
 class UserAvatar extends ConsumerWidget {
   final double radius;
@@ -34,14 +35,51 @@ class UserAvatar extends ConsumerWidget {
     super.key,
   });
 
+  Widget _buildCurrentUserFluttermoji(WidgetRef ref, double radius) {
+    final fluttermojiState = ref.watch(fluttermojiNotifierProvider);
+
+    return ClipPath(
+      clipper: HalfCircleClipper(),
+      child: CircleAvatar(
+        radius: calcWidth(radius),
+        backgroundColor: AppConstant.softHighlightColor,
+        child: fluttermojiState.when(
+          data: (state) {
+            if (state.fluttermoji.isEmpty) {
+              return const CircularProgressIndicator();
+            }
+            return SvgPicture.string(
+              state.fluttermoji,
+              height: calcWidth(radius * 2.1),
+              placeholderBuilder: (context) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          },
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Icon(
+            Icons.person,
+            color: Colors.white.withValues(alpha: 0.7),
+            size: calcWidth(radius * 1.5),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Check if this is the current user and watch for updates
+    final authState = ref.watch(authProvider);
+    final isCurrentUser = user?.uid == authState.currentUser.uid;
+    final displayUser = isCurrentUser ? authState.currentUser : user;
+
     return GestureDetector(
       onTap: onTapOverride ??
           (disabled
               ? null
-              : (user != null
-                  ? () => showProfileOverview(context, user!)
+              : (displayUser != null
+                  ? () => showProfileOverview(context, displayUser)
                   : null)),
       child: Stack(
         alignment: Alignment.center,
@@ -52,24 +90,24 @@ class UserAvatar extends ConsumerWidget {
               height: calcWidth(radius * 2.1),
               child: CircularProgressIndicator(
                 strokeWidth: 6.0,
-                value: user?.userXp ?? 0 / 100,
+                value: displayUser?.userXp ?? 0 / 100,
                 color: AppConstant.onPrimaryColor,
               ),
             ),
-          user != null && user?.uid == AppConstant.botUserId
+          displayUser != null && displayUser.uid == AppConstant.botUserId
               ? ClipPath(
                   clipper: HalfCircleClipper(),
                   child: CircleAvatar(
                     radius: calcWidth(radius),
                     backgroundColor: AppConstant.softHighlightColor,
                     child: SvgPicture.asset(
-                      user?.imageUrl ?? Strings.botAvatar1,
+                      displayUser.imageUrl ?? Strings.botAvatar1,
                     ),
                   ),
                 )
-              : user != null && user?.imageUrl != null
+              : displayUser != null && displayUser.imageUrl != null
                   ? CachedNetworkImage(
-                      imageUrl: user!.imageUrl!,
+                      imageUrl: displayUser.imageUrl!,
                       placeholder: (context, url) => Shimmer.fromColors(
                         baseColor: Colors.grey[300]!,
                         highlightColor: Colors.grey[100]!,
@@ -83,20 +121,24 @@ class UserAvatar extends ConsumerWidget {
                         radius: calcWidth(radius),
                       ),
                     )
-                  : user != null && user?.fluttermojiOptions != null
-                      ? ClipPath(
-                          clipper: HalfCircleClipper(),
-                          child: CircleAvatar(
-                            radius: calcWidth(radius),
-                            backgroundColor: AppConstant.softHighlightColor,
-                            child: SvgPicture.string(
-                              ref
-                                  .read(fluttermojiNotifierProvider.notifier)
-                                  .getFluttermojiFromOptions(
-                                      user!.fluttermojiOptions!),
-                            ),
-                          ),
-                        )
+                  : displayUser != null &&
+                          displayUser.fluttermojiOptions != null
+                      ? isCurrentUser
+                          ? _buildCurrentUserFluttermoji(ref, radius)
+                          : ClipPath(
+                              clipper: HalfCircleClipper(),
+                              child: CircleAvatar(
+                                radius: calcWidth(radius),
+                                backgroundColor: AppConstant.softHighlightColor,
+                                child: SvgPicture.string(
+                                  ref
+                                      .read(
+                                          fluttermojiNotifierProvider.notifier)
+                                      .getFluttermojiFromOptions(
+                                          displayUser.fluttermojiOptions!),
+                                ),
+                              ),
+                            )
                       : CircleAvatar(
                           radius: calcWidth(radius),
                           backgroundColor: AppConstant.softHighlightColor,
