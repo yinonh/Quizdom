@@ -17,8 +17,8 @@ import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/core/common_widgets/emoji_bubble.dart';
 import 'package:trivia/features/results_screen/duel_result_screen.dart';
 import 'package:trivia/features/results_screen/game_canceled.dart';
-import 'package:trivia/core/providers/ad_provider.dart'; // Added
-import 'package:trivia/core/common_widgets/interstitial_ad_widget.dart'; // Added
+import 'package:trivia/core/providers/ad_provider.dart';
+// import 'package:trivia/core/common_widgets/interstitial_ad_widget.dart'; // Removed
 
 class DuelQuizScreen extends ConsumerStatefulWidget {
   static const routeName = AppRoutes.duelQuizRouteName;
@@ -32,12 +32,31 @@ class DuelQuizScreen extends ConsumerStatefulWidget {
 
 class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
   String? _showEmojiBubbleForUserId;
-  bool _showAdRelatedUI = false; // Added state variable
+  // bool _showAdRelatedUI = false; // Removed state variable
+  bool _interstitialAdShownThisSession = false; // Added state variable
+
+  @override
+  void dispose() {
+    // Reset ad shown flag if screen is disposed, e.g. user navigates away completely
+    _interstitialAdShownThisSession = false;
+    super.dispose();
+  }
+
+  void _navigateToResults(String roomId) {
+    print("Navigating to results screen.");
+    if (mounted) {
+      goRoute(
+        DuelResultsScreen.routeName,
+        pathParameters: {'roomId': roomId},
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Initialize ad provider early to start loading ads.
-    ref.watch(interstitialAdProvider); // Ensures provider is alive and can load ads
+    // Initialize ad provider early to start loading ads if it's not already active.
+    // Watching it here ensures it's kept alive while this screen is.
+    ref.watch(interstitialAdProvider);
 
     final questionsState =
         ref.watch(duelQuizScreenManagerProvider(widget.roomId));
@@ -94,18 +113,41 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                 // Main content based on game state
                 questionsState.customWhen(
                   data: (state) {
-                    // If game is completed and we are in the ad display phase,
-                    // this part of the UI should be minimal as the Stack above handles the ad UI.
-                    if (state.gameStage == GameStage.completed && _showAdRelatedUI) {
-                      return const SizedBox.shrink(); // Ad UI is shown in the Stack overlay
-                    }
-                    // If game is completed and not in ad display phase (e.g. initial load or after ad UI), show spinner.
-                    // The actual logic for state change and navigation is handled by the
-                    // WidgetsBinding.instance.addPostFrameCallback in the main body of the
-                    // "if (state.gameStage == GameStage.completed)" block from Step 3.
-                    // This part just ensures the correct UI is shown based on _showAdRelatedUI.
-                    if (state.gameStage == GameStage.completed && !_showAdRelatedUI) {
-                       return const Center(child: CircularProgressIndicator()); // Initial brief spinner before or after ad UI
+                    if (state.gameStage == GameStage.completed) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) async {
+                        if (!mounted || _interstitialAdShownThisSession) {
+                          if (_interstitialAdShownThisSession && mounted && state.roomId != null) {
+                            // If ad was already shown and we are still here, navigate.
+                            // This case might occur if navigation was somehow interrupted.
+                            _navigateToResults(state.roomId!);
+                          }
+                          return;
+                        }
+
+                        print("Game completed. Attempting to show ad logic.");
+                        setState(() {
+                          _interstitialAdShownThisSession = true;
+                        });
+
+                        // Initial 3-second delay before trying to show the ad
+                        await Future.delayed(const Duration(seconds: 3));
+
+                        if (mounted) {
+                           print("Attempting to show Interstitial Ad via provider.");
+                           ref.read(interstitialAdProvider.notifier).showAd(
+                            onDismiss: () {
+                              print("Interstitial Ad Dismissed. Navigating to results.");
+                              _navigateToResults(state.roomId!);
+                            },
+                            onFail: (error) {
+                              print("Interstitial Ad failed to show: $error. Navigating to results.");
+                              _navigateToResults(state.roomId!);
+                            },
+                          );
+                        }
+                      });
+                      // Show a loading indicator while the ad logic is processing or during delays.
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     // Handle canceled game state
@@ -194,16 +236,9 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                   ),
                   loading: () => const ShimmerLoadingQuestionWidget(),
                 ),
-                // Ad-related UI (Spinner and Ad Manager listener)
-                if (_showAdRelatedUI)
-                  const Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      InterstitialAdManager(), // Listens and shows ad
-                      CircularProgressIndicator(), // Visual feedback
-                    ],
-                  ),
                 // Emoji bubble overlay
+                // Note: The _showAdRelatedUI and InterstitialAdManager Stack was removed.
+                // The CircularProgressIndicator for completed state is handled above.
                 if (_showEmojiBubbleForUserId != null &&
                     questionsState.value?.currentUser?.uid ==
                         _showEmojiBubbleForUserId)

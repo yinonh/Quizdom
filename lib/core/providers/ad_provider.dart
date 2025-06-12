@@ -36,6 +36,9 @@ class AdState {
 }
 
 class AdNotifier extends StateNotifier<AdState> {
+  void Function()? _onAdDismissedCallback;
+  void Function(AdError)? _onAdFailedToShowCallback;
+
   AdNotifier() : super(AdState()) {
     _initializeAds();
   }
@@ -71,21 +74,25 @@ class AdNotifier extends StateNotifier<AdState> {
                 _logger.i('$ad onAdShowedFullScreenContent.'),
             onAdDismissedFullScreenContent: (InterstitialAd ad) {
               _logger.i('$ad onAdDismissedFullScreenContent.');
+              print('Ad Dismissed: $ad');
               ad.dispose();
               state = state.copyWith(isLoaded: false, adDisposed: true);
-              // Optionally, load a new ad
-              loadAd();
+              _onAdDismissedCallback?.call();
+              _clearCallbacks();
+              loadAd(); // Reload a new ad
             },
             onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
               _logger.e('$ad onAdFailedToShowFullScreenContent: $error');
+              print('Ad Failed to Show: $error');
               ad.dispose();
               state = state.copyWith(
                 isLoaded: false,
                 error: 'Failed to show ad: ${error.message}',
                 adDisposed: true,
               );
-              // Optionally, load a new ad
-              loadAd();
+              _onAdFailedToShowCallback?.call(error);
+              _clearCallbacks();
+              loadAd(); // Reload a new ad
             },
           );
           state = state.copyWith(
@@ -103,25 +110,41 @@ class AdNotifier extends StateNotifier<AdState> {
     );
   }
 
-  Future<void> showAd() async {
+  Future<void> showAd({
+    void Function()? onDismiss,
+    void Function(AdError)? onFail,
+  }) async {
+    _onAdDismissedCallback = onDismiss;
+    _onAdFailedToShowCallback = onFail;
+
     if (state.isLoaded && state.interstitialAd != null) {
-      _logger.i('Showing Interstitial Ad...');
+      _logger.i('Attempting to show Interstitial Ad...');
+      print('Attempting to show Interstitial Ad...');
       await state.interstitialAd!.show();
-      // The ad is disposed and state updated in onAdDismissedFullScreenContent
-      // or onAdFailedToShowFullScreenContent
+      // Callbacks are handled by FullScreenContentCallback
     } else {
       _logger.w('Show ad request ignored, ad not loaded or null.');
+      print('Show ad request ignored, ad not loaded or null.');
+      // If ad is not loaded, immediately call the onFail callback as the show operation can't proceed.
+      // Create a generic AdError if one isn't available.
+      _onAdFailedToShowCallback?.call(AdError(0, 'AdNotLoaded', 'Ad is not loaded or null.'));
+      _clearCallbacks();
       if (!state.isLoading) {
-        // If not already loading, try to load one
         loadAd();
       }
     }
+  }
+
+  void _clearCallbacks() {
+    _onAdDismissedCallback = null;
+    _onAdFailedToShowCallback = null;
   }
 
   @override
   void dispose() {
     _logger.i('Disposing AdNotifier, cleaning up ad resources.');
     state.interstitialAd?.dispose();
+    _clearCallbacks();
     super.dispose();
   }
 }
