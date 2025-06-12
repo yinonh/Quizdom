@@ -17,6 +17,8 @@ import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:trivia/core/common_widgets/emoji_bubble.dart';
 import 'package:trivia/features/results_screen/duel_result_screen.dart';
 import 'package:trivia/features/results_screen/game_canceled.dart';
+import 'package:trivia/core/providers/ad_provider.dart'; // Added
+import 'package:trivia/core/common_widgets/interstitial_ad_widget.dart'; // Added
 
 class DuelQuizScreen extends ConsumerStatefulWidget {
   static const routeName = AppRoutes.duelQuizRouteName;
@@ -30,9 +32,13 @@ class DuelQuizScreen extends ConsumerStatefulWidget {
 
 class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
   String? _showEmojiBubbleForUserId;
+  bool _showAdRelatedUI = false; // Added state variable
 
   @override
   Widget build(BuildContext context) {
+    // Initialize ad provider early to start loading ads.
+    ref.watch(interstitialAdProvider); // Ensures provider is alive and can load ads
+
     final questionsState =
         ref.watch(duelQuizScreenManagerProvider(widget.roomId));
 
@@ -85,24 +91,21 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
             },
             child: Stack(
               children: [
+                // Main content based on game state
                 questionsState.customWhen(
                   data: (state) {
-                    // If game is completed, navigate to results
-                    if (state.gameStage == GameStage.completed) {
-                      // Use post-frame callback to navigate after the build is complete
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        // Show loading indicator for 3 seconds
-                        await Future.delayed(const Duration(seconds: 3));
-
-                        // Navigate only if the widget is still mounted
-                        if (context.mounted) {
-                          goRoute(
-                            DuelResultsScreen.routeName,
-                            pathParameters: {'roomId': state.roomId!},
-                          );
-                        }
-                      });
-                      return const Center(child: CircularProgressIndicator());
+                    // If game is completed and we are in the ad display phase,
+                    // this part of the UI should be minimal as the Stack above handles the ad UI.
+                    if (state.gameStage == GameStage.completed && _showAdRelatedUI) {
+                      return const SizedBox.shrink(); // Ad UI is shown in the Stack overlay
+                    }
+                    // If game is completed and not in ad display phase (e.g. initial load or after ad UI), show spinner.
+                    // The actual logic for state change and navigation is handled by the
+                    // WidgetsBinding.instance.addPostFrameCallback in the main body of the
+                    // "if (state.gameStage == GameStage.completed)" block from Step 3.
+                    // This part just ensures the correct UI is shown based on _showAdRelatedUI.
+                    if (state.gameStage == GameStage.completed && !_showAdRelatedUI) {
+                       return const Center(child: CircularProgressIndicator()); // Initial brief spinner before or after ad UI
                     }
 
                     // Handle canceled game state
@@ -191,6 +194,16 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                   ),
                   loading: () => const ShimmerLoadingQuestionWidget(),
                 ),
+                // Ad-related UI (Spinner and Ad Manager listener)
+                if (_showAdRelatedUI)
+                  const Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      InterstitialAdManager(), // Listens and shows ad
+                      CircularProgressIndicator(), // Visual feedback
+                    ],
+                  ),
+                // Emoji bubble overlay
                 if (_showEmojiBubbleForUserId != null &&
                     questionsState.value?.currentUser?.uid ==
                         _showEmojiBubbleForUserId)
