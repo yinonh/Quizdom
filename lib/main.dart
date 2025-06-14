@@ -6,6 +6,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:trivia/features/no_internet_screen/connectivity_wrapper.dart';
+import 'core/global_providers/ad_provider.dart';
 import 'firebase_options.dart';
 import 'app.dart';
 
@@ -18,6 +19,18 @@ void main() async {
     name: "app",
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize AdMob
+  try {
+    await AdService.instance.initialize();
+    if (kDebugMode) {
+      print('AdMob initialized successfully in main');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to initialize AdMob in main: $e');
+    }
+  }
 
   // Set preferred orientations
   SystemChrome.setPreferredOrientations([

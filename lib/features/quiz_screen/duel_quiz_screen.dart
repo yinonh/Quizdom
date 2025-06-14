@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/ad_widgets.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
@@ -30,6 +31,97 @@ class DuelQuizScreen extends ConsumerStatefulWidget {
 
 class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
   String? _showEmojiBubbleForUserId;
+  bool _showingAd = false; // Add this to prevent multiple ad shows
+
+  void _showInterstitialAndNavigate(String roomId) {
+    if (_showingAd) return; // Prevent multiple ad shows
+
+    setState(() {
+      _showingAd = true;
+    });
+
+    // Show the ad widget as a new route
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => InterstitialAdWidget(
+          loadingText: 'Preparing your results...',
+          showSkipButton: true,
+          skipDelaySeconds: 15,
+          onComplete: () {
+            // Navigate to results after ad completion
+            Navigator.of(context).pop(); // Pop the ad screen
+            if (context.mounted) {
+              goRoute(
+                DuelResultsScreen.routeName,
+                pathParameters: {'roomId': roomId},
+              );
+            }
+          },
+          onSkip: () {
+            // Navigate to results if user skips
+            Navigator.of(context).pop(); // Pop the ad screen
+            if (context.mounted) {
+              goRoute(
+                DuelResultsScreen.routeName,
+                pathParameters: {'roomId': roomId},
+              );
+            }
+          },
+        ),
+        settings: const RouteSettings(name: '/interstitial_ad'),
+      ),
+    );
+  }
+
+  void _showInterstitialAndNavigateToGameCanceled(DuelQuizState state) {
+    if (_showingAd) return; // Prevent multiple ad shows
+
+    setState(() {
+      _showingAd = true;
+    });
+
+    // Show the ad widget as a new route
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => InterstitialAdWidget(
+          loadingText: 'Game was canceled...',
+          showSkipButton: true,
+          skipDelaySeconds: 3,
+          onComplete: () {
+            // Navigate to game canceled screen after ad completion
+            Navigator.of(context).pop(); // Pop the ad screen
+            if (context.mounted) {
+              goRoute(
+                GameCanceledScreen.routeName,
+                extra: {
+                  'users': state.users,
+                  'userScores': state.userScores,
+                  'currentUserId': state.currentUser?.uid ?? '',
+                  'opponentId': state.opponent?.uid ?? '',
+                },
+              );
+            }
+          },
+          onSkip: () {
+            // Navigate to game canceled screen if user skips
+            Navigator.of(context).pop(); // Pop the ad screen
+            if (context.mounted) {
+              goRoute(
+                GameCanceledScreen.routeName,
+                extra: {
+                  'users': state.users,
+                  'userScores': state.userScores,
+                  'currentUserId': state.currentUser?.uid ?? '',
+                  'opponentId': state.opponent?.uid ?? '',
+                },
+              );
+            }
+          },
+        ),
+        settings: const RouteSettings(name: '/interstitial_ad_canceled'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,16 +182,9 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                     // If game is completed, navigate to results
                     if (state.gameStage == GameStage.completed) {
                       // Use post-frame callback to navigate after the build is complete
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        // Show loading indicator for 3 seconds
-                        await Future.delayed(const Duration(seconds: 3));
-
-                        // Navigate only if the widget is still mounted
-                        if (context.mounted) {
-                          goRoute(
-                            DuelResultsScreen.routeName,
-                            pathParameters: {'roomId': state.roomId!},
-                          );
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!_showingAd) {
+                          _showInterstitialAndNavigate(state.roomId!);
                         }
                       });
                       return const Center(child: CircularProgressIndicator());
@@ -107,24 +192,31 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
 
                     // Handle canceled game state
                     if (state.gameStage == GameStage.canceled) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        // Show loading indicator for 3 seconds
-                        await Future.delayed(const Duration(seconds: 3));
-                        // Navigate only if the widget is still mounted
-                        if (context.mounted) {
-                          goRoute(
-                            GameCanceledScreen.routeName,
-                            extra: {
-                              'users': state.users,
-                              'userScores': state.userScores,
-                              'currentUserId': state.currentUser?.uid ?? '',
-                              'opponentId': state.opponent?.uid ?? '',
-                            },
-                          );
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!_showingAd) {
+                          _showInterstitialAndNavigateToGameCanceled(state);
                         }
                       });
                       return const Center(child: CircularProgressIndicator());
                     }
+                    //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    //     // Show loading indicator for 3 seconds
+                    //     await Future.delayed(const Duration(seconds: 3));
+                    //     // Navigate only if the widget is still mounted
+                    //     if (context.mounted) {
+                    //       goRoute(
+                    //         GameCanceledScreen.routeName,
+                    //         extra: {
+                    //           'users': state.users,
+                    //           'userScores': state.userScores,
+                    //           'currentUserId': state.currentUser?.uid ?? '',
+                    //           'opponentId': state.opponent?.uid ?? '',
+                    //         },
+                    //       );
+                    //     }
+                    //   });
+                    //   return const Center(child: CircularProgressIndicator());
+                    // }
 
                     if (state.gameStage == GameStage.created) {
                       return const WaitingOrCountdown();

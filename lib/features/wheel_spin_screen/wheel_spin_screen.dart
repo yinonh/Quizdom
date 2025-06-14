@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trivia/core/common_widgets/ad_widgets.dart';
 import 'package:trivia/core/common_widgets/background.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
@@ -166,10 +167,32 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
                     onPressed: isSpinning || wheelState.currentUser.coins < 10
                         ? null
                         : () {
-                            setState(() {
-                              isSpinning = true;
-                            });
-                            _controller.add(Random().nextInt(items.length));
+                            // In your screen where you want to show rewarded ads
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => RewardedAdWidget(
+                                  title: 'Get Extra Coins',
+                                  description:
+                                      'Watch an ad to earn 50 bonus coins',
+                                  rewardDescription: 'Reward: 50 coins',
+                                  onRewardEarned: (reward) {
+                                    setState(() {
+                                      isSpinning = true;
+                                    });
+                                    _controller
+                                        .add(Random().nextInt(items.length));
+                                  },
+                                  onComplete: () {
+                                    Navigator.of(context).pop();
+                                    // Navigate to next screen or update UI
+                                  },
+                                  onSkip: () {
+                                    Navigator.of(context).pop();
+                                    // Handle skip action
+                                  },
+                                ),
+                              ),
+                            );
                           },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppConstant.onPrimaryColor,
