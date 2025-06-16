@@ -234,7 +234,7 @@ class Strings {
   static const String noPrize = 'No Prize';
   static const String spinning = 'Spinning...';
   static const String spinNow = 'SPIN NOW!';
-  static const String tenCoins = '(10 coins)';
+  static const String watchAd = '(Watch Ad)';
 
   // Trophy Dialog
   static const String newText = 'New';

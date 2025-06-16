@@ -70,10 +70,9 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
     if (items[_selectedValue].coins > 0) {
       ref
           .read(wheelScreenManagerProvider.notifier)
-          .updateCoins(items[_selectedValue].coins - 10);
+          .updateCoins(items[_selectedValue].coins);
       _showWinDialog(items[_selectedValue].coins);
     } else {
-      ref.read(wheelScreenManagerProvider.notifier).updateCoins(-10);
       _showBetterLuckDialog();
     }
   }
@@ -205,7 +204,7 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
                     child: Text(
                       isSpinning
                           ? Strings.spinning
-                          : "${Strings.spinNow} ${Strings.tenCoins}",
+                          : "${Strings.spinNow} ${Strings.watchAd}",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
