@@ -1,10 +1,9 @@
-// lib/core/services/ad_service.dart
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:trivia/core/network/server.dart';
 
 class AdService {
   static AdService? _instance;
@@ -26,30 +25,22 @@ class AdService {
   // Production Ad Unit IDs - Replace with your actual IDs
   static const String _prodInterstitialAdUnitIdAndroid =
       'ca-app-pub-YOUR_ID/YOUR_ANDROID_INTERSTITIAL_ID';
-  static const String _prodInterstitialAdUnitIdIOS =
-      'ca-app-pub-YOUR_ID/YOUR_IOS_INTERSTITIAL_ID';
   static const String _prodRewardedAdUnitIdAndroid =
       'ca-app-pub-YOUR_ID/YOUR_ANDROID_REWARDED_ID';
-  static const String _prodRewardedAdUnitIdIOS =
-      'ca-app-pub-YOUR_ID/YOUR_IOS_REWARDED_ID';
 
   // Get the appropriate ad unit ID based on debug/release mode
   String get interstitialAdUnitId {
     if (kDebugMode) {
       return _testInterstitialAdUnitId;
     }
-    return Platform.isAndroid
-        ? _prodInterstitialAdUnitIdAndroid
-        : _prodInterstitialAdUnitIdIOS;
+    return _prodInterstitialAdUnitIdAndroid;
   }
 
   String get rewardedAdUnitId {
     if (kDebugMode) {
       return _testRewardedAdUnitId;
     }
-    return Platform.isAndroid
-        ? _prodRewardedAdUnitIdAndroid
-        : _prodRewardedAdUnitIdIOS;
+    return _prodRewardedAdUnitIdAndroid;
   }
 
   Future<void> initialize() async {
@@ -68,11 +59,11 @@ class AdService {
 
       _isInitialized = true;
       if (kDebugMode) {
-        print('AdMob initialized successfully');
+        logger.i('AdMob initialized successfully');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Failed to initialize AdMob: $e');
+        logger.e('Failed to initialize AdMob: $e');
       }
     }
   }
@@ -90,13 +81,13 @@ class AdService {
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           if (kDebugMode) {
-            print('Interstitial ad loaded successfully');
+            logger.i('Interstitial ad loaded successfully');
           }
           completer.complete(ad);
         },
         onAdFailedToLoad: (error) {
           if (kDebugMode) {
-            print('Failed to load interstitial ad: $error');
+            logger.e('Failed to load interstitial ad: $error');
           }
           completer.complete(null);
         },
@@ -119,13 +110,13 @@ class AdService {
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
           if (kDebugMode) {
-            print('Rewarded ad loaded successfully');
+            logger.i('Rewarded ad loaded successfully');
           }
           completer.complete(ad);
         },
         onAdFailedToLoad: (error) {
           if (kDebugMode) {
-            print('Failed to load rewarded ad: $error');
+            logger.e('Failed to load rewarded ad: $error');
           }
           completer.complete(null);
         },
@@ -184,13 +175,13 @@ class AdStateNotifier extends StateNotifier<AdState> {
       ad.fullScreenContentCallback = FullScreenContentCallback(
         onAdShowedFullScreenContent: (ad) {
           if (kDebugMode) {
-            print('Interstitial ad showed full screen content');
+            logger.i('Interstitial ad showed full screen content');
           }
           state = state.copyWith(isLoading: false, isAdShowing: true);
         },
         onAdDismissedFullScreenContent: (ad) {
           if (kDebugMode) {
-            print('Interstitial ad dismissed');
+            logger.i('Interstitial ad dismissed');
           }
           state = state.copyWith(isAdShowing: false);
           ad.dispose();
@@ -198,7 +189,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
           if (kDebugMode) {
-            print('Failed to show interstitial ad: $error');
+            logger.e('Failed to show interstitial ad: $error');
           }
           state = state.copyWith(isLoading: false, error: error.message);
           ad.dispose();
@@ -209,7 +200,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
       await ad.show();
     } catch (e) {
       if (kDebugMode) {
-        print('Error showing interstitial ad: $e');
+        logger.e('Error showing interstitial ad: $e');
       }
       state = state.copyWith(isLoading: false, error: e.toString());
       onAdFailedToShow?.call();
@@ -244,7 +235,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
             state = state.copyWith(isLoading: false, isAdShowing: true);
           });
           if (kDebugMode) {
-            print('Rewarded ad showed full screen content');
+            logger.i('Rewarded ad showed full screen content');
           }
         },
         onAdDismissedFullScreenContent: (ad) {
@@ -254,7 +245,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
           ad.dispose();
           onAdClosed();
           if (kDebugMode) {
-            print('Rewarded ad dismissed');
+            logger.i('Rewarded ad dismissed');
           }
         },
         onAdFailedToShowFullScreenContent: (ad, error) {
@@ -264,7 +255,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
           ad.dispose();
           onAdFailedToShow?.call();
           if (kDebugMode) {
-            print('Failed to show rewarded ad: $error');
+            logger.e('Failed to show rewarded ad: $error');
           }
         },
       );
@@ -280,7 +271,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
       });
       onAdFailedToShow?.call();
       if (kDebugMode) {
-        print('Error showing rewarded ad: $e');
+        logger.e('Error showing rewarded ad: $e');
       }
     }
   }

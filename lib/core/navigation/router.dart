@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trivia/core/common_widgets/ad_interstitial_widget.dart';
+import 'package:trivia/core/common_widgets/ad_rewarded_widget.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/navigation/router_service.dart';
 import 'package:trivia/core/navigation/routes_popup.dart';
@@ -115,6 +117,39 @@ final routerProvider = Provider<GoRouter>(
               ],
             ),
           ],
+        ),
+        GoRoute(
+          path: InterstitialAdWidget.routeName,
+          name: InterstitialAdWidget.routeName,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+
+            return CustomRouteByName.buildDialogTransition(
+              key: state.pageKey,
+              child: InterstitialAdWidget(
+                onComplete: extra?['onComplete'] ?? () {},
+                onSkip: extra?['onSkip'],
+              ),
+            );
+          },
+        ),
+
+// Updated router configuration for RewardedAdWidget
+        GoRoute(
+          path: RewardedAdWidget.routeName,
+          name: RewardedAdWidget.routeName,
+          pageBuilder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>?;
+
+            return CustomRouteByName.buildDialogTransition(
+              key: state.pageKey,
+              child: RewardedAdWidget(
+                onRewardEarned: extra?['onRewardEarned'] ?? (reward) {},
+                onComplete: extra?['onComplete'] ?? () {},
+                onSkip: extra?['onSkip'],
+              ),
+            );
+          },
         ),
       ],
     );

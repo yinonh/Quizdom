@@ -14,4 +14,6 @@ class AppRoutes {
   static const String winDialog = '/win-dialog';
   static const String loseDialog = '/lose-dialog';
   static const String filterDialog = '/filter-dialog';
+  static const String rewardedAdRouteName = '/rewarded_ad';
+  static const String interstitialAdRouteName = '/interstitial_ad';
 }
