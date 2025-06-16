@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/network/server.dart';
+
+part 'ad_provider.g.dart';
 
 class AdService {
   static AdService? _instance;
@@ -152,10 +155,15 @@ class AdState {
   }
 }
 
-class AdStateNotifier extends StateNotifier<AdState> {
-  final AdService _adService;
+@riverpod
+class Ad extends _$Ad {
+  late final AdService _adService;
 
-  AdStateNotifier(this._adService) : super(const AdState());
+  @override
+  AdState build() {
+    _adService = ref.watch(adServiceProvider);
+    return const AdState();
+  }
 
   Future<void> showInterstitialAd({
     required VoidCallback onAdClosed,
@@ -278,11 +286,7 @@ class AdStateNotifier extends StateNotifier<AdState> {
 }
 
 // Provider for the ad service
-final adServiceProvider = Provider<AdService>((ref) {
+@riverpod
+AdService adService(Ref ref) {
   return AdService.instance;
-});
-
-final adStateProvider = StateNotifierProvider<AdStateNotifier, AdState>((ref) {
-  final adService = ref.watch(adServiceProvider);
-  return AdStateNotifier(adService);
-});
+}

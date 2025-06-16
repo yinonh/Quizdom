@@ -60,7 +60,7 @@ class _RewardedAdWidgetState extends ConsumerState<RewardedAdWidget> {
     if (_adRequested) return;
     _adRequested = true;
 
-    final adNotifier = ref.read(adStateProvider.notifier);
+    final adNotifier = ref.read(adProvider.notifier);
 
     adNotifier.showRewardedAd(
       onUserEarnedReward: (reward) {

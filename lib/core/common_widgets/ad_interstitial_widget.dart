@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/global_providers/ad_provider.dart';
 
@@ -60,7 +59,7 @@ class _InterstitialAdWidgetState extends ConsumerState<InterstitialAdWidget> {
     if (_adRequested) return;
     _adRequested = true;
 
-    final adNotifier = ref.read(adStateProvider.notifier);
+    final adNotifier = ref.read(adProvider.notifier);
 
     adNotifier.showInterstitialAd(
       onAdClosed: () {
