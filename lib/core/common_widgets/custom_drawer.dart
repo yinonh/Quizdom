@@ -81,11 +81,20 @@ class CustomDrawer extends ConsumerWidget {
                 context: context,
                 builder: (BuildContext dialogContext) {
                   return DeleteUserDialog(
+                    isGoogleUser: authNotifier.isGoogleSignIn(),
                     onConfirmDelete: () async {
-                      // Make sure to use dialogContext if needed inside,
-                      // but for operations that might outlive the dialog (like navigation after delete),
-                      // it's often better to use the main context if `mounted` checks are in place.
+                      // This is the initial attempt to delete
                       await authNotifier.deleteUser();
+                    },
+                    onReauthenticateAndDelete: (String password) async {
+                      await authNotifier.reauthenticateUserWithPassword(password);
+                      // If re-authentication is successful, try deleting again
+                      await authNotifier.deleteUser(isRetryAfterReauthentication: true);
+                    },
+                    onReauthenticateWithGoogleAndDelete: () async {
+                      await authNotifier.reauthenticateUserWithGoogle();
+                      // If re-authentication is successful, try deleting again
+                      await authNotifier.deleteUser(isRetryAfterReauthentication: true);
                     },
                   );
                 },

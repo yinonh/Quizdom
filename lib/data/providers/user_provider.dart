@@ -264,7 +264,67 @@ class Auth extends _$Auth {
         .any((userInfo) => userInfo.providerId == 'google.com');
   }
 
-  Future<void> deleteUser() async {
+  Future<void> reauthenticateUserWithPassword(String password) async {
+    final firebaseUser = state.firebaseUser;
+    if (firebaseUser == null) {
+      throw Exception("User not logged in. Cannot re-authenticate.");
+    }
+    if (firebaseUser.email == null) {
+      throw Exception("User email is not available. Cannot re-authenticate with password.");
+    }
+
+    try {
+      final credential = EmailAuthProvider.credential(
+        email: firebaseUser.email!,
+        password: password,
+      );
+      await firebaseUser.reauthenticateWithCredential(credential);
+      print("User re-authenticated successfully with password.");
+    } on FirebaseAuthException catch (e) {
+      print("Error re-authenticating with password: ${e.code} - ${e.message}");
+      rethrow; // Rethrow to be caught by UI
+    } catch (e) {
+      print("Unexpected error during password re-authentication: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> reauthenticateUserWithGoogle() async {
+    final firebaseUser = state.firebaseUser;
+    if (firebaseUser == null) {
+      throw Exception("User not logged in. Cannot re-authenticate.");
+    }
+
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User cancelled the Google Sign-In flow
+        throw FirebaseAuthException(
+            code: 'ERROR_ABORTED_BY_USER',
+            message: 'Google Sign-In aborted by user.');
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await firebaseUser.reauthenticateWithCredential(credential);
+      print("User re-authenticated successfully with Google.");
+    } on FirebaseAuthException catch (e) {
+      print("Error re-authenticating with Google: ${e.code} - ${e.message}");
+      rethrow; // Rethrow to be caught by UI
+    } catch (e) {
+      print("Unexpected error during Google re-authentication: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> deleteUser({bool isRetryAfterReauthentication = false}) async {
     final firebaseUser = state.firebaseUser;
     if (firebaseUser == null) {
       throw Exception("User not logged in. Cannot delete account.");
@@ -277,16 +337,18 @@ class Auth extends _$Auth {
       await firebaseUser.delete();
 
       // 2. Delete user data from Firestore
-      // Ensure currentUserId is not empty before calling clearUser
       if (currentUserId.isEmpty) {
-        throw Exception("Current user ID is empty. Cannot clear user data.");
+        // This case should ideally not happen if a user is logged in
+        print("Warning: currentUserId is empty during deleteUser for firebaseUser: ${firebaseUser.uid}. Using firebaseUser.uid for data deletion.");
+        await UserDataSource.clearUser(firebaseUser.uid);
+        await UserStatisticsDataSource.deleteUserStatistics(firebaseUser.uid);
+      } else {
+        await UserDataSource.clearUser(currentUserId);
+        await UserStatisticsDataSource.deleteUserStatistics(currentUserId);
       }
-      await UserDataSource.clearUser(currentUserId);
-      // Also delete statistics if they exist
-      await UserStatisticsDataSource.clearUserStatistics(currentUserId);
 
       // 3. Sign out
-      final wasGoogleSignIn = isGoogleSignIn();
+      final wasGoogleSignIn = isGoogleSignIn(); // Check before firebaseUser becomes null
       await FirebaseAuth.instance.signOut();
       if (wasGoogleSignIn) {
         await GoogleSignIn().signOut();
@@ -296,33 +358,41 @@ class Auth extends _$Auth {
       state = state.copyWith(
         firebaseUser: null,
         currentUser: TriviaUser.createDefault(uid: "", name: "Guest"),
-        loginNewDayInARow: null, // Reset any login streak info
+        loginNewDayInARow: null,
       );
+      print("User account deleted and signed out successfully.");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
-        // Handle requires-recent-login error specifically
-        // This might involve prompting the user to re-authenticate
-        print('Delete user error: Requires recent login. ${e.message}');
-        // You might want to throw a custom exception or signal the UI to handle re-authentication
-        throw Exception(
-            "Deleting your account requires you to recently sign back in. Please log out and log back in, then try again.");
+        if (isRetryAfterReauthentication) {
+          print("Delete user error: Still requires recent login even after re-authentication attempt. Aborting.");
+          throw Exception(
+              "Failed to delete account. Please try logging out and in again.");
+        } else {
+          print("Delete user error: Requires recent login. Prompting for re-authentication.");
+          rethrow; // Rethrow the specific FirebaseAuthException to be caught by the UI
+        }
       } else {
-        // Handle other Firebase auth errors
-        print('Firebase Auth error during user deletion: ${e.message}');
-        rethrow; // Or handle more gracefully
+        print('Firebase Auth error during user deletion: ${e.code} - ${e.message}');
+        rethrow;
       }
     } catch (e) {
-      // Handle other errors (e.g., Firestore deletion, sign-out)
       print('Error deleting user account: $e');
-      // Potentially try to sign the user out locally even if other steps failed
+      // Attempt to sign out locally if something went wrong mid-process
       if (FirebaseAuth.instance.currentUser != null) {
-        await FirebaseAuth.instance.signOut();
+        try {
+          await FirebaseAuth.instance.signOut();
+          if (isGoogleSignIn()) await GoogleSignIn().signOut();
+        } catch (signOutError) {
+          print("Error during fallback sign out: $signOutError");
+        }
       }
+      // Reset local state as a safety measure
       state = state.copyWith(
         firebaseUser: null,
         currentUser: TriviaUser.createDefault(uid: "", name: "Guest"),
+        loginNewDayInARow: null,
       );
-      rethrow; // Or handle more gracefully
+      rethrow;
     }
   }
 }
