@@ -10,6 +10,9 @@ class CustomButton extends StatelessWidget {
   final TextStyle? textStyle;
   final List<BoxShadow>? boxShadow;
   final bool isDisabled;
+  final IconData? leadingIcon;
+  final double? iconSize;
+  final double? iconSpacing;
 
   const CustomButton({
     super.key,
@@ -22,6 +25,9 @@ class CustomButton extends StatelessWidget {
     this.textStyle,
     this.boxShadow,
     this.isDisabled = false, // Default to false if not provided
+    this.leadingIcon,
+    this.iconSize,
+    this.iconSpacing,
   });
 
   @override
@@ -42,22 +48,38 @@ class CustomButton extends StatelessWidget {
               : boxShadow ??
                   [
                     BoxShadow(
-                      color: (color ?? Colors.blue).withValues(alpha:0.5),
+                      color: (color ?? Colors.blue).withValues(alpha: 0.5),
                       spreadRadius: 4,
                       blurRadius: 5,
                       offset: const Offset(1, 2),
                     ),
                   ],
         ),
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: textStyle ??
-              const TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (leadingIcon != null) ...[
+              Icon(
+                leadingIcon,
+                size: iconSize ?? 20.0,
+                color: isDisabled
+                    ? Colors.grey.shade600
+                    : (textStyle?.color ?? Colors.white),
               ),
+              SizedBox(width: iconSpacing ?? 8.0),
+            ],
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: textStyle ??
+                  const TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+            ),
+          ],
         ),
       ),
     );

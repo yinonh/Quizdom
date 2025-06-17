@@ -270,7 +270,8 @@ class Auth extends _$Auth {
       throw Exception("User not logged in. Cannot re-authenticate.");
     }
     if (firebaseUser.email == null) {
-      throw Exception("User email is not available. Cannot re-authenticate with password.");
+      throw Exception(
+          "User email is not available. Cannot re-authenticate with password.");
     }
 
     try {
@@ -339,16 +340,18 @@ class Auth extends _$Auth {
       // 2. Delete user data from Firestore
       if (currentUserId.isEmpty) {
         // This case should ideally not happen if a user is logged in
-        print("Warning: currentUserId is empty during deleteUser for firebaseUser: ${firebaseUser.uid}. Using firebaseUser.uid for data deletion.");
+        print(
+            "Warning: currentUserId is empty during deleteUser for firebaseUser: ${firebaseUser.uid}. Using firebaseUser.uid for data deletion.");
         await UserDataSource.clearUser(firebaseUser.uid);
-        await UserStatisticsDataSource.deleteUserStatistics(firebaseUser.uid);
+        await UserStatisticsDataSource.clearUserStatistics(firebaseUser.uid);
       } else {
         await UserDataSource.clearUser(currentUserId);
-        await UserStatisticsDataSource.deleteUserStatistics(currentUserId);
+        await UserStatisticsDataSource.clearUserStatistics(currentUserId);
       }
 
       // 3. Sign out
-      final wasGoogleSignIn = isGoogleSignIn(); // Check before firebaseUser becomes null
+      final wasGoogleSignIn =
+          isGoogleSignIn(); // Check before firebaseUser becomes null
       await FirebaseAuth.instance.signOut();
       if (wasGoogleSignIn) {
         await GoogleSignIn().signOut();
@@ -364,15 +367,18 @@ class Auth extends _$Auth {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         if (isRetryAfterReauthentication) {
-          print("Delete user error: Still requires recent login even after re-authentication attempt. Aborting.");
+          print(
+              "Delete user error: Still requires recent login even after re-authentication attempt. Aborting.");
           throw Exception(
               "Failed to delete account. Please try logging out and in again.");
         } else {
-          print("Delete user error: Requires recent login. Prompting for re-authentication.");
+          print(
+              "Delete user error: Requires recent login. Prompting for re-authentication.");
           rethrow; // Rethrow the specific FirebaseAuthException to be caught by the UI
         }
       } else {
-        print('Firebase Auth error during user deletion: ${e.code} - ${e.message}');
+        print(
+            'Firebase Auth error during user deletion: ${e.code} - ${e.message}');
         rethrow;
       }
     } catch (e) {

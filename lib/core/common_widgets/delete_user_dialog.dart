@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/extensions/empty_padding_extension.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/custom_button.dart';
-import 'package:trivia/core/common_widgets/custom_text_field.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/extensions/empty_padding_extension.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
+import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
 
 class DeleteUserDialog extends StatefulWidget {
   final Future<void> Function() onConfirmDelete;
@@ -35,6 +31,7 @@ class DeleteUserDialog extends StatefulWidget {
 class _DeleteUserDialogState extends State<DeleteUserDialog> {
   bool _isLoading = false;
   bool _requiresRecentLogin = false;
+  bool _showPassword = false;
   String? _errorMessage;
 
   final _passwordController = TextEditingController();
@@ -52,6 +49,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
     setState(() {
       _isLoading = false;
       _requiresRecentLogin = false;
+      _showPassword = false;
       _errorMessage = null;
       _passwordController.clear();
     });
@@ -67,11 +65,23 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
       if (!mounted) return;
       pop(); // Close the dialog
       goRoute(AuthScreen.routeName);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Account deleted successfully."),
-          backgroundColor: AppConstant.successColor,
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(
+          message: "Account deleted successfully.",
+          backgroundColor: AppConstant.secondaryColor,
+          icon: Icon(
+            Icons.warning_rounded,
+            color: Colors.black.withValues(alpha: 0.2),
+            size: 120,
+          ),
         ),
+        snackBarPosition: SnackBarPosition.bottom,
+        padding: EdgeInsets.symmetric(
+          horizontal: calcWidth(20),
+          vertical: calcHeight(80),
+        ),
+        displayDuration: const Duration(seconds: 1, milliseconds: 500),
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -83,32 +93,57 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           _isLoading = false;
         });
       } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-         setState(() {
+        setState(() {
           _errorMessage = "Incorrect password. Please try again.";
           _isLoading = false;
         });
       } else {
-        pop(); // Close dialog for other errors
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error: ${e.message ?? e.code}"),
-            backgroundColor: AppConstant.errorColor,
+        pop();
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.info(
+            message: "Error: ${e.message ?? e.code}",
+            backgroundColor: AppConstant.onPrimaryColor,
+            icon: Icon(
+              Icons.warning_rounded,
+              color: Colors.black.withValues(alpha: 0.2),
+              size: 120,
+            ),
           ),
+          snackBarPosition: SnackBarPosition.bottom,
+          padding: EdgeInsets.symmetric(
+            horizontal: calcWidth(20),
+            vertical: calcHeight(80),
+          ),
+          displayDuration: const Duration(seconds: 1, milliseconds: 500),
         );
-         _resetState(); // Ensure state is reset
+        _resetState(); // Ensure state is reset
       }
     } catch (e) {
       if (!mounted) return;
       pop(); // Close dialog for other errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("An unexpected error occurred: ${e.toString()}"),
-          backgroundColor: AppConstant.errorColor,
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.info(
+          message: "An unexpected error occurred: ${e.toString()}",
+          backgroundColor: AppConstant.onPrimaryColor,
+          icon: Icon(
+            Icons.warning_rounded,
+            color: Colors.black.withValues(alpha: 0.2),
+            size: 120,
+          ),
         ),
+        snackBarPosition: SnackBarPosition.bottom,
+        padding: EdgeInsets.symmetric(
+          horizontal: calcWidth(20),
+          vertical: calcHeight(80),
+        ),
+        displayDuration: const Duration(seconds: 1, milliseconds: 500),
       );
       _resetState(); // Ensure state is reset
     } finally {
-      if (mounted && _requiresRecentLogin == false) { // Only stop loading if not waiting for re-auth
+      if (mounted && _requiresRecentLogin == false) {
+        // Only stop loading if not waiting for re-auth
         setState(() => _isLoading = false);
       }
     }
@@ -118,7 +153,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !_isLoading,
-      onPopInvoked: (_) {
+      onPopInvokedWithResult: (_, __) {
         if (_isLoading) return;
         _resetState();
       },
@@ -140,7 +175,9 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _requiresRecentLogin ? "Re-authenticate to Delete" : "Delete Account?",
+                  _requiresRecentLogin
+                      ? "Re-authenticate to Delete"
+                      : "Delete Account?",
                   style: TextStyle(
                     fontSize: calcWidth(20),
                     fontWeight: FontWeight.bold,
@@ -148,14 +185,26 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                calcHeight(12).ph,
+                SizedBox(
+                  height: calcHeight(12),
+                ),
                 if (_errorMessage != null) ...[
                   Text(
                     _errorMessage!,
-                    style: TextStyle(color: AppConstant.errorColor, fontSize: calcWidth(14)),
+                    style: TextStyle(
+                        color: AppConstant.red,
+                        fontSize: calcWidth(14),
+                        shadows: [
+                          Shadow(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              offset: const Offset(0.5, 0.1),
+                              blurRadius: 5)
+                        ]),
                     textAlign: TextAlign.center,
                   ),
-                  calcHeight(10).ph,
+                  SizedBox(
+                    height: calcHeight(10),
+                  ),
                 ],
                 if (!_requiresRecentLogin)
                   Text(
@@ -168,21 +217,32 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
                   ),
                 if (_requiresRecentLogin && !widget.isGoogleUser) ...[
                   CustomTextField(
-                    label: "Password",
+                    label: Strings.password,
+                    prefixIcon: Icons.lock_rounded,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showPassword
+                            ? Icons.visibility_rounded
+                            : Icons.visibility_off_rounded,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showPassword = !_showPassword;
+                        });
+                      },
+                    ),
                     controller: _passwordController,
                     focusNode: _passwordFocusNode,
-                    isPassword: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password is required";
-                      }
-                      return null;
-                    },
+                    obscureText: !_showPassword,
                   ),
                 ],
-                calcHeight(20).ph,
+                SizedBox(
+                  height: calcHeight(20),
+                ),
                 if (_isLoading)
-                  const Center(child: CircularProgressIndicator(color: Colors.white))
+                  const Center(
+                      child: CircularProgressIndicator(color: Colors.white))
                 else
                   _buildActionButtons(),
               ],
@@ -201,17 +261,20 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           children: [
             CustomButton(
               text: "Re-authenticate with Google",
-              onTap: () => _processDeletion(widget.onReauthenticateWithGoogleAndDelete),
+              onTap: () =>
+                  _processDeletion(widget.onReauthenticateWithGoogleAndDelete),
               color: AppConstant.primaryColor, // Or a Google-like color
             ),
-            calcHeight(10).ph,
+            SizedBox(
+              height: calcHeight(10),
+            ),
             CustomButton(
               text: "Cancel",
               onTap: () {
                 _resetState();
                 pop();
               },
-              color: AppConstant.errorColor.withOpacity(0.7),
+              color: AppConstant.highlightColor.withValues(alpha: 0.7),
             ),
           ],
         );
@@ -224,18 +287,21 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
               text: "Confirm Delete",
               onTap: () {
                 if (_formKey.currentState!.validate()) {
-                  _processDeletion(() => widget.onReauthenticateAndDelete(_passwordController.text.trim()));
+                  _processDeletion(() => widget.onReauthenticateAndDelete(
+                      _passwordController.text.trim()));
                 }
               },
             ),
-            calcHeight(10).ph,
+            SizedBox(
+              height: calcHeight(10),
+            ),
             CustomButton(
               text: "Cancel",
               onTap: () {
                 _resetState();
                 pop();
               },
-              color: AppConstant.errorColor.withOpacity(0.7),
+              color: AppConstant.highlightColor.withValues(alpha: 0.7),
             ),
           ],
         );
@@ -252,17 +318,22 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
                 _resetState();
                 pop();
               },
-              color: AppConstant.errorColor.withOpacity(0.8),
-              textColor: Colors.white,
+              color: AppConstant.highlightColor.withValues(alpha: 0.8),
+              textStyle: const TextStyle(
+                color: Colors.white,
+              ),
             ),
           ),
-          calcWidth(16).pw,
+          SizedBox(
+            width: calcWidth(16),
+          ),
           Expanded(
             child: CustomButton(
               text: "Yes, Delete",
               onTap: () => _processDeletion(widget.onConfirmDelete),
-              color: AppConstant.successColor.withOpacity(0.8),
-              textColor: Colors.white,
+              textStyle: const TextStyle(
+                color: Colors.white,
+              ),
             ),
           ),
         ],

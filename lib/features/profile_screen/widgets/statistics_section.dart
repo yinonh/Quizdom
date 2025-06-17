@@ -34,8 +34,8 @@ class StatisticsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: calcWidth(10)),
-      padding: EdgeInsets.symmetric(
-          horizontal: calcWidth(15), vertical: calcHeight(25)),
+      padding:
+          EdgeInsets.fromLTRB(calcWidth(15), calcHeight(25), calcWidth(15), 0),
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(

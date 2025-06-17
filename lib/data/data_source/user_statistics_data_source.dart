@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/models/user_statistics.dart';
@@ -9,6 +10,18 @@ class UserStatisticsDataSource {
         .collection('userStatistics')
         .doc(userId)
         .set(const UserStatistics().toJson());
+  }
+
+  static Future<void> clearUserStatistics(String userId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('userStatistics')
+          .doc(userId)
+          .delete();
+    } catch (e) {
+      logger.e('Error clearing user statistics: $e');
+      rethrow;
+    }
   }
 
   static Future<void> updateUserStatistics({

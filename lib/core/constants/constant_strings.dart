@@ -83,6 +83,7 @@ class Strings {
   static const String currentPassword = 'Current Password';
   static const String currentPasswordRequired = 'Current Password Required';
   static const String newPassword = 'New Password';
+  static const String deleteAccount = 'Delete Account';
 
   //No Internet Screen
   static const String noInternet = 'No Internet';

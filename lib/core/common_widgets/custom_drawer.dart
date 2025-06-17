@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:trivia/core/common_widgets/app_bar_resource.dart';
 import 'package:trivia/core/common_widgets/current_user_avatar.dart';
-import 'package:trivia/core/common_widgets/delete_user_dialog.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/navigation/route_extensions.dart';
@@ -69,36 +68,6 @@ class CustomDrawer extends ConsumerWidget {
             title: Strings.about,
             onTap: () {
               pop();
-            },
-          ),
-          drawerOption(
-            icon: Icons.delete_forever_rounded,
-            title: "Delete User",
-            onTap: () {
-              pop(); // Close drawer first
-              final authNotifier = ref.read(authProvider.notifier);
-              showDialog(
-                context: context,
-                builder: (BuildContext dialogContext) {
-                  return DeleteUserDialog(
-                    isGoogleUser: authNotifier.isGoogleSignIn(),
-                    onConfirmDelete: () async {
-                      // This is the initial attempt to delete
-                      await authNotifier.deleteUser();
-                    },
-                    onReauthenticateAndDelete: (String password) async {
-                      await authNotifier.reauthenticateUserWithPassword(password);
-                      // If re-authentication is successful, try deleting again
-                      await authNotifier.deleteUser(isRetryAfterReauthentication: true);
-                    },
-                    onReauthenticateWithGoogleAndDelete: () async {
-                      await authNotifier.reauthenticateUserWithGoogle();
-                      // If re-authentication is successful, try deleting again
-                      await authNotifier.deleteUser(isRetryAfterReauthentication: true);
-                    },
-                  );
-                },
-              );
             },
           ),
           drawerOption(
