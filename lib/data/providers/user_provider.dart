@@ -283,8 +283,7 @@ class Auth extends _$Auth {
       }
       await UserDataSource.clearUser(currentUserId);
       // Also delete statistics if they exist
-      await UserStatisticsDataSource.deleteUserStatistics(currentUserId);
-
+      await UserStatisticsDataSource.clearUserStatistics(currentUserId);
 
       // 3. Sign out
       final wasGoogleSignIn = isGoogleSignIn();
