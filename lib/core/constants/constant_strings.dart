@@ -40,6 +40,8 @@ class Strings {
   static const String email = "Email";
   static const String password = "Password";
   static const String returnHome = "Return to Home";
+  static const String cancel = "Cancel";
+  static const String no = "No";
 
   // Custom Drawer
   static const String home = "Home";
@@ -286,4 +288,19 @@ class Strings {
   static const String thisFeatureComingSoon =
       "This feature is coming soon!\nStay tuned for updates.";
   static const String underConstruction = "Under Construction";
+
+  // Delete User Account Dialog
+  static const String accountDeletedSuccessfully =
+      "Account deleted successfully.";
+  static const String needToReAuthenticate =
+      "This action requires recent authentication. Please provide your credentials below.";
+  static const String incorrectPassword =
+      "Incorrect password. Please try again.";
+  static const String reAuthenticateToDelete = "Re-authenticate to Delete";
+  static const String deleteAccountQ = "Delete Account?";
+  static const String sureDeleteAccountQ =
+      "Are you sure you want to delete your account? This action is irreversible and will delete all your data.";
+  static const String reAuthenticateWithGoogle = "Re-authenticate with Google";
+  static const String confirmDelete = "Confirm Delete";
+  static const String yesDelete = "Yes, Delete";
 }

@@ -68,7 +68,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
       showTopSnackBar(
         Overlay.of(context),
         CustomSnackBar.info(
-          message: "Account deleted successfully.",
+          message: Strings.accountDeletedSuccessfully,
           backgroundColor: AppConstant.secondaryColor,
           icon: Icon(
             Icons.warning_rounded,
@@ -88,13 +88,12 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
       if (e.code == 'requires-recent-login') {
         setState(() {
           _requiresRecentLogin = true;
-          _errorMessage =
-              "This action requires recent authentication. Please provide your credentials below.";
+          _errorMessage = Strings.needToReAuthenticate;
           _isLoading = false;
         });
       } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
         setState(() {
-          _errorMessage = "Incorrect password. Please try again.";
+          _errorMessage = Strings.incorrectPassword;
           _isLoading = false;
         });
       } else {
@@ -102,7 +101,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
         showTopSnackBar(
           Overlay.of(context),
           CustomSnackBar.info(
-            message: "Error: ${e.message ?? e.code}",
+            message: "${Strings.error}: ${e.message ?? e.code}",
             backgroundColor: AppConstant.onPrimaryColor,
             icon: Icon(
               Icons.warning_rounded,
@@ -125,7 +124,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
       showTopSnackBar(
         Overlay.of(context),
         CustomSnackBar.info(
-          message: "An unexpected error occurred: ${e.toString()}",
+          message: "${Strings.error}: ${e.toString()}",
           backgroundColor: AppConstant.onPrimaryColor,
           icon: Icon(
             Icons.warning_rounded,
@@ -176,8 +175,8 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
               children: [
                 Text(
                   _requiresRecentLogin
-                      ? "Re-authenticate to Delete"
-                      : "Delete Account?",
+                      ? Strings.reAuthenticateToDelete
+                      : Strings.deleteAccountQ,
                   style: TextStyle(
                     fontSize: calcWidth(20),
                     fontWeight: FontWeight.bold,
@@ -208,7 +207,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
                 ],
                 if (!_requiresRecentLogin)
                   Text(
-                    "Are you sure you want to delete your account? This action is irreversible and will delete all your data.",
+                    Strings.sureDeleteAccountQ,
                     style: TextStyle(
                       fontSize: calcWidth(15),
                       color: Colors.white70,
@@ -260,7 +259,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CustomButton(
-              text: "Re-authenticate with Google",
+              text: Strings.reAuthenticateWithGoogle,
               onTap: () =>
                   _processDeletion(widget.onReauthenticateWithGoogleAndDelete),
               color: AppConstant.primaryColor, // Or a Google-like color
@@ -269,7 +268,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
               height: calcHeight(10),
             ),
             CustomButton(
-              text: "Cancel",
+              text: Strings.cancel,
               onTap: () {
                 _resetState();
                 pop();
@@ -284,7 +283,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CustomButton(
-              text: "Confirm Delete",
+              text: Strings.confirmDelete,
               onTap: () {
                 if (_formKey.currentState!.validate()) {
                   _processDeletion(() => widget.onReauthenticateAndDelete(
@@ -296,7 +295,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
               height: calcHeight(10),
             ),
             CustomButton(
-              text: "Cancel",
+              text: Strings.cancel,
               onTap: () {
                 _resetState();
                 pop();
@@ -313,7 +312,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
         children: [
           Expanded(
             child: CustomButton(
-              text: "No",
+              text: Strings.no,
               onTap: () {
                 _resetState();
                 pop();
@@ -329,7 +328,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           ),
           Expanded(
             child: CustomButton(
-              text: "Yes, Delete",
+              text: Strings.yesDelete,
               onTap: () => _processDeletion(widget.onConfirmDelete),
               textStyle: const TextStyle(
                 color: Colors.white,
