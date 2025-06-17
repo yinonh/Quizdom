@@ -263,4 +263,67 @@ class Auth extends _$Auth {
     return state.firebaseUser!.providerData
         .any((userInfo) => userInfo.providerId == 'google.com');
   }
+
+  Future<void> deleteUser() async {
+    final firebaseUser = state.firebaseUser;
+    if (firebaseUser == null) {
+      throw Exception("User not logged in. Cannot delete account.");
+    }
+
+    final currentUserId = state.currentUser.uid;
+
+    try {
+      // 1. Delete from Firebase Authentication
+      await firebaseUser.delete();
+
+      // 2. Delete user data from Firestore
+      // Ensure currentUserId is not empty before calling clearUser
+      if (currentUserId.isEmpty) {
+        throw Exception("Current user ID is empty. Cannot clear user data.");
+      }
+      await UserDataSource.clearUser(currentUserId);
+      // Also delete statistics if they exist
+      await UserStatisticsDataSource.deleteUserStatistics(currentUserId);
+
+
+      // 3. Sign out
+      final wasGoogleSignIn = isGoogleSignIn();
+      await FirebaseAuth.instance.signOut();
+      if (wasGoogleSignIn) {
+        await GoogleSignIn().signOut();
+      }
+
+      // 4. Update local state
+      state = state.copyWith(
+        firebaseUser: null,
+        currentUser: TriviaUser.createDefault(uid: "", name: "Guest"),
+        loginNewDayInARow: null, // Reset any login streak info
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // Handle requires-recent-login error specifically
+        // This might involve prompting the user to re-authenticate
+        print('Delete user error: Requires recent login. ${e.message}');
+        // You might want to throw a custom exception or signal the UI to handle re-authentication
+        throw Exception(
+            "Deleting your account requires you to recently sign back in. Please log out and log back in, then try again.");
+      } else {
+        // Handle other Firebase auth errors
+        print('Firebase Auth error during user deletion: ${e.message}');
+        rethrow; // Or handle more gracefully
+      }
+    } catch (e) {
+      // Handle other errors (e.g., Firestore deletion, sign-out)
+      print('Error deleting user account: $e');
+      // Potentially try to sign the user out locally even if other steps failed
+      if (FirebaseAuth.instance.currentUser != null) {
+        await FirebaseAuth.instance.signOut();
+      }
+      state = state.copyWith(
+        firebaseUser: null,
+        currentUser: TriviaUser.createDefault(uid: "", name: "Guest"),
+      );
+      rethrow; // Or handle more gracefully
+    }
+  }
 }
