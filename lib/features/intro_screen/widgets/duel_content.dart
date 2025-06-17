@@ -12,8 +12,8 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/quiz_screen/duel_quiz_screen.dart';
 import 'package:trivia/features/intro_screen/view_model/duel_manager.dart';
+import 'package:trivia/features/quiz_screen/duel_quiz_screen.dart';
 
 import 'detail_row.dart';
 import 'filter_room.dart';

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/providers/user_provider.dart';
+
 import 'user_resources_dialog.dart';
 
 class AppBarResourceWidget extends ConsumerStatefulWidget {

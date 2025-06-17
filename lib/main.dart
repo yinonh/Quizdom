@@ -1,14 +1,15 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:trivia/features/no_internet_screen/connectivity_wrapper.dart';
+
+import 'app.dart';
 import 'core/global_providers/ad_provider.dart';
 import 'firebase_options.dart';
-import 'app.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

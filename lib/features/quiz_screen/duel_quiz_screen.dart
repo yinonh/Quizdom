@@ -4,6 +4,7 @@ import 'package:trivia/core/common_widgets/ad_interstitial_widget.dart';
 import 'package:trivia/core/common_widgets/app_bar.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
+import 'package:trivia/core/common_widgets/emoji_bubble.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
@@ -15,7 +16,6 @@ import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_question_w
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/question_review.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/waiting_or_countdown.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
-import 'package:trivia/core/common_widgets/emoji_bubble.dart';
 import 'package:trivia/features/results_screen/duel_result_screen.dart';
 import 'package:trivia/features/results_screen/game_canceled.dart';
 

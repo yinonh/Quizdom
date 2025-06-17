@@ -13,7 +13,6 @@ import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
 
 part 'profile_screen_manager.freezed.dart';
-
 part 'profile_screen_manager.g.dart';
 
 @freezed

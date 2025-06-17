@@ -4,11 +4,11 @@ import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/models/trivia_user.dart'; // For TriviaUser
 import 'package:trivia/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
 import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 import 'package:trivia/features/quiz_screen/widgets/question_shemmer.dart';
-import 'package:trivia/data/models/trivia_user.dart'; // For TriviaUser
 
 class DuelQuestionWidget extends ConsumerWidget {
   final List<String> usersList;

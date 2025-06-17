@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -16,7 +15,7 @@ class EditAvatar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final avatarState = ref.watch(avatarScreenManagerProvider);
-    final avatarNotifier = ref.read(avatarScreenManagerProvider.notifier);
+    // final avatarNotifier = ref.read(avatarScreenManagerProvider.notifier);
 
     return Center(
       child: avatarState.customWhen(
@@ -27,11 +26,11 @@ class EditAvatar extends ConsumerWidget {
             Hero(
               tag: Strings.userAvatarTag,
               child: GestureDetector(
-                onTap: () {
-                  if (state.showImage) {
-                    avatarNotifier.toggleShowTrashIcon();
-                  }
-                },
+                // onTap: () {
+                //   if (state.showImage) {
+                //     avatarNotifier.toggleShowTrashIcon();
+                //   }
+                // },
                 child: Stack(
                   children: [
                     if (state.showImage)
@@ -75,67 +74,67 @@ class EditAvatar extends ConsumerWidget {
                 ),
               ),
             ),
-            if (state.showTrashIcon)
-              Positioned(
-                bottom: 35,
-                child: IconButton(
-                  icon: Icon(Icons.delete,
-                      color: Colors.white.withValues(alpha: 0.5)),
-                  onPressed: () {
-                    avatarNotifier.switchImage(null);
-                    avatarNotifier.toggleShowTrashIcon(false);
-                  },
-                ),
-              ),
-            Positioned(
-              bottom: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      final image = await ImagePicker()
-                          .pickImage(source: ImageSource.camera);
-                      avatarNotifier.switchImage(image);
-                    },
-                    icon: Container(
-                      width: calcWidth(45.0),
-                      height: calcHeight(45.0),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: const Icon(
-                        Icons.camera,
-                        size: 30,
-                        color: AppConstant.onPrimaryColor,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: calcWidth(55)),
-                  IconButton(
-                    onPressed: () async {
-                      final image = await ImagePicker()
-                          .pickImage(source: ImageSource.gallery);
-                      avatarNotifier.switchImage(image);
-                    },
-                    icon: Container(
-                      width: calcWidth(45.0),
-                      height: calcHeight(45.0),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: const Icon(
-                        Icons.image,
-                        size: 30,
-                        color: AppConstant.onPrimaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // if (state.showTrashIcon)
+            //   Positioned(
+            //     bottom: 35,
+            //     child: IconButton(
+            //       icon: Icon(Icons.delete,
+            //           color: Colors.white.withValues(alpha: 0.5)),
+            //       onPressed: () {
+            //         avatarNotifier.switchImage(null);
+            //         avatarNotifier.toggleShowTrashIcon(false);
+            //       },
+            //     ),
+            //   ),
+            // Positioned(
+            //   bottom: 0,
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       IconButton(
+            //         onPressed: () async {
+            //           final image = await ImagePicker()
+            //               .pickImage(source: ImageSource.camera);
+            //           avatarNotifier.switchImage(image);
+            //         },
+            //         icon: Container(
+            //           width: calcWidth(45.0),
+            //           height: calcHeight(45.0),
+            //           decoration: const BoxDecoration(
+            //             shape: BoxShape.circle,
+            //             color: Colors.white,
+            //           ),
+            //           child: const Icon(
+            //             Icons.camera,
+            //             size: 30,
+            //             color: AppConstant.onPrimaryColor,
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(width: calcWidth(55)),
+            //       IconButton(
+            //         onPressed: () async {
+            //           final image = await ImagePicker()
+            //               .pickImage(source: ImageSource.gallery);
+            //           avatarNotifier.switchImage(image);
+            //         },
+            //         icon: Container(
+            //           width: calcWidth(45.0),
+            //           height: calcHeight(45.0),
+            //           decoration: const BoxDecoration(
+            //             shape: BoxShape.circle,
+            //             color: Colors.white,
+            //           ),
+            //           child: const Icon(
+            //             Icons.image,
+            //             size: 30,
+            //             color: AppConstant.onPrimaryColor,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/common_widgets/trophy_dialog.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/navigation/route_extensions.dart';
@@ -9,7 +10,6 @@ import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/user_statistics.dart';
 import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/core/common_widgets/trophy_dialog.dart';
 
 part 'user_statistics_provider.freezed.dart';
 part 'user_statistics_provider.g.dart';

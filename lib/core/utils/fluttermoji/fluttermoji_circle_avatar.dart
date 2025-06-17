@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/custom_clipper.dart';
+
 import 'fluttermoji_provider.dart';
 
 /// This widget renders the Fluttermoji of the user on screen

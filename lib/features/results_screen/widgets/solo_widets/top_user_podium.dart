@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_podium/src/podium_bar.dart';
 import 'package:trivia/core/common_widgets/user_avatar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
-
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 

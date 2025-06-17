@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_assets/fluttermojimodel.dart';
 import 'package:trivia/core/utils/timestamp_converter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'trivia_user.freezed.dart';
 part 'trivia_user.g.dart';

@@ -7,8 +7,8 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/navigation/route_extensions.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
 import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dart';
+import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
 
 import 'detail_row.dart';
 

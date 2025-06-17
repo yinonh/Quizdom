@@ -1,14 +1,14 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/navigation/new_user_registration_provider.dart';
 import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';

@@ -1,5 +1,6 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/data/providers/user_statistics_provider.dart';
@@ -10,7 +11,7 @@ import 'general_trivia_room_provider.dart';
 part 'app_initialization_provider.g.dart';
 
 @riverpod
-Stream<User?> authStateChanges(AuthStateChangesRef ref) {
+Stream<User?> authStateChanges(Ref ref) {
   return FirebaseAuth.instance.authStateChanges();
 }
 
