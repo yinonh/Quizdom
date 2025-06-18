@@ -1,6 +1,6 @@
-// solo_trivia_provider.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
@@ -16,6 +16,7 @@ class TriviaState with _$TriviaState {
   const factory TriviaState({
     required String? token,
     required GeneralTriviaRoom? triviaRoom,
+    required Difficulty? selectedDifficulty,
     TriviaCategories? categories,
   }) = _SoloTriviaState;
 }
@@ -27,7 +28,12 @@ class Trivia extends _$Trivia {
     return const TriviaState(
       triviaRoom: null,
       token: null,
+      selectedDifficulty: null,
     );
+  }
+
+  void setDifficulty(Difficulty difficulty) {
+    state = state.copyWith(selectedDifficulty: difficulty);
   }
 
   Future setToken() async {
@@ -95,8 +101,13 @@ class Trivia extends _$Trivia {
   Future<List<Question>?> getSoloTriviaQuestions() async {
     Map<String, dynamic>? data;
 
+    print("########################### ${state.selectedDifficulty}");
+
     data = await TriviaDataSource.fetchTriviaQuestions(
-        state.triviaRoom?.categoryId, state.token);
+      state.triviaRoom?.categoryId,
+      state.token,
+      // state.selectedDifficulty?.value,
+    ); // Pass difficulty to the API call
 
     final List<Question> questions = (data['results'] as List).map((result) {
       final decodedResult = decodeFields(result);

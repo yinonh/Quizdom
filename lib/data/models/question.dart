@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 
 part 'question.freezed.dart';
 part 'question.g.dart';
@@ -16,15 +17,6 @@ class Question with _$Question {
 
   factory Question.fromJson(Map<String, dynamic> json) =>
       _$QuestionFromJson(json);
-}
-
-enum Difficulty {
-  @JsonValue("easy")
-  EASY,
-  @JsonValue("hard")
-  HARD,
-  @JsonValue("medium")
-  MEDIUM
 }
 
 enum Type {

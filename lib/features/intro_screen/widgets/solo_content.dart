@@ -11,6 +11,7 @@ import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dar
 import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
 
 import 'detail_row.dart';
+import 'difficulty_selector.dart';
 
 class SoloIntroContent extends ConsumerWidget {
   const SoloIntroContent({super.key});
@@ -69,14 +70,6 @@ class SoloIntroContent extends ConsumerWidget {
                       icon: Icons.question_answer,
                       text:
                           '${Strings.questions} ${AppConstant.numberOfQuestions}'),
-                  const DetailRow(
-                      icon: Icons.speed,
-                      text:
-                          '${Strings.difficulty} ${AppConstant.questionsDifficulty}'),
-                  const DetailRow(
-                      icon: Icons.timer,
-                      text:
-                          '${Strings.timePerQuestion} ${AppConstant.questionTime}s'),
                   DetailRow(
                     icon: Icons.monetization_on,
                     text: '${Strings.price} 10 coins',
@@ -84,7 +77,14 @@ class SoloIntroContent extends ConsumerWidget {
                         ? AppConstant.onPrimaryColor
                         : Colors.red,
                   ),
-                  SizedBox(height: calcHeight(30)),
+                  SizedBox(height: calcHeight(20)),
+                  DifficultySelector(
+                    selectedDifficulty: introState.selectedDifficulty,
+                    onDifficultySelected: (difficulty) {
+                      introNotifier.setDifficulty(difficulty);
+                    },
+                  ),
+                  SizedBox(height: calcHeight(10)),
                   Row(
                     spacing: calcWidth(10),
                     children: [

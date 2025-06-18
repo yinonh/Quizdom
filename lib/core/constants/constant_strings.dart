@@ -223,6 +223,7 @@ class Strings {
   static const String any = 'Any';
   static const String clear = 'Clear';
   static const String setFilters = 'Set Filters';
+  static const String selectDifficulty = 'Select Difficulty:';
 
   // Fortune Wheel Screen
   static const String congratulations = 'Congratulations!';

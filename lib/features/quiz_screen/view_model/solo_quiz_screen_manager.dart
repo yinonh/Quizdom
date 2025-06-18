@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/data/models/question.dart';
 import 'package:trivia/data/models/shuffled_data.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
@@ -21,6 +22,7 @@ class SoloQuizState with _$SoloQuizState {
     required List<String> shuffledOptions,
     required int correctAnswerIndex,
     required String categoryName,
+    required Difficulty? difficulty,
     int? selectedAnswerIndex,
   }) = _SoloQuizState;
 }
@@ -32,6 +34,8 @@ class SoloQuizScreenManager extends _$SoloQuizScreenManager {
   @override
   Future<SoloQuizState> build() async {
     final triviaNotifier = ref.read(triviaProvider.notifier);
+    final triviaState = ref.read(triviaProvider);
+
     final response = await triviaNotifier.getSoloTriviaQuestions();
     final initialShuffledData = _getShuffledOptions(response![0]);
     ref.onDispose(() {
@@ -46,6 +50,7 @@ class SoloQuizScreenManager extends _$SoloQuizScreenManager {
       correctAnswerIndex: initialShuffledData.correctIndex,
       selectedAnswerIndex: null,
       categoryName: ref.read(triviaProvider).triviaRoom?.categoryName ?? "",
+      difficulty: triviaState.selectedDifficulty,
     );
   }
 

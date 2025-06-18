@@ -1,10 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/core/utils/enums/game_mode.dart';
 import 'package:trivia/data/models/general_trivia_room.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/data/providers/game_mode_provider.dart';
 import 'package:trivia/data/providers/general_trivia_room_provider.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
 
 part 'intro_screen_manager.freezed.dart';
@@ -16,6 +18,7 @@ class IntroState with _$IntroState {
     required GeneralTriviaRoom? room,
     required GameMode gameMode,
     required TriviaUser currentUser,
+    required Difficulty? selectedDifficulty,
   }) = _IntroState;
 }
 
@@ -26,11 +29,25 @@ class IntroScreenManager extends _$IntroScreenManager {
     final triviaRoomState = ref.watch(generalTriviaRoomsProvider);
     final currentUser = ref.watch(authProvider).currentUser;
     final gameMode = ref.watch(gameModeNotifierProvider) ?? GameMode.solo;
+    final triviaState = ref.read(triviaProvider);
 
     return IntroState(
       room: triviaRoomState.selectedRoom,
       gameMode: gameMode,
       currentUser: currentUser,
+      selectedDifficulty: triviaState.selectedDifficulty,
+    );
+  }
+
+  void setDifficulty(Difficulty difficulty) {
+    ref.read(triviaProvider.notifier).setDifficulty(difficulty);
+    final currentState = state;
+    if (currentState is! AsyncData<IntroState>) return;
+    final data = currentState.value;
+    state = state = AsyncData(
+      data.copyWith(
+        selectedDifficulty: difficulty,
+      ),
     );
   }
 
