@@ -101,12 +101,10 @@ class Trivia extends _$Trivia {
   Future<List<Question>?> getSoloTriviaQuestions() async {
     Map<String, dynamic>? data;
 
-    print("########################### ${state.selectedDifficulty}");
-
     data = await TriviaDataSource.fetchTriviaQuestions(
-      state.triviaRoom?.categoryId,
-      state.token,
-      // state.selectedDifficulty?.value,
+      category: state.triviaRoom?.categoryId,
+      token: state.token,
+      difficulty: state.selectedDifficulty,
     ); // Pass difficulty to the API call
 
     final List<Question> questions = (data['results'] as List).map((result) {

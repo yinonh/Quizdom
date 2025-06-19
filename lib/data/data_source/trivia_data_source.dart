@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:trivia/core/constants/api_endpoints.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 
 class TriviaDataSource {
   static final Dio client = DioClient.instance;
@@ -27,13 +28,13 @@ class TriviaDataSource {
   }
 
   static Future<Map<String, dynamic>> fetchTriviaQuestions(
-      int? category, String? token) async {
+      {int? category, String? token, Difficulty? difficulty}) async {
     final response = await client.get(
       ApiEndpoints.apiTrivia,
       queryParameters: {
         "amount": AppConstant.numberOfQuestions,
         "category": category == -1 ? "" : category,
-        "difficulty": AppConstant.questionsDifficulty, //triviaRoom?.difficulty,
+        "difficulty": difficulty?.value,
         "encode": "base64",
         "token": token,
       },

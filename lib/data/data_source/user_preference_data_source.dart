@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/data/data_source/trivia_data_source.dart';
 import 'package:trivia/data/data_source/trivia_room_data_source.dart';
 import 'package:trivia/data/models/user_preference.dart';
@@ -107,8 +108,8 @@ class UserPreferenceDataSource {
         if (currentUserId == userIds[0]) {
           try {
             // Fetch questions from the API
-            final questionsData =
-                await TriviaDataSource.fetchTriviaQuestions(categoryId, token);
+            final questionsData = await TriviaDataSource.fetchTriviaQuestions(
+                category: categoryId, token: token, difficulty: difficulty);
 
             // Update the trivia room with the questions data
             await firestore.collection('triviaRooms').doc(roomId).update({
@@ -133,7 +134,7 @@ class UserPreferenceDataSource {
   }
 
 // Helper function to merge preferences
-  static (int?, int?, String?) _mergePreferences(
+  static (int?, int?, Difficulty?) _mergePreferences(
       UserPreference pref1, UserPreference pref2) {
     // For question count: if either user specified a count, use that
     int? questionCount;
@@ -152,7 +153,7 @@ class UserPreferenceDataSource {
     }
 
     // For difficulty: if either user specified a difficulty, use that
-    String? difficulty;
+    Difficulty? difficulty;
     if (pref1.difficulty != null && pref1.difficulty != "-1") {
       difficulty = pref1.difficulty;
     } else if (pref2.difficulty != null && pref2.difficulty != "-1") {
@@ -457,8 +458,8 @@ class UserPreferenceDataSource {
 
     try {
       // Fetch questions from the API
-      final questionsData =
-          await TriviaDataSource.fetchTriviaQuestions(categoryId, token);
+      final questionsData = await TriviaDataSource.fetchTriviaQuestions(
+          category: categoryId, token: token, difficulty: difficulty);
 
       // Update the trivia room with the questions data
       await FirebaseFirestore.instance

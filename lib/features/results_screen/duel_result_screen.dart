@@ -4,6 +4,7 @@ import 'package:trivia/core/common_widgets/custom_when.dart';
 import 'package:trivia/core/constants/app_routes.dart';
 import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
+import 'package:trivia/data/providers/trivia_provider.dart';
 import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
 import 'package:trivia/features/results_screen/widgets/duel_widgets/duel_results_header.dart';
 import 'package:trivia/features/results_screen/widgets/duel_widgets/player_stats_comparison.dart';
@@ -23,10 +24,22 @@ class DuelResultsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resultsAsync = ref.watch(duelResultScreenManagerProvider(roomId));
-
     return Scaffold(
       body: resultsAsync.customWhen(
         data: (resultsState) {
+          final triviaCategories = ref.read(triviaProvider).categories;
+          String categoryName = 'Any';
+          if (resultsState.room.categoryId != null &&
+              triviaCategories != null) {
+            try {
+              final category = triviaCategories.triviaCategories?.firstWhere(
+                (cat) => cat.id == resultsState.room.categoryId,
+              );
+              categoryName = category?.name ?? 'Any';
+            } catch (e) {
+              // Category not found, keep default
+            }
+          }
           return Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -45,7 +58,10 @@ class DuelResultsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      DuelResultsHeader(resultsState: resultsState),
+                      DuelResultsHeader(
+                        resultsState: resultsState,
+                        categoryName: cleanCategoryName(categoryName),
+                      ),
                       SizedBox(height: calcHeight(24)),
                       WinnerAnnouncement(resultsState: resultsState),
                       SizedBox(height: calcHeight(48)),

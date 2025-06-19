@@ -3,9 +3,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 enum Difficulty {
   @JsonValue("easy")
   easy('easy', 'Easy'),
-  @JsonValue("hard")
-  medium('medium', 'Medium'),
   @JsonValue("medium")
+  medium('medium', 'Medium'),
+  @JsonValue("hard")
   hard('hard', 'Hard');
 
   const Difficulty(this.value, this.displayName);

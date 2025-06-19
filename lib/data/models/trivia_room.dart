@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/timestamp_converter.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
@@ -14,7 +15,7 @@ class TriviaRoom with _$TriviaRoom {
     String? hostUserId,
     required int? questionCount,
     required int? categoryId,
-    required String? difficulty,
+    required Difficulty? difficulty,
     required bool? isPublic,
     @TimestampConverter() required DateTime? createdAt,
 

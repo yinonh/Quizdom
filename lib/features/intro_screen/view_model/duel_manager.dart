@@ -7,6 +7,7 @@ import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/bots.dart';
 import 'package:trivia/core/global_providers/app_lifecycle_provider.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_preference_data_source.dart';
 import 'package:trivia/data/models/trivia_categories.dart';
@@ -389,7 +390,7 @@ class DuelManager extends _$DuelManager {
   Future<void> updateUserPreferences({
     int? category,
     int? numOfQuestions,
-    String? difficulty,
+    Difficulty? difficulty,
   }) async {
     final currentState = state;
     if (currentState is! AsyncData<DuelState>) return;
@@ -402,9 +403,7 @@ class DuelManager extends _$DuelManager {
       questionCount: numOfQuestions == -1
           ? null
           : numOfQuestions ?? currentData.userPreferences.questionCount,
-      difficulty: difficulty == "-1"
-          ? null
-          : difficulty ?? currentData.userPreferences.difficulty,
+      difficulty: difficulty ?? currentData.userPreferences.difficulty,
     );
 
     // First update the state with the new preferences
@@ -419,11 +418,13 @@ class DuelManager extends _$DuelManager {
       }
 
       // Update the state to reflect that there's no match
-      state = AsyncData(state.value!.copyWith(
-        matchedUserId: null,
-        matchedUser: null,
-        isMatchedWithBot: false,
-      ));
+      state = AsyncData(
+        state.value!.copyWith(
+          matchedUserId: null,
+          matchedUser: null,
+          isMatchedWithBot: false,
+        ),
+      );
 
       // Start bot match timer again
       _startBotMatchTimer();

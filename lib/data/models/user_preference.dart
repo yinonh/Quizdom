@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/core/utils/timestamp_converter.dart';
 
 part 'user_preference.freezed.dart';
@@ -10,7 +11,7 @@ class UserPreference with _$UserPreference {
   const factory UserPreference({
     required int? questionCount,
     required int? categoryId,
-    required String? difficulty,
+    required Difficulty? difficulty,
     String? matchedUserId,
     String? triviaRoomId,
     @TimestampConverter() required DateTime? createdAt,

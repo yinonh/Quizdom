@@ -72,7 +72,7 @@ class PlayerStatsComparison extends StatelessWidget {
                   size: 24,
                 ),
                 Text(
-                  Strings.performanceStatistics,
+                  Strings.gamePerformance,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppConstant.primaryColor,

@@ -272,7 +272,7 @@ class Strings {
   static const String opponent = "Opponent";
   static const String vs = "VS";
   static const String statisticsNotAvailable = "Statistics are not available";
-  static const String performanceStatistics = "Performance Statistics";
+  static const String gamePerformance = "Game Performance";
   static const String avgResponseTime = "Avg. Response Time";
   static const String finalScore = "Final Score";
   static const String playAgain = "Play Again";

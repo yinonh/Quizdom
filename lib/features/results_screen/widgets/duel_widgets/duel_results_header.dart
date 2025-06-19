@@ -6,10 +6,12 @@ import 'package:trivia/features/results_screen/view_model/duel_screen_manager/du
 
 class DuelResultsHeader extends StatelessWidget {
   final DuelResultState resultsState;
+  final String categoryName;
 
   const DuelResultsHeader({
     super.key,
     required this.resultsState,
+    required this.categoryName,
   });
 
   @override
@@ -49,12 +51,12 @@ class DuelResultsHeader extends StatelessWidget {
               _buildInfoChip(
                 context,
                 icon: Icons.category,
-                label: _getCategoryName(resultsState.room.categoryId),
+                label: categoryName,
               ),
               _buildInfoChip(
                 context,
                 icon: Icons.psychology,
-                label: resultsState.room.difficulty ?? 'Unknown',
+                label: resultsState.room.difficulty?.displayName ?? 'Unknown',
               ),
             ],
           ),
@@ -87,16 +89,5 @@ class DuelResultsHeader extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _getCategoryName(int? categoryId) {
-    // Map category IDs to names - replace with your actual categories
-    final categories = {
-      9: 'General Knowledge',
-      10: 'Books',
-      11: 'Film',
-      // Add more categories as needed
-    };
-    return categories[categoryId] ?? 'Unknown';
   }
 }

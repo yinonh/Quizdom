@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trivia/core/utils/enums/difficulty.dart';
 import 'package:trivia/core/utils/enums/game_stage.dart';
 import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Added import
 import 'package:trivia/data/models/trivia_achievements.dart';
@@ -18,7 +19,7 @@ class TriviaRoomDataSource {
     required String roomId,
     required int? questionCount,
     required int? categoryId,
-    required String? difficulty,
+    required Difficulty? difficulty,
     required bool isPublic,
     required List<String> userIds,
     required String hostUserId,

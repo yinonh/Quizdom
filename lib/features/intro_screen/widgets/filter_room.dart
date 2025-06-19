@@ -10,6 +10,7 @@ import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/intro_screen/view_model/duel_manager.dart';
 import 'package:trivia/features/intro_screen/view_model/filter_manager.dart';
+import 'package:trivia/features/intro_screen/widgets/difficulty_selector.dart';
 
 class RoomFilterScreen extends ConsumerStatefulWidget {
   static const routeName = AppRoutes.filterDialog;
@@ -155,21 +156,9 @@ class RoomFilterContent extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: calcHeight(16)),
-                _buildDropdown(
-                  context: context,
-                  value: filterState.difficulty,
-                  label: Strings.difficulty,
-                  items: [
-                    const DropdownMenuItem(
-                        value: "-1", child: Text(Strings.any)),
-                    ...AppConstant.difficultyMap.map(
-                      (difficulty) => DropdownMenuItem(
-                        value: difficulty,
-                        child: Text(difficulty),
-                      ),
-                    ),
-                  ],
-                  onChanged: (value) {
+                DifficultySelector(
+                  selectedDifficulty: filterState.difficulty,
+                  onDifficultySelected: (value) {
                     filterNotifier.updateFilters(difficulty: value);
                   },
                 ),
