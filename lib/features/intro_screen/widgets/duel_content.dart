@@ -160,7 +160,7 @@ class DuelIntroContent extends ConsumerWidget {
 
                         // Title
                         const Text(
-                          Strings.duelMode,
+                          Strings.duelChallenge,
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,

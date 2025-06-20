@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
@@ -340,7 +341,7 @@ class Auth extends _$Auth {
       // 2. Delete user data from Firestore
       if (currentUserId.isEmpty) {
         // This case should ideally not happen if a user is logged in
-        print(
+        logger.i(
             "Warning: currentUserId is empty during deleteUser for firebaseUser: ${firebaseUser.uid}. Using firebaseUser.uid for data deletion.");
         await UserDataSource.clearUser(firebaseUser.uid);
         await UserStatisticsDataSource.clearUserStatistics(firebaseUser.uid);
@@ -363,33 +364,33 @@ class Auth extends _$Auth {
         currentUser: TriviaUser.createDefault(uid: "", name: "Guest"),
         loginNewDayInARow: null,
       );
-      print("User account deleted and signed out successfully.");
+      logger.i("User account deleted and signed out successfully.");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         if (isRetryAfterReauthentication) {
-          print(
+          logger.e(
               "Delete user error: Still requires recent login even after re-authentication attempt. Aborting.");
           throw Exception(
               "Failed to delete account. Please try logging out and in again.");
         } else {
-          print(
+          logger.e(
               "Delete user error: Requires recent login. Prompting for re-authentication.");
-          rethrow; // Rethrow the specific FirebaseAuthException to be caught by the UI
+          rethrow;
         }
       } else {
-        print(
+        logger.e(
             'Firebase Auth error during user deletion: ${e.code} - ${e.message}');
         rethrow;
       }
     } catch (e) {
-      print('Error deleting user account: $e');
+      logger.e('Error deleting user account: $e');
       // Attempt to sign out locally if something went wrong mid-process
       if (FirebaseAuth.instance.currentUser != null) {
         try {
           await FirebaseAuth.instance.signOut();
           if (isGoogleSignIn()) await GoogleSignIn().signOut();
         } catch (signOutError) {
-          print("Error during fallback sign out: $signOutError");
+          logger.e("Error during fallback sign out: $signOutError");
         }
       }
       // Reset local state as a safety measure

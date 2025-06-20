@@ -7,6 +7,7 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/ad_rewarded_widget.dart';
 import 'package:trivia/core/common_widgets/background.dart';
+import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/common_widgets/custom_drawer.dart';
 import 'package:trivia/core/common_widgets/user_app_bar.dart';
 import 'package:trivia/core/constants/app_constant.dart';
@@ -187,29 +188,22 @@ class _WheelSpinScreenState extends ConsumerState<WheelSpinScreen> {
                     ),
                   ),
                   SizedBox(height: calcHeight(40)),
-                  ElevatedButton(
-                    onPressed: isSpinning || wheelState.currentUser.coins < 10
-                        ? null
-                        : _showRewardedAd,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppConstant.onPrimaryColor,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: calcWidth(40),
-                        vertical: calcHeight(16),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
+                  CustomButton(
+                    text: isSpinning
+                        ? Strings.spinning
+                        : "${Strings.spinNow} ${Strings.watchAd}",
+                    onTap: isSpinning ? null : _showRewardedAd,
+                    // This will disable the button when isSpinning is true
+                    padding: EdgeInsets.symmetric(
+                      horizontal: calcWidth(40),
+                      vertical: calcHeight(16),
                     ),
-                    child: Text(
-                      isSpinning
-                          ? Strings.spinning
-                          : "${Strings.spinNow} ${Strings.watchAd}",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    color: AppConstant.onPrimaryColor,
+                    borderRadius: 30,
+                    textStyle: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                   SizedBox(height: calcHeight(40)),

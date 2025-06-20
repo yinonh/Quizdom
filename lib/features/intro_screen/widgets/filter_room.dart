@@ -108,11 +108,12 @@ class RoomFilterContent extends ConsumerWidget {
                     ),
                     Icon(
                       Icons.filter_list,
-                      size: calcWidth(50),
+                      size: calcWidth(70),
                       color: Colors.white,
                     ),
                   ],
                 ),
+                SizedBox(height: calcHeight(16)),
                 Text(
                   Strings.filterRooms,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -138,31 +139,30 @@ class RoomFilterContent extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: calcHeight(16)),
-                _buildDropdown(
-                  context: context,
-                  value: filterState.questionCount,
-                  label: Strings.numberOfQuestions,
-                  items: [
-                    const DropdownMenuItem(value: -1, child: Text(Strings.any)),
-                    ...[10, 15, 20].map(
-                      (count) => DropdownMenuItem(
-                        value: count,
-                        child: Text('$count ${Strings.questions}'),
-                      ),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    filterNotifier.updateFilters(questionCount: value);
-                  },
-                ),
-                SizedBox(height: calcHeight(16)),
+                // _buildDropdown(
+                //   context: context,
+                //   value: filterState.questionCount,
+                //   label: Strings.numberOfQuestions,
+                //   items: [
+                //     const DropdownMenuItem(value: -1, child: Text(Strings.any)),
+                //     ...[10, 15, 20].map(
+                //       (count) => DropdownMenuItem(
+                //         value: count,
+                //         child: Text('$count ${Strings.questions}'),
+                //       ),
+                //     ),
+                //   ],
+                //   onChanged: (value) {
+                //     filterNotifier.updateFilters(questionCount: value);
+                //   },
+                // ),
                 DifficultySelector(
                   selectedDifficulty: filterState.difficulty,
                   onDifficultySelected: (value) {
                     filterNotifier.updateFilters(difficulty: value);
                   },
                 ),
-                SizedBox(height: calcHeight(24)),
+                SizedBox(height: calcHeight(35)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

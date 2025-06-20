@@ -7,6 +7,7 @@ import 'package:trivia/core/utils/enums/game_mode.dart';
 import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dart';
 import 'package:trivia/features/intro_screen/widgets/duel_content.dart';
 import 'package:trivia/features/intro_screen/widgets/group_content.dart';
+import 'package:trivia/features/intro_screen/widgets/insufficient_coins.dart';
 import 'package:trivia/features/intro_screen/widgets/solo_content.dart';
 
 class TriviaIntroScreen extends ConsumerWidget {
@@ -21,7 +22,17 @@ class TriviaIntroScreen extends ConsumerWidget {
     return BaseScreen(
       child: Scaffold(
         body: introStateAsync.customWhen(
-          data: (introState) => _buildContent(introState.gameMode),
+          data: (introState) {
+            // Check if user has enough coins (10 coins required)
+            if (introState.currentUser.coins < 10) {
+              return InsufficientCoinsWidget(
+                gameMode: introState.gameMode,
+                requiredCoins: 10,
+                currentCoins: introState.currentUser.coins,
+              );
+            }
+            return _buildContent(introState.gameMode);
+          },
         ),
       ),
     );

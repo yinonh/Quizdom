@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/common_widgets/custom_button.dart';
-import 'package:trivia/core/common_widgets/delete_user_dialog.dart';
 import 'package:trivia/core/common_widgets/resource_floating_action_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/providers/user_provider.dart';
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
 import 'package:trivia/features/profile_screen/widgets/avatar_section.dart';
 import 'package:trivia/features/profile_screen/widgets/delete_account_section.dart';

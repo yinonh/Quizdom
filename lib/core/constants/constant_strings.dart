@@ -14,6 +14,7 @@ class Strings {
   static const String appBarDrop = "assets/drop.svg";
   static const String closeChestIcon = "assets/icons/close_chest_icon.svg";
   static const String openChestIcon = "assets/icons/open_chest_icon.svg";
+  static const String emptyChestIcon = "assets/icons/empty_chest_icon.svg";
   static const String energyIcon = "assets/icons/energy_icon.svg";
   static const String coinsIcon = "assets/icons/coins_icon.svg";
   static const String singleCoinsIcon = "assets/icons/coin_single_icon.svg";
@@ -214,7 +215,7 @@ class Strings {
   static const String price = 'Price:';
   static const String players = 'Players';
   static const String groupChallenge = 'Group Challenge';
-  static const String duelMode = 'Duel Mode';
+  static const String duelChallenge = 'Duel Challenge';
   static const String waitingForMorePlayers = 'Waiting for more players...';
   static const String filterRooms = 'Filter Rooms';
   static const String errorLoadingCategories = 'Error loading categories';
@@ -304,4 +305,10 @@ class Strings {
   static const String reAuthenticateWithGoogle = "Re-authenticate with Google";
   static const String confirmDelete = "Confirm Delete";
   static const String yesDelete = "Yes, Delete";
+
+  // Insufficient Coins
+  static const String insufficientCoins = "Insufficient Coins";
+  static const String youNeed = "You need";
+  static const String coinsToPlayGame = "coins to play this game";
+  static const String currentColon = "Current:";
 }
