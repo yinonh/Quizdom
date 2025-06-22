@@ -3,10 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:trivia/core/common_widgets/ad_interstitial_widget.dart';
 import 'package:trivia/core/common_widgets/ad_rewarded_widget.dart';
 import 'package:trivia/core/constants/app_routes.dart';
+import 'package:trivia/core/global_providers/auth_providers.dart';
+import 'package:trivia/core/navigation/custom_route_by_name.dart';
 import 'package:trivia/core/navigation/router_service.dart';
 import 'package:trivia/core/navigation/routes_popup.dart';
 import 'package:trivia/core/navigation/routes_quiz.dart';
-import 'package:trivia/data/providers/app_initialization_provider.dart';
 import 'package:trivia/features/auth_screen/auth_screen.dart';
 import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
@@ -15,41 +16,66 @@ import 'package:trivia/features/intro_screen/widgets/filter_room.dart';
 import 'package:trivia/features/profile_screen/profile_screen.dart';
 import 'package:trivia/features/wheel_spin_screen/wheel_spin_screen.dart';
 
-import 'custom_route_by_name.dart';
-import 'new_user_registration_provider.dart';
-
 final routerProvider = Provider<GoRouter>(
   (ref) {
-    final authState = ref.watch(authStateChangesProvider);
-    final isNewUser = ref.watch(newUserRegistrationProvider);
+    // Use the enhanced auth state provider
+    final authState = ref.watch(unifiedAuthProvider);
 
     return GoRouter(
       navigatorKey: AppNavigatorKeys.navigatorKey,
       initialLocation: AppRoutes.categoriesRouteName,
       debugLogDiagnostics: true,
-      redirect: (context, state) {
-        final isAuthenticated = authState.value != null;
-        final isLoggingIn = state.matchedLocation == AppRoutes.authRouteName;
-        final isOnAvatarScreen = state.matchedLocation ==
-            '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
+      redirect: (context, state) async {
+        // Handle loading and error states
+        return authState.when(
+          data: (authData) async {
+            final isAuthenticated = authData.user != null;
+            final isNewUser = authData.isNewUser;
+            final isInitialized = authData.isInitialized;
+            final isLoggingIn =
+                state.matchedLocation == AppRoutes.authRouteName;
+            final isOnAvatarScreen = state.matchedLocation ==
+                '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
 
-        // Authentication logic
-        if (!isAuthenticated && !isLoggingIn) {
-          return AppRoutes.authRouteName;
-        }
+            // Wait for initialization to complete
+            if (!isInitialized) {
+              return null; // Stay on current route while initializing
+            }
 
-        if (isAuthenticated && isLoggingIn) {
-          if (isNewUser) {
-            return '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
-          }
-          return AppRoutes.categoriesRouteName;
-        }
+            // If there's an auth error, redirect to login
+            if (authData.error != null && !isLoggingIn) {
+              return AppRoutes.authRouteName;
+            }
 
-        if (isAuthenticated && isNewUser && !isOnAvatarScreen) {
-          return '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
-        }
+            // Authentication logic
+            if (!isAuthenticated && !isLoggingIn) {
+              return AppRoutes.authRouteName;
+            }
 
-        return null;
+            if (isAuthenticated && isLoggingIn) {
+              if (isNewUser) {
+                return '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
+              }
+              return AppRoutes.categoriesRouteName;
+            }
+
+            if (isAuthenticated && isNewUser && !isOnAvatarScreen) {
+              return '${AppRoutes.categoriesRouteName}${AppRoutes.avatarRouteName}';
+            }
+
+            return null;
+          },
+          loading: () async {
+            // While auth state is loading, don't redirect
+            return null;
+          },
+          error: (error, stack) async {
+            // On auth error, redirect to login unless already there
+            final isLoggingIn =
+                state.matchedLocation == AppRoutes.authRouteName;
+            return isLoggingIn ? null : AppRoutes.authRouteName;
+          },
+        );
       },
       routes: [
         // Auth route (outside hierarchy)
@@ -134,7 +160,6 @@ final routerProvider = Provider<GoRouter>(
           },
         ),
 
-// Updated router configuration for RewardedAdWidget
         GoRoute(
           path: RewardedAdWidget.routeName,
           name: RewardedAdWidget.routeName,
