@@ -167,6 +167,8 @@ class Strings {
   static const String invalidEmail = "Invalid email";
   static const String passwordTooShort =
       "Password must be at least 6 characters long";
+  static const String passwordMustContainLetter =
+      "Password must contain at least one English letter";
   static const String passwordsNotMatch = "Passwords do not match";
   static const String userDisabled =
       "The user corresponding to the given email has been disabled.";

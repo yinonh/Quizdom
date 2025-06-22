@@ -60,8 +60,6 @@ class AuthScreenManager extends _$AuthScreenManager {
       isLogin: !state.isLogin,
       showPassword: false,
       showConfirmPassword: false,
-      email: '',
-      password: '',
       confirmPassword: '',
       emailErrorMessage: '',
       passwordErrorMessage: '',
@@ -101,6 +99,13 @@ class AuthScreenManager extends _$AuthScreenManager {
     state = state.copyWith(navigate: false);
   }
 
+  bool _isPasswordStrong(String password) {
+    if (password.length < 6) return false;
+
+    final RegExp englishLetterRegex = RegExp(r'[a-zA-Z]');
+    return englishLetterRegex.hasMatch(password);
+  }
+
   Future<void> submit() async {
     String emailError = '';
     String passwordError = '';
@@ -109,8 +114,12 @@ class AuthScreenManager extends _$AuthScreenManager {
     if (!EmailValidator.validate(state.email)) {
       emailError = Strings.invalidEmail;
     }
-    if (state.password.length < 6) {
-      passwordError = Strings.passwordTooShort;
+    if (!_isPasswordStrong(state.password)) {
+      if (state.password.length < 6) {
+        passwordError = Strings.passwordTooShort;
+      } else {
+        passwordError = Strings.passwordMustContainLetter;
+      }
     }
     if (!state.isLogin && state.password != state.confirmPassword) {
       confirmPasswordError = Strings.passwordsNotMatch;
