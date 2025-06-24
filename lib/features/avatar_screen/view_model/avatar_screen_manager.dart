@@ -43,6 +43,11 @@ class AvatarScreenManager extends _$AvatarScreenManager {
         .getString("${Strings.originalUserImagePathKey} - ${currentUser.uid}");
     final originalImage =
         originalImagePath != null ? File(originalImagePath) : null;
+
+    ref.onDispose(() {
+      ref.read(newUserRegistrationProvider.notifier).clearNewUser();
+    });
+
     return AvatarState(
       userName: currentUser.name ?? "",
       currentUserUid: currentUser.uid,
