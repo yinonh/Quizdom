@@ -50,6 +50,19 @@ class UserStatisticsDataSource {
     return null;
   }
 
+  static Future<bool> userStatisticsExists(String userId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('userStatistics')
+          .doc(userId)
+          .get();
+      return doc.exists;
+    } catch (e) {
+      logger.e('Error checking if user statistics exist: $e');
+      return false; // Assume not exists on error
+    }
+  }
+
   static Future<Map<TriviaUser, int>> getTopUsersByScore() async {
     final querySnapshot = await FirebaseFirestore.instance
         .collection('userStatistics')

@@ -32,6 +32,7 @@ class TriviaUser with _$TriviaUser {
     Map<String, dynamic>? fluttermojiOptions,
     @Default([]) List<dynamic> trophies,
     @Default(100) int coins,
+    @Default(false) bool isAnonymous,
   }) = _TriviaUser;
 
   const TriviaUser._();
@@ -45,10 +46,11 @@ class TriviaUser with _$TriviaUser {
     String? name,
     String? email,
     String? imageUrl,
+    bool isAnonymous = false, // Add isAnonymous parameter
   }) {
     return TriviaUser(
       uid: uid,
-      name: name,
+      name: name ?? (isAnonymous ? 'Guest' : null), // Default name for guests
       email: email,
       imageUrl: imageUrl,
       lastLogin: DateTime.now(),
@@ -57,20 +59,24 @@ class TriviaUser with _$TriviaUser {
       fluttermojiOptions: defaultFluttermojiOptions,
       trophies: [],
       coins: 100,
+      isAnonymous: isAnonymous, // Set isAnonymous field
     );
   }
 
   // Factory constructor from Firebase User
   factory TriviaUser.fromFirebaseUser(User firebaseUser) {
-    final defaultName = firebaseUser.displayName ??
-        firebaseUser.email?.split('@')[0] ??
-        'User${firebaseUser.uid.substring(0, 4)}';
+    final defaultName = firebaseUser.isAnonymous
+        ? 'Guest'
+        : firebaseUser.displayName ??
+            firebaseUser.email?.split('@')[0] ??
+            'User${firebaseUser.uid.substring(0, 4)}';
 
     return TriviaUser.createDefault(
       uid: firebaseUser.uid,
       name: defaultName,
       email: firebaseUser.email,
       imageUrl: firebaseUser.photoURL,
+      isAnonymous: firebaseUser.isAnonymous, // Set based on Firebase user
     );
   }
 

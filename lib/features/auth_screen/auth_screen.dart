@@ -221,6 +221,13 @@ class AuthScreen extends ConsumerWidget {
                       style: TextStyle(color: AppConstant.highlightColor),
                     ),
                   ),
+                  TextButton(
+                    onPressed: authNotifier.signInAsGuest, // New guest sign-in method
+                    child: const Text(
+                      Strings.playAsGuest, // Used constant string
+                      style: TextStyle(color: AppConstant.highlightColor),
+                    ),
+                  ),
                 ],
               ),
             ),

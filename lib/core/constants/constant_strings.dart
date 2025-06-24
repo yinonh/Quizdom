@@ -194,6 +194,7 @@ class Strings {
   static const String missingEmail = "An email address must be provided.";
   static const String undefinedError = "An undefined error occurred.";
   static const String continueWithGoogle = "Continue with Google";
+  static const String playAsGuest = "Play as Guest";
 
   // Profile Overview Screen
   static const String mysteryPlayer = 'Mystery Player';
@@ -313,4 +314,9 @@ class Strings {
   static const String youNeed = "You need";
   static const String coinsToPlayGame = "coins to play this game";
   static const String currentColon = "Current:";
+
+  // Link Account Section (Profile Screen)
+  static const String saveYourProgress = "Save Your Progress!";
+  static const String createAccountToSaveStats = "Create an account to save your statistics and achievements.";
+  static const String saveAccount = "Save Account";
 }

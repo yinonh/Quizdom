@@ -28,6 +28,16 @@ class ProfileState with _$ProfileState {
     required String oldPasswordErrorMessage,
     required String newPasswordErrorMessage,
     String? firebaseErrorMessage,
+    // Fields for account linking
+    required TextEditingController linkEmailController,
+    required TextEditingController linkPasswordController,
+    required TextEditingController linkConfirmPasswordController,
+    required String linkEmailErrorMessage,
+    required String linkPasswordErrorMessage,
+    required String linkConfirmPasswordErrorMessage,
+    required bool showPassword,
+    required bool showConfirmPassword,
+    required bool showOldPassword,
   }) = _ProfileState;
 }
 
@@ -35,7 +45,8 @@ class ProfileState with _$ProfileState {
 class ProfileScreenManager extends _$ProfileScreenManager {
   @override
   ProfileState build() {
-    final currentUser = ref.watch(authProvider).currentUser;
+    final authState = ref.watch(authProvider);
+    final currentUser = authState.currentUser;
     final userNotifier = ref.read(authProvider.notifier);
     final statistics = ref.watch(statisticsProvider).userStatistics;
     return ProfileState(
@@ -48,7 +59,28 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       newPasswordController: TextEditingController(),
       oldPasswordErrorMessage: '',
       newPasswordErrorMessage: '',
+      // Initialize linking fields
+      linkEmailController: TextEditingController(),
+      linkPasswordController: TextEditingController(),
+      linkConfirmPasswordController: TextEditingController(),
+      linkEmailErrorMessage: '',
+      linkPasswordErrorMessage: '',
+      linkConfirmPasswordErrorMessage: '',
+      showPassword: false,
+      showConfirmPassword: false,
+      showOldPassword: false,
     );
+  }
+
+  void toggleShowPassword() {
+    state = state.copyWith(showPassword: !state.showPassword);
+  }
+
+  void toggleShowConfirmPassword() {
+    state = state.copyWith(showConfirmPassword: !state.showConfirmPassword);
+  }
+  void toggleShowOldPassword() {
+    state = state.copyWith(showOldPassword: !state.showOldPassword);
   }
 
   void toggleIsEditing() {
@@ -142,6 +174,58 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       logger.e(e);
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+    } finally {
+      ref.read(loadingProvider.notifier).state = false;
+    }
+  }
+
+  Future<void> linkAccount() async {
+    // Validation
+    String emailError = '';
+    String passwordError = '';
+    String confirmPasswordError = '';
+
+    final email = state.linkEmailController.text;
+    final password = state.linkPasswordController.text;
+    final confirmPassword = state.linkConfirmPasswordController.text;
+
+    if (email.isEmpty || !RegExp(r"[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+").hasMatch(email)) {
+      emailError = Strings.invalidEmail;
+    }
+    if (password.length < 6) {
+      passwordError = Strings.passwordTooShort;
+    }
+    if (password != confirmPassword) {
+      confirmPasswordError = Strings.passwordsNotMatch;
+    }
+
+    state = state.copyWith(
+      linkEmailErrorMessage: emailError,
+      linkPasswordErrorMessage: passwordError,
+      linkConfirmPasswordErrorMessage: confirmPasswordError,
+    );
+
+    if (emailError.isNotEmpty || passwordError.isNotEmpty || confirmPasswordError.isNotEmpty) {
+      return;
+    }
+
+    ref.read(loadingProvider.notifier).state = true;
+    try {
+      await ref.read(authProvider.notifier).linkEmailAndPassword(email, password);
+      // After successful linking, the authStateChanges listener in router or
+      // relevant widgets should handle UI updates.
+      // We can clear the form fields and potentially hide the form.
+      state.linkEmailController.clear();
+      state.linkPasswordController.clear();
+      state.linkConfirmPasswordController.clear();
+      // The user is no longer anonymous, so subsequent builds of ProfileState
+      // should reflect this, potentially hiding the link form.
+      // We might not need an explicit showLinkForm if currentUser.isAnonymous is used.
+       state = state.copyWith(firebaseErrorMessage: null); // Clear any previous error
+    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+    } catch (e) {
+      state = state.copyWith(firebaseErrorMessage: e.toString());
     } finally {
       ref.read(loadingProvider.notifier).state = false;
     }

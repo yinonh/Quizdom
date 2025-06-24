@@ -12,6 +12,7 @@ import 'package:trivia/features/profile_screen/widgets/profile_appbar.dart';
 import 'package:trivia/features/profile_screen/widgets/profile_content.dart';
 import 'package:trivia/features/profile_screen/widgets/statistics_section.dart';
 import 'package:trivia/features/profile_screen/widgets/trophies_section.dart';
+import 'package:trivia/features/profile_screen/widgets/link_account_section.dart'; // Import new widget
 
 class ProfileScreen extends ConsumerWidget {
   static const routeName = AppRoutes.profileRouteName;
@@ -20,7 +21,11 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userStatistics = ref.read(profileScreenManagerProvider).statistics;
+    final profileState = ref.watch(profileScreenManagerProvider);
+    final userStatistics = profileState.statistics;
+    final currentUser = profileState.currentUser;
+    final bool isAnonymous = currentUser?.isAnonymous ?? false;
+
     return BaseScreen(
       actionButton: const ResourceFloatingActionButton(),
       child: Scaffold(
@@ -28,25 +33,28 @@ class ProfileScreen extends ConsumerWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              const ProfileAppbar(),
-              SizedBox(
-                height: calcHeight(15),
-              ),
-              const Stack(
-                children: [
-                  ProfileContent(),
-                  AvatarSection(),
-                ],
-              ),
-              SizedBox(
-                height: calcHeight(15),
-              ),
-              TrophiesSection(statistics: userStatistics),
-              SizedBox(
-                height: calcHeight(15),
-              ),
-              StatisticsSection(statistics: userStatistics),
-              const DeleteAccountSection(),
+              const ProfileAppbar(), // AppBar should be fine for both
+              SizedBox(height: calcHeight(15)),
+
+              // Conditionally show LinkAccountSection or standard ProfileContent
+              if (isAnonymous)
+                const LinkAccountSection()
+              else
+                const Stack(
+                  children: [
+                    ProfileContent(), // Shows user details, edit functionality
+                    AvatarSection(),
+                  ],
+                ),
+
+              SizedBox(height: calcHeight(15)),
+              TrophiesSection(statistics: userStatistics), // Trophies can be shown to guests
+              SizedBox(height: calcHeight(15)),
+              StatisticsSection(statistics: userStatistics), // Statistics can be shown to guests
+
+              // Only show DeleteAccountSection if the user is NOT anonymous
+              if (!isAnonymous)
+                const DeleteAccountSection(),
             ],
           ),
         ),

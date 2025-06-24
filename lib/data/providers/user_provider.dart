@@ -9,6 +9,7 @@ import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/trivia_user.dart';
+import 'package:trivia/core/global_providers/auth_providers.dart'; // Added import
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -322,6 +323,63 @@ class Auth extends _$Auth {
       rethrow; // Rethrow to be caught by UI
     } catch (e) {
       print("Unexpected error during Google re-authentication: $e");
+      rethrow;
+    }
+  }
+
+  Future<UserCredential> signInAnonymously() async {
+    try {
+      final userCredential = await UserDataSource.signInAnonymously();
+      final firebaseUser = userCredential.user;
+
+      if (firebaseUser != null) {
+        // UserDataSource.signInAnonymously should have created the TriviaUser.
+        // We need to ensure UserStatistics are also created.
+        if (!await UserStatisticsDataSource.userStatisticsExists(firebaseUser.uid)) {
+          await UserStatisticsDataSource.createUserStatistics(firebaseUser.uid);
+        }
+
+        // Fetch the potentially newly created or existing TriviaUser for the anonymous session
+        final triviaUser = await UserDataSource.getUserById(firebaseUser.uid);
+
+        state = state.copyWith(
+          firebaseUser: firebaseUser,
+          // Ensure the currentUser reflects the anonymous status and details
+          currentUser: triviaUser ?? TriviaUser.fromFirebaseUser(firebaseUser),
+          loginNewDayInARow: null, // Reset daily login for new session
+        );
+        // It might be good to call initializeUser or parts of its logic
+        // to ensure everything is set up like a normal login,
+        // but for now, directly setting the state.
+      }
+      return userCredential;
+    } catch (e) {
+      logger.e("Error in Auth provider signInAnonymously: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> linkEmailAndPassword(String email, String password) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null || !currentUser.isAnonymous) {
+      throw Exception("User must be signed in anonymously to link account.");
+    }
+
+    try {
+      final credential = EmailAuthProvider.credential(email: email, password: password);
+      await UserDataSource.linkAnonymousAccount(credential);
+
+      // After linking, the user is no longer anonymous.
+      // authStateChanges should pick this up. We can force a refresh of user data.
+      // Re-initializing user to get updated data (isAnonymous=false, email, etc.)
+      await initializeUser();
+
+      // It's also good practice to ensure the newUserRegistrationProvider is cleared
+      // as the user is now fully registered.
+      ref.read(newUserRegistrationProvider.notifier).clearNewUser();
+
+    } catch (e) {
+      logger.e("Error linking email and password: $e");
       rethrow;
     }
   }

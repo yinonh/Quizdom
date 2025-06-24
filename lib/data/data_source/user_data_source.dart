@@ -178,4 +178,52 @@ class UserDataSource {
       return false;
     }
   }
+
+  // Sign in anonymously
+  static Future<UserCredential> signInAnonymously() async {
+    try {
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      // Ensure a user document is created for the anonymous user
+      if (userCredential.user != null) {
+        final triviaUser = TriviaUser.fromFirebaseUser(userCredential.user!);
+        // Check if user document already exists to prevent overwriting
+        if (!await userExists(triviaUser.uid)) {
+          await saveUser(triviaUser);
+        }
+      }
+      return userCredential;
+    } catch (e) {
+      logger.e('Error signing in anonymously: $e');
+      rethrow;
+    }
+  }
+
+  // Link anonymous account with a credential
+  static Future<UserCredential> linkAnonymousAccount(
+      AuthCredential credential) async {
+    try {
+      final userCredential = await FirebaseAuth.instance.currentUser
+          ?.linkWithCredential(credential);
+      if (userCredential == null) {
+        throw Exception("Failed to link anonymous account: User was null");
+      }
+      // Update the user document to reflect linked status (e.g., isAnonymous = false)
+      if (userCredential.user != null) {
+        final firebaseUser = userCredential.user!;
+        TriviaUser? triviaUser = await getUserById(firebaseUser.uid);
+        if (triviaUser != null) {
+          triviaUser = triviaUser.copyWith(
+            isAnonymous: false,
+            email: firebaseUser.email, // Update email
+            name: triviaUser.name == 'Guest' ? (firebaseUser.displayName ?? triviaUser.name) : triviaUser.name, // Update name if it was 'Guest'
+          );
+          await updateUser(triviaUser);
+        }
+      }
+      return userCredential;
+    } catch (e) {
+      logger.e('Error linking anonymous account: $e');
+      rethrow;
+    }
+  }
 }
