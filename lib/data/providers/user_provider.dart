@@ -7,9 +7,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:trivia/core/network/server.dart';
 import 'package:trivia/core/utils/date_time_extansion.dart';
 import 'package:trivia/data/data_source/user_data_source.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Added import
 import 'package:trivia/data/data_source/user_statistics_data_source.dart';
 import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/core/global_providers/auth_providers.dart'; // Added import
+import 'package:trivia/core/global_providers/auth_providers.dart';
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';
@@ -377,6 +378,11 @@ class Auth extends _$Auth {
       // It's also good practice to ensure the newUserRegistrationProvider is cleared
       // as the user is now fully registered.
       ref.read(newUserRegistrationProvider.notifier).clearNewUser();
+
+      // Clear the guest account flag from shared_preferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('has_created_guest_account');
+      logger.i("Cleared has_created_guest_account flag after linking.");
 
     } catch (e) {
       logger.e("Error linking email and password: $e");

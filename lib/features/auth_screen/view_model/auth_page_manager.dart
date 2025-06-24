@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Added import
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -203,6 +204,13 @@ class AuthScreenManager extends _$AuthScreenManager {
   Future<void> signInAsGuest() async {
     ref.read(loadingProvider.notifier).state = true;
     try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool('has_created_guest_account') ?? false) {
+        state = state.copyWith(firebaseErrorMessage: Strings.guestAccountExistsError);
+        ref.read(loadingProvider.notifier).state = false;
+        return;
+      }
+
       // Use the authProvider to sign in anonymously
       // The authProvider should handle user creation in UserDataSource
       final userCredential =

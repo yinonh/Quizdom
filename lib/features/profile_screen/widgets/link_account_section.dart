@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:trivia/core/common_widgets/custom_button.dart';
 import 'package:trivia/core/constants/app_constant.dart';
 import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:trivia/core/extensions/empty_padding_extension.dart';
 import 'package:trivia/core/utils/size_config.dart';
 import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart'; // Reusing the text field
 import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
@@ -22,7 +22,7 @@ class LinkAccountSection extends ConsumerWidget {
       (previous, next) {
         if (next.firebaseErrorMessage != null) {
           final message = next.firebaseErrorMessage!;
-          profileNotifier.deleteFirebaseMessage();
+          profileNotifier.deleteFirebaseMessage(); // Clear the message after showing
           showTopSnackBar(
             Overlay.of(context),
             CustomSnackBar.error(
@@ -39,8 +39,7 @@ class LinkAccountSection extends ConsumerWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: calcWidth(20), vertical: calcHeight(10)),
+      padding: EdgeInsets.symmetric(horizontal: calcWidth(20), vertical: calcHeight(10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -50,23 +49,19 @@ class LinkAccountSection extends ConsumerWidget {
             style: TextStyle(
               fontSize: calcWidth(20),
               fontWeight: FontWeight.bold,
-              color: AppConstant.onPrimaryColor,
+              color: AppConstant.infoColor,
             ),
           ),
-          SizedBox(
-            height: calcHeight(10),
-          ),
+          calcHeight(10).ph,
           Text(
             Strings.createAccountToSaveStats, // Used constant
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: calcWidth(14),
-              color: Colors.white,
+              color: AppConstant.onPrimaryColor.withOpacity(0.8),
             ),
           ),
-          SizedBox(
-            height: calcHeight(20),
-          ),
+          calcHeight(20).ph,
           CustomTextField(
             label: Strings.email,
             prefixIcon: Icons.email_rounded,
@@ -76,9 +71,7 @@ class LinkAccountSection extends ConsumerWidget {
                 : null,
             keyboardType: TextInputType.emailAddress,
           ),
-          SizedBox(
-            height: calcHeight(15),
-          ),
+          calcHeight(15).ph,
           CustomTextField(
             label: Strings.password,
             prefixIcon: Icons.lock_rounded,
@@ -97,9 +90,7 @@ class LinkAccountSection extends ConsumerWidget {
               onPressed: profileNotifier.toggleShowPassword,
             ),
           ),
-          SizedBox(
-            height: calcHeight(15),
-          ),
+          calcHeight(15).ph,
           CustomTextField(
             label: Strings.confirmPassword,
             prefixIcon: Icons.lock_rounded,
@@ -118,13 +109,20 @@ class LinkAccountSection extends ConsumerWidget {
               onPressed: profileNotifier.toggleShowConfirmPassword,
             ),
           ),
-          SizedBox(
-            height: calcHeight(25),
-          ),
-          CustomButton(
-            text: Strings.saveAccount,
-            onTap: profileNotifier.linkAccount,
-            color: AppConstant.secondaryColor,
+          calcHeight(25).ph,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstant.secondaryColor,
+              padding: EdgeInsets.symmetric(vertical: calcHeight(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            onPressed: profileNotifier.linkAccount,
+            child: Text(
+              Strings.saveAccount, // Used constant
+              style: TextStyle(fontSize: calcWidth(16), color: Colors.white),
+            ),
           ),
         ],
       ),

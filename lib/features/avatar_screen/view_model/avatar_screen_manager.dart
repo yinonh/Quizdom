@@ -13,6 +13,7 @@ import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/core/global_providers/auth_providers.dart';
 import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
 import 'package:trivia/data/providers/user_provider.dart';
+import 'package:trivia/data/data_source/user_data_source.dart'; // Added import
 
 part 'avatar_screen_manager.freezed.dart';
 part 'avatar_screen_manager.g.dart';
@@ -27,8 +28,9 @@ class AvatarState with _$AvatarState {
     File? selectedImage,
     File? originalImage,
     required CustomImageCropController cropController,
-    @Default(false) showTrashIcon,
-    @Default(false) navigate,
+    @Default(false) bool showTrashIcon,
+    @Default(false) bool navigate,
+    @Default(false) bool isAnonymousUser,
   }) = _AvatarState;
 }
 
@@ -44,22 +46,48 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     final originalImage =
         originalImagePath != null ? File(originalImagePath) : null;
 
-    ref.onDispose(() {
-      ref.read(newUserRegistrationProvider.notifier).clearNewUser();
-    });
+    final bool isAnonymous = currentUser.isAnonymous;
 
     return AvatarState(
       userName: currentUser.name ?? "",
       currentUserUid: currentUser.uid,
-      showImage: userImage != null,
+      showImage: userImage != null && !isAnonymous, // Don't show image for anonymous users initially
       currentImage: userImage,
       selectedImage: null,
       originalImage: originalImage,
       cropController: CustomImageCropController(),
+      isAnonymousUser: isAnonymous,
     );
   }
 
   void switchImage(XFile? image) {
+    state.whenData(
+      (data) {
+        if (data.isAnonymousUser) {
+          // Prevent anonymous users from selecting an image
+          // Optionally, show a message or simply do nothing
+          print("Anonymous users cannot select profile images."); // TODO: Show user message
+          state = AsyncValue.data(
+            data.copyWith(
+              originalImage: null,
+              selectedImage: null,
+              showImage: false, // Ensure we switch to avatar mode
+            )
+          );
+          return;
+        }
+        state = AsyncValue.data(
+          data.copyWith(
+            originalImage: image != null ? File(image.path) : null,
+            selectedImage: image != null ? File(image.path) : null,
+            showImage: image != null,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<File> convertMemoryImageToFile(
     state.whenData(
       (data) {
         state = AsyncValue.data(
@@ -89,7 +117,27 @@ class AvatarScreenManager extends _$AvatarScreenManager {
 
   Future<void> saveImage() async {
     state.whenData((data) async {
-      if (data.currentUserUid == null) return;
+      if (data.isAnonymousUser) {
+        // If user is anonymous, force save as avatar and clear any image stuff.
+        print("Anonymous users cannot save profile images. Defaulting to avatar."); // TODO: User message/logic
+        if (data.currentUserUid != null && data.currentUserUid!.isNotEmpty) {
+          await UserDataSource.deleteUserImageIfExists(data.currentUserUid!);
+          // Also ensure avatar is set if we are clearing an image
+          // This might involve ensuring fluttermoji options are saved if they changed
+        }
+        await saveAvatar(); // This saves the current fluttermoji
+        // Ensure state reflects that we are in avatar mode.
+        state = AsyncValue.data(data.copyWith(
+            showImage: false,
+            selectedImage: null,
+            originalImage: null,
+            currentImage: null,
+            navigate: true // Assuming saveAvatar sets navigation or we do it here
+        ));
+        return;
+      }
+
+      if (data.currentUserUid == null || data.currentUserUid!.isEmpty) return; // Added empty check
       ref.read(loadingProvider.notifier).state = true;
       final MemoryImage? croppedImage = await data.cropController.onCropImage();
 

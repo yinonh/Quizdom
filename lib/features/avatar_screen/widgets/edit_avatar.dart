@@ -87,55 +87,59 @@ class EditAvatar extends ConsumerWidget {
                   },
                 ),
               ),
-            Positioned(
-              bottom: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      final image = await ImagePicker()
-                          .pickImage(source: ImageSource.camera);
-                      avatarNotifier.switchImage(image);
-                    },
-                    icon: Container(
-                      width: calcWidth(45.0),
-                      height: calcHeight(45.0),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: const Icon(
-                        Icons.camera,
-                        size: 30,
-                        color: AppConstant.onPrimaryColor,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: calcWidth(55)),
-                  IconButton(
-                    onPressed: () async {
-                      final image = await ImagePicker()
-                          .pickImage(source: ImageSource.gallery);
-                      avatarNotifier.switchImage(image);
-                    },
-                    icon: Container(
-                      width: calcWidth(45.0),
-                      height: calcHeight(45.0),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: const Icon(
-                        Icons.image,
-                        size: 30,
-                        color: AppConstant.onPrimaryColor,
+            if (!state.isAnonymousUser) // Only show image selection for non-anonymous users
+              Positioned(
+                bottom: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () async {
+                        // This check is redundant due to the outer if, but good for safety
+                        if (state.isAnonymousUser) return;
+                        final image = await ImagePicker()
+                            .pickImage(source: ImageSource.camera);
+                        avatarNotifier.switchImage(image);
+                      },
+                      icon: Container(
+                        width: calcWidth(45.0),
+                        height: calcHeight(45.0),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.camera,
+                          size: 30,
+                          color: AppConstant.onPrimaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: calcWidth(55)),
+                    IconButton(
+                      onPressed: () async {
+                        if (state.isAnonymousUser) return;
+                        final image = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+                        avatarNotifier.switchImage(image);
+                      },
+                      icon: Container(
+                        width: calcWidth(45.0),
+                        height: calcHeight(45.0),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: const Icon(
+                          Icons.image,
+                          size: 30,
+                          color: AppConstant.onPrimaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

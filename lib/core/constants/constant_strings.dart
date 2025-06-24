@@ -319,4 +319,7 @@ class Strings {
   static const String saveYourProgress = "Save Your Progress!";
   static const String createAccountToSaveStats = "Create an account to save your statistics and achievements.";
   static const String saveAccount = "Save Account";
+
+  // Guest Account Limit
+  static const String guestAccountExistsError = "A guest account already exists on this device. Please register it or log in if you have an account.";
 }

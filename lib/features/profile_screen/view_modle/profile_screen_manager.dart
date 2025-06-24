@@ -79,7 +79,6 @@ class ProfileScreenManager extends _$ProfileScreenManager {
   void toggleShowConfirmPassword() {
     state = state.copyWith(showConfirmPassword: !state.showConfirmPassword);
   }
-
   void toggleShowOldPassword() {
     state = state.copyWith(showOldPassword: !state.showOldPassword);
   }
@@ -180,13 +179,6 @@ class ProfileScreenManager extends _$ProfileScreenManager {
     }
   }
 
-  bool _isPasswordStrong(String password) {
-    if (password.length < 6) return false;
-
-    final RegExp englishLetterRegex = RegExp(r'[a-zA-Z]');
-    return englishLetterRegex.hasMatch(password);
-  }
-
   Future<void> linkAccount() async {
     // Validation
     String emailError = '';
@@ -197,16 +189,11 @@ class ProfileScreenManager extends _$ProfileScreenManager {
     final password = state.linkPasswordController.text;
     final confirmPassword = state.linkConfirmPasswordController.text;
 
-    if (email.isEmpty ||
-        !RegExp(r"[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+").hasMatch(email)) {
+    if (email.isEmpty || !RegExp(r"[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+").hasMatch(email)) {
       emailError = Strings.invalidEmail;
     }
-    if (!_isPasswordStrong(password)) {
-      if (password.length < 6) {
-        passwordError = Strings.passwordTooShort;
-      } else {
-        passwordError = Strings.passwordMustContainLetter;
-      }
+    if (password.length < 6) {
+      passwordError = Strings.passwordTooShort;
     }
     if (password != confirmPassword) {
       confirmPasswordError = Strings.passwordsNotMatch;
@@ -218,17 +205,13 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       linkConfirmPasswordErrorMessage: confirmPasswordError,
     );
 
-    if (emailError.isNotEmpty ||
-        passwordError.isNotEmpty ||
-        confirmPasswordError.isNotEmpty) {
+    if (emailError.isNotEmpty || passwordError.isNotEmpty || confirmPasswordError.isNotEmpty) {
       return;
     }
 
     ref.read(loadingProvider.notifier).state = true;
     try {
-      await ref
-          .read(authProvider.notifier)
-          .linkEmailAndPassword(email, password);
+      await ref.read(authProvider.notifier).linkEmailAndPassword(email, password);
       // After successful linking, the authStateChanges listener in router or
       // relevant widgets should handle UI updates.
       // We can clear the form fields and potentially hide the form.
@@ -238,11 +221,9 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       // The user is no longer anonymous, so subsequent builds of ProfileState
       // should reflect this, potentially hiding the link form.
       // We might not need an explicit showLinkForm if currentUser.isAnonymous is used.
-      state = state.copyWith(
-          firebaseErrorMessage: null); // Clear any previous error
+       state = state.copyWith(firebaseErrorMessage: null); // Clear any previous error
     } on FirebaseAuthException catch (e) {
-      state = state.copyWith(
-          firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+      state = state.copyWith(firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
     } catch (e) {
       state = state.copyWith(firebaseErrorMessage: e.toString());
     } finally {

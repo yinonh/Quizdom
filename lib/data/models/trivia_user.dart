@@ -65,11 +65,16 @@ class TriviaUser with _$TriviaUser {
 
   // Factory constructor from Firebase User
   factory TriviaUser.fromFirebaseUser(User firebaseUser) {
-    final defaultName = firebaseUser.isAnonymous
-        ? 'Guest'
-        : firebaseUser.displayName ??
-            firebaseUser.email?.split('@')[0] ??
-            'User${firebaseUser.uid.substring(0, 4)}';
+    String defaultName;
+    if (firebaseUser.isAnonymous) {
+      // Generate a unique guest name, e.g., Guest-ABC123
+      final uidSuffix = firebaseUser.uid.length >= 6 ? firebaseUser.uid.substring(0, 6) : firebaseUser.uid;
+      defaultName = 'Guest-${uidSuffix.toUpperCase()}';
+    } else {
+      defaultName = firebaseUser.displayName ??
+          firebaseUser.email?.split('@')[0] ??
+          'User${firebaseUser.uid.substring(0, 4)}';
+    }
 
     return TriviaUser.createDefault(
       uid: firebaseUser.uid,
