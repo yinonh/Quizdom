@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -41,40 +43,73 @@ class AuthState {
 // Enhanced auth state provider with token validation and new user tracking
 @riverpod
 class UnifiedAuth extends _$UnifiedAuth {
+  StreamController<AuthState>? _controller;
+  User? _lastUser;
+  bool _lastIsNewUser = false;
+
   @override
   Stream<AuthState> build() {
-    return FirebaseAuth.instance.authStateChanges().asyncMap((user) async {
-      if (user == null) {
-        return const AuthState(user: null, isInitialized: true);
-      }
+    _controller = StreamController<AuthState>.broadcast();
 
-      try {
-        // Validate token - this will fail if user was deleted
-        await user.getIdToken(true);
-
-        // Initialize app data for authenticated user
-        await _initializeAppData();
-
-        // Check if this is a new user (you might want to implement your own logic here)
-        // For now, we'll assume it's handled elsewhere or you can add your logic
-        final isNewUser = ref.read(newUserRegistrationProvider);
-
-        return AuthState(
-          user: user,
-          isNewUser: isNewUser,
-          isInitialized: true,
-        );
-      } catch (e) {
-        // User was deleted or token is invalid
-        print('User token invalid, signing out: $e');
-        await FirebaseAuth.instance.signOut();
-        return AuthState(
-          user: null,
-          isInitialized: true,
-          error: e.toString(),
-        );
-      }
+    // Watch the new user provider
+    ref.listen(newUserRegistrationProvider, (previous, next) {
+      _lastIsNewUser = next;
+      _emitCurrentState();
     });
+
+    // Watch auth state changes
+    final authSubscription =
+        FirebaseAuth.instance.authStateChanges().listen((user) {
+      _lastUser = user;
+      _emitCurrentState();
+    });
+
+    // Clean up when disposed
+    ref.onDispose(() {
+      authSubscription.cancel();
+      _controller?.close();
+    });
+
+    return _controller!.stream;
+  }
+
+  void _emitCurrentState() async {
+    if (_controller?.isClosed == true) return;
+
+    final authState = await _processAuthState(_lastUser, _lastIsNewUser);
+    if (_controller?.isClosed == false) {
+      _controller!.add(authState);
+    }
+  }
+
+  // Async method to process the auth state
+  Future<AuthState> _processAuthState(User? user, bool isNewUser) async {
+    if (user == null) {
+      return const AuthState(user: null, isInitialized: true);
+    }
+
+    try {
+      // Validate token - this will fail if user was deleted
+      await user.getIdToken(true);
+
+      // Initialize app data for authenticated user
+      await _initializeAppData();
+
+      return AuthState(
+        user: user,
+        isNewUser: isNewUser,
+        isInitialized: true,
+      );
+    } catch (e) {
+      // User was deleted or token is invalid
+      print('User token invalid, signing out: $e');
+      await FirebaseAuth.instance.signOut();
+      return AuthState(
+        user: null,
+        isInitialized: true,
+        error: e.toString(),
+      );
+    }
   }
 
   Future<void> _initializeAppData() async {
