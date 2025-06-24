@@ -203,30 +203,33 @@ class AuthScreenManager extends _$AuthScreenManager {
 
   Future<void> signInAsGuest() async {
     ref.read(loadingProvider.notifier).state = true;
+    state = state.copyWith(firebaseErrorMessage: null); // Clear previous errors
     try {
       final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool('has_created_guest_account') ?? false) {
-        state = state.copyWith(firebaseErrorMessage: Strings.guestAccountExistsError);
-        ref.read(loadingProvider.notifier).state = false;
-        return;
-      }
+      final String? deviceGuestUid = prefs.getString('device_guest_uid');
 
-      // Use the authProvider to sign in anonymously
-      // The authProvider should handle user creation in UserDataSource
-      final userCredential =
-          await ref.read(authProvider.notifier).signInAnonymously();
-
-      if (userCredential.user != null) {
-        // Ensure statistics are created for the new guest user
-        // This is similar to what happens in the createUser path of submit()
-        await UserStatisticsDataSource.createUserStatistics(
-            userCredential.user!.uid);
-
-        // Set the new user flag, as a guest is a new user session
-        ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
-        state = state.copyWith(navigate: true, isNewUser: true);
+      if (deviceGuestUid != null && deviceGuestUid.isNotEmpty) {
+        // Existing device guest UID found, attempt to sign in with custom token
+        await ref.read(authProvider.notifier).signInWithDeviceGuestUid(deviceGuestUid);
+        // Successful custom token sign-in should be handled by authStateChanges for navigation.
+        // Mark as not a new user because we're logging into an existing guest identity.
+        ref.read(newUserRegistrationProvider.notifier).clearNewUser();
+        state = state.copyWith(navigate: true, isNewUser: false);
       } else {
-        state = state.copyWith(firebaseErrorMessage: Strings.failedToSignInAsGuest);
+        // No device guest UID found, this is the first-time guest sign-in for this installation.
+        // This will call the updated signInAnonymously which now also stores the UID.
+        final userCredential =
+            await ref.read(authProvider.notifier).signInAnonymously();
+
+        // User and statistics creation, and storing device_guest_uid,
+        // are now responsibilities of authProvider.signInAnonymously().
+        if (userCredential.user != null) {
+          ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
+          state = state.copyWith(navigate: true, isNewUser: true);
+        } else {
+          // This case should ideally be caught by errors within signInAnonymously
+          state = state.copyWith(firebaseErrorMessage: Strings.failedToSignInAsGuest);
+        }
       }
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(

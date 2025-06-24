@@ -76,16 +76,14 @@ class CustomDrawer extends ConsumerWidget {
             title: Strings.logout,
             onTap: () async {
               final firebaseUser = FirebaseAuth.instance.currentUser;
-              bool wasAnonymous = firebaseUser?.isAnonymous ?? false;
+              // final firebaseUser = FirebaseAuth.instance.currentUser; // No longer needed here for wasAnonymous check
+              // bool wasAnonymous = firebaseUser?.isAnonymous ?? false; // No longer needed
 
               await FirebaseAuth.instance.signOut();
               await GoogleSignIn().signOut(); // In case Google sign-in was used by a non-guest
 
-              if (wasAnonymous) {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('has_created_guest_account');
-                // print("Cleared has_created_guest_account flag on guest logout."); // For debugging
-              }
+              // We no longer clear any guest-specific flag here.
+              // The device_guest_uid persists to allow logging back in.
 
               if (context.mounted) {
                 // Ensure we navigate the user to the AuthScreen after logout

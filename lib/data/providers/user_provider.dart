@@ -329,33 +329,97 @@ class Auth extends _$Auth {
   }
 
   Future<UserCredential> signInAnonymously() async {
+    // This method is now for the *initial* anonymous sign-in on a device installation.
+    // It creates the user and stores their UID as the device_guest_uid.
     try {
+      // UserDataSource.signInAnonymously calls FirebaseAuth.instance.signInAnonymously()
+      // and creates the TriviaUser document.
       final userCredential = await UserDataSource.signInAnonymously();
       final firebaseUser = userCredential.user;
 
       if (firebaseUser != null) {
-        // UserDataSource.signInAnonymously should have created the TriviaUser.
-        // We need to ensure UserStatistics are also created.
+        // Store this new anonymous user's UID as the device_guest_uid
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('device_guest_uid', firebaseUser.uid);
+        logger.i("Stored new device_guest_uid: ${firebaseUser.uid}");
+
+        // Ensure UserStatistics are created if they don't exist
         if (!await UserStatisticsDataSource.userStatisticsExists(firebaseUser.uid)) {
           await UserStatisticsDataSource.createUserStatistics(firebaseUser.uid);
         }
 
-        // Fetch the potentially newly created or existing TriviaUser for the anonymous session
+        // Fetch the TriviaUser (which UserDataSource.signInAnonymously should have created)
         final triviaUser = await UserDataSource.getUserById(firebaseUser.uid);
 
         state = state.copyWith(
           firebaseUser: firebaseUser,
-          // Ensure the currentUser reflects the anonymous status and details
           currentUser: triviaUser ?? TriviaUser.fromFirebaseUser(firebaseUser),
-          loginNewDayInARow: null, // Reset daily login for new session
+          loginNewDayInARow: null,
         );
-        // It might be good to call initializeUser or parts of its logic
-        // to ensure everything is set up like a normal login,
-        // but for now, directly setting the state.
       }
       return userCredential;
     } catch (e) {
-      logger.e("Error in Auth provider signInAnonymously: $e");
+      logger.e("Error in Auth provider initial signInAnonymously: $e");
+      rethrow;
+    }
+  }
+
+  Future<UserCredential> signInWithDeviceGuestUid(String deviceGuestUid) async {
+    logger.i("Attempting to sign in with device_guest_uid: $deviceGuestUid");
+    try {
+      // Step 1: Call your Firebase Function to get a custom token
+      // This is a placeholder for the actual HTTP call.
+      // You'll need to use a package like http or dio to make this call.
+      // final response = await http.post(
+      //   Uri.parse('YOUR_FIREBASE_FUNCTION_URL/getDeviceGuestToken'),
+      //   body: {'uid': deviceGuestUid},
+      // );
+
+      // if (response.statusCode == 200) {
+      //   final customToken = jsonDecode(response.body)['customToken'];
+      //   if (customToken == null) {
+      //     throw Exception('Custom token was null in function response.');
+      //   }
+
+      // For now, simulate a successful token fetch for testing client logic.
+      // In real implementation, replace this with actual HTTP call.
+      // IMPORTANT: THIS IS A MOCK AND WILL NOT ACTUALLY AUTHENTICATE.
+      // IT WILL LIKELY FAIL AT signInWithCustomToken IF THE TOKEN IS INVALID/MOCKED.
+      if (deviceGuestUid.isEmpty) { // Simple check to avoid using empty string if something went wrong
+         throw FirebaseAuthException(code: 'NO_DEVICE_GUEST_UID', message: 'Device Guest UID is empty');
+      }
+      // THIS IS A PLACEHOLDER. A REAL CUSTOM TOKEN IS NEEDED FROM YOUR FUNCTION.
+      // Using deviceGuestUid as a fake token will cause signInWithCustomToken to fail.
+      // const String MOCK_FAILURE_TOKEN = "THIS_IS_NOT_A_REAL_TOKEN";
+      // For testing purposes where function doesn't exist yet, this will throw immediately:
+      throw FirebaseAuthException(
+          code: 'FUNCTION_NOT_IMPLEMENTED',
+          message: 'Firebase Function for custom token not implemented. Cannot sign in.'
+      );
+
+      //   final userCredential = await FirebaseAuth.instance.signInWithCustomToken(MOCK_FAILURE_TOKEN /* customToken */);
+      //   logger.i("Successfully signed in with custom token for UID: ${userCredential.user?.uid}");
+
+      //   // Update local state (similar to other sign-in methods)
+      //   final firebaseUser = userCredential.user;
+      //   if (firebaseUser != null) {
+      //     final triviaUser = await UserDataSource.getUserById(firebaseUser.uid);
+      //     state = state.copyWith(
+      //       firebaseUser: firebaseUser,
+      //       currentUser: triviaUser ?? TriviaUser.fromFirebaseUser(firebaseUser),
+      //       loginNewDayInARow: null, // Or determine based on last login
+      //     );
+      //   }
+      //   return userCredential;
+      // } else {
+      //   throw Exception('Failed to get custom token from function: ${response.statusCode} ${response.body}');
+      // }
+
+    } on FirebaseAuthException catch (e) {
+      logger.e("FirebaseAuthException in signInWithDeviceGuestUid: ${e.code} - ${e.message}");
+      rethrow;
+    } catch (e) {
+      logger.e("Error in signInWithDeviceGuestUid: $e");
       rethrow;
     }
   }
@@ -379,10 +443,10 @@ class Auth extends _$Auth {
       // as the user is now fully registered.
       ref.read(newUserRegistrationProvider.notifier).clearNewUser();
 
-      // Clear the guest account flag from shared_preferences
+      // Clear the device_guest_uid from shared_preferences as the account is now permanent
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('has_created_guest_account');
-      logger.i("Cleared has_created_guest_account flag after linking.");
+      await prefs.remove('device_guest_uid');
+      logger.i("Cleared device_guest_uid after account linking.");
 
     } catch (e) {
       logger.e("Error linking email and password: $e");
@@ -417,16 +481,23 @@ class Auth extends _$Auth {
       // 3. Sign out
       final wasGoogleSignIn = isGoogleSignIn(); // Check before firebaseUser becomes null
       final bool wasAnonymous = firebaseUser.isAnonymous; // Check if user was anonymous
+      final String? deviceGuestUidForDeletedUser = firebaseUser.uid; // Get UID before signout
 
       await FirebaseAuth.instance.signOut();
       if (wasGoogleSignIn) {
         await GoogleSignIn().signOut();
       }
 
-      if (wasAnonymous) {
+      // If the deleted user was the one whose UID is stored as the device_guest_uid,
+      // then we should clear device_guest_uid, as that specific guest identity is now gone.
+      // This allows a new guest to be created on next "Play as Guest" attempt.
+      if (wasAnonymous) { // Or a more specific check if this UID was THE device_guest_uid
         final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('has_created_guest_account');
-        logger.i("Cleared has_created_guest_account flag after anonymous user deletion.");
+        final storedDeviceGuestUid = prefs.getString('device_guest_uid');
+        if (storedDeviceGuestUid == deviceGuestUidForDeletedUser) {
+          await prefs.remove('device_guest_uid');
+          logger.i("Cleared device_guest_uid because the deleted user was the device guest.");
+        }
       }
 
       // 4. Update local state

@@ -21,42 +21,54 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profileState = ref.watch(profileScreenManagerProvider);
-    final userStatistics = profileState.statistics;
-    final currentUser = profileState.currentUser;
-    final bool isAnonymous = currentUser?.isAnonymous ?? false;
+    final asyncProfileState = ref.watch(profileScreenManagerProvider);
 
-    return BaseScreen(
-      actionButton: const ResourceFloatingActionButton(),
-      child: Scaffold(
-        backgroundColor: AppConstant.primaryColor,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              const ProfileAppbar(), // AppBar should be fine for both
-              SizedBox(height: calcHeight(15)),
+    return asyncProfileState.when(
+      data: (profileState) {
+        final userStatistics = profileState.statistics;
+        // final currentUser = profileState.currentUser; // TriviaUser
+        final bool shouldShowLink = profileState.shouldShowAccountLinkForm;
 
-              // Conditionally show LinkAccountSection or standard ProfileContent
-              if (isAnonymous)
-                const LinkAccountSection()
-              else
-                const Stack(
-                  children: [
-                    ProfileContent(), // Shows user details, edit functionality
-                    AvatarSection(),
-                  ],
-                ),
-
-              SizedBox(height: calcHeight(15)),
-              TrophiesSection(statistics: userStatistics), // Trophies can be shown to guests
-              SizedBox(height: calcHeight(15)),
-              StatisticsSection(statistics: userStatistics), // Statistics can be shown to guests
-
-              // Only show DeleteAccountSection if the user is NOT anonymous
-              if (!isAnonymous)
-                const DeleteAccountSection(),
-            ],
+        return BaseScreen(
+          actionButton: const ResourceFloatingActionButton(),
+          child: Scaffold(
+            backgroundColor: AppConstant.primaryColor,
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const ProfileAppbar(),
+                  SizedBox(height: calcHeight(15)),
+                  if (shouldShowLink)
+                    const LinkAccountSection()
+                  else
+                    const Stack(
+                      children: [
+                        ProfileContent(),
+                        AvatarSection(),
+                      ],
+                    ),
+                  SizedBox(height: calcHeight(15)),
+                  TrophiesSection(statistics: userStatistics),
+                  SizedBox(height: calcHeight(15)),
+                  StatisticsSection(statistics: userStatistics),
+                  if (!shouldShowLink) // If not showing link form, user is considered registered
+                    const DeleteAccountSection(),
+                ],
+              ),
+            ),
           ),
+        );
+      },
+      loading: () => const BaseScreen(
+        child: Scaffold(
+          backgroundColor: AppConstant.primaryColor,
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+      error: (err, stack) => BaseScreen(
+        child: Scaffold(
+          backgroundColor: AppConstant.primaryColor,
+          body: Center(child: Text('Error: $err')),
         ),
       ),
     );
