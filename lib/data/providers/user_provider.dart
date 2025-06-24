@@ -415,11 +415,18 @@ class Auth extends _$Auth {
       }
 
       // 3. Sign out
-      final wasGoogleSignIn =
-          isGoogleSignIn(); // Check before firebaseUser becomes null
+      final wasGoogleSignIn = isGoogleSignIn(); // Check before firebaseUser becomes null
+      final bool wasAnonymous = firebaseUser.isAnonymous; // Check if user was anonymous
+
       await FirebaseAuth.instance.signOut();
       if (wasGoogleSignIn) {
         await GoogleSignIn().signOut();
+      }
+
+      if (wasAnonymous) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('has_created_guest_account');
+        logger.i("Cleared has_created_guest_account flag after anonymous user deletion.");
       }
 
       // 4. Update local state

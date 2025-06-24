@@ -226,15 +226,14 @@ class AuthScreenManager extends _$AuthScreenManager {
         ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
         state = state.copyWith(navigate: true, isNewUser: true);
       } else {
-        state = state.copyWith(
-            firebaseErrorMessage: "Failed to sign in as guest.");
+        state = state.copyWith(firebaseErrorMessage: Strings.failedToSignInAsGuest);
       }
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
     } catch (e) {
       state = state.copyWith(
-          firebaseErrorMessage: "An unexpected error occurred: ${e.toString()}");
+          firebaseErrorMessage: "${Strings.unexpectedErrorOccurred}${e.toString()}");
     } finally {
       ref.read(loadingProvider.notifier).state = false;
     }

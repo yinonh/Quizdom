@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Added import
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -74,10 +75,25 @@ class CustomDrawer extends ConsumerWidget {
             icon: Icons.logout_rounded,
             title: Strings.logout,
             onTap: () async {
+              final firebaseUser = FirebaseAuth.instance.currentUser;
+              bool wasAnonymous = firebaseUser?.isAnonymous ?? false;
+
               await FirebaseAuth.instance.signOut();
-              await GoogleSignIn().signOut();
+              await GoogleSignIn().signOut(); // In case Google sign-in was used by a non-guest
+
+              if (wasAnonymous) {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('has_created_guest_account');
+                // print("Cleared has_created_guest_account flag on guest logout."); // For debugging
+              }
+
               if (context.mounted) {
-                goRoute(AuthScreen.routeName);
+                // Ensure we navigate the user to the AuthScreen after logout
+                // Replace with your app's specific navigation logic if different
+                while (GoRouter.of(context).canPop()) {
+                  GoRouter.of(context).pop();
+                }
+                GoRouter.of(context).goNamed(AuthScreen.routeName);
               }
             },
           ),

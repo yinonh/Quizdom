@@ -322,4 +322,6 @@ class Strings {
 
   // Guest Account Limit
   static const String guestAccountExistsError = "A guest account already exists on this device. Please register it or log in if you have an account.";
+  static const String failedToSignInAsGuest = "Failed to sign in as guest.";
+  static const String unexpectedErrorOccurred = "An unexpected error occurred: "; // Append error detail in code
 }
