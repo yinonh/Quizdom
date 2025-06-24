@@ -52,6 +52,7 @@ class StatisticsSection extends StatelessWidget {
           _buildAnswersAnalysis(),
           _buildGameModes(),
           _buildTimeAnalysis(),
+          const SizedBox.shrink(),
         ],
       ),
     );
@@ -59,16 +60,7 @@ class StatisticsSection extends StatelessWidget {
 
   Widget _buildAnswersAnalysis() {
     if (_totalAnswers == 0) {
-      return const Center(
-        child: Text(
-          Strings.statisticsNotAvailableYet,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-      );
+      return const SizedBox.shrink();
     }
 
     return Container(

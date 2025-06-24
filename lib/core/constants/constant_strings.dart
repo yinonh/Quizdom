@@ -105,8 +105,6 @@ class Strings {
   static const String points = 'points';
 
   // Statistics Section
-  static const String statisticsNotAvailableYet =
-      'Statistics Not Available Yet';
   static const String answerDistribution = 'Answer Distribution';
   static const String correct = 'Correct';
   static const String wrong = 'Wrong';
@@ -317,6 +315,7 @@ class Strings {
 
   // Link Account Section (Profile Screen)
   static const String saveYourProgress = "Save Your Progress!";
-  static const String createAccountToSaveStats = "Create an account to save your statistics and achievements.";
+  static const String createAccountToSaveStats =
+      "Create an account to save your statistics and achievements.";
   static const String saveAccount = "Save Account";
 }
