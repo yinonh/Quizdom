@@ -43,6 +43,7 @@ class Strings {
   static const String returnHome = "Return to Home";
   static const String cancel = "Cancel";
   static const String no = "No";
+  static const String guest = "Guest";
 
   // Custom Drawer
   static const String home = "Home";

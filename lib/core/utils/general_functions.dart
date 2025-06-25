@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:trivia/core/constants/app_constant.dart';
+import 'package:trivia/core/constants/constant_strings.dart';
 import 'package:trivia/data/models/trivia_achievements.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 import 'package:trivia/features/profile_overview_screen/profile_overview_screen.dart';
@@ -93,5 +94,5 @@ int calculateTotalScore(TriviaAchievements achievements) {
 String generateGuestName(String userId) {
 // Take first 6 characters of userId and make it readable
   final suffix = userId.substring(0, 5).toUpperCase();
-  return 'Guest $suffix';
+  return '${Strings.guest} $suffix';
 }
