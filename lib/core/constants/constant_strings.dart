@@ -318,4 +318,12 @@ class Strings {
   static const String createAccountToSaveStats =
       "Create an account to save your statistics and achievements.";
   static const String saveAccount = "Save Account";
+
+  // Guest Logout Warning Dialog strings
+  static const String warningTitle = 'Warning!';
+  static const String guestLogoutWarning =
+      'You are currently using a guest account. If you logout, all your progress will be permanently lost!';
+  static const String saveProgressTip =
+      'Tip: Create an account with email and password to save your progress!';
+  static const String logoutAnyway = 'Logout Anyway';
 }

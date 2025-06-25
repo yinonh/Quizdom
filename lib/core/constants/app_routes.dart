@@ -16,4 +16,5 @@ class AppRoutes {
   static const String filterDialog = '/filter-dialog';
   static const String rewardedAdRouteName = '/rewarded_ad';
   static const String interstitialAdRouteName = '/interstitial_ad';
+  static const String guestLogoutWarning = '/guest-logout-warning';
 }

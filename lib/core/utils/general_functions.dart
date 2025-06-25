@@ -89,3 +89,9 @@ int calculateTotalScore(TriviaAchievements achievements) {
   // Map rawScore to 0–100 range and return as an int
   return (rawScore.clamp(0.0, 1.0) * maxScore).round();
 }
+
+String generateGuestName(String userId) {
+// Take first 6 characters of userId and make it readable
+  final suffix = userId.substring(0, 5).toUpperCase();
+  return 'Guest $suffix';
+}

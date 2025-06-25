@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:trivia/core/network/server.dart';
+import 'package:trivia/core/utils/general_functions.dart';
 import 'package:trivia/data/models/trivia_user.dart';
 
 class UserDataSource {
@@ -183,9 +184,17 @@ class UserDataSource {
   static Future<UserCredential> signInAnonymously() async {
     try {
       final userCredential = await FirebaseAuth.instance.signInAnonymously();
-      // Ensure a user document is created for the anonymous user
+
       if (userCredential.user != null) {
-        final triviaUser = TriviaUser.fromFirebaseUser(userCredential.user!);
+        final firebaseUser = userCredential.user!;
+
+        // Create TriviaUser with unique guest name
+        final guestName = generateGuestName(firebaseUser.uid);
+        final triviaUser = TriviaUser.fromFirebaseUser(firebaseUser).copyWith(
+          name: guestName,
+          isAnonymous: true,
+        );
+
         // Check if user document already exists to prevent overwriting
         if (!await userExists(triviaUser.uid)) {
           await saveUser(triviaUser);
@@ -215,7 +224,9 @@ class UserDataSource {
           triviaUser = triviaUser.copyWith(
             isAnonymous: false,
             email: firebaseUser.email, // Update email
-            name: triviaUser.name == 'Guest' ? (firebaseUser.displayName ?? triviaUser.name) : triviaUser.name, // Update name if it was 'Guest'
+            name: triviaUser.name == 'Guest'
+                ? (firebaseUser.displayName ?? triviaUser.name)
+                : triviaUser.name, // Update name if it was 'Guest'
           );
           await updateUser(triviaUser);
         }

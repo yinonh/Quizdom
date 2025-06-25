@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:trivia/core/common_widgets/guest_logout_warning_dialog.dart';
 import 'package:trivia/features/categories_screen/widgets/daily_login-popup.dart';
 import 'package:trivia/features/wheel_spin_screen/widgets/lose_dialog.dart';
 import 'package:trivia/features/wheel_spin_screen/widgets/win_dialog.dart';
@@ -22,6 +23,16 @@ final popupRoutesProvider = Provider(
             rewards: extra['rewards'],
             onClaim: extra['onClaim'],
           ),
+        );
+      },
+    ),
+    GoRoute(
+      path: GuestLogoutWarningDialog.routeName,
+      name: GuestLogoutWarningDialog.routeName,
+      pageBuilder: (context, state) {
+        return CustomRouteByName.buildDialogTransition(
+          key: state.pageKey,
+          child: const GuestLogoutWarningDialog(),
         );
       },
     ),

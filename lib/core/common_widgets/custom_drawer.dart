@@ -14,6 +14,8 @@ import 'package:trivia/features/avatar_screen/avatar_screen.dart';
 import 'package:trivia/features/categories_screen/categories_screen.dart';
 import 'package:trivia/features/profile_screen/profile_screen.dart';
 
+import 'guest_logout_warning_dialog.dart';
+
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
 
@@ -36,6 +38,27 @@ class CustomDrawer extends ConsumerWidget {
       tileColor: tileColor,
       onTap: onTap,
     );
+  }
+
+  Future<void> _performRegularLogout(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+
+      if (context.mounted) {
+        goRoute(AuthScreen.routeName);
+      }
+    } catch (e) {
+      // Handle error
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error logging out: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -74,10 +97,15 @@ class CustomDrawer extends ConsumerWidget {
             icon: Icons.logout_rounded,
             title: Strings.logout,
             onTap: () async {
-              await FirebaseAuth.instance.signOut();
-              await GoogleSignIn().signOut();
-              if (context.mounted) {
-                goRoute(AuthScreen.routeName);
+              final user = FirebaseAuth.instance.currentUser;
+
+              // Check if user is a guest (anonymous user)
+              if (user != null && user.isAnonymous) {
+                // Show warning dialog for guest users
+                GuestLogoutWarningDialog.show(context);
+              } else {
+                // Regular logout for authenticated users
+                await _performRegularLogout(context);
               }
             },
           ),

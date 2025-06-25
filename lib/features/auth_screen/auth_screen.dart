@@ -214,20 +214,25 @@ class AuthScreen extends ConsumerWidget {
                       style: const TextStyle(color: AppConstant.highlightColor),
                     ),
                   ),
-                  TextButton(
-                    onPressed: authNotifier.signInWithGoogle,
-                    child: const Text(
-                      Strings.continueWithGoogle,
-                      style: TextStyle(color: AppConstant.highlightColor),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: authNotifier.signInAsGuest, // New guest sign-in method
-                    child: const Text(
-                      Strings.playAsGuest, // Used constant string
-                      style: TextStyle(color: AppConstant.highlightColor),
-                    ),
-                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: authNotifier.signInWithGoogle,
+                        child: const Text(
+                          Strings.continueWithGoogle,
+                          style: TextStyle(color: AppConstant.highlightColor),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: authNotifier.signInAsGuest,
+                        child: const Text(
+                          Strings.playAsGuest, // Used constant string
+                          style: TextStyle(color: AppConstant.highlightColor),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),
