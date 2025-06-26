@@ -1,14 +1,15 @@
+import 'package:Quizdom/core/network/server.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/global_providers/auth_providers.dart';
-import 'package:trivia/core/utils/map_firebase_errors_to_message.dart';
-import 'package:trivia/data/data_source/user_statistics_data_source.dart';
-import 'package:trivia/data/providers/user_provider.dart';
+import 'package:Quizdom/core/common_widgets/base_screen.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/global_providers/auth_providers.dart';
+import 'package:Quizdom/core/utils/map_firebase_errors_to_message.dart';
+import 'package:Quizdom/data/data_source/user_statistics_data_source.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';
@@ -195,6 +196,7 @@ class AuthScreenManager extends _$AuthScreenManager {
     } catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: 'An error occurred during Google sign-in');
+      logger.e(e);
     } finally {
       ref.read(loadingProvider.notifier).state = false;
     }

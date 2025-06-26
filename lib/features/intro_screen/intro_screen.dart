@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/common_widgets/custom_when.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/utils/enums/game_mode.dart';
-import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dart';
-import 'package:trivia/features/intro_screen/widgets/duel_content.dart';
-import 'package:trivia/features/intro_screen/widgets/group_content.dart';
-import 'package:trivia/features/intro_screen/widgets/insufficient_coins.dart';
-import 'package:trivia/features/intro_screen/widgets/solo_content.dart';
+import 'package:Quizdom/core/common_widgets/base_screen.dart';
+import 'package:Quizdom/core/common_widgets/custom_when.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/utils/enums/game_mode.dart';
+import 'package:Quizdom/features/intro_screen/view_model/intro_screen_manager.dart';
+import 'package:Quizdom/features/intro_screen/widgets/duel_content.dart';
+import 'package:Quizdom/features/intro_screen/widgets/group_content.dart';
+import 'package:Quizdom/features/intro_screen/widgets/insufficient_coins.dart';
+import 'package:Quizdom/features/intro_screen/widgets/solo_content.dart';
 
 class TriviaIntroScreen extends ConsumerWidget {
   static const routeName = AppRoutes.triviaIntroRouteName;

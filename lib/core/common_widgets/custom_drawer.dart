@@ -2,17 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:trivia/core/common_widgets/app_bar_resource.dart';
-import 'package:trivia/core/common_widgets/current_user_avatar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/features/auth_screen/auth_screen.dart';
-import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/features/categories_screen/categories_screen.dart';
-import 'package:trivia/features/profile_screen/profile_screen.dart';
+import 'package:Quizdom/core/common_widgets/app_bar_resource.dart';
+import 'package:Quizdom/core/common_widgets/current_user_avatar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
+import 'package:Quizdom/features/auth_screen/auth_screen.dart';
+import 'package:Quizdom/features/avatar_screen/avatar_screen.dart';
+import 'package:Quizdom/features/categories_screen/categories_screen.dart';
+import 'package:Quizdom/features/profile_screen/profile_screen.dart';
 
 import 'guest_logout_warning_dialog.dart';
 

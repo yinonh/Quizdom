@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/utils/enums/selected_emoji.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/utils/enums/selected_emoji.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class EmojiBubble extends StatelessWidget {
   final Function(SelectedEmoji) onEmojiSelected;

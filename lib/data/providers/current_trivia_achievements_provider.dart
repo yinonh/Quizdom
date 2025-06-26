@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
 
 part 'current_trivia_achievements_provider.freezed.dart';
 part 'current_trivia_achievements_provider.g.dart';

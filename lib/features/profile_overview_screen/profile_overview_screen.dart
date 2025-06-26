@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/common_widgets/custom_when.dart';
-import 'package:trivia/core/common_widgets/user_avatar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/features/profile_overview_screen/view_model/profile_overview_screen_manager.dart';
+import 'package:Quizdom/core/common_widgets/custom_when.dart';
+import 'package:Quizdom/core/common_widgets/user_avatar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/features/profile_overview_screen/view_model/profile_overview_screen_manager.dart';
 
 class ProfileBottomSheet extends ConsumerWidget {
   final TriviaUser user;

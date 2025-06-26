@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/constants/bots.dart';
-import 'package:trivia/data/data_source/user_statistics_data_source.dart';
-import 'package:trivia/data/models/user_statistics.dart';
+import 'package:Quizdom/core/constants/bots.dart';
+import 'package:Quizdom/data/data_source/user_statistics_data_source.dart';
+import 'package:Quizdom/data/models/user_statistics.dart';
 
 part 'profile_overview_screen_manager.g.dart';
 

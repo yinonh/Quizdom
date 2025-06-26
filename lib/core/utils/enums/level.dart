@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
 
 enum Level {
   none,

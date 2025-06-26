@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/network/server.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:Quizdom/core/network/server.dart';
 
 part 'ad_provider.g.dart';
 
@@ -26,10 +27,11 @@ class AdService {
       'ca-app-pub-3940256099942544/5224354917';
 
   // Production Ad Unit IDs - Replace with your actual IDs
-  static const String _prodInterstitialAdUnitIdAndroid =
-      'ca-app-pub-YOUR_ID/YOUR_ANDROID_INTERSTITIAL_ID';
-  static const String _prodRewardedAdUnitIdAndroid =
-      'ca-app-pub-YOUR_ID/YOUR_ANDROID_REWARDED_ID';
+  static String get _prodInterstitialAdUnitIdAndroid =>
+      dotenv.env['PROD_INTERSTITIAL_AD_UNIT_ID_ANDROID'] ?? '';
+
+  static String get _prodRewardedAdUnitIdAndroid =>
+      dotenv.env['PROD_REWARDED_AD_UNIT_ID_ANDROID'] ?? '';
 
   // Get the appropriate ad unit ID based on debug/release mode
   String get interstitialAdUnitId {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;

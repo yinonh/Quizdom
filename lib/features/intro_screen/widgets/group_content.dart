@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
-import 'package:trivia/core/common_widgets/custom_when.dart';
-import 'package:trivia/core/common_widgets/user_avatar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/intro_screen/view_model/intro_screen_manager.dart';
-import 'package:trivia/features/intro_screen/widgets/detail_row.dart';
-import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
+import 'package:Quizdom/core/common_widgets/custom_bottom_button.dart';
+import 'package:Quizdom/core/common_widgets/custom_when.dart';
+import 'package:Quizdom/core/common_widgets/user_avatar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/intro_screen/view_model/intro_screen_manager.dart';
+import 'package:Quizdom/features/intro_screen/widgets/detail_row.dart';
+import 'package:Quizdom/features/quiz_screen/solo_quiz_screen.dart';
 
 class GroupIntroContent extends ConsumerWidget {
   const GroupIntroContent({super.key});

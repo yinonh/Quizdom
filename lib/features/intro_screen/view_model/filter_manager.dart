@@ -1,8 +1,8 @@
 // filter_state.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
-import 'package:trivia/data/models/user_preference.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/data/models/user_preference.dart';
 
 part 'filter_manager.freezed.dart';
 part 'filter_manager.g.dart';

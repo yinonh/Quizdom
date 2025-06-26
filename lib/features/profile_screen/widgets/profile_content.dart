@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:trivia/core/common_widgets/app_bar_resource.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
-import 'package:trivia/features/profile_screen/widgets/edit_user_details.dart';
-import 'package:trivia/features/profile_screen/widgets/user_details.dart';
+import 'package:Quizdom/core/common_widgets/app_bar_resource.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/profile_screen/view_modle/profile_screen_manager.dart';
+import 'package:Quizdom/features/profile_screen/widgets/edit_user_details.dart';
+import 'package:Quizdom/features/profile_screen/widgets/user_details.dart';
 
 class ProfileContent extends ConsumerWidget {
   const ProfileContent({super.key});

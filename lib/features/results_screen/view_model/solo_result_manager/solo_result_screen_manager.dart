@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/data/data_source/user_data_source.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
-import 'package:trivia/data/providers/general_trivia_room_provider.dart';
-import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/data/providers/user_statistics_provider.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/data/data_source/user_data_source.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/data/providers/current_trivia_achievements_provider.dart';
+import 'package:Quizdom/data/providers/general_trivia_room_provider.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
+import 'package:Quizdom/data/providers/user_statistics_provider.dart';
 
 part 'solo_result_screen_manager.freezed.dart';
 part 'solo_result_screen_manager.g.dart';

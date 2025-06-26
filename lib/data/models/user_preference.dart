@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
-import 'package:trivia/core/utils/timestamp_converter.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/core/utils/timestamp_converter.dart';
 
 part 'user_preference.freezed.dart';
 part 'user_preference.g.dart';

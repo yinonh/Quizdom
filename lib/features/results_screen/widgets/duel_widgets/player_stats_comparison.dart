@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
-import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/stat_comparison_bar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
+import 'package:Quizdom/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
+import 'package:Quizdom/features/results_screen/widgets/duel_widgets/stat_comparison_bar.dart';
 
 class PlayerStatsComparison extends StatelessWidget {
   final DuelResultState resultsState;

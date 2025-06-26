@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/bots.dart';
-import 'package:trivia/core/utils/enums/game_stage.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/data/data_source/trivia_room_data_source.dart';
-import 'package:trivia/data/data_source/user_data_source.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
-import 'package:trivia/data/models/trivia_room.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/data/providers/user_statistics_provider.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/bots.dart';
+import 'package:Quizdom/core/utils/enums/game_stage.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/data/data_source/trivia_room_data_source.dart';
+import 'package:Quizdom/data/data_source/user_data_source.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
+import 'package:Quizdom/data/models/trivia_room.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
+import 'package:Quizdom/data/providers/user_statistics_provider.dart';
 
 part 'duel_result_screen_manager.freezed.dart';
 part 'duel_result_screen_manager.g.dart';

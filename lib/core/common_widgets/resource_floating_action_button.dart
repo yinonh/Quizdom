@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/user_coins.dart';
-import 'package:trivia/core/common_widgets/user_resources_dialog.dart';
-import 'package:trivia/core/constants/app_constant.dart';
+import 'package:Quizdom/core/common_widgets/user_coins.dart';
+import 'package:Quizdom/core/common_widgets/user_resources_dialog.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
 
 class ResourceFloatingActionButton extends StatelessWidget {
   const ResourceFloatingActionButton({super.key});

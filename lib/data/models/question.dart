@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
 
 part 'question.freezed.dart';
 part 'question.g.dart';

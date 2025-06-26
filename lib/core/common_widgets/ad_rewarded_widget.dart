@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/global_providers/ad_provider.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/global_providers/ad_provider.dart';
 
 import 'custom_progress_indicator.dart';
 

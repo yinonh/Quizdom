@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/wheel_spin_screen/wheel_spin_screen.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/wheel_spin_screen/wheel_spin_screen.dart';
 
 class WheelOfFortuneBanner extends StatelessWidget {
   const WheelOfFortuneBanner({super.key});

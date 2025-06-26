@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/custom_button.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
+import 'package:Quizdom/core/common_widgets/custom_button.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/profile_screen/view_modle/profile_screen_manager.dart';
 
 import 'editable_field.dart';
 

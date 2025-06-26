@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/custom_clipper.dart';
-import 'package:trivia/core/utils/enums/selected_emoji.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/data/providers/user_provider.dart'; // Added import
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/custom_clipper.dart';
+import 'package:Quizdom/core/utils/enums/selected_emoji.dart';
+import 'package:Quizdom/core/utils/fluttermoji/fluttermoji_provider.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/data/providers/user_provider.dart'; // Added import
 
 class UserAvatar extends ConsumerWidget {
   final double radius;

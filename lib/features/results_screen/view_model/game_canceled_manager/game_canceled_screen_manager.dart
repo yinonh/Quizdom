@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/providers/user_statistics_provider.dart';
+import 'package:Quizdom/data/providers/user_statistics_provider.dart';
 
 part 'game_canceled_screen_manager.g.dart';
 

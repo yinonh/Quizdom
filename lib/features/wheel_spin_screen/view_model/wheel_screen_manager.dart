@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/data/providers/user_provider.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
 
 part 'wheel_screen_manager.freezed.dart';
 part 'wheel_screen_manager.g.dart';

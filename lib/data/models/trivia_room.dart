@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
-import 'package:trivia/core/utils/enums/game_stage.dart';
-import 'package:trivia/core/utils/timestamp_converter.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/core/utils/enums/game_stage.dart';
+import 'package:Quizdom/core/utils/timestamp_converter.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
 
 part 'trivia_room.freezed.dart';
 part 'trivia_room.g.dart';

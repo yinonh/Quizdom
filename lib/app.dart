@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/global_providers/auth_providers.dart';
-import 'package:trivia/core/navigation/router.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/common_widgets/custom_progress_indicator.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/global_providers/auth_providers.dart';
+import 'package:Quizdom/core/navigation/router.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});

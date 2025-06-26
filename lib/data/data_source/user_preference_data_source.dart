@@ -1,11 +1,11 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:trivia/core/network/server.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
-import 'package:trivia/data/data_source/trivia_data_source.dart';
-import 'package:trivia/data/data_source/trivia_room_data_source.dart';
-import 'package:trivia/data/models/user_preference.dart';
+import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/data/data_source/trivia_data_source.dart';
+import 'package:Quizdom/data/data_source/trivia_room_data_source.dart';
+import 'package:Quizdom/data/models/user_preference.dart';
 
 class UserPreferenceDataSource {
   static final _collection =

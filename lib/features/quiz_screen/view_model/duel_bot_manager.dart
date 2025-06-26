@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/bots.dart';
-import 'package:trivia/data/data_source/trivia_room_data_source.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
-import 'package:trivia/data/models/trivia_user.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/bots.dart';
+import 'package:Quizdom/data/data_source/trivia_room_data_source.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
 
 // Create a separate class for bot-related functionality
 class BotManager {

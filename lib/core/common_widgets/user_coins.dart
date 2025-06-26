@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trivia/core/common_widgets/user_resources_dialog.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/common_widgets/user_resources_dialog.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class UserCoins extends StatelessWidget {
   const UserCoins({super.key});

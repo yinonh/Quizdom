@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/current_user_avatar.dart';
-import 'package:trivia/core/common_widgets/user_avatar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/enums/selected_emoji.dart';
-import 'package:trivia/data/models/trivia_user.dart';
+import 'package:Quizdom/core/common_widgets/current_user_avatar.dart';
+import 'package:Quizdom/core/common_widgets/user_avatar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/enums/selected_emoji.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
 
 class UserScoreBar extends StatelessWidget {
   final List<String> users; // users[0] is current, users[1] is opponent

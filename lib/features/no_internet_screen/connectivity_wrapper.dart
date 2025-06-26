@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/global_providers/connectivity_provider.dart';
+import 'package:Quizdom/core/global_providers/connectivity_provider.dart';
 
 import 'no_internet_screen.dart';
 

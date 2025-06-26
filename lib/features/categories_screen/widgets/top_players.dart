@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/user_avatar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/trivia_user.dart';
+import 'package:Quizdom/core/common_widgets/user_avatar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
 
 class ExpandableHighScorePlayersList extends StatefulWidget {
   final Map<TriviaUser, int> topUsers;

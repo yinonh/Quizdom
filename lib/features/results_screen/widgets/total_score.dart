@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class TotalScore extends StatelessWidget {
   final int score;

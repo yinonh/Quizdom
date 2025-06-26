@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/custom_when.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/providers/trivia_provider.dart';
-import 'package:trivia/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/duel_results_header.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/player_stats_comparison.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/results_action_buttons.dart';
-import 'package:trivia/features/results_screen/widgets/duel_widgets/winner_announcement.dart';
-import 'package:trivia/features/results_screen/widgets/total_score.dart';
+import 'package:Quizdom/core/common_widgets/custom_when.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/providers/trivia_provider.dart';
+import 'package:Quizdom/features/results_screen/view_model/duel_screen_manager/duel_result_screen_manager.dart';
+import 'package:Quizdom/features/results_screen/widgets/duel_widgets/duel_results_header.dart';
+import 'package:Quizdom/features/results_screen/widgets/duel_widgets/player_stats_comparison.dart';
+import 'package:Quizdom/features/results_screen/widgets/duel_widgets/results_action_buttons.dart';
+import 'package:Quizdom/features/results_screen/widgets/duel_widgets/winner_announcement.dart';
+import 'package:Quizdom/features/results_screen/widgets/total_score.dart';
 
 class DuelResultsScreen extends ConsumerWidget {
   static const String routeName = AppRoutes.duelResultsRouteName;

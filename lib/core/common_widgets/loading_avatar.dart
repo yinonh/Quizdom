@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/utils/custom_clipper.dart';
-import 'package:trivia/core/utils/fluttermoji/fluttermoji_provider.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/utils/custom_clipper.dart';
+import 'package:Quizdom/core/utils/fluttermoji/fluttermoji_provider.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class LoadingAvatar extends ConsumerStatefulWidget {
   final double radius;

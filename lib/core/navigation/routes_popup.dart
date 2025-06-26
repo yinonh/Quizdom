@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trivia/core/common_widgets/guest_logout_warning_dialog.dart';
-import 'package:trivia/features/categories_screen/widgets/daily_login-popup.dart';
-import 'package:trivia/features/wheel_spin_screen/widgets/lose_dialog.dart';
-import 'package:trivia/features/wheel_spin_screen/widgets/win_dialog.dart';
+import 'package:Quizdom/core/common_widgets/guest_logout_warning_dialog.dart';
+import 'package:Quizdom/features/categories_screen/widgets/daily_login-popup.dart';
+import 'package:Quizdom/features/wheel_spin_screen/widgets/lose_dialog.dart';
+import 'package:Quizdom/features/wheel_spin_screen/widgets/win_dialog.dart';
 
 import 'custom_route_by_name.dart';
 

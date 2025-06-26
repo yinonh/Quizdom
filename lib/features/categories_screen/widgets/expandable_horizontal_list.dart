@@ -2,13 +2,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/features/intro_screen/intro_screen.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/general_trivia_room.dart';
+import 'package:Quizdom/features/categories_screen/view_model/categories_screen_manager.dart';
+import 'package:Quizdom/features/intro_screen/intro_screen.dart';
 
 class ExpandableHorizontalList extends ConsumerStatefulWidget {
   final List<GeneralTriviaRoom>? triviaRoom;

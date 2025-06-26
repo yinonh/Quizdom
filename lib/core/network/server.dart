@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
-import 'package:trivia/core/constants/api_endpoints.dart';
+import 'package:Quizdom/core/constants/api_endpoints.dart';
 
 final logger = Logger(
   printer: PrettyPrinter(),

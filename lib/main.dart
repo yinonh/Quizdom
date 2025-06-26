@@ -3,9 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/features/no_internet_screen/connectivity_wrapper.dart';
+import 'package:Quizdom/features/no_internet_screen/connectivity_wrapper.dart';
 
 import 'app.dart';
 import 'core/global_providers/ad_provider.dart';
@@ -13,6 +14,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize Firebase first

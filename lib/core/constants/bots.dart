@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/data/models/user_statistics.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/data/models/user_statistics.dart';
 
 import 'app_constant.dart';
 import 'constant_strings.dart';

@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
-import 'package:trivia/core/utils/enums/game_stage.dart';
-import 'package:trivia/core/utils/enums/selected_emoji.dart'; // Added import
-import 'package:trivia/data/models/trivia_achievements.dart';
-import 'package:trivia/data/models/trivia_room.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/core/utils/enums/game_stage.dart';
+import 'package:Quizdom/core/utils/enums/selected_emoji.dart'; // Added import
+import 'package:Quizdom/data/models/trivia_achievements.dart';
+import 'package:Quizdom/data/models/trivia_room.dart';
 
 class TriviaRoomDataSource {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;

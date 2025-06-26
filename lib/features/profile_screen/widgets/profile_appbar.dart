@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/app_bar.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/categories_screen/categories_screen.dart';
+import 'package:Quizdom/core/common_widgets/app_bar.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/categories_screen/categories_screen.dart';
 
 class ProfileAppbar extends StatelessWidget {
   const ProfileAppbar({super.key});

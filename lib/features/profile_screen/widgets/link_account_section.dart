@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:trivia/core/common_widgets/custom_button.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart'; // Reusing the text field
-import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
+import 'package:Quizdom/core/common_widgets/custom_button.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/auth_screen/widgets/custom_text_feild.dart'; // Reusing the text field
+import 'package:Quizdom/features/profile_screen/view_modle/profile_screen_manager.dart';
 
 class LinkAccountSection extends ConsumerWidget {
   const LinkAccountSection({super.key});

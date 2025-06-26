@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/question.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/question.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 
 class QuestionReviewWidget extends StatelessWidget {
   final Question question;

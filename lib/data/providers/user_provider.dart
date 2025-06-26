@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/network/server.dart';
-import 'package:trivia/core/utils/date_time_extansion.dart';
-import 'package:trivia/data/data_source/user_data_source.dart';
-import 'package:trivia/data/data_source/user_statistics_data_source.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/core/global_providers/auth_providers.dart'; // Added import
+import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/core/utils/date_time_extansion.dart';
+import 'package:Quizdom/data/data_source/user_data_source.dart';
+import 'package:Quizdom/data/data_source/user_statistics_data_source.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/core/global_providers/auth_providers.dart'; // Added import
 
 part 'user_provider.freezed.dart';
 part 'user_provider.g.dart';

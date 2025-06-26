@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/features/auth_screen/auth_screen.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
+import 'package:Quizdom/features/auth_screen/auth_screen.dart';
 
 class GuestLogoutWarningDialog extends ConsumerStatefulWidget {
   static const routeName = AppRoutes.guestLogoutWarning;

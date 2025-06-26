@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/data/models/general_trivia_room.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/data/models/general_trivia_room.dart';
 
 class GeneralTriviaRoomDataSource {
   static Future<List<GeneralTriviaRoom>> fetchAllGeneralRooms() async {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trivia/core/common_widgets/custom_bottom_button.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/enums/game_mode.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/common_widgets/custom_bottom_button.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/enums/game_mode.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class InsufficientCoinsWidget extends StatelessWidget {
   final GameMode gameMode;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trivia/core/navigation/router_service.dart';
+import 'package:Quizdom/core/navigation/router_service.dart';
 
 // Get router contexts
 BuildContext get _routerContext =>

@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
 
 String mapFirebaseErrorCodeToMessage(FirebaseAuthException e) {
   switch (e.code) {

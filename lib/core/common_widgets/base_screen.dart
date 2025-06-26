@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/custom_progress_indicator.dart';
+import 'package:Quizdom/core/common_widgets/custom_progress_indicator.dart';
 
 final loadingProvider = StateProvider<bool>((ref) => false);
 

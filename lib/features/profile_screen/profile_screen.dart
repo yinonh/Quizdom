@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/common_widgets/resource_floating_action_button.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/profile_screen/view_modle/profile_screen_manager.dart';
-import 'package:trivia/features/profile_screen/widgets/avatar_section.dart';
-import 'package:trivia/features/profile_screen/widgets/delete_account_section.dart';
-import 'package:trivia/features/profile_screen/widgets/profile_appbar.dart';
-import 'package:trivia/features/profile_screen/widgets/profile_content.dart';
-import 'package:trivia/features/profile_screen/widgets/statistics_section.dart';
-import 'package:trivia/features/profile_screen/widgets/trophies_section.dart';
-import 'package:trivia/features/profile_screen/widgets/link_account_section.dart'; // Import new widget
+import 'package:Quizdom/core/common_widgets/base_screen.dart';
+import 'package:Quizdom/core/common_widgets/resource_floating_action_button.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/profile_screen/view_modle/profile_screen_manager.dart';
+import 'package:Quizdom/features/profile_screen/widgets/avatar_section.dart';
+import 'package:Quizdom/features/profile_screen/widgets/delete_account_section.dart';
+import 'package:Quizdom/features/profile_screen/widgets/profile_appbar.dart';
+import 'package:Quizdom/features/profile_screen/widgets/profile_content.dart';
+import 'package:Quizdom/features/profile_screen/widgets/statistics_section.dart';
+import 'package:Quizdom/features/profile_screen/widgets/trophies_section.dart';
+import 'package:Quizdom/features/profile_screen/widgets/link_account_section.dart'; // Import new widget
 
 class ProfileScreen extends ConsumerWidget {
   static const routeName = AppRoutes.profileRouteName;

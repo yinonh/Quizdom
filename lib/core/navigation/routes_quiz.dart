@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/features/quiz_screen/duel_quiz_screen.dart';
-import 'package:trivia/features/quiz_screen/solo_quiz_screen.dart';
-import 'package:trivia/features/results_screen/duel_result_screen.dart';
-import 'package:trivia/features/results_screen/game_canceled.dart';
-import 'package:trivia/features/results_screen/solo_results_screen.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/features/quiz_screen/duel_quiz_screen.dart';
+import 'package:Quizdom/features/quiz_screen/solo_quiz_screen.dart';
+import 'package:Quizdom/features/results_screen/duel_result_screen.dart';
+import 'package:Quizdom/features/results_screen/game_canceled.dart';
+import 'package:Quizdom/features/results_screen/solo_results_screen.dart';
 
 import 'custom_route_by_name.dart';
 

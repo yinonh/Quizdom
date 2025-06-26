@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:trivia/core/common_widgets/custom_button.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
+import 'package:Quizdom/core/common_widgets/custom_button.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
 
 class DailyLoginScreen extends StatelessWidget {
   static const routeName = AppRoutes.dailyLoginRouteName;

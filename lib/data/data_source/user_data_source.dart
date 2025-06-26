@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:trivia/core/network/server.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/data/models/trivia_user.dart';
+import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
 
 class UserDataSource {
   static final _usersCollection =

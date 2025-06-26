@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:trivia/core/network/server.dart';
-import 'package:trivia/core/utils/custom_clipper.dart';
+import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/core/utils/custom_clipper.dart';
 
 import 'fluttermoji_provider.dart';
 

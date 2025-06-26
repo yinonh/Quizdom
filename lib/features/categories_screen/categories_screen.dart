@@ -2,28 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/common_widgets/background.dart';
-import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/common_widgets/custom_drawer.dart';
-import 'package:trivia/core/common_widgets/custom_when.dart';
-import 'package:trivia/core/common_widgets/resource_floating_action_button.dart';
-import 'package:trivia/core/common_widgets/under_construction_dialog.dart';
-import 'package:trivia/core/common_widgets/user_app_bar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/features/categories_screen/view_model/categories_screen_manager.dart';
-import 'package:trivia/features/categories_screen/widgets/categories_screen_shimmer.dart';
-import 'package:trivia/features/categories_screen/widgets/expandable_horizontal_list.dart';
-import 'package:trivia/features/categories_screen/widgets/info_container.dart';
-import 'package:trivia/features/categories_screen/widgets/recent_categories.dart';
-import 'package:trivia/features/categories_screen/widgets/top_button.dart';
-import 'package:trivia/features/categories_screen/widgets/top_players.dart';
-import 'package:trivia/features/categories_screen/widgets/wheel_of_fortune_banner.dart';
-import 'package:trivia/features/intro_screen/intro_screen.dart';
+import 'package:Quizdom/core/common_widgets/background.dart';
+import 'package:Quizdom/core/common_widgets/base_screen.dart';
+import 'package:Quizdom/core/common_widgets/custom_drawer.dart';
+import 'package:Quizdom/core/common_widgets/custom_when.dart';
+import 'package:Quizdom/core/common_widgets/resource_floating_action_button.dart';
+import 'package:Quizdom/core/common_widgets/under_construction_dialog.dart';
+import 'package:Quizdom/core/common_widgets/user_app_bar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/features/categories_screen/view_model/categories_screen_manager.dart';
+import 'package:Quizdom/features/categories_screen/widgets/categories_screen_shimmer.dart';
+import 'package:Quizdom/features/categories_screen/widgets/expandable_horizontal_list.dart';
+import 'package:Quizdom/features/categories_screen/widgets/recent_categories.dart';
+import 'package:Quizdom/features/categories_screen/widgets/top_button.dart';
+import 'package:Quizdom/features/categories_screen/widgets/top_players.dart';
+import 'package:Quizdom/features/categories_screen/widgets/wheel_of_fortune_banner.dart';
+import 'package:Quizdom/features/intro_screen/intro_screen.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routeName = AppRoutes.categoriesRouteName;
@@ -149,7 +148,6 @@ class CategoriesScreen extends ConsumerWidget {
                                 topUsers: snapshot.data!);
                           },
                         ),
-                        const InfoContainer(text: "Personal Rooms Information"),
                       ],
                     ),
                   ),

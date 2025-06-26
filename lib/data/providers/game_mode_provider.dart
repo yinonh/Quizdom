@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/utils/enums/game_mode.dart';
+import 'package:Quizdom/core/utils/enums/game_mode.dart';
 
 part 'game_mode_provider.g.dart';
 

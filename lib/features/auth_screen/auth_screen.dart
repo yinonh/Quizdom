@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:trivia/core/common_widgets/base_screen.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/auth_screen/view_model/auth_page_manager.dart';
-import 'package:trivia/features/auth_screen/widgets/custom_text_feild.dart';
+import 'package:Quizdom/core/common_widgets/base_screen.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/auth_screen/view_model/auth_page_manager.dart';
+import 'package:Quizdom/features/auth_screen/widgets/custom_text_feild.dart';
 
 class AuthScreen extends ConsumerWidget {
   static const String routeName = AppRoutes.authRouteName;

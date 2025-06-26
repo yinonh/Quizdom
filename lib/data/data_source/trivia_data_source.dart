@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:trivia/core/constants/api_endpoints.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/network/server.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/core/constants/api_endpoints.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
 
 class TriviaDataSource {
   static final Dio client = DioClient.instance;

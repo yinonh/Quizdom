@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/common_widgets/current_user_avatar.dart';
-import 'package:trivia/core/navigation/route_extensions.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/features/avatar_screen/avatar_screen.dart';
+import 'package:Quizdom/core/common_widgets/current_user_avatar.dart';
+import 'package:Quizdom/core/navigation/route_extensions.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/features/avatar_screen/avatar_screen.dart';
 
 class AvatarSection extends StatelessWidget {
   const AvatarSection({super.key});

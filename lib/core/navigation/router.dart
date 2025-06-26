@@ -1,20 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:trivia/core/common_widgets/ad_interstitial_widget.dart';
-import 'package:trivia/core/common_widgets/ad_rewarded_widget.dart';
-import 'package:trivia/core/constants/app_routes.dart';
-import 'package:trivia/core/global_providers/auth_providers.dart';
-import 'package:trivia/core/navigation/custom_route_by_name.dart';
-import 'package:trivia/core/navigation/router_service.dart';
-import 'package:trivia/core/navigation/routes_popup.dart';
-import 'package:trivia/core/navigation/routes_quiz.dart';
-import 'package:trivia/features/auth_screen/auth_screen.dart';
-import 'package:trivia/features/avatar_screen/avatar_screen.dart';
-import 'package:trivia/features/categories_screen/categories_screen.dart';
-import 'package:trivia/features/intro_screen/intro_screen.dart';
-import 'package:trivia/features/intro_screen/widgets/filter_room.dart';
-import 'package:trivia/features/profile_screen/profile_screen.dart';
-import 'package:trivia/features/wheel_spin_screen/wheel_spin_screen.dart';
+import 'package:Quizdom/core/common_widgets/ad_interstitial_widget.dart';
+import 'package:Quizdom/core/common_widgets/ad_rewarded_widget.dart';
+import 'package:Quizdom/core/constants/app_routes.dart';
+import 'package:Quizdom/core/global_providers/auth_providers.dart';
+import 'package:Quizdom/core/navigation/custom_route_by_name.dart';
+import 'package:Quizdom/core/navigation/router_service.dart';
+import 'package:Quizdom/core/navigation/routes_popup.dart';
+import 'package:Quizdom/core/navigation/routes_quiz.dart';
+import 'package:Quizdom/features/auth_screen/auth_screen.dart';
+import 'package:Quizdom/features/avatar_screen/avatar_screen.dart';
+import 'package:Quizdom/features/categories_screen/categories_screen.dart';
+import 'package:Quizdom/features/intro_screen/intro_screen.dart';
+import 'package:Quizdom/features/intro_screen/widgets/filter_room.dart';
+import 'package:Quizdom/features/profile_screen/profile_screen.dart';
+import 'package:Quizdom/features/wheel_spin_screen/wheel_spin_screen.dart';
 
 final routerProvider = Provider<GoRouter>(
   (ref) {

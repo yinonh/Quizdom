@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/data/models/trivia_achievements.dart';
-import 'package:trivia/data/models/trivia_user.dart';
-import 'package:trivia/features/profile_overview_screen/profile_overview_screen.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/data/models/trivia_achievements.dart';
+import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:Quizdom/features/profile_overview_screen/profile_overview_screen.dart';
 
 Map<String, dynamic> decodeFields(Map<String, dynamic> result) {
   return {

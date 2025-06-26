@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/constants/constant_strings.dart';
-import 'package:trivia/core/utils/enums/trophy_type.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/models/user_statistics.dart';
-import 'package:trivia/features/profile_screen/widgets/trophy_item.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/utils/enums/trophy_type.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/models/user_statistics.dart';
+import 'package:Quizdom/features/profile_screen/widgets/trophy_item.dart';
 
 class TrophiesSection extends StatelessWidget {
   final UserStatistics statistics;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:trivia/core/utils/enums/level.dart';
-import 'package:trivia/core/utils/enums/trophy_type.dart';
-import 'package:trivia/data/models/user_statistics.dart';
+import 'package:Quizdom/core/utils/enums/level.dart';
+import 'package:Quizdom/core/utils/enums/trophy_type.dart';
+import 'package:Quizdom/data/models/user_statistics.dart';
 
 class AppConstant {
   // App colors

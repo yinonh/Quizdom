@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/network/server.dart';
-import 'package:trivia/data/providers/current_trivia_achievements_provider.dart';
-import 'package:trivia/data/providers/general_trivia_room_provider.dart';
-import 'package:trivia/data/providers/user_provider.dart';
-import 'package:trivia/data/providers/user_statistics_provider.dart';
+import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/data/providers/current_trivia_achievements_provider.dart';
+import 'package:Quizdom/data/providers/general_trivia_room_provider.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
+import 'package:Quizdom/data/providers/user_statistics_provider.dart';
 
 part 'auth_providers.g.dart';
 

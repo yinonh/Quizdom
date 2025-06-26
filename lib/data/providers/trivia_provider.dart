@@ -1,12 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:trivia/core/utils/enums/difficulty.dart';
-import 'package:trivia/core/utils/general_functions.dart';
-import 'package:trivia/data/data_source/trivia_data_source.dart';
-import 'package:trivia/data/models/general_trivia_room.dart';
-import 'package:trivia/data/models/question.dart';
-import 'package:trivia/data/models/trivia_categories.dart';
-import 'package:trivia/data/models/trivia_room.dart';
+import 'package:Quizdom/core/utils/enums/difficulty.dart';
+import 'package:Quizdom/core/utils/general_functions.dart';
+import 'package:Quizdom/data/data_source/trivia_data_source.dart';
+import 'package:Quizdom/data/models/general_trivia_room.dart';
+import 'package:Quizdom/data/models/question.dart';
+import 'package:Quizdom/data/models/trivia_categories.dart';
+import 'package:Quizdom/data/models/trivia_room.dart';
 
 part 'trivia_provider.freezed.dart';
 part 'trivia_provider.g.dart';

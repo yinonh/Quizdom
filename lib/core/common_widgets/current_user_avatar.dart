@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:trivia/core/common_widgets/user_avatar.dart';
-import 'package:trivia/core/constants/app_constant.dart';
-import 'package:trivia/core/utils/enums/selected_emoji.dart';
-import 'package:trivia/core/utils/size_config.dart';
-import 'package:trivia/data/providers/user_provider.dart';
+import 'package:Quizdom/core/common_widgets/user_avatar.dart';
+import 'package:Quizdom/core/constants/app_constant.dart';
+import 'package:Quizdom/core/utils/enums/selected_emoji.dart';
+import 'package:Quizdom/core/utils/size_config.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
 
 class CurrentUserAvatar extends ConsumerWidget {
   final double radius;
