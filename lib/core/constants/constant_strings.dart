@@ -88,6 +88,11 @@ class Strings {
   static const String currentPasswordRequired = 'Current Password Required';
   static const String newPassword = 'New Password';
   static const String deleteAccount = 'Delete Account';
+  static const String userNameNotAllowed = 'User name not allowed.';
+  static const String onlyEnglishLettersAllowed =
+      'Only English letters and numbers are allowed.';
+  static const String userNameTooLong = 'User name is too long (max';
+  static const String characters = 'characters).';
 
   //No Internet Screen
   static const String noInternet = 'No Internet';

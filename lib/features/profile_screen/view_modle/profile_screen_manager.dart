@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:Quizdom/core/common_widgets/base_screen.dart';
 import 'package:Quizdom/core/constants/constant_strings.dart';
@@ -27,6 +28,7 @@ class ProfileState with _$ProfileState {
     required TextEditingController newPasswordController,
     required String oldPasswordErrorMessage,
     required String newPasswordErrorMessage,
+    required String usenameErrorMessage,
     String? firebaseErrorMessage,
     // Fields for account linking
     required TextEditingController linkEmailController,
@@ -59,6 +61,7 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       newPasswordController: TextEditingController(),
       oldPasswordErrorMessage: '',
       newPasswordErrorMessage: '',
+      usenameErrorMessage: '',
       // Initialize linking fields
       linkEmailController: TextEditingController(),
       linkPasswordController: TextEditingController(),
@@ -96,17 +99,43 @@ class ProfileScreenManager extends _$ProfileScreenManager {
   }
 
   Future<void> updateUserDetails() async {
+    final filter = ProfanityFilter();
+    final newName = state.nameController.text.trim();
+
+    final RegExp validCharacters = RegExp(r'^[a-zA-Z0-9]+$');
+    const int maxNameLength = 20;
+
+    if (filter.hasProfanity(newName)) {
+      state = state.copyWith(
+        usenameErrorMessage: Strings.userNameNotAllowed,
+      );
+      return;
+    }
+
+    if (!validCharacters.hasMatch(newName)) {
+      state = state.copyWith(
+        usenameErrorMessage: Strings.onlyEnglishLettersAllowed,
+      );
+      return;
+    }
+
+    if (newName.length > maxNameLength) {
+      state = state.copyWith(
+        usenameErrorMessage:
+            "${Strings.userNameTooLong} $maxNameLength ${Strings.characters}",
+      );
+      return;
+    }
+
     if (!state.isGoogleAuth) {
       String oldPasswordError = '';
       String newPasswordError = '';
 
-      // Password validation (for new password)
       if (state.newPasswordController.text.isNotEmpty &&
           state.newPasswordController.text.length < 6) {
         newPasswordError = Strings.passwordTooShort;
       }
 
-      // Old password validation
       if (state.oldPasswordController.text.isEmpty) {
         oldPasswordError = Strings.currentPasswordRequired;
       }
@@ -118,6 +147,7 @@ class ProfileScreenManager extends _$ProfileScreenManager {
         );
         return;
       }
+
       state = state.copyWith(
         oldPasswordErrorMessage: '',
         newPasswordErrorMessage: '',
@@ -132,7 +162,6 @@ class ProfileScreenManager extends _$ProfileScreenManager {
       AuthCredential credential;
 
       if (state.isGoogleAuth) {
-        // Re-authenticate the user using Google credentials
         final googleSignIn = GoogleSignIn();
         final googleUser = await googleSignIn.signIn();
 
@@ -148,27 +177,24 @@ class ProfileScreenManager extends _$ProfileScreenManager {
           idToken: googleAuth.idToken,
         );
       } else {
-        // Re-authenticate the user with old credentials
         credential = EmailAuthProvider.credential(
           email: currentUser!.email!,
           password: state.oldPasswordController.text,
         );
       }
+
       if (currentUser != null) {
         await currentUser.reauthenticateWithCredential(credential);
 
-        // Update password in Firebase Auth (if provided)
         if (state.newPasswordController.text.isNotEmpty) {
           await currentUser.updatePassword(state.newPasswordController.text);
         }
 
-        // Update name and email in state and Firestore
         await ref.read(authProvider.notifier).updateUserDetails(
               uid: currentUser.uid,
-              name: state.nameController.text,
+              name: newName,
             );
 
-        // Reset the editing state
         state = state.copyWith(isEditing: false);
       }
     } on FirebaseAuthException catch (e) {

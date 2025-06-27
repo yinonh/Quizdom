@@ -205,14 +205,10 @@ class AuthScreenManager extends _$AuthScreenManager {
   Future<void> signInAsGuest() async {
     ref.read(loadingProvider.notifier).state = true;
     try {
-      // Use the authProvider to sign in anonymously
-      // The authProvider should handle user creation in UserDataSource
       final userCredential =
           await ref.read(authProvider.notifier).signInAnonymously();
 
       if (userCredential.user != null) {
-        // Ensure statistics are created for the new guest user
-        // This is similar to what happens in the createUser path of submit()
         await UserStatisticsDataSource.createUserStatistics(
             userCredential.user!.uid);
 

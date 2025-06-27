@@ -335,7 +335,8 @@ class Auth extends _$Auth {
       if (firebaseUser != null) {
         // UserDataSource.signInAnonymously should have created the TriviaUser.
         // We need to ensure UserStatistics are also created.
-        if (!await UserStatisticsDataSource.userStatisticsExists(firebaseUser.uid)) {
+        if (!await UserStatisticsDataSource.userStatisticsExists(
+            firebaseUser.uid)) {
           await UserStatisticsDataSource.createUserStatistics(firebaseUser.uid);
         }
 
@@ -366,7 +367,8 @@ class Auth extends _$Auth {
     }
 
     try {
-      final credential = EmailAuthProvider.credential(email: email, password: password);
+      final credential =
+          EmailAuthProvider.credential(email: email, password: password);
       await UserDataSource.linkAnonymousAccount(credential);
 
       // After linking, the user is no longer anonymous.
@@ -377,7 +379,6 @@ class Auth extends _$Auth {
       // It's also good practice to ensure the newUserRegistrationProvider is cleared
       // as the user is now fully registered.
       ref.read(newUserRegistrationProvider.notifier).clearNewUser();
-
     } catch (e) {
       logger.e("Error linking email and password: $e");
       rethrow;

@@ -20,6 +20,9 @@ class EditUserDetails extends ConsumerWidget {
         EditableField(
           label: Strings.username,
           controller: profileState.nameController,
+          errorText: profileState.usenameErrorMessage.isNotEmpty
+              ? profileState.usenameErrorMessage
+              : null,
         ),
         if (!profileState.isGoogleAuth)
           Column(
