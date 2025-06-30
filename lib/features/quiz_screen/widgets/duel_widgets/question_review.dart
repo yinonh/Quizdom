@@ -3,21 +3,12 @@ import 'package:Quizdom/core/constants/app_constant.dart';
 import 'package:Quizdom/core/constants/constant_strings.dart';
 import 'package:Quizdom/core/utils/size_config.dart';
 import 'package:Quizdom/data/models/question.dart';
-import 'package:Quizdom/data/models/trivia_user.dart';
-import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 
 class QuestionReviewWidget extends StatelessWidget {
   final Question question;
   final String correctAnswer;
   final int? selectedAnswerIndex;
   final int correctAnswerIndex;
-  final Map<String, int> userScores;
-  final List<String> users;
-  final TriviaUser? currentUser;
-  final TriviaUser? opponent;
-  final Map<String, Map<String, dynamic>>? userEmojis;
-  final Function(String userId)? onCurrentUserAvatarTap;
-  final String? currentUserId;
 
   const QuestionReviewWidget({
     super.key,
@@ -25,13 +16,6 @@ class QuestionReviewWidget extends StatelessWidget {
     required this.correctAnswer,
     required this.selectedAnswerIndex,
     required this.correctAnswerIndex,
-    required this.userScores,
-    required this.users,
-    required this.currentUser,
-    required this.opponent,
-    this.userEmojis,
-    this.onCurrentUserAvatarTap,
-    this.currentUserId,
   });
 
   @override
@@ -42,20 +26,8 @@ class QuestionReviewWidget extends StatelessWidget {
       color: Colors.white,
       child: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top: Score bar
-            UserScoreBar(
-              users: users,
-              userScores: userScores,
-              opponent: opponent,
-              currentUser: currentUser,
-              userEmojis:
-                  userEmojis ?? const {}, // Pass down, ensuring non-null
-              onCurrentUserAvatarTap: onCurrentUserAvatarTap ??
-                  (_) {}, // Pass down, ensuring non-null
-              currentUserId: currentUserId, // Pass down
-            ),
-
             // Middle: Icon + feedback + question + correct answer
             Expanded(
               child: Center(
@@ -135,6 +107,7 @@ class QuestionReviewWidget extends StatelessWidget {
 
             // Bottom: Timer
             Container(
+              alignment: Alignment.center,
               padding: EdgeInsets.symmetric(
                   vertical: calcHeight(8), horizontal: calcWidth(19)),
               decoration: BoxDecoration(

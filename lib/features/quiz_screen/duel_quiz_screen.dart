@@ -15,6 +15,7 @@ import 'package:Quizdom/features/quiz_screen/view_model/duel_quiz_screen_manager
 import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/duel_question_widget.dart';
 import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/question_review.dart';
 import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/waiting_or_countdown.dart';
+import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 import 'package:Quizdom/features/quiz_screen/widgets/question_shemmer.dart';
 import 'package:Quizdom/features/results_screen/duel_result_screen.dart';
 import 'package:Quizdom/features/results_screen/game_canceled.dart';
@@ -194,7 +195,6 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                       return const WaitingOrCountdown();
                     }
 
-                    // Show different widgets based on game stage
                     // Define avatar tap handler
                     void handleAvatarTap(String userId) {
                       // Only allow current user to trigger their own bubble
@@ -205,33 +205,50 @@ class _DuelQuizScreenState extends ConsumerState<DuelQuizScreen> {
                       }
                     }
 
-                    if (state.gameStage == GameStage.questionReview) {
-                      return QuestionReviewWidget(
-                        question: state.questions[state.questionIndex],
-                        correctAnswer:
-                            state.questions[state.questionIndex].correctAnswer!,
-                        selectedAnswerIndex: state.selectedAnswerIndex,
-                        correctAnswerIndex: state.correctAnswerIndex,
-                        userScores: state.userScores,
-                        users: state.users,
-                        currentUser: state.currentUser,
-                        opponent: state.opponent,
-                        userEmojis: state.userEmojis,
-                        onCurrentUserAvatarTap: handleAvatarTap,
-                        currentUserId: state.currentUser?.uid,
-                      );
-                    } else {
-                      return DuelQuestionWidget(
-                        usersList: state.users,
-                        userScores: state.userScores,
-                        roomId: widget.roomId,
-                        userEmojis: state.userEmojis,
-                        onCurrentUserAvatarTap: handleAvatarTap,
-                        currentUserId: state.currentUser?.uid,
-                        currentUser: state.currentUser,
-                        opponentUser: state.opponent,
-                      );
-                    }
+                    return Column(
+                      children: [
+                        // Extracted UserScoreBar
+                        UserScoreBar(
+                          users: state.users,
+                          userScores: state.userScores,
+                          opponent: state.opponent,
+                          currentUser: state.currentUser,
+                          userEmojis: state.userEmojis,
+                          onCurrentUserAvatarTap: handleAvatarTap,
+                          currentUserId: state.currentUser?.uid,
+                        ),
+
+                        // Extracted Question Number Display
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "${Strings.question} ${state.questionIndex + 1}/${AppConstant.numberOfQuestions}",
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                                color: AppConstant.highlightColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                        Expanded(
+                          child: state.gameStage == GameStage.questionReview
+                              ? QuestionReviewWidget(
+                                  question:
+                                      state.questions[state.questionIndex],
+                                  correctAnswer: state
+                                      .questions[state.questionIndex]
+                                      .correctAnswer!,
+                                  selectedAnswerIndex:
+                                      state.selectedAnswerIndex,
+                                  correctAnswerIndex: state.correctAnswerIndex,
+                                )
+                              : DuelQuestionWidget(
+                                  roomId: widget.roomId,
+                                  gameStage: state.gameStage,
+                                ),
+                        ),
+                      ],
+                    );
                   },
                   error: (error, _) => Center(
                     child: Column(

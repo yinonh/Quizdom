@@ -6,7 +6,6 @@ import 'package:Quizdom/core/common_widgets/background.dart';
 import 'package:Quizdom/core/common_widgets/base_screen.dart';
 import 'package:Quizdom/core/common_widgets/custom_drawer.dart';
 import 'package:Quizdom/core/common_widgets/custom_when.dart';
-import 'package:Quizdom/core/common_widgets/resource_floating_action_button.dart';
 import 'package:Quizdom/core/common_widgets/under_construction_dialog.dart';
 import 'package:Quizdom/core/common_widgets/user_app_bar.dart';
 import 'package:Quizdom/core/constants/app_constant.dart';
@@ -36,7 +35,7 @@ class CategoriesScreen extends ConsumerWidget {
         ref.read(categoriesScreenManagerProvider.notifier);
 
     return BaseScreen(
-      actionButton: const ResourceFloatingActionButton(),
+      // actionButton: const ResourceFloatingActionButton(),
       child: Scaffold(
         appBar: UserAppBar(),
         drawer: const CustomDrawer(),

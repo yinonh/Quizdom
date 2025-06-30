@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:Quizdom/core/constants/app_constant.dart';
-import 'package:Quizdom/core/constants/constant_strings.dart';
 import 'package:Quizdom/core/utils/enums/game_stage.dart';
 import 'package:Quizdom/core/utils/size_config.dart';
 
@@ -33,11 +32,6 @@ class DuelMultipleAnswerWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "${Strings.question} ${questionIndex + 1}/${AppConstant.numberOfQuestions}",
-          style: const TextStyle(
-              color: AppConstant.highlightColor, fontWeight: FontWeight.bold),
-        ),
         Padding(
           padding: EdgeInsets.all(calcHeight(16)),
           child: Text(

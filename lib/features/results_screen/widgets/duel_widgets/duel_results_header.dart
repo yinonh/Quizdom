@@ -56,7 +56,7 @@ class DuelResultsHeader extends StatelessWidget {
               _buildInfoChip(
                 context,
                 icon: Icons.psychology,
-                label: resultsState.room.difficulty?.displayName ?? 'Unknown',
+                label: resultsState.room.difficulty?.displayName ?? Strings.any,
               ),
             ],
           ),

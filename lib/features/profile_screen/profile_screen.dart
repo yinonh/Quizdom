@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Quizdom/core/common_widgets/base_screen.dart';
-import 'package:Quizdom/core/common_widgets/resource_floating_action_button.dart';
 import 'package:Quizdom/core/constants/app_constant.dart';
 import 'package:Quizdom/core/constants/app_routes.dart';
 import 'package:Quizdom/core/utils/size_config.dart';
@@ -27,7 +26,7 @@ class ProfileScreen extends ConsumerWidget {
     final bool isAnonymous = currentUser?.isAnonymous ?? false;
 
     return BaseScreen(
-      actionButton: const ResourceFloatingActionButton(),
+      // actionButton: const ResourceFloatingActionButton(),
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
         body: SingleChildScrollView(
@@ -48,13 +47,16 @@ class ProfileScreen extends ConsumerWidget {
                 ),
 
               SizedBox(height: calcHeight(15)),
-              TrophiesSection(statistics: userStatistics), // Trophies can be shown to guests
+              TrophiesSection(
+                  statistics:
+                      userStatistics), // Trophies can be shown to guests
               SizedBox(height: calcHeight(15)),
-              StatisticsSection(statistics: userStatistics), // Statistics can be shown to guests
+              StatisticsSection(
+                  statistics:
+                      userStatistics), // Statistics can be shown to guests
 
               // Only show DeleteAccountSection if the user is NOT anonymous
-              if (!isAnonymous)
-                const DeleteAccountSection(),
+              if (!isAnonymous) const DeleteAccountSection(),
             ],
           ),
         ),

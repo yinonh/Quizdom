@@ -28,10 +28,7 @@ class UserResourcesDialog extends ConsumerWidget {
     final chestIconRadius = calcWidth(55);
     final chestIconPosition = chestIconRadius;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+    return SafeArea(
       child: Stack(
         alignment: Alignment.topCenter,
         clipBehavior: Clip.none,

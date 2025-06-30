@@ -1,3 +1,4 @@
+import 'package:Quizdom/core/constants/constant_strings.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:Quizdom/core/utils/enums/difficulty.dart';
@@ -59,7 +60,7 @@ class Trivia extends _$Trivia {
     if (state.categories != null) {
       return state.categories?.triviaCategories?.firstWhere(
         (category) => category.id == id,
-        orElse: () => const TriviaCategory(id: -1, name: 'Unknown'),
+        orElse: () => const TriviaCategory(id: -1, name: Strings.any),
       );
     }
     return null;

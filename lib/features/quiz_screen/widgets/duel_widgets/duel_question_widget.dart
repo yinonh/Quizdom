@@ -4,32 +4,18 @@ import 'package:Quizdom/core/common_widgets/custom_when.dart';
 import 'package:Quizdom/core/constants/app_constant.dart';
 import 'package:Quizdom/core/utils/enums/game_stage.dart';
 import 'package:Quizdom/core/utils/size_config.dart';
-import 'package:Quizdom/data/models/trivia_user.dart'; // For TriviaUser
 import 'package:Quizdom/features/quiz_screen/view_model/duel_quiz_screen_manager.dart';
 import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/duel_multiple_answer_widget.dart';
-import 'package:Quizdom/features/quiz_screen/widgets/duel_widgets/user_score_bar.dart';
 import 'package:Quizdom/features/quiz_screen/widgets/question_shemmer.dart';
 
 class DuelQuestionWidget extends ConsumerWidget {
-  final List<String> usersList;
-  final Map<String, int> userScores;
   final String roomId;
-  final Map<String, Map<String, dynamic>> userEmojis;
-  final Function(String userId) onCurrentUserAvatarTap;
-  final String? currentUserId;
-  final TriviaUser? currentUser;
-  final TriviaUser? opponentUser;
+  final GameStage gameStage;
 
   const DuelQuestionWidget({
     super.key,
-    required this.usersList,
-    required this.userScores,
     required this.roomId,
-    required this.userEmojis,
-    required this.onCurrentUserAvatarTap,
-    required this.currentUserId,
-    this.currentUser,
-    this.opponentUser,
+    required this.gameStage,
   });
 
   @override
@@ -46,16 +32,6 @@ class DuelQuestionWidget extends ConsumerWidget {
 
         return Column(
           children: [
-            UserScoreBar(
-              users: usersList,
-              userScores: userScores,
-              opponent: opponentUser ?? data.opponent,
-              currentUser: currentUser ?? data.currentUser,
-              userEmojis: userEmojis,
-              onCurrentUserAvatarTap: onCurrentUserAvatarTap,
-              currentUserId: currentUserId,
-            ),
-
             SizedBox(height: calcHeight(10)),
 
             // Question and Answers
@@ -65,8 +41,7 @@ class DuelQuestionWidget extends ConsumerWidget {
                 options: data.shuffledOptions,
                 onAnswerSelected: (index) {
                   if (data.selectedAnswerIndex == null &&
-                      data.gameStage == GameStage.active) {
-                    // Ensure this is correct
+                      gameStage == GameStage.active) {
                     ref
                         .read(duelQuizScreenManagerProvider(roomId).notifier)
                         .selectAnswer(index);
@@ -76,8 +51,8 @@ class DuelQuestionWidget extends ConsumerWidget {
                 selectedAnswerIndex: data.selectedAnswerIndex,
                 correctAnswerIndex: data.correctAnswerIndex,
                 userAnswers: data.userAnswers,
-                gameStage: data.gameStage,
-                users: usersList, // Pass usersList
+                gameStage: gameStage,
+                users: data.users,
               ),
             ),
 

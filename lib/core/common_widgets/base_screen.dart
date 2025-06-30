@@ -16,21 +16,25 @@ class BaseScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoading = ref.watch(loadingProvider);
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      floatingActionButton: actionButton,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          child,
-          if (isLoading)
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: const CustomProgressIndicator(),
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        floatingActionButton: actionButton,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            child,
+            if (isLoading)
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                  child: const CustomProgressIndicator(),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
