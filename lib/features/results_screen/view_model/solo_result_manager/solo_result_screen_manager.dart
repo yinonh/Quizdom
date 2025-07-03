@@ -82,8 +82,4 @@ class SoloResultScreenManager extends _$SoloResultScreenManager {
           newScore: totalScore,
         );
   }
-
-  void addXpToUser() {
-    ref.read(authProvider.notifier).addXp(5.0);
-  }
 }

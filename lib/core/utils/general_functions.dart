@@ -22,12 +22,10 @@ Map<String, dynamic> decodeFields(Map<String, dynamic> result) {
 String formatNumber(int number) {
   if (number >= 1000000) {
     double result = number / 1000000;
-    // Format to 1 decimal place if needed
-    return '${result.toStringAsFixed(result.truncateToDouble() == result ? 0 : 1)}M';
+    return '${result.toStringAsFixed(2)}M';
   } else if (number >= 1000) {
     double result = number / 1000;
-    // Format to 1 decimal place if needed
-    return '${result.toStringAsFixed(result.truncateToDouble() == result ? 0 : 1)}K';
+    return '${result.toStringAsFixed(2)}K';
   }
   return number.toString();
 }

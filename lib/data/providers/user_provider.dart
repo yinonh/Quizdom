@@ -141,17 +141,6 @@ class Auth extends _$Auth {
     await UserDataSource.updateName(uid, name);
   }
 
-  // Add XP to user
-  Future<void> addXp(double xp) async {
-    final updatedUser = state.currentUser.withAddedXp(xp);
-
-    // Update local state
-    state = state.copyWith(currentUser: updatedUser);
-
-    // Update Firestore
-    await UserDataSource.updateXp(updatedUser.uid, updatedUser.userXp);
-  }
-
   // Handle image upload
   Future<void> setImage(File? image) async {
     if (image == null) return;

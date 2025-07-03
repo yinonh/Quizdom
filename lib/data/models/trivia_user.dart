@@ -28,7 +28,6 @@ class TriviaUser with _$TriviaUser {
     @JsonKey(name: "userAvatar") String? avatarUrl,
     @TimestampConverter() DateTime? lastLogin,
     @Default([]) List<int> recentTriviaCategories,
-    @Default(0.0) double userXp,
     Map<String, dynamic>? fluttermojiOptions,
     @Default([]) List<dynamic> trophies,
     @Default(100) int coins,
@@ -55,11 +54,10 @@ class TriviaUser with _$TriviaUser {
       imageUrl: imageUrl,
       lastLogin: DateTime.now(),
       recentTriviaCategories: [],
-      userXp: 0.0,
       fluttermojiOptions: defaultFluttermojiOptions,
       trophies: [],
       coins: 100,
-      isAnonymous: isAnonymous, // Set isAnonymous field
+      isAnonymous: isAnonymous,
     );
   }
 
@@ -76,7 +74,7 @@ class TriviaUser with _$TriviaUser {
       name: defaultName,
       email: firebaseUser.email,
       imageUrl: firebaseUser.photoURL,
-      isAnonymous: firebaseUser.isAnonymous, // Set based on Firebase user
+      isAnonymous: firebaseUser.isAnonymous,
     );
   }
 
@@ -90,11 +88,6 @@ class TriviaUser with _$TriviaUser {
   // Method to create updated copy with new coin amount
   TriviaUser withUpdatedCoins(int newCoins) {
     return copyWith(coins: newCoins);
-  }
-
-  // Method to add XP
-  TriviaUser withAddedXp(double xpToAdd) {
-    return copyWith(userXp: userXp + xpToAdd);
   }
 
   // Method to update recent categories

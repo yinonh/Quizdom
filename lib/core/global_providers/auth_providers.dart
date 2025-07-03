@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:Quizdom/core/network/server.dart';
 import 'package:Quizdom/data/providers/current_trivia_achievements_provider.dart';
 import 'package:Quizdom/data/providers/general_trivia_room_provider.dart';
 import 'package:Quizdom/data/providers/user_provider.dart';
 import 'package:Quizdom/data/providers/user_statistics_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_providers.g.dart';
 
@@ -102,7 +102,7 @@ class UnifiedAuth extends _$UnifiedAuth {
       );
     } catch (e) {
       // User was deleted or token is invalid
-      print('User token invalid, signing out: $e');
+      logger.i('User token invalid, signing out: $e');
       await FirebaseAuth.instance.signOut();
       return AuthState(
         user: null,
@@ -159,7 +159,7 @@ class UnifiedAuth extends _$UnifiedAuth {
       return true;
     } catch (e) {
       // Token is invalid - user was likely deleted
-      print('Token validation failed: $e');
+      logger.e('Token validation failed: $e');
       await FirebaseAuth.instance.signOut();
       return false;
     }

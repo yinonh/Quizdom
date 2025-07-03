@@ -88,9 +88,9 @@ class UserAvatar extends ConsumerWidget {
             SizedBox(
               width: calcWidth(radius * 2.1),
               height: calcWidth(radius * 2.1),
-              child: CircularProgressIndicator(
+              child: const CircularProgressIndicator(
                 strokeWidth: 6.0,
-                value: displayUser?.userXp ?? 0 / 100,
+                value: 1,
                 color: AppConstant.onPrimaryColor,
               ),
             ),

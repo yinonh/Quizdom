@@ -44,7 +44,6 @@ class BotService {
     final user = TriviaUser(
       uid: AppConstant.botUserId,
       name: name ?? _generateRandomBotName(),
-      userXp: _random.nextDouble() * 2000,
       recentTriviaCategories: [],
       imageUrl: imageUrl ?? _botAvatars[_random.nextInt(_botAvatars.length)],
     );
