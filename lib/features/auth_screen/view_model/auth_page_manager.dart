@@ -1,15 +1,15 @@
+import 'package:Quizdom/core/common_widgets/base_screen.dart';
+import 'package:Quizdom/core/constants/constant_strings.dart';
+import 'package:Quizdom/core/global_providers/auth_providers.dart';
 import 'package:Quizdom/core/network/server.dart';
+import 'package:Quizdom/core/utils/map_firebase_errors_to_message.dart';
+import 'package:Quizdom/data/data_source/user_statistics_data_source.dart';
+import 'package:Quizdom/data/providers/user_provider.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:Quizdom/core/common_widgets/base_screen.dart';
-import 'package:Quizdom/core/constants/constant_strings.dart';
-import 'package:Quizdom/core/global_providers/auth_providers.dart';
-import 'package:Quizdom/core/utils/map_firebase_errors_to_message.dart';
-import 'package:Quizdom/data/data_source/user_statistics_data_source.dart';
-import 'package:Quizdom/data/providers/user_provider.dart';
 
 part 'auth_page_manager.freezed.dart';
 part 'auth_page_manager.g.dart';
@@ -30,6 +30,9 @@ class AuthState with _$AuthState {
     required bool navigate,
     required bool isNewUser,
     required GlobalKey<FormState> formKey,
+    required bool showPinVerification,
+    String? pendingEmail,
+    String? pendingPassword,
   }) = _AuthState;
 }
 
@@ -52,6 +55,7 @@ class AuthScreenManager extends _$AuthScreenManager {
       navigate: false,
       isNewUser: false,
       formKey: _formKey,
+      showPinVerification: false,
     );
   }
 
@@ -148,19 +152,15 @@ class AuthScreenManager extends _$AuthScreenManager {
         await ref
             .read(authProvider.notifier)
             .signIn(state.email, state.password);
-        // For login, clear any existing new user flag
         ref.read(newUserRegistrationProvider.notifier).clearNewUser();
         state = state.copyWith(navigate: true, isNewUser: false);
       } else {
-        final userCredential = await ref
-            .read(authProvider.notifier)
-            .createUser(state.email, state.password);
-        final newUserUid = userCredential.user!.uid;
-        await UserStatisticsDataSource.createUserStatistics(newUserUid);
-
-        // Set the new user flag in the global provider
-        ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
-        state = state.copyWith(navigate: true, isNewUser: true);
+        // For registration, show PIN verification first
+        state = state.copyWith(
+          showPinVerification: true,
+          pendingEmail: state.email,
+          pendingPassword: state.password,
+        );
       }
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
@@ -168,6 +168,48 @@ class AuthScreenManager extends _$AuthScreenManager {
     } finally {
       ref.read(loadingProvider.notifier).state = false;
     }
+  }
+
+  Future<void> onPinVerified() async {
+    if (state.pendingEmail == null || state.pendingPassword == null) return;
+
+    ref.read(loadingProvider.notifier).state = true;
+
+    try {
+      final userCredential = await ref
+          .read(authProvider.notifier)
+          .createUser(state.pendingEmail!, state.pendingPassword!);
+
+      final newUserUid = userCredential.user!.uid;
+      await UserStatisticsDataSource.createUserStatistics(newUserUid);
+
+      // Set the new user flag in the global provider
+      ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
+
+      state = state.copyWith(
+        navigate: true,
+        isNewUser: true,
+        showPinVerification: false,
+        pendingEmail: null,
+        pendingPassword: null,
+      );
+    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(
+        firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e),
+        showPinVerification: false,
+      );
+    } finally {
+      ref.read(loadingProvider.notifier).state = false;
+    }
+  }
+
+  /// Called when user cancels PIN verification
+  void cancelPinVerification() {
+    state = state.copyWith(
+      showPinVerification: false,
+      pendingEmail: null,
+      pendingPassword: null,
+    );
   }
 
 // Updated signInWithGoogle method

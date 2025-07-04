@@ -69,6 +69,7 @@ dependencies:
   google_mobile_ads: ^6.0.0
   flutter_dotenv: ^5.2.1
   profanity_filter: ^2.0.0
+  pinput: ^5.0.1
 
 dev_dependencies:
   flutter_test:

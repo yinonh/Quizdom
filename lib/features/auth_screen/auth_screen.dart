@@ -1,3 +1,4 @@
+import 'package:Quizdom/features/auth_screen/widgets/pin_verification_screen.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,6 +59,17 @@ class AuthScreen extends ConsumerWidget {
         }
       },
     );
+
+    if (authState.showPinVerification && authState.pendingEmail != null) {
+      return PinVerificationScreen(
+        email: authState.pendingEmail!,
+        userName:
+            authState.pendingEmail!.split('@')[0], // Use email prefix as name
+        onVerified: () {
+          authNotifier.onPinVerified();
+        },
+      );
+    }
 
     return BaseScreen(
       child: Scaffold(
