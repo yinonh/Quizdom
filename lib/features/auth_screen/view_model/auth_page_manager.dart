@@ -3,6 +3,7 @@ import 'package:Quizdom/core/constants/constant_strings.dart';
 import 'package:Quizdom/core/global_providers/auth_providers.dart';
 import 'package:Quizdom/core/network/server.dart';
 import 'package:Quizdom/core/utils/map_firebase_errors_to_message.dart';
+import 'package:Quizdom/data/data_source/user_data_source.dart';
 import 'package:Quizdom/data/data_source/user_statistics_data_source.dart';
 import 'package:Quizdom/data/providers/user_provider.dart';
 import 'package:email_validator/email_validator.dart';
@@ -33,6 +34,7 @@ class AuthState with _$AuthState {
     required bool showPinVerification,
     String? pendingEmail,
     String? pendingPassword,
+    @Default(false) bool isCheckingEmail,
   }) = _AuthState;
 }
 
@@ -56,6 +58,7 @@ class AuthScreenManager extends _$AuthScreenManager {
       isNewUser: false,
       formKey: _formKey,
       showPinVerification: false,
+      isCheckingEmail: false,
     );
   }
 
@@ -116,6 +119,7 @@ class AuthScreenManager extends _$AuthScreenManager {
     String passwordError = '';
     String confirmPasswordError = '';
 
+    // Your existing validation logic
     if (!EmailValidator.validate(state.email)) {
       emailError = Strings.invalidEmail;
     }
@@ -143,9 +147,11 @@ class AuthScreenManager extends _$AuthScreenManager {
 
     ref.read(loadingProvider.notifier).state = true;
     state = state.copyWith(
-        emailErrorMessage: '',
-        passwordErrorMessage: '',
-        confirmPasswordErrorMessage: '');
+      emailErrorMessage: '',
+      passwordErrorMessage: '',
+      confirmPasswordErrorMessage: '',
+      isCheckingEmail: !state.isLogin,
+    );
 
     try {
       if (state.isLogin) {
@@ -155,27 +161,42 @@ class AuthScreenManager extends _$AuthScreenManager {
         ref.read(newUserRegistrationProvider.notifier).clearNewUser();
         state = state.copyWith(navigate: true, isNewUser: false);
       } else {
-        // For registration, show PIN verification first
-        state = state.copyWith(
-          showPinVerification: true,
-          pendingEmail: state.email,
-          pendingPassword: state.password,
-        );
+        // For registration, first validate email availability
+        try {
+          await UserDataSource.validateEmailForRegistration(state.email);
+
+          // Email is available, proceed to PIN verification
+          state = state.copyWith(
+            showPinVerification: true,
+            pendingEmail: state.email,
+            pendingPassword: state.password,
+            isCheckingEmail: false,
+          );
+        } on EmailAlreadyInUseException catch (e) {
+          state = state.copyWith(
+            emailErrorMessage: e.toString(),
+            isCheckingEmail: false,
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
-          firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+        firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e),
+        isCheckingEmail: false,
+      );
     } finally {
       ref.read(loadingProvider.notifier).state = false;
     }
   }
 
+  /// Called when PIN is verified successfully
   Future<void> onPinVerified() async {
     if (state.pendingEmail == null || state.pendingPassword == null) return;
 
     ref.read(loadingProvider.notifier).state = true;
 
     try {
+      // Create the account after PIN verification
       final userCredential = await ref
           .read(authProvider.notifier)
           .createUser(state.pendingEmail!, state.pendingPassword!);
@@ -183,7 +204,6 @@ class AuthScreenManager extends _$AuthScreenManager {
       final newUserUid = userCredential.user!.uid;
       await UserStatisticsDataSource.createUserStatistics(newUserUid);
 
-      // Set the new user flag in the global provider
       ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
 
       state = state.copyWith(
@@ -193,10 +213,28 @@ class AuthScreenManager extends _$AuthScreenManager {
         pendingEmail: null,
         pendingPassword: null,
       );
+    } on EmailAlreadyInUseException catch (e) {
+      // Handle rare case where someone registered the same email during PIN verification
+      state = state.copyWith(
+        firebaseErrorMessage:
+            'Email was taken by someone else during verification. Please try again.',
+        showPinVerification: false,
+        pendingEmail: null,
+        pendingPassword: null,
+      );
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
         firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e),
         showPinVerification: false,
+        pendingEmail: null,
+        pendingPassword: null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        firebaseErrorMessage: 'An error occurred: ${e.toString()}',
+        showPinVerification: false,
+        pendingEmail: null,
+        pendingPassword: null,
       );
     } finally {
       ref.read(loadingProvider.notifier).state = false;

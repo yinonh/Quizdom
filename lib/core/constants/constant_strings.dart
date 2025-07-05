@@ -332,4 +332,16 @@ class Strings {
   static const String saveProgressTip =
       'Tip: Create an account with email and password to save your progress!';
   static const String logoutAnyway = 'Logout Anyway';
+
+  // Pin Verification Screen
+  static const String emailVerification = 'Email Verification';
+  static const String verifyYourEmail = 'Verify Your Email';
+  static const String weSentPITo = 'We sent a 6-digit PIN to';
+  static const String remainingAttempts = 'Remaining attempts:';
+  static const String verifying = 'Verifying...';
+  static const String verifyPIN = 'Verify PIN';
+  static const String resendPIN = 'Resend PIN';
+  static const String sendingPINToYourEmail = 'Sending PIN to your email...';
+  static const String didntReceiveCheckSpam =
+      'Didn\'t receive the PIN? Check your spam folder or try resending.';
 }

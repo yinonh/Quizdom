@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:Quizdom/core/network/server.dart';
 import 'package:Quizdom/core/utils/general_functions.dart';
 import 'package:Quizdom/data/models/trivia_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserDataSource {
   static final _usersCollection =
@@ -237,4 +237,40 @@ class UserDataSource {
       rethrow;
     }
   }
+
+  static Future<bool> isEmailRegisteredInApp(String email) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: email.toLowerCase()) // Normalize email
+          .limit(1)
+          .get();
+
+      final exists = querySnapshot.docs.isNotEmpty;
+      logger.i('Email $email exists in app: $exists');
+      return exists;
+    } catch (e) {
+      logger.e('Error checking email in Firestore: $e');
+      // On error, assume email doesn't exist to avoid blocking valid users
+      return false;
+    }
+  }
+
+  /// Validates email availability for registration
+  static Future<void> validateEmailForRegistration(String email) async {
+    final emailExists = await isEmailRegisteredInApp(email);
+
+    if (emailExists) {
+      throw EmailAlreadyInUseException(
+          'This email is already registered. Please use a different email or try signing in.');
+    }
+  }
+}
+
+class EmailAlreadyInUseException implements Exception {
+  final String message;
+  EmailAlreadyInUseException(this.message);
+
+  @override
+  String toString() => message;
 }

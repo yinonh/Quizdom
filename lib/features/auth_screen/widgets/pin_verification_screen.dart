@@ -1,3 +1,4 @@
+import 'package:Quizdom/core/constants/constant_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
@@ -66,7 +67,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
           elevation: 0,
           iconTheme: const IconThemeData(color: Colors.white),
           title: const Text(
-            'Email Verification',
+            Strings.emailVerification,
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -107,7 +108,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
 
                 // Title
                 const Text(
-                  'Verify Your Email',
+                  Strings.verifyYourEmail,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -119,7 +120,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
 
                 // Description
                 Text(
-                  'We sent a 6-digit PIN to\n${widget.email}',
+                  '${Strings.weSentPITo}\n${widget.email}',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -210,7 +211,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                   // Remaining attempts
                   if (pinState.remainingAttempts > 0) ...[
                     Text(
-                      'Remaining attempts: ${pinState.remainingAttempts}',
+                      '${Strings.remainingAttempts} ${pinState.remainingAttempts}',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 14,
@@ -221,7 +222,9 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
 
                   // Verify button
                   CustomButton(
-                    text: pinState.isLoading ? 'Verifying...' : 'Verify PIN',
+                    text: pinState.isLoading
+                        ? Strings.verifying
+                        : Strings.verifyPIN,
                     onTap: pinState.isLoading
                         ? null
                         : () {
@@ -244,7 +247,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                             pinNotifier.resendPin();
                           },
                     child: const Text(
-                      'Resend PIN',
+                      Strings.resendPIN,
                       style: TextStyle(
                         color: AppConstant.primaryColor,
                         fontWeight: FontWeight.w600,
@@ -255,14 +258,14 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                   // Loading state while sending PIN
                   const CircularProgressIndicator(),
                   SizedBox(height: calcHeight(20)),
-                  const Text('Sending PIN to your email...'),
+                  const Text(Strings.sendingPINToYourEmail),
                 ],
 
                 SizedBox(height: calcHeight(40)),
 
                 // Help text
                 Text(
-                  'Didn\'t receive the PIN? Check your spam folder or try resending.',
+                  Strings.didntReceiveCheckSpam,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey[500],

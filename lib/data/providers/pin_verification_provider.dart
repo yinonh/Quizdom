@@ -1,10 +1,24 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:Quizdom/core/network/server.dart';
 import 'package:Quizdom/data/data_source/email_service_data_source.dart';
 import 'package:Quizdom/data/data_source/pin_verification_data_source.dart';
-import 'package:Quizdom/data/models/pin_verification.dart';
 
 part 'pin_verification_provider.g.dart';
+part 'pin_verification_provider.freezed.dart';
+
+@freezed
+class PinVerificationState with _$PinVerificationState {
+  const factory PinVerificationState({
+    @Default('') String email,
+    @Default('') String pin,
+    @Default(false) bool isLoading,
+    @Default(false) bool isPinSent,
+    @Default(false) bool isVerified,
+    String? errorMessage,
+    @Default(3) int remainingAttempts,
+  }) = _PinVerificationState;
+}
 
 @riverpod
 class PinVerificationNotifier extends _$PinVerificationNotifier {
@@ -41,20 +55,11 @@ class PinVerificationNotifier extends _$PinVerificationNotifier {
         userName: userName,
       );
 
-      if (!emailSent) {
-        // Fallback to Resend if EmailJS fails
-        emailSent = await EmailServiceDataSource.sendPinViaResend(
-          email: email,
-          pin: pin,
-          userName: userName,
-        );
-      }
-
       if (emailSent) {
         // Save PIN to Firestore
         await PinVerificationDataSource.savePinVerification(
           email: email,
-          pin: pin,
+          plainPin: pin,
         );
 
         state = state.copyWith(
