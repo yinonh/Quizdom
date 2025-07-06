@@ -248,12 +248,13 @@ class GuestLogoutWarningContent extends StatelessWidget {
                                   AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           )
-                        : Text(
+                        : const Text(
                             Strings.logoutAnyway,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                   ),
                 ),

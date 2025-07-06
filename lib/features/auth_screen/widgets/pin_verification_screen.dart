@@ -94,7 +94,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                   width: calcWidth(100),
                   height: calcWidth(100),
                   decoration: BoxDecoration(
-                    color: AppConstant.primaryColor.withValues(alpha: 0.1),
+                    color: AppConstant.secondaryColor.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -145,7 +145,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                       height: calcHeight(50),
                       textStyle: const TextStyle(
                         fontSize: 20,
-                        color: AppConstant.primaryColor,
+                        color: AppConstant.onPrimaryColor,
                         fontWeight: FontWeight.w600,
                       ),
                       decoration: BoxDecoration(
@@ -158,11 +158,11 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                       height: calcHeight(50),
                       textStyle: const TextStyle(
                         fontSize: 20,
-                        color: AppConstant.primaryColor,
+                        color: AppConstant.onPrimaryColor,
                         fontWeight: FontWeight.w600,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppConstant.primaryColor),
+                        border: Border.all(color: AppConstant.onPrimaryColor),
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -175,7 +175,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                       decoration: BoxDecoration(
-                        color: AppConstant.primaryColor,
+                        color: AppConstant.onPrimaryColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
@@ -225,7 +225,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                     text: pinState.isLoading
                         ? Strings.verifying
                         : Strings.verifyPIN,
-                    onTap: pinState.isLoading
+                    onTap: pinState.isLoading || pinState.remainingAttempts < 1
                         ? null
                         : () {
                             if (_pinController.text.length == 6) {
@@ -249,7 +249,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
                     child: const Text(
                       Strings.resendPIN,
                       style: TextStyle(
-                        color: AppConstant.primaryColor,
+                        color: AppConstant.highlightColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

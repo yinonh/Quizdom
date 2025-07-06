@@ -213,7 +213,7 @@ class AuthScreenManager extends _$AuthScreenManager {
         pendingEmail: null,
         pendingPassword: null,
       );
-    } on EmailAlreadyInUseException catch (e) {
+    } on EmailAlreadyInUseException catch (_) {
       // Handle rare case where someone registered the same email during PIN verification
       state = state.copyWith(
         firebaseErrorMessage:
