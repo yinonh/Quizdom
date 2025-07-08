@@ -34,6 +34,7 @@ class _PinVerificationScreenState extends ConsumerState<PinVerificationScreen> {
     super.initState();
     // Send PIN when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(loadingProvider.notifier).state = false;
       ref.read(pinVerificationNotifierProvider.notifier).sendPin(
             email: widget.email,
             userName: widget.userName,

@@ -12,26 +12,26 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_providers.g.dart';
 
 // State class to hold authentication state and new user flag
-class AuthState {
+class UnifiedAuthState {
   final User? user;
   final bool isNewUser;
   final bool isInitialized;
   final String? error;
 
-  const AuthState({
+  const UnifiedAuthState({
     this.user,
     this.isNewUser = false,
     this.isInitialized = false,
     this.error,
   });
 
-  AuthState copyWith({
+  UnifiedAuthState copyWith({
     User? user,
     bool? isNewUser,
     bool? isInitialized,
     String? error,
   }) {
-    return AuthState(
+    return UnifiedAuthState(
       user: user ?? this.user,
       isNewUser: isNewUser ?? this.isNewUser,
       isInitialized: isInitialized ?? this.isInitialized,
@@ -43,13 +43,13 @@ class AuthState {
 // Enhanced auth state provider with token validation and new user tracking
 @riverpod
 class UnifiedAuth extends _$UnifiedAuth {
-  StreamController<AuthState>? _controller;
+  StreamController<UnifiedAuthState>? _controller;
   User? _lastUser;
   bool _lastIsNewUser = false;
 
   @override
-  Stream<AuthState> build() {
-    _controller = StreamController<AuthState>.broadcast();
+  Stream<UnifiedAuthState> build() {
+    _controller = StreamController<UnifiedAuthState>.broadcast();
 
     // Watch the new user provider
     ref.listen(newUserRegistrationProvider, (previous, next) {
@@ -83,9 +83,9 @@ class UnifiedAuth extends _$UnifiedAuth {
   }
 
   // Async method to process the auth state
-  Future<AuthState> _processAuthState(User? user, bool isNewUser) async {
+  Future<UnifiedAuthState> _processAuthState(User? user, bool isNewUser) async {
     if (user == null) {
-      return const AuthState(user: null, isInitialized: true);
+      return const UnifiedAuthState(user: null, isInitialized: true);
     }
 
     try {
@@ -95,7 +95,7 @@ class UnifiedAuth extends _$UnifiedAuth {
       // Initialize app data for authenticated user
       await _initializeAppData();
 
-      return AuthState(
+      return UnifiedAuthState(
         user: user,
         isNewUser: isNewUser,
         isInitialized: true,
@@ -104,7 +104,7 @@ class UnifiedAuth extends _$UnifiedAuth {
       // User was deleted or token is invalid
       logger.i('User token invalid, signing out: $e');
       await FirebaseAuth.instance.signOut();
-      return AuthState(
+      return UnifiedAuthState(
         user: null,
         isInitialized: true,
         error: e.toString(),

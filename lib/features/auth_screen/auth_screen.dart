@@ -26,15 +26,6 @@ class AuthScreen extends ConsumerWidget {
     ref.listen<AuthState>(
       authScreenManagerProvider,
       (previous, next) {
-        if (next.navigate && next.isNewUser) {
-          // The router will handle the navigation automatically
-          // Just reset the navigate flag
-          authNotifier.resetNavigate();
-        } else if (next.navigate) {
-          // The router will handle the navigation automatically
-          // Just reset the navigate flag
-          authNotifier.resetNavigate();
-        }
         if (next.firebaseErrorMessage != null) {
           final message = next.firebaseErrorMessage!;
           authNotifier.deleteFirebaseMessage();

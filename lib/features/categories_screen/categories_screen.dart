@@ -1,7 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:Quizdom/core/common_widgets/background.dart';
 import 'package:Quizdom/core/common_widgets/base_screen.dart';
 import 'package:Quizdom/core/common_widgets/custom_drawer.dart';
@@ -22,6 +18,10 @@ import 'package:Quizdom/features/categories_screen/widgets/top_button.dart';
 import 'package:Quizdom/features/categories_screen/widgets/top_players.dart';
 import 'package:Quizdom/features/categories_screen/widgets/wheel_of_fortune_banner.dart';
 import 'package:Quizdom/features/intro_screen/intro_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CategoriesScreen extends ConsumerWidget {
   static const routeName = AppRoutes.categoriesRouteName;
@@ -33,6 +33,12 @@ class CategoriesScreen extends ConsumerWidget {
     final categoriesState = ref.watch(categoriesScreenManagerProvider);
     final categoriesNotifier =
         ref.read(categoriesScreenManagerProvider.notifier);
+
+    if (ref.read(loadingProvider.notifier).state == true) {
+      Future.delayed(const Duration(milliseconds: 150), () {
+        ref.read(loadingProvider.notifier).state = false;
+      });
+    }
 
     return BaseScreen(
       // actionButton: const ResourceFloatingActionButton(),

@@ -29,7 +29,6 @@ class AuthState with _$AuthState {
     required String confirmPasswordErrorMessage,
     String? firebaseErrorMessage,
     required bool navigate,
-    required bool isNewUser,
     required GlobalKey<FormState> formKey,
     required bool showPinVerification,
     String? pendingEmail,
@@ -55,7 +54,6 @@ class AuthScreenManager extends _$AuthScreenManager {
       passwordErrorMessage: '',
       confirmPasswordErrorMessage: '',
       navigate: false,
-      isNewUser: false,
       formKey: _formKey,
       showPinVerification: false,
       isCheckingEmail: false,
@@ -63,7 +61,6 @@ class AuthScreenManager extends _$AuthScreenManager {
   }
 
   void toggleFormMode() {
-    ref.read(loadingProvider.notifier).state = false;
     state = state.copyWith(
       isLogin: !state.isLogin,
       showPassword: false,
@@ -74,7 +71,6 @@ class AuthScreenManager extends _$AuthScreenManager {
       confirmPasswordErrorMessage: '',
       firebaseErrorMessage: null,
       navigate: false,
-      isNewUser: state.isLogin,
       formKey: _formKey,
     );
   }
@@ -103,16 +99,14 @@ class AuthScreenManager extends _$AuthScreenManager {
     state = state.copyWith(firebaseErrorMessage: null);
   }
 
-  void resetNavigate() {
-    state = state.copyWith(navigate: false);
-  }
-
   bool _isPasswordStrong(String password) {
     if (password.length < 6) return false;
 
     final RegExp englishLetterRegex = RegExp(r'[a-zA-Z]');
     return englishLetterRegex.hasMatch(password);
   }
+
+  // In auth_page_manager.dart - Updated submit and onPinVerified methods
 
   Future<void> submit() async {
     String emailError = '';
@@ -159,7 +153,8 @@ class AuthScreenManager extends _$AuthScreenManager {
             .read(authProvider.notifier)
             .signIn(state.email, state.password);
         ref.read(newUserRegistrationProvider.notifier).clearNewUser();
-        state = state.copyWith(navigate: true, isNewUser: false);
+        state = state.copyWith(navigate: true);
+        // Don't set loading to false here - let the navigation handle it
       } else {
         // For registration, first validate email availability
         try {
@@ -172,11 +167,13 @@ class AuthScreenManager extends _$AuthScreenManager {
             pendingPassword: state.password,
             isCheckingEmail: false,
           );
+          // Don't set loading to false here - PIN verification is still pending
         } on EmailAlreadyInUseException catch (e) {
           state = state.copyWith(
             emailErrorMessage: e.toString(),
             isCheckingEmail: false,
           );
+          ref.read(loadingProvider.notifier).state = false;
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -184,7 +181,6 @@ class AuthScreenManager extends _$AuthScreenManager {
         firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e),
         isCheckingEmail: false,
       );
-    } finally {
       ref.read(loadingProvider.notifier).state = false;
     }
   }
@@ -192,8 +188,6 @@ class AuthScreenManager extends _$AuthScreenManager {
   /// Called when PIN is verified successfully
   Future<void> onPinVerified() async {
     if (state.pendingEmail == null || state.pendingPassword == null) return;
-
-    ref.read(loadingProvider.notifier).state = true;
 
     try {
       // Create the account after PIN verification
@@ -208,11 +202,11 @@ class AuthScreenManager extends _$AuthScreenManager {
 
       state = state.copyWith(
         navigate: true,
-        isNewUser: true,
         showPinVerification: false,
         pendingEmail: null,
         pendingPassword: null,
       );
+      // Don't set loading to false here - let avatar screen handle it
     } on EmailAlreadyInUseException catch (_) {
       // Handle rare case where someone registered the same email during PIN verification
       state = state.copyWith(
@@ -222,6 +216,7 @@ class AuthScreenManager extends _$AuthScreenManager {
         pendingEmail: null,
         pendingPassword: null,
       );
+      ref.read(loadingProvider.notifier).state = false;
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
         firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e),
@@ -229,6 +224,7 @@ class AuthScreenManager extends _$AuthScreenManager {
         pendingEmail: null,
         pendingPassword: null,
       );
+      ref.read(loadingProvider.notifier).state = false;
     } catch (e) {
       state = state.copyWith(
         firebaseErrorMessage: 'An error occurred: ${e.toString()}',
@@ -236,21 +232,10 @@ class AuthScreenManager extends _$AuthScreenManager {
         pendingEmail: null,
         pendingPassword: null,
       );
-    } finally {
       ref.read(loadingProvider.notifier).state = false;
     }
   }
 
-  /// Called when user cancels PIN verification
-  void cancelPinVerification() {
-    state = state.copyWith(
-      showPinVerification: false,
-      pendingEmail: null,
-      pendingPassword: null,
-    );
-  }
-
-// Updated signInWithGoogle method
   Future<void> signInWithGoogle() async {
     ref.read(loadingProvider.notifier).state = true;
 
@@ -269,15 +254,16 @@ class AuthScreenManager extends _$AuthScreenManager {
         ref.read(newUserRegistrationProvider.notifier).clearNewUser();
       }
 
-      state = state.copyWith(navigate: true, isNewUser: isNewUser);
+      state = state.copyWith(navigate: true);
+      // Don't set loading to false here - let the navigation handle it
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+      ref.read(loadingProvider.notifier).state = false;
     } catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: 'An error occurred during Google sign-in');
       logger.e(e);
-    } finally {
       ref.read(loadingProvider.notifier).state = false;
     }
   }
@@ -294,19 +280,21 @@ class AuthScreenManager extends _$AuthScreenManager {
 
         // Set the new user flag, as a guest is a new user session
         ref.read(newUserRegistrationProvider.notifier).setNewUser(true);
-        state = state.copyWith(navigate: true, isNewUser: true);
+        state = state.copyWith(navigate: true);
+        // Don't set loading to false here - let the navigation handle it
       } else {
         state =
             state.copyWith(firebaseErrorMessage: "Failed to sign in as guest.");
+        ref.read(loadingProvider.notifier).state = false;
       }
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(
           firebaseErrorMessage: mapFirebaseErrorCodeToMessage(e));
+      ref.read(loadingProvider.notifier).state = false;
     } catch (e) {
       state = state.copyWith(
           firebaseErrorMessage:
               "An unexpected error occurred: ${e.toString()}");
-    } finally {
       ref.read(loadingProvider.notifier).state = false;
     }
   }

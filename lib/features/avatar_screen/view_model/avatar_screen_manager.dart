@@ -44,6 +44,10 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     final originalImage =
         originalImagePath != null ? File(originalImagePath) : null;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(loadingProvider.notifier).state = false;
+    });
+
     ref.onDispose(() {
       ref.read(newUserRegistrationProvider.notifier).clearNewUser();
     });
