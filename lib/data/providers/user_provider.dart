@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Quizdom/core/constants/app_constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -143,7 +144,7 @@ class Auth extends _$Auth {
 
   // Handle image upload
   Future<void> setImage(File? image) async {
-    if (image == null) return;
+    if (!AppConstant.imagesAllowed || image == null) return;
 
     state = state.copyWith(imageLoading: true);
 

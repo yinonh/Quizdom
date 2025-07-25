@@ -1,3 +1,4 @@
+// import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +46,7 @@ class AvatarScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: AppConstant.primaryColor,
         appBar: CustomAppBar(
-          title: Strings.setImage,
+          title: Strings.setAvatar,
           onBack: avatarNotifier.revertChanges,
         ),
         body: avatarState.customWhen(
@@ -53,8 +54,10 @@ class AvatarScreen extends ConsumerWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  if (state.selectedImage != null) {
-                    avatarNotifier.toggleShowTrashIcon(false);
+                  if (AppConstant.imagesAllowed) {
+                    if (state.selectedImage != null) {
+                      avatarNotifier.toggleShowTrashIcon(false);
+                    }
                   }
                 },
                 child: Container(
@@ -79,7 +82,7 @@ class AvatarScreen extends ConsumerWidget {
                           bottom: calcHeight(30),
                           top: calcHeight(100),
                         ),
-                        child: state.showImage
+                        child: AppConstant.imagesAllowed && state.showImage
                             ? SizedBox(
                                 width: calcWidth(500),
                                 height: calcHeight(300),
@@ -121,7 +124,7 @@ class AvatarScreen extends ConsumerWidget {
                   child: CustomButton(
                     text: Strings.save,
                     onTap: () async {
-                      if (state.showImage) {
+                      if (AppConstant.imagesAllowed && state.showImage) {
                         avatarNotifier.saveImage();
                       } else {
                         avatarNotifier.saveAvatar();

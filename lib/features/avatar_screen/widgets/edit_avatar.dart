@@ -1,3 +1,4 @@
+import 'package:Quizdom/core/common_widgets/under_construction_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +35,7 @@ class EditAvatar extends ConsumerWidget {
                 },
                 child: Stack(
                   children: [
-                    if (state.showImage)
+                    if (AppConstant.imagesAllowed && state.showImage)
                       (state.selectedImage != null
                           ? CircleAvatar(
                               backgroundImage: FileImage(state.selectedImage!)
@@ -82,8 +83,10 @@ class EditAvatar extends ConsumerWidget {
                   icon: Icon(Icons.delete,
                       color: Colors.white.withValues(alpha: 0.5)),
                   onPressed: () {
-                    avatarNotifier.switchImage(null);
-                    avatarNotifier.toggleShowTrashIcon(false);
+                    if (AppConstant.imagesAllowed) {
+                      avatarNotifier.switchImage(null);
+                      avatarNotifier.toggleShowTrashIcon(false);
+                    }
                   },
                 ),
               ),
@@ -94,9 +97,13 @@ class EditAvatar extends ConsumerWidget {
                 children: [
                   IconButton(
                     onPressed: () async {
-                      final image = await ImagePicker()
-                          .pickImage(source: ImageSource.camera);
-                      avatarNotifier.switchImage(image);
+                      if (AppConstant.imagesAllowed) {
+                        final image = await ImagePicker()
+                            .pickImage(source: ImageSource.camera);
+                        avatarNotifier.switchImage(image);
+                      } else {
+                        await UnderConstructionDialog.show(context);
+                      }
                     },
                     icon: Container(
                       width: calcWidth(45.0),
@@ -115,9 +122,13 @@ class EditAvatar extends ConsumerWidget {
                   SizedBox(width: calcWidth(55)),
                   IconButton(
                     onPressed: () async {
-                      final image = await ImagePicker()
-                          .pickImage(source: ImageSource.gallery);
-                      avatarNotifier.switchImage(image);
+                      if (AppConstant.imagesAllowed) {
+                        final image = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+                        avatarNotifier.switchImage(image);
+                      } else {
+                        await UnderConstructionDialog.show(context);
+                      }
                     },
                     icon: Container(
                       width: calcWidth(45.0),

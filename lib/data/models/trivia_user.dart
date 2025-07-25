@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Quizdom/core/constants/app_constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -73,7 +74,7 @@ class TriviaUser with _$TriviaUser {
       uid: firebaseUser.uid,
       name: defaultName,
       email: firebaseUser.email,
-      imageUrl: firebaseUser.photoURL,
+      imageUrl: AppConstant.imagesAllowed ? firebaseUser.photoURL : null,
       isAnonymous: firebaseUser.isAnonymous,
     );
   }

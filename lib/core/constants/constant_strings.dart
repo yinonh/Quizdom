@@ -53,7 +53,7 @@ class Strings {
   static const String hello = "Hello,";
 
   // Avatar Screen
-  static const String setImage = "Set Image";
+  static const String setAvatar = "Set Avatar";
   static const String save = "Save";
 
   static String getCroppedImagePath(String directory, String currentTime) {

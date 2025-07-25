@@ -41,6 +41,7 @@ class AppConstant {
   static const List<int> loginAwards = [0, 10, 35, 50, 100, 200];
   static const matchTimeout = 20;
   static const String botUserId = "-1";
+  static const bool imagesAllowed = false;
 
   static const Map<int, String> categoryIcons = {
     -1: "assets/icons/all_icon.svg", // General Knowledge

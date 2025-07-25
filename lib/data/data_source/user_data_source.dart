@@ -86,10 +86,6 @@ class UserDataSource {
     await updateUserFields(userId: userId, updates: {'coins': coins});
   }
 
-  static Future<void> updateXp(String userId, double xp) async {
-    await updateUserFields(userId: userId, updates: {'userXp': xp});
-  }
-
   static Future<void> updateLastLogin(String userId, DateTime lastLogin) async {
     await updateUserFields(userId: userId, updates: {'lastLogin': lastLogin});
   }

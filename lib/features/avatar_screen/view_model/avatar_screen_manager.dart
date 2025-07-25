@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:Quizdom/core/constants/app_constant.dart';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -37,7 +38,9 @@ class AvatarScreenManager extends _$AvatarScreenManager {
   @override
   Future<AvatarState> build() async {
     final currentUser = ref.read(authProvider).currentUser;
-    String? userImage = currentUser.imageUrl;
+
+    String? userImage = AppConstant.imagesAllowed ? currentUser.imageUrl : null;
+
     final prefs = await SharedPreferences.getInstance();
     final originalImagePath = prefs
         .getString("${Strings.originalUserImagePathKey} - ${currentUser.uid}");
@@ -92,6 +95,7 @@ class AvatarScreenManager extends _$AvatarScreenManager {
   }
 
   Future<void> saveImage() async {
+    if (!AppConstant.imagesAllowed) return;
     state.whenData((data) async {
       if (data.currentUserUid == null) return;
       ref.read(loadingProvider.notifier).state = true;
@@ -128,6 +132,22 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     });
   }
 
+  // Modified save method for avatar-only mode
+  Future<void> saveAvatar() async {
+    state.whenData((data) async {
+      if (data.currentUserUid == null) return;
+      ref.read(loadingProvider.notifier).state = true;
+
+      // Since we're avatar-only, just ensure no image is set and navigate
+      await ref.read(fluttermojiNotifierProvider.notifier).setFluttermoji();
+      await ref.read(authProvider.notifier).setAvatar();
+
+      ref.read(newUserRegistrationProvider.notifier).clearNewUser();
+      state = AsyncValue.data(data.copyWith(navigate: true));
+      ref.read(loadingProvider.notifier).state = false;
+    });
+  }
+
   void toggleShowTrashIcon([bool? value]) {
     state.whenData((data) {
       state = AsyncValue.data(data.copyWith(
@@ -136,20 +156,13 @@ class AvatarScreenManager extends _$AvatarScreenManager {
     });
   }
 
-  Future<void> saveAvatar() async {
-    ref.read(loadingProvider.notifier).state = true;
-    await ref.read(fluttermojiNotifierProvider.notifier).setFluttermoji();
-    await ref.read(authProvider.notifier).setAvatar();
-    state.whenData(
-      (data) {
-        ref.read(newUserRegistrationProvider.notifier).clearNewUser();
-        state = AsyncValue.data(data.copyWith(navigate: true));
-      },
-    );
-    ref.read(loadingProvider.notifier).state = false;
-  }
-
-  Future<void> revertChanges() async {
-    await ref.read(fluttermojiNotifierProvider.notifier).restoreState();
+  void revertChanges() {
+    state.whenData((data) {
+      state = AsyncValue.data(data.copyWith(
+        selectedImage: null,
+        showImage: data.currentImage != null,
+        showTrashIcon: false,
+      ));
+    });
   }
 }
